@@ -1,0 +1,97 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "\\\\Mac\\funbox\\plugins\\plugin-spine\\win32\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{79F0CACC-457B-4A25-BC54-81277688C361}|Plugin.vcxproj|\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_texture.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.42.34430\\include\\comdef.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{79F0CACC-457B-4A25-BC54-81277688C361}|Plugin.vcxproj|\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_renderer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|\\\\Mac\\funbox\\plugins\\plugin-core\\win32\\Utils.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|\\\\Mac\\funbox\\plugins\\plugin-core\\win32\\Plugin\\LuaUtils.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "spine_texture.cpp",
+              "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_texture.cpp",
+              "RelativeDocumentMoniker": "..\\shared\\spine_texture.cpp",
+              "ToolTip": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_texture.cpp",
+              "RelativeToolTip": "..\\shared\\spine_texture.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-11-03T17:36:10.256Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "comdef.h",
+              "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.42.34430\\include\\comdef.h",
+              "ToolTip": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.42.34430\\include\\comdef.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-11-03T17:34:58.266Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "spine_renderer.cpp",
+              "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_renderer.cpp",
+              "RelativeDocumentMoniker": "..\\shared\\spine_renderer.cpp",
+              "ToolTip": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_renderer.cpp",
+              "RelativeToolTip": "..\\shared\\spine_renderer.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-11-03T17:24:28.583Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "LuaUtils.cpp",
+              "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-core\\win32\\Plugin\\LuaUtils.cpp",
+              "RelativeDocumentMoniker": "..\\..\\plugin-core\\win32\\Plugin\\LuaUtils.cpp",
+              "ToolTip": "\\\\Mac\\funbox\\plugins\\plugin-core\\win32\\Plugin\\LuaUtils.cpp",
+              "RelativeToolTip": "..\\..\\plugin-core\\win32\\Plugin\\LuaUtils.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-10-18T20:20:35.018Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Utils.h",
+              "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-core\\win32\\Utils.h",
+              "RelativeDocumentMoniker": "..\\..\\plugin-core\\win32\\Utils.h",
+              "ToolTip": "\\\\Mac\\funbox\\plugins\\plugin-core\\win32\\Utils.h",
+              "RelativeToolTip": "..\\..\\plugin-core\\win32\\Utils.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-10-18T18:04:19.63Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

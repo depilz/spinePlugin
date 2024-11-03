@@ -1,0 +1,130 @@
+# General temporary files
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# macOS Finder attributes
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.TemporaryItems
+.Trashes
+
+# Xcode build artifacts and temporary files
+build/
+DerivedData/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+*.xcworkspace
+!default.xcworkspace
+xcuserdata/
+*.xccheckout
+*.moved-aside
+*.xcuserstate
+*.xcscmblueprint
+
+# CocoaPods
+Pods/
+
+# Carthage
+Carthage/Build/
+
+# Swift Package Manager
+.build/
+
+# Gradle files
+.gradle/
+build/
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Android Studio files
+.idea/
+*.iml
+
+# Keystore files
+*.jks
+*.keystore
+
+# Proguard files
+proguard/
+
+# NDK
+obj/
+
+# Visual Studio temporary files
+*.obj
+*.exe
+*.pdb
+*.ilk
+*.idb
+*.lib
+*.exp
+*.appx
+*.appxbundle
+*.msix
+*.msixbundle
+
+# Build directories
+[Bb]uild*/
+[Dd]ebug*/
+[Rr]elease*/
+x64/
+x86/
+ARM/
+ARM64/
+
+# Visual Studio cache files
+ipch/
+*.aps
+*.ncb
+*.opensdf
+*.sdf
+*.cachefile
+
+# Visual Studio database files
+*.VC.db
+*.VC.VC.opendb
+
+# Visual Studio user-specific files
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+
+# Visual Studio Code workspace settings
+.vscode/
+.vscode/extensions.json
+
+# Python virtual environments
+venv/
+env/
+
+# Ruby bundler
+.bundle/
+
+# Package files
+*.gem
+*.pyc
+
+# Backup files
+*.bak
+
+# Logs and databases
+*.log
+*.sql
+*.sqlite
+
+/local.properties
+**/.idea/**
+**/build/**
