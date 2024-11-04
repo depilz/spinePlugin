@@ -19,20 +19,11 @@ Current Status
 	- Load and display Spine animations.
 	- Set and control animations programmatically.
 
-Upcoming Features
-
-- Animation Mixing: Blend animations smoothly
-- Physics Controls: Incorporate the new physics features available in Spine 4.2.
-- Event Listeners: Trigger events and call listeners
-- Platform Expansion: Windows and Android
-- Optimizations:
-	- Memory management improvements.
-	- Performance enhancements.
-
 📚 Usage
 
 Using the Solar2D Spine Plugin is straightforward. Here’s a basic example to help you get started:
 
+```lua
 local spine = require("plugin.spine")
 
 local jsonPath = system.pathForFile("art/raptor.json", system.ResourceDirectory)
@@ -47,6 +38,7 @@ local spineObject = spine.create({
 spineObject:setAnimation(0, "walk", true)
 
 parent:insert(spineObject)
+```
 
 Parameters:
 
@@ -60,23 +52,24 @@ Methods:
 
 📈 Roadmap
 
-Here’s what’s coming next for the Solar2D Spine Plugin:
+Here’s what’s coming next for the Plugin:
 
-	1.	Properly Update Meshes: Resolve current crashes related to mesh updates.
-	2.	Platform Support:
+1.	Properly Update Meshes: Resolve current crashes related to mesh updates.
+2.	Platform Support:
 	•	Complete support for Android.
 	•	Complete support for Windows.
-  3.  Make it available for free in Solar2D plugin Marketplace
-	4.	Interface to Animation Mix Times: Provide controls for managing animation transitions.
-	5.	Event Listeners: Implement event handling for interactive animations.
-	6.	A More Robust Update Cycle: Enhance the update mechanism for better performance and reliability.
-	7.	Physics Controls: Integrate new physics features from Spine 4.2.
-	8.	Draw the Meshes Using Solar’s Native API: Utilize Solar2D’s native drawing capabilities for improved performance.
-	9.	Correct Memory Management: Optimize memory usage to prevent leaks and crashes.
-	10.	Interface to All Spine Utilities: Provide access to the full range of Spine utilities for comprehensive animation control.
-  11. Add sample project.
-  12. Add documentation.
-  13. Implement spine injections
+3.  Make it available for free in Solar2D plugin Marketplace
+4.  Scripts to build the plugin easily
+5.  Interface to Animation Mix Times: Provide controls for managing animation transitions.
+6.  Event Listeners: Implement event handling for interactive animations.
+7.  A More Robust Update Cycle: Enhance the update mechanism for better performance and reliability.
+8.  Physics Controls: Integrate new physics features from Spine 4.2.
+9.  Draw the Meshes Using Solar’s Native API: Utilize Solar2D’s native drawing capabilities for improved performance.
+10.  Correct Memory Management: Optimize memory usage to prevent leaks and crashes.
+11.  Interface to All Spine Utilities: Provide access to the full range of Spine utilities for comprehensive animation control.
+12.  Add sample project.
+13.  Add documentation.
+14.  Implement spine injections
 
 
 
@@ -107,5 +100,3 @@ Feel free to reach out for any questions, collaborations, or to share your Spine
 	•	Email: clarospilzdw@gmail.com
 
 Stay tuned for more updates, and thank you for your support!
-
-Note: Replace placeholders like https://github.com/yourusername/solar2d-spine-plugin.git with your actual repository link if applicable.
