@@ -196,12 +196,11 @@ void engine_drawMesh(lua_State *L, float *positions, size_t numVertices, float *
 
     // Assign returned x to mesh.x
     lua_pushvalue(L, meshIndex);                           // Push mesh
-    lua_pushvalue(L, -2);                                  // Push x
+    lua_pushvalue(L, -3);                                  // Push x
     lua_setfield(L, -2, "x");                              // mesh.x = x
 
     // Assign returned y to mesh.y
-    lua_pushvalue(L, meshIndex);                           // Push mesh
-    lua_pushvalue(L, -1);                                  // Push y
+    lua_pushvalue(L, -2);                                  // Push y
     lua_setfield(L, -2, "y");                              // mesh.y = y
 
     // lua_pop(L, 3); // Pop y, x, and mesh.path.getVertexOffset
