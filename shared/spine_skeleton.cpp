@@ -199,6 +199,7 @@ int skeleton_update(lua_State *L)
 
     skeletonUserdata->state->update(deltaTime);
     skeletonUserdata->state->apply(*skeletonUserdata->skeleton);
+    skeletonUserdata->skeleton->update(deltaTime);
     skeletonUserdata->skeleton->updateWorldTransform(Physics_Update);
 
     // Render the skeleton
