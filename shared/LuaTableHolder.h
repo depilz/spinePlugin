@@ -62,12 +62,6 @@ public:
         }
     }
 
-    // Retrieves the Lua state
-    lua_State *getLuaState() const
-    {
-        return L_;
-    }
-
     // Checks if the Lua table reference is valid
     bool isValid() const
     {
@@ -81,6 +75,17 @@ public:
         {
             L_ = L;
             saveReference();
+        }
+    }
+
+    // Releases the Lua table reference
+    void releaseTable()
+    {
+        if (isValid())
+        {
+            luaL_unref(L_, LUA_REGISTRYINDEX, ref_);
+            L_ = nullptr;
+            ref_ = LUA_NOREF;
         }
     }
 
@@ -98,17 +103,6 @@ private:
             {
                 L_ = nullptr;
             }
-        }
-    }
-
-    // Releases the Lua table reference
-    void releaseTable()
-    {
-        if (isValid())
-        {
-            luaL_unref(L_, LUA_REGISTRYINDEX, ref_);
-            L_ = nullptr;
-            ref_ = LUA_NOREF;
         }
     }
 

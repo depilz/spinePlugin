@@ -73,7 +73,7 @@ int create(lua_State *L)
     skeletonUserdata->skeletonData = skeletonData;
 
     skeletonUserdata->meshes.reserve(100);
-    skeletonUserdata->meshSet.reserve(100);
+    skeletonUserdata->meshIndices.reserve(100);
 
     // Set metatable
     luaL_getmetatable(L, "SpineSkeleton");
@@ -227,13 +227,26 @@ int skeleton_render(lua_State *L, SpineSkeleton * skeletonUserdata, SkeletonRend
         BlendMode blendMode = command->blendMode;
 
         auto &meshes = skeletonUserdata->meshes;
+        auto &meshIndices = skeletonUserdata->meshIndices;
 
-        if (meshes[i].isValid())
+        bool existingMesh = meshes[i].isValid();
+
+        if (existingMesh)
         {
             LuaTableHolder &mesh = meshes[i];
-            engine_updateMesh(L, &mesh, command->positions, command->numVertices, command->uvs, command->indices, command->numIndices, texture, blendMode, command->colors);
+            if(meshIndices[i] != command->numIndices)
+            {
+                engine_removeMesh(L, &mesh);
+                existingMesh = false;
+                meshes[i].releaseTable();
+            } 
+            else
+            {   
+                engine_updateMesh(L, &mesh, command->positions, command->numVertices, command->uvs, command->indices, command->numIndices, texture, blendMode, command->colors);
+            }
         }
-        else
+
+        if (!existingMesh)
         {
             engine_drawMesh(L, command->positions, command->numVertices, command->uvs, command->indices, command->numIndices, texture, blendMode, command->colors);
 
@@ -246,6 +259,7 @@ int skeleton_render(lua_State *L, SpineSkeleton * skeletonUserdata, SkeletonRend
 
             // initialize mesh
             meshes[i].initialize(L);
+            meshIndices[i] = command->numIndices;
             lua_pop(L, 1);
         }
         command = command->next;

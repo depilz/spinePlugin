@@ -7,14 +7,10 @@
 
 void SpineTextureLoader::load(spine::AtlasPage &page, const spine::String &path)
 {
-    std::string *texturePath = new std::string(path.buffer());
-
-    Texture *texture = new Texture(*texturePath);
-
-    page.texture = texture;
+    page.texture = new std::string(path.buffer());
 }
 
 void SpineTextureLoader::unload(void *texture)
 {
-    delete static_cast<std::string *>(texture);
+    delete (std::string *)texture;
 }

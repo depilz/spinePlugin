@@ -18,39 +18,7 @@ struct Vertex {
 // Define the Texture struct to hold a Lua reference
 struct Texture
 {
-    const char *path;
-
-    // Constructor to create a Texture with a given path
-    Texture(const std::string &pathStr)
-    {
-        path = new char[pathStr.length() + 1]; // Allocate memory for the path
-        strcpy((char *)path, pathStr.c_str()); // Copy the string into the allocated memory
-    }
-
-    // Destructor to clean up the allocated memory
-    ~Texture()
-    {
-        delete[] path; // Free the allocated memory for the path
-    }
-
-    // Copy constructor to handle copying of Texture objects
-    Texture(const Texture &other)
-    {
-        path = new char[strlen(other.path) + 1];
-        strcpy((char *)path, other.path);
-    }
-
-    // Assignment operator to handle assignment of Texture objects
-    Texture &operator=(const Texture &other)
-    {
-        if (this != &other)
-        {
-            delete[] path; // Free existing path
-            path = new char[strlen(other.path) + 1];
-            strcpy((char *)path, other.path);
-        }
-        return *this;
-    }
+    std::string path;
 };
 
 #include "spine_skeleton.h"
@@ -63,3 +31,4 @@ struct Texture
 // - blendMode the blend mode to use
 void engine_drawMesh(lua_State *L, float *positions, size_t numVertices, float *uvs, unsigned short *indices, size_t numIndices, Texture *texture, spine::BlendMode blendMode, uint32_t *colors);
 void engine_updateMesh(lua_State *L, LuaTableHolder *meshHolder, float *positions, size_t numVertices, float *uvs, unsigned short *indices, size_t numIndices, Texture *texture, spine::BlendMode blendMode, uint32_t *colors);
+void engine_removeMesh(lua_State *L, LuaTableHolder *meshHolder);

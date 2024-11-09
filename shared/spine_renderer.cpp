@@ -15,8 +15,8 @@ void engine_updateMesh(lua_State *L, LuaTableHolder *meshHolder, float *position
 
     
     // remove the resources directory from the Texture->path
-    const char* texturePath = texture->path;
-    const char* texturePathStart = strstr(texturePath, resourcesDir);
+    std::string texturePath = texture->path;
+    const char* texturePathStart = strstr(texturePath.c_str(), resourcesDir);
     if (texturePathStart != NULL)
     {
         texturePath = texturePathStart + strlen(resourcesDir);
@@ -34,9 +34,17 @@ void engine_updateMesh(lua_State *L, LuaTableHolder *meshHolder, float *position
     lua_newtable(L);
 
     // create the vertices table
+    double minX = 99999999;
+    double minY = 99999999;
+    double maxX = -99999999;
+    double maxY = -99999999;
     lua_newtable(L);
     for (size_t i = 0; i < numIndices; ++i)
     {
+        if (positions[indices[i] * 2] < minX) minX = positions[indices[i] * 2];
+        if (positions[indices[i] * 2] > maxX) maxX = positions[indices[i] * 2];
+        if (positions[indices[i] * 2 + 1] < minY) minY = positions[indices[i] * 2 + 1];
+        if (positions[indices[i] * 2 + 1] > maxY) maxY = positions[indices[i] * 2 + 1];
         lua_pushnumber(L, positions[indices[i] * 2]);
         lua_rawseti(L, -2, i * 2 + 1);
         lua_pushnumber(L, -positions[indices[i] * 2 + 1]);
@@ -66,38 +74,46 @@ void engine_updateMesh(lua_State *L, LuaTableHolder *meshHolder, float *position
 
     lua_call(L, 2, 0);
 
+    meshHolder->pushTable();
+    int meshIndex = lua_gettop(L);
 
+    lua_pushvalue(L, meshIndex);                           // Push mesh
 
+    // offsetx
+    lua_pushnumber(L, (minX + maxX) / 2);                 // Push x
+    lua_setfield(L, -2, "x");                              // mesh.x = x
 
+    // offsety
+    lua_pushnumber(L, - (minY + maxY) / 2);                 // Push y
+    lua_setfield(L, -2, "y");                              // mesh.y = y
 
+    // lua_newtable(L);
+    // lua_pushstring(L, "type");
+    // lua_pushstring(L, "image");
+    // lua_settable(L, -3);
+    // lua_pushstring(L, "filename");
+    // lua_pushstring(L, texturePath.c_str());
+    // lua_settable(L, -3);
+    // lua_setfield(L, meshIndex, "fill");
 
-    // // lua_newtable(L);
-    // // lua_pushstring(L, "type");
-    // // lua_pushstring(L, "image");
-    // // lua_settable(L, -3);
-    // // lua_pushstring(L, "filename");
-    // // lua_pushstring(L, texturePath);
-    // // lua_settable(L, -3);
-    // // lua_setfield(L, -2, "fill");
+    // set color with mesh.setFillColor
+    // meshHolder->pushTable();
+    // lua_getfield(L, -1, "setFillColor");         // Push mesh.setFillColor
+    // meshHolder->pushTable();
+    // lua_remove(L, -3);
 
-    // // set color with mesh.setFillColor
-    // // meshHolder->pushTable();
-    // // lua_getfield(L, -1, "setFillColor");         // Push mesh.setFillColor
-    // // meshHolder->pushTable();
-    // // lua_remove(L, -3);
+    // uint32_t color = colors[0];
+    // float r = ((color >> 16) & 0xff) / 255.0f;
+    // float g = ((color >> 8) & 0xff) / 255.0f;
+    // float b = (color & 0xff) / 255.0f;
+    // float a = ((color >> 24) & 0xff) / 255.0f;
 
-    // // uint32_t color = colors[0];
-    // // float r = ((color >> 16) & 0xff) / 255.0f;
-    // // float g = ((color >> 8) & 0xff) / 255.0f;
-    // // float b = (color & 0xff) / 255.0f;
-    // // float a = ((color >> 24) & 0xff) / 255.0f;
+    // lua_pushnumber(L, r);                                // Push r
+    // lua_pushnumber(L, g);                                // Push g
+    // lua_pushnumber(L, b);                                // Push b
+    // lua_pushnumber(L, a);                                // Push a
 
-    // // lua_pushnumber(L, r);                                // Push r
-    // // lua_pushnumber(L, g);                                // Push g
-    // // lua_pushnumber(L, b);                                // Push b
-    // // lua_pushnumber(L, a);                                // Push a
-
-    // // lua_call(L, 5, 0);                // Call setFillColor(self, r, g, b, a)
+    // lua_call(L, 5, 0);                // Call setFillColor(self, r, g, b, a)
 }
 
 void engine_drawMesh(lua_State *L, float *positions, size_t numVertices, float *uvs, unsigned short *indices, size_t numIndices, Texture *texture, spine::BlendMode blendMode, uint32_t *colors)
@@ -113,8 +129,8 @@ void engine_drawMesh(lua_State *L, float *positions, size_t numVertices, float *
 
     
     // remove the resources directory from the Texture->path
-    const char* texturePath = texture->path;
-    const char* texturePathStart = strstr(texturePath, resourcesDir);
+    std::string texturePath = texture->path;
+    const char* texturePathStart = strstr(texturePath.c_str(), resourcesDir);
     if (texturePathStart != NULL)
     {
         texturePath = texturePathStart + strlen(resourcesDir);
@@ -144,9 +160,17 @@ void engine_drawMesh(lua_State *L, float *positions, size_t numVertices, float *
 
     // create the vertices table
     // { x, y, x2, y2, x3, y3, ... }
+    double minX = 99999999;
+    double minY = 99999999;
+    double maxX = -99999999;
+    double maxY = -99999999;
     lua_newtable(L);
     for (size_t i = 0; i < numIndices; ++i)
     {
+        if (positions[indices[i] * 2] < minX) minX = positions[indices[i] * 2];
+        if (positions[indices[i] * 2] > maxX) maxX = positions[indices[i] * 2];
+        if (positions[indices[i] * 2 + 1] < minY) minY = positions[indices[i] * 2 + 1];
+        if (positions[indices[i] * 2 + 1] > maxY) maxY = positions[indices[i] * 2 + 1];
         lua_pushnumber(L, positions[indices[i] * 2]);
         lua_rawseti(L, -2, i * 2 + 1);
         lua_pushnumber(L, -positions[indices[i] * 2 + 1]);
@@ -187,20 +211,14 @@ void engine_drawMesh(lua_State *L, float *positions, size_t numVertices, float *
     // 'mesh' is now on top of the stack
     int meshIndex = lua_gettop(L);
 
-    // **Step 5: Set 'mesh.x' and 'mesh.y' using 'mesh.path:getVertexOffset()'**
-    lua_getfield(L, meshIndex, "path");                   // Push mesh.path
-    lua_getfield(L, -1, "getVertexOffset");               // Push mesh.path.getVertexOffset
-
-    lua_pushvalue(L, -2);                                 // Push mesh.path as 'self'
-    lua_call(L, 1, 2);                                    // Call getVertexOffset(self), expecting 2 results
-
-    // Assign returned x to mesh.x
     lua_pushvalue(L, meshIndex);                           // Push mesh
-    lua_pushvalue(L, -3);                                  // Push x
+
+    // offsetx
+    lua_pushnumber(L, (minX + maxX) / 2);                 // Push x
     lua_setfield(L, -2, "x");                              // mesh.x = x
 
-    // Assign returned y to mesh.y
-    lua_pushvalue(L, -2);                                  // Push y
+    // offsety
+    lua_pushnumber(L, - (minY + maxY) / 2);                 // Push y
     lua_setfield(L, -2, "y");                              // mesh.y = y
 
     // lua_pop(L, 3); // Pop y, x, and mesh.path.getVertexOffset
@@ -211,7 +229,7 @@ void engine_drawMesh(lua_State *L, float *positions, size_t numVertices, float *
     lua_pushstring(L, "image");
     lua_settable(L, -3);
     lua_pushstring(L, "filename");
-    lua_pushstring(L, texturePath);
+    lua_pushstring(L, texturePath.c_str());
     lua_settable(L, -3);
     lua_setfield(L, meshIndex, "fill");
 
@@ -262,4 +280,13 @@ void engine_drawMesh(lua_State *L, float *positions, size_t numVertices, float *
         break;
     }
     lua_settable(L, -3);
+}
+
+void engine_removeMesh(lua_State *L, LuaTableHolder *meshHolder)
+{
+    meshHolder->pushTable();
+    lua_getfield(L, -1, "removeSelf");
+    meshHolder->pushTable();
+    lua_call(L, 1, 0);
+    lua_pop(L, 1);
 }

@@ -61,7 +61,7 @@ struct SpineSkeleton
 
     LuaTableHolder group;               // Holds a Lua table for the group
     std::vector<LuaTableHolder> meshes; // Holds a collection of Lua tables for meshes
-    std::vector<bool> meshSet;
+    std::vector<int> meshIndices;
 
     // Default constructor
     SpineSkeleton()
