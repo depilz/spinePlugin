@@ -66,13 +66,13 @@ int create(lua_State *L)
 
     // Allocate userdata
     SpineSkeleton *skeletonUserdata = (SpineSkeleton *)lua_newuserdata(L, sizeof(SpineSkeleton));
+    new (skeletonUserdata) SpineSkeleton(L);
     skeletonUserdata->skeleton = skeleton;
     skeletonUserdata->state = state;
     skeletonUserdata->stateData = stateData;
     skeletonUserdata->atlas = atlas;
     skeletonUserdata->skeletonData = skeletonData;
-    skeletonUserdata->meshes.reserve(100);
-    skeletonUserdata->meshIndices.reserve(100);
+    
 
     // Set metatable
     luaL_getmetatable(L, "SpineSkeleton");
@@ -154,6 +154,12 @@ int create(lua_State *L)
             {"setToSetupPose", skeleton_setToSetupPose},
             {"dispose", skeleton_dispose},
 
+            {"addAnimation", skeleton_addAnimation},
+            {"findAnimation", skeleton_findAnimation},
+            {"getAllAnimations", skeleton_getAllAnimations},
+            {"getAllSkins", skeleton_getAllSkins},
+            {"setSkin", skeleton_setSkin},
+
             // {"setSkin", skeleton_setSkin},
             // {"setAttachment", skeleton_setAttachment},
             // {"updateWorldTransform", skeleton_updateWorldTransform},
@@ -170,7 +176,7 @@ int create(lua_State *L)
     
 
     return 1;
-    }
+}
 
 int set_default_mix(lua_State *L){
     // 2 arguments: self, mix
@@ -240,6 +246,112 @@ int skeleton_setAnimation(lua_State *L)
     return 0;
 }
 
+int skeleton_addAnimation(lua_State *L)
+{
+    lua_getfield(L, 1, "_skeleton");
+    SpineSkeleton *skeletonUserdata = (SpineSkeleton *)luaL_checkudata(L, -1, "SpineSkeleton");
+    int trackIndex = luaL_checkint(L, 2);
+    const char *animationName = luaL_checkstring(L, 3);
+    bool loop = lua_toboolean(L, 4);
+    float delay = luaL_checknumber(L, 5);
+
+    Animation *animation = skeletonUserdata->skeletonData->findAnimation(animationName);
+    if (!animation)
+    {
+        luaL_error(L, "Animation not found: %s", animationName);
+        return 0;
+    }
+
+    skeletonUserdata->state->addAnimation(trackIndex, animation, loop, delay);
+    return 0;
+}
+
+int skeleton_findAnimation(lua_State *L)
+{
+    lua_getfield(L, 1, "_skeleton");
+    SpineSkeleton *skeletonUserdata = (SpineSkeleton *)luaL_checkudata(L, -1, "SpineSkeleton");
+    const char *animationName = luaL_checkstring(L, 2);
+
+    Animation *animation = skeletonUserdata->skeletonData->findAnimation(animationName);
+
+    lua_pushboolean(L, animation != nullptr);
+
+    return 1;
+}
+
+int skeleton_getAllAnimations(lua_State *L)
+{
+    lua_getfield(L, 1, "_skeleton");
+    SpineSkeleton *skeletonUserdata = (SpineSkeleton *)luaL_checkudata(L, -1, "SpineSkeleton");
+
+    SkeletonData *skeletonData = skeletonUserdata->skeletonData;
+    Vector<Animation *> &animations = skeletonData->getAnimations();
+    int n = animations.size();
+    lua_createtable(L, n, 0);
+
+    for (int i = 0; i < n; i++)
+    {
+        lua_pushstring(L, animations[i]->getName().buffer());
+        lua_rawseti(L, -2, i + 1);
+    }
+
+    return 1;
+}
+
+int skeleton_getAllSkins(lua_State *L)
+{
+    lua_getfield(L, 1, "_skeleton");
+    SpineSkeleton *skeletonUserdata = (SpineSkeleton *)luaL_checkudata(L, -1, "SpineSkeleton");
+
+    SkeletonData *skeletonData = skeletonUserdata->skeletonData;
+    Vector<Skin *> &skins = skeletonData->getSkins();
+    int n = skins.size();
+    lua_createtable(L, n, 0);
+
+    for (int i = 0; i < n; i++)
+    {
+        lua_pushstring(L, skins[i]->getName().buffer());
+        lua_rawseti(L, -2, i + 1);
+    }
+
+    return 1;
+}
+
+int skeleton_setSkin(lua_State *L)
+{
+    // 2 arguments: self, skinName
+    if (lua_gettop(L) != 2)
+    {
+        luaL_error(L, "Expected 2 arguments: self, skinName");
+        return 0;
+    }
+
+    lua_getfield(L, 1, "_skeleton");
+    SpineSkeleton *skeletonUserdata = (SpineSkeleton *)luaL_checkudata(L, -1, "SpineSkeleton");
+    const char *skinName = luaL_checkstring(L, 2);
+
+    Skeleton *skeleton = skeletonUserdata->skeleton;
+    SkeletonData *skeletonData = skeletonUserdata->skeletonData;
+
+    if (!skinName)
+    {
+        luaL_error(L, "Skin name is required");
+        return 0;
+    }
+
+    Skin *skin = skeletonData->findSkin(skinName);
+    if (!skin)
+    {
+        luaL_error(L, "Skin not found: %s", skinName);
+        return 0;
+    }
+
+    skeleton->setSkin(skin);
+    skeleton->setSlotsToSetupPose();
+
+    return 0;
+}
+
 int skeleton_update(lua_State *L)
 {
     lua_getfield(L, 1, "_skeleton");
@@ -255,6 +367,9 @@ int skeleton_update(lua_State *L)
     SkeletonRenderer skeletonRenderer;
     skeleton_render(L, skeletonUserdata, skeletonRenderer);
 
+    int n = lua_gettop(L);
+    lua_pop(L, n);
+
     return 0;
 }
 
@@ -265,6 +380,9 @@ int skeleton_render(lua_State *L, SpineSkeleton * skeletonUserdata, SkeletonRend
     // we need to have ids for each command, so we can update already existing meshes
     // for that we can't use the index, but the slot name
     int i = 0;
+
+    auto &meshes = skeletonUserdata->meshes;
+    auto &meshIndices = skeletonUserdata->meshIndices;
     while (command)
     {
         float *positions = command->positions;
@@ -275,10 +393,7 @@ int skeleton_render(lua_State *L, SpineSkeleton * skeletonUserdata, SkeletonRend
         
         BlendMode blendMode = command->blendMode;
 
-        auto &meshes = skeletonUserdata->meshes;
-        auto &meshIndices = skeletonUserdata->meshIndices;
-
-        bool existingMesh = meshes[i].isValid();
+        bool existingMesh = meshes.isMeshValid(i);
 
         if (existingMesh)
         {
@@ -307,15 +422,23 @@ int skeleton_render(lua_State *L, SpineSkeleton * skeletonUserdata, SkeletonRend
             lua_pop(L, 1); // Pop the group
 
             // initialize mesh
-            meshes[i].initialize(L);
+            meshes.setMesh(L, i);
             meshIndices[i] = command->numIndices;
             lua_pop(L, 1);
         }
         command = command->next;
         i++;
     }
+
+    while (meshes.isMeshValid(i))
+    {
+        LuaTableHolder &mesh = meshes[i];
+        engine_removeMesh(L, &mesh);
+        meshes[i].releaseTable();
+        i++;
+    }
     
-    return 0; // Return 0 to indicate no values are pushed to Lua
+    return 0;
 }
 
 int skeleton_setToSetupPose(lua_State *L)

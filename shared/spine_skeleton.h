@@ -18,13 +18,12 @@ private:
     std::vector<LuaTableHolder> meshHolders;
 
 public:
-    // Constructor: Initializes the vector with 'size' LuaTableHolder instances
-    MeshManager(lua_State *L, int size)
+    MeshManager(int size)
     {
         meshHolders.reserve(size);
-        for (int i = 0; i < size; ++i)
+        for (int i = 0; i < size; i++)
         {
-            meshHolders.emplace_back(L);
+            meshHolders.push_back(LuaTableHolder());
         }
     }
 
@@ -42,12 +41,20 @@ public:
     {
         if (index >= 0 && index < static_cast<int>(meshHolders.size()))
         {
-            // Utilize move assignment to avoid copy issues
             meshHolders[index] = LuaTableHolder(L);
         }
     }
 
-    // Additional utility functions can be added here as needed
+    int isMeshValid(int index)
+    {
+        return index >= 0 && index < static_cast<int>(meshHolders.size()) && meshHolders[index].isValid();
+    }
+
+    LuaTableHolder &operator[](int index)
+    {
+        assert(index >= 0 && index < static_cast<int>(meshHolders.size()));
+        return meshHolders[index];
+    }
 };
 
 // SpineSkeleton structure holds various Spine-related objects and Lua tables
@@ -60,14 +67,14 @@ struct SpineSkeleton
     spine::SkeletonData *skeletonData;
 
     LuaTableHolder group;               // Holds a Lua table for the group
-    std::vector<LuaTableHolder> meshes; // Holds a collection of Lua tables for meshes
+    MeshManager meshes;                 // Manages a collection of Lua tables for meshes
     std::vector<int> meshIndices;
 
     // Default constructor
-    SpineSkeleton()
+    SpineSkeleton(lua_State *L)
         : skeleton(nullptr), state(nullptr), stateData(nullptr),
           atlas(nullptr), skeletonData(nullptr), group(),
-          meshes()
+          meshes(100), meshIndices(100)
     {
     }
 
@@ -124,11 +131,27 @@ struct SpineSkeleton
     // Destructor
     ~SpineSkeleton()
     {
-        // Clean up Spine objects if this class owns them
-        // For example:
-        // if (skeletonData) { delete skeletonData; }
-        // Similarly for other pointers
-        // Ensure that LuaTableHolder destructors are called automatically
+        // Clean up resources
+        if (skeleton)
+        {
+            delete skeleton;
+        }
+        if (state)
+        {
+            delete state;
+        }
+        if (stateData)
+        {
+            delete stateData;
+        }
+        if (atlas)
+        {
+            delete atlas;
+        }
+        if (skeletonData)
+        {
+            delete skeletonData;
+        }
     }
 };
 
@@ -137,6 +160,11 @@ int create(lua_State *L);
 int set_default_mix(lua_State *L);
 int set_mix(lua_State *L);
 int skeleton_setAnimation(lua_State *L);
+int skeleton_addAnimation(lua_State *L);
+int skeleton_findAnimation(lua_State *L);
+int skeleton_getAllAnimations(lua_State *L);
+int skeleton_getAllSkins(lua_State *L);
+int skeleton_setSkin(lua_State *L);
 int skeleton_update(lua_State *L);
 int skeleton_render(lua_State *L, SpineSkeleton *skeletonUserdata, SkeletonRenderer &skeletonRenderer);
 int skeleton_dispose(lua_State *L);
