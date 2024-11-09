@@ -71,7 +71,6 @@ int create(lua_State *L)
     skeletonUserdata->stateData = stateData;
     skeletonUserdata->atlas = atlas;
     skeletonUserdata->skeletonData = skeletonData;
-
     skeletonUserdata->meshes.reserve(100);
     skeletonUserdata->meshIndices.reserve(100);
 
@@ -148,6 +147,8 @@ int create(lua_State *L)
         // Register methods
         luaL_Reg methods[] = {
             {"setAnimation", skeleton_setAnimation},
+            {"setDefaultMix", set_default_mix},
+            {"setMix", set_mix},
             {"update", skeleton_update},
             {"dispose", skeleton_dispose},
             {"setToSetupPose", skeleton_setToSetupPose},
@@ -156,8 +157,7 @@ int create(lua_State *L)
             // {"setSkin", skeleton_setSkin},
             // {"setAttachment", skeleton_setAttachment},
             // {"updateWorldTransform", skeleton_updateWorldTransform},
-            {NULL, NULL}
-        };
+            {NULL, NULL}};
         luaL_register(L, NULL, methods);
 
         // Add garbage collection method
@@ -172,6 +172,55 @@ int create(lua_State *L)
     return 1;
     }
 
+int set_default_mix(lua_State *L){
+    // 2 arguments: self, mix
+    if (lua_gettop(L) != 2)
+    {
+        luaL_error(L, "Expected 2 arguments: self, mix");
+        return 0;
+    }
+
+    lua_getfield(L, 1, "_skeleton");
+    SpineSkeleton *skeletonUserdata = (SpineSkeleton *)luaL_checkudata(L, -1, "SpineSkeleton");
+
+    float mix = luaL_checknumber(L, 2);
+
+    skeletonUserdata->stateData->setDefaultMix(mix);
+}
+
+int set_mix(lua_State *L){
+    // 4 arguments: self, from, to, mix
+    if (lua_gettop(L) != 4)
+    {
+        luaL_error(L, "Expected 4 arguments: self, from, to, mix");
+        return 0;
+    }
+
+    lua_getfield(L, 1, "_skeleton");
+    SpineSkeleton *skeletonUserdata = (SpineSkeleton *)luaL_checkudata(L, -1, "SpineSkeleton");
+
+    const char *from = luaL_checkstring(L, 2);
+    const char *to = luaL_checkstring(L, 3);
+    float mix = luaL_checknumber(L, 4);
+
+    Animation *fromAnimation = skeletonUserdata->skeletonData->findAnimation(from);
+    if (!fromAnimation)
+    {
+        luaL_error(L, "Animation not found: %s", from);
+        return 0;
+    }
+
+    Animation *toAnimation = skeletonUserdata->skeletonData->findAnimation(to);
+    if (!toAnimation)
+    {
+        luaL_error(L, "Animation not found: %s", to);
+        return 0;
+    }
+
+    skeletonUserdata->stateData->setMix(fromAnimation, toAnimation, mix);
+    return 0;
+
+}
 int skeleton_setAnimation(lua_State *L)
 {
     lua_getfield(L, 1, "_skeleton");

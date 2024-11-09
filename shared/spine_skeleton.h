@@ -134,6 +134,8 @@ struct SpineSkeleton
 
 // Function declarations
 int create(lua_State *L);
+int set_default_mix(lua_State *L);
+int set_mix(lua_State *L);
 int skeleton_setAnimation(lua_State *L);
 int skeleton_update(lua_State *L);
 int skeleton_render(lua_State *L, SpineSkeleton *skeletonUserdata, SkeletonRenderer &skeletonRenderer);
