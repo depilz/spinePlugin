@@ -2,8 +2,6 @@
 #define SPINE_TEXTURE_H
 
 #include <spine/TextureLoader.h>
-#include "CoronaLua.h"
-#include "CoronaGraphics.h"
 
 class SpineTextureLoader : public spine::TextureLoader
 {

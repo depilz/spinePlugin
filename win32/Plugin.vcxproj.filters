@@ -5,6 +5,9 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
+    <Filter Include="Source Files\spine">
+      <UniqueIdentifier>{a5428dcc-0a5c-4899-8b9b-c307efd0c957}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\shared\spine_skeleton.cpp">
@@ -16,6 +19,213 @@
     <ClCompile Include="..\shared\spine_texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\shared\LuaTableHolder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Plugin\SimulatorPluginLibrary.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\PhysicsConstraintTimeline.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\Log.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\SkeletonData.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\EventTimeline.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\TextureLoader.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\AttachmentTimeline.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\Skin.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\DeformTimeline.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\CurveTimeline.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\PathConstraintData.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\TransformConstraintTimeline.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\ClippingAttachment.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\Timeline.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\SkeletonRenderer.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\PathConstraintPositionTimeline.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\Animation.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\AtlasAttachmentLoader.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\MeshAttachment.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\Event.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\PathAttachment.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\VertexAttachment.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\DrawOrderTimeline.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\RotateTimeline.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\IkConstraintTimeline.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\MathUtil.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\TransformConstraintData.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\Skeleton.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\AttachmentLoader.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\IkConstraintData.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\BoundingBoxAttachment.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\LinkedMesh.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\ScaleTimeline.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\Bone.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\SkeletonClipping.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\SkeletonBounds.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\AnimationStateData.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\PathConstraint.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\SpineObject.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\EventData.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\PhysicsConstraintData.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\Triangulator.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\ConstraintData.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\PhysicsConstraint.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\AnimationState.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\Atlas.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\Json.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\SkeletonJson.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\BoneData.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\Attachment.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\RegionAttachment.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\Extension.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\Updatable.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\SequenceTimeline.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\RTTI.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\PointAttachment.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\Slot.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\PathConstraintMixTimeline.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\TransformConstraint.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\IkConstraint.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\SlotData.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\PathConstraintSpacingTimeline.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\Sequence.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\ColorTimeline.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\InheritTimeline.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\TranslateTimeline.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\ShearTimeline.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\spine\SkeletonBinary.cpp">
+      <Filter>Source Files\spine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\shared\spine_renderer.h">
@@ -26,6 +236,285 @@
     </ClInclude>
     <ClInclude Include="..\shared\spine_skeleton.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\LuaTableHolder.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Plugin\SimulatorPluginLibrary.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\Debug.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\IkConstraintData.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\Slot.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\PhysicsConstraint.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\DeformTimeline.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\DrawOrderTimeline.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\Physics.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\Atlas.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\Event.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\PointAttachment.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\LinkedMesh.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\EventData.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\IkConstraint.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\ShearTimeline.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\AttachmentLoader.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\MixBlend.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\SkeletonJson.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\PathConstraintSpacingTimeline.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\PathAttachment.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\HasRendererObject.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\ColorTimeline.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\Attachment.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\BoundingBoxAttachment.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\ConstraintData.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\Skin.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\RotateTimeline.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\EventTimeline.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\MixDirection.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\spine.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\TranslateTimeline.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\BoneData.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\Inherit.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\PositionMode.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\Extension.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\ScaleTimeline.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\IkConstraintTimeline.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\AttachmentTimeline.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\AtlasAttachmentLoader.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\dll.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\Updatable.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\InheritTimeline.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\Json.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\PhysicsConstraintTimeline.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\MathUtil.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\Color.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\SkeletonBinary.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\Property.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\CurveTimeline.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\ClippingAttachment.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\TransformConstraint.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\PathConstraintData.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\Vector.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\TextureLoader.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\Timeline.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\SpineString.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\SkeletonClipping.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\ContainerUtil.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\PathConstraintPositionTimeline.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\AnimationState.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\PathConstraintMixTimeline.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\SlotData.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\Log.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\Triangulator.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\SpacingMode.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\Animation.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\SkeletonBounds.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\PathConstraint.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\Pool.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\AnimationStateData.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\SkeletonRenderer.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\HashMap.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\Skeleton.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\TransformConstraintTimeline.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\Bone.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\Version.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\Vertices.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\BlockAllocator.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\VertexAttachment.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\PhysicsConstraintData.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\RTTI.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\RotateMode.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\SpineObject.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\Sequence.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\SkeletonData.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\SequenceTimeline.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\RegionAttachment.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\TextureRegion.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\TransformConstraintData.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\BlendMode.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\MeshAttachment.h">
+      <Filter>Source Files\spine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\spine\AttachmentType.h">
+      <Filter>Source Files\spine</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

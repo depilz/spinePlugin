@@ -11,14 +11,176 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\shared\LuaTableHolder.cpp" />
+    <ClCompile Include="..\shared\spine\Animation.cpp" />
+    <ClCompile Include="..\shared\spine\AnimationState.cpp" />
+    <ClCompile Include="..\shared\spine\AnimationStateData.cpp" />
+    <ClCompile Include="..\shared\spine\Atlas.cpp" />
+    <ClCompile Include="..\shared\spine\AtlasAttachmentLoader.cpp" />
+    <ClCompile Include="..\shared\spine\Attachment.cpp" />
+    <ClCompile Include="..\shared\spine\AttachmentLoader.cpp" />
+    <ClCompile Include="..\shared\spine\AttachmentTimeline.cpp" />
+    <ClCompile Include="..\shared\spine\Bone.cpp" />
+    <ClCompile Include="..\shared\spine\BoneData.cpp" />
+    <ClCompile Include="..\shared\spine\BoundingBoxAttachment.cpp" />
+    <ClCompile Include="..\shared\spine\ClippingAttachment.cpp" />
+    <ClCompile Include="..\shared\spine\ColorTimeline.cpp" />
+    <ClCompile Include="..\shared\spine\ConstraintData.cpp" />
+    <ClCompile Include="..\shared\spine\CurveTimeline.cpp" />
+    <ClCompile Include="..\shared\spine\DeformTimeline.cpp" />
+    <ClCompile Include="..\shared\spine\DrawOrderTimeline.cpp" />
+    <ClCompile Include="..\shared\spine\Event.cpp" />
+    <ClCompile Include="..\shared\spine\EventData.cpp" />
+    <ClCompile Include="..\shared\spine\EventTimeline.cpp" />
+    <ClCompile Include="..\shared\spine\Extension.cpp" />
+    <ClCompile Include="..\shared\spine\IkConstraint.cpp" />
+    <ClCompile Include="..\shared\spine\IkConstraintData.cpp" />
+    <ClCompile Include="..\shared\spine\IkConstraintTimeline.cpp" />
+    <ClCompile Include="..\shared\spine\InheritTimeline.cpp" />
+    <ClCompile Include="..\shared\spine\Json.cpp" />
+    <ClCompile Include="..\shared\spine\LinkedMesh.cpp" />
+    <ClCompile Include="..\shared\spine\Log.cpp" />
+    <ClCompile Include="..\shared\spine\MathUtil.cpp" />
+    <ClCompile Include="..\shared\spine\MeshAttachment.cpp" />
+    <ClCompile Include="..\shared\spine\PathAttachment.cpp" />
+    <ClCompile Include="..\shared\spine\PathConstraint.cpp" />
+    <ClCompile Include="..\shared\spine\PathConstraintData.cpp" />
+    <ClCompile Include="..\shared\spine\PathConstraintMixTimeline.cpp" />
+    <ClCompile Include="..\shared\spine\PathConstraintPositionTimeline.cpp" />
+    <ClCompile Include="..\shared\spine\PathConstraintSpacingTimeline.cpp" />
+    <ClCompile Include="..\shared\spine\PhysicsConstraint.cpp" />
+    <ClCompile Include="..\shared\spine\PhysicsConstraintData.cpp" />
+    <ClCompile Include="..\shared\spine\PhysicsConstraintTimeline.cpp" />
+    <ClCompile Include="..\shared\spine\PointAttachment.cpp" />
+    <ClCompile Include="..\shared\spine\RegionAttachment.cpp" />
+    <ClCompile Include="..\shared\spine\RotateTimeline.cpp" />
+    <ClCompile Include="..\shared\spine\RTTI.cpp" />
+    <ClCompile Include="..\shared\spine\ScaleTimeline.cpp" />
+    <ClCompile Include="..\shared\spine\Sequence.cpp" />
+    <ClCompile Include="..\shared\spine\SequenceTimeline.cpp" />
+    <ClCompile Include="..\shared\spine\ShearTimeline.cpp" />
+    <ClCompile Include="..\shared\spine\Skeleton.cpp" />
+    <ClCompile Include="..\shared\spine\SkeletonBinary.cpp" />
+    <ClCompile Include="..\shared\spine\SkeletonBounds.cpp" />
+    <ClCompile Include="..\shared\spine\SkeletonClipping.cpp" />
+    <ClCompile Include="..\shared\spine\SkeletonData.cpp" />
+    <ClCompile Include="..\shared\spine\SkeletonJson.cpp" />
+    <ClCompile Include="..\shared\spine\SkeletonRenderer.cpp" />
+    <ClCompile Include="..\shared\spine\Skin.cpp" />
+    <ClCompile Include="..\shared\spine\Slot.cpp" />
+    <ClCompile Include="..\shared\spine\SlotData.cpp" />
+    <ClCompile Include="..\shared\spine\SpineObject.cpp" />
+    <ClCompile Include="..\shared\spine\TextureLoader.cpp" />
+    <ClCompile Include="..\shared\spine\Timeline.cpp" />
+    <ClCompile Include="..\shared\spine\TransformConstraint.cpp" />
+    <ClCompile Include="..\shared\spine\TransformConstraintData.cpp" />
+    <ClCompile Include="..\shared\spine\TransformConstraintTimeline.cpp" />
+    <ClCompile Include="..\shared\spine\TranslateTimeline.cpp" />
+    <ClCompile Include="..\shared\spine\Triangulator.cpp" />
+    <ClCompile Include="..\shared\spine\Updatable.cpp" />
+    <ClCompile Include="..\shared\spine\VertexAttachment.cpp" />
     <ClCompile Include="..\shared\spine_renderer.cpp" />
     <ClCompile Include="..\shared\spine_skeleton.cpp" />
     <ClCompile Include="..\shared\spine_texture.cpp" />
+    <ClCompile Include="Plugin\SimulatorPluginLibrary.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\shared\LuaTableHolder.h" />
+    <ClInclude Include="..\shared\spine\Animation.h" />
+    <ClInclude Include="..\shared\spine\AnimationState.h" />
+    <ClInclude Include="..\shared\spine\AnimationStateData.h" />
+    <ClInclude Include="..\shared\spine\Atlas.h" />
+    <ClInclude Include="..\shared\spine\AtlasAttachmentLoader.h" />
+    <ClInclude Include="..\shared\spine\Attachment.h" />
+    <ClInclude Include="..\shared\spine\AttachmentLoader.h" />
+    <ClInclude Include="..\shared\spine\AttachmentTimeline.h" />
+    <ClInclude Include="..\shared\spine\AttachmentType.h" />
+    <ClInclude Include="..\shared\spine\BlendMode.h" />
+    <ClInclude Include="..\shared\spine\BlockAllocator.h" />
+    <ClInclude Include="..\shared\spine\Bone.h" />
+    <ClInclude Include="..\shared\spine\BoneData.h" />
+    <ClInclude Include="..\shared\spine\BoundingBoxAttachment.h" />
+    <ClInclude Include="..\shared\spine\ClippingAttachment.h" />
+    <ClInclude Include="..\shared\spine\Color.h" />
+    <ClInclude Include="..\shared\spine\ColorTimeline.h" />
+    <ClInclude Include="..\shared\spine\ConstraintData.h" />
+    <ClInclude Include="..\shared\spine\ContainerUtil.h" />
+    <ClInclude Include="..\shared\spine\CurveTimeline.h" />
+    <ClInclude Include="..\shared\spine\Debug.h" />
+    <ClInclude Include="..\shared\spine\DeformTimeline.h" />
+    <ClInclude Include="..\shared\spine\dll.h" />
+    <ClInclude Include="..\shared\spine\DrawOrderTimeline.h" />
+    <ClInclude Include="..\shared\spine\Event.h" />
+    <ClInclude Include="..\shared\spine\EventData.h" />
+    <ClInclude Include="..\shared\spine\EventTimeline.h" />
+    <ClInclude Include="..\shared\spine\Extension.h" />
+    <ClInclude Include="..\shared\spine\HashMap.h" />
+    <ClInclude Include="..\shared\spine\HasRendererObject.h" />
+    <ClInclude Include="..\shared\spine\IkConstraint.h" />
+    <ClInclude Include="..\shared\spine\IkConstraintData.h" />
+    <ClInclude Include="..\shared\spine\IkConstraintTimeline.h" />
+    <ClInclude Include="..\shared\spine\Inherit.h" />
+    <ClInclude Include="..\shared\spine\InheritTimeline.h" />
+    <ClInclude Include="..\shared\spine\Json.h" />
+    <ClInclude Include="..\shared\spine\LinkedMesh.h" />
+    <ClInclude Include="..\shared\spine\Log.h" />
+    <ClInclude Include="..\shared\spine\MathUtil.h" />
+    <ClInclude Include="..\shared\spine\MeshAttachment.h" />
+    <ClInclude Include="..\shared\spine\MixBlend.h" />
+    <ClInclude Include="..\shared\spine\MixDirection.h" />
+    <ClInclude Include="..\shared\spine\PathAttachment.h" />
+    <ClInclude Include="..\shared\spine\PathConstraint.h" />
+    <ClInclude Include="..\shared\spine\PathConstraintData.h" />
+    <ClInclude Include="..\shared\spine\PathConstraintMixTimeline.h" />
+    <ClInclude Include="..\shared\spine\PathConstraintPositionTimeline.h" />
+    <ClInclude Include="..\shared\spine\PathConstraintSpacingTimeline.h" />
+    <ClInclude Include="..\shared\spine\Physics.h" />
+    <ClInclude Include="..\shared\spine\PhysicsConstraint.h" />
+    <ClInclude Include="..\shared\spine\PhysicsConstraintData.h" />
+    <ClInclude Include="..\shared\spine\PhysicsConstraintTimeline.h" />
+    <ClInclude Include="..\shared\spine\PointAttachment.h" />
+    <ClInclude Include="..\shared\spine\Pool.h" />
+    <ClInclude Include="..\shared\spine\PositionMode.h" />
+    <ClInclude Include="..\shared\spine\Property.h" />
+    <ClInclude Include="..\shared\spine\RegionAttachment.h" />
+    <ClInclude Include="..\shared\spine\RotateMode.h" />
+    <ClInclude Include="..\shared\spine\RotateTimeline.h" />
+    <ClInclude Include="..\shared\spine\RTTI.h" />
+    <ClInclude Include="..\shared\spine\ScaleTimeline.h" />
+    <ClInclude Include="..\shared\spine\Sequence.h" />
+    <ClInclude Include="..\shared\spine\SequenceTimeline.h" />
+    <ClInclude Include="..\shared\spine\ShearTimeline.h" />
+    <ClInclude Include="..\shared\spine\Skeleton.h" />
+    <ClInclude Include="..\shared\spine\SkeletonBinary.h" />
+    <ClInclude Include="..\shared\spine\SkeletonBounds.h" />
+    <ClInclude Include="..\shared\spine\SkeletonClipping.h" />
+    <ClInclude Include="..\shared\spine\SkeletonData.h" />
+    <ClInclude Include="..\shared\spine\SkeletonJson.h" />
+    <ClInclude Include="..\shared\spine\SkeletonRenderer.h" />
+    <ClInclude Include="..\shared\spine\Skin.h" />
+    <ClInclude Include="..\shared\spine\Slot.h" />
+    <ClInclude Include="..\shared\spine\SlotData.h" />
+    <ClInclude Include="..\shared\spine\SpacingMode.h" />
+    <ClInclude Include="..\shared\spine\spine.h" />
+    <ClInclude Include="..\shared\spine\SpineObject.h" />
+    <ClInclude Include="..\shared\spine\SpineString.h" />
+    <ClInclude Include="..\shared\spine\TextureLoader.h" />
+    <ClInclude Include="..\shared\spine\TextureRegion.h" />
+    <ClInclude Include="..\shared\spine\Timeline.h" />
+    <ClInclude Include="..\shared\spine\TransformConstraint.h" />
+    <ClInclude Include="..\shared\spine\TransformConstraintData.h" />
+    <ClInclude Include="..\shared\spine\TransformConstraintTimeline.h" />
+    <ClInclude Include="..\shared\spine\TranslateTimeline.h" />
+    <ClInclude Include="..\shared\spine\Triangulator.h" />
+    <ClInclude Include="..\shared\spine\Updatable.h" />
+    <ClInclude Include="..\shared\spine\Vector.h" />
+    <ClInclude Include="..\shared\spine\Version.h" />
+    <ClInclude Include="..\shared\spine\VertexAttachment.h" />
+    <ClInclude Include="..\shared\spine\Vertices.h" />
     <ClInclude Include="..\shared\spine_renderer.h" />
     <ClInclude Include="..\shared\spine_skeleton.h" />
     <ClInclude Include="..\shared\spine_texture.h" />
+    <ClInclude Include="Plugin\SimulatorPluginLibrary.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{79F0CACC-457B-4A25-BC54-81277688C361}</ProjectGuid>
@@ -62,7 +224,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <TargetName>plugin_core</TargetName>
+    <TargetName>plugin_spine</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <PreBuildEvent />
@@ -92,7 +254,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(CORONA_ROOT)\Corona\shared\include\Corona;$(CORONA_ROOT)\Corona\shared\include\lua;$(ProjectDir)..\shared\;$(ProjectDir)..\shared\spine\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CORONA_ROOT)\Corona\shared\include\Corona;$(CORONA_ROOT)\Corona\shared\include\lua;$(ProjectDir)..\shared\spine\;$(ProjectDir)..\shared\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;PLUGIN_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>

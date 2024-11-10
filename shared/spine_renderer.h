@@ -1,7 +1,6 @@
 #include <cstddef>
 #include "CoronaLua.h"
 #include <string>
-#include "BlendMode.h"
 
 // A single vertex with UV
 struct Vertex {
@@ -29,6 +28,6 @@ struct Texture
 // - numIndices the number of indices, must be divisible by 3, as there are 3 vertices in a triangle.
 // - texture the texture to use
 // - blendMode the blend mode to use
-void engine_drawMesh(lua_State *L, float *positions, size_t numVertices, float *uvs, unsigned short *indices, size_t numIndices, Texture *texture, spine::BlendMode blendMode, uint32_t *colors);
+void engine_drawMesh(lua_State* L, float* positions, size_t numVertices, float* uvs, unsigned short* indices, size_t numIndices, Texture* texture, spine::BlendMode blendMode, uint32_t* colors);
 void engine_updateMesh(lua_State *L, LuaTableHolder *meshHolder, float *positions, size_t numVertices, float *uvs, unsigned short *indices, size_t numIndices, Texture *texture, spine::BlendMode blendMode, uint32_t *colors);
 void engine_removeMesh(lua_State *L, LuaTableHolder *meshHolder);

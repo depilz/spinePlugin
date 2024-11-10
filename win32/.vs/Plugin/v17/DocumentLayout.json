@@ -3,13 +3,58 @@
   "WorkspaceRootPath": "\\\\Mac\\funbox\\plugins\\plugin-spine\\win32\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{79F0CACC-457B-4A25-BC54-81277688C361}|Plugin.vcxproj|\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_texture.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{79F0CACC-457B-4A25-BC54-81277688C361}|Plugin.vcxproj|\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\Bone.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.42.34430\\include\\comdef.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{79F0CACC-457B-4A25-BC54-81277688C361}|Plugin.vcxproj|\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\PhysicsConstraintTimeline.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{79F0CACC-457B-4A25-BC54-81277688C361}|Plugin.vcxproj|\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_renderer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{79F0CACC-457B-4A25-BC54-81277688C361}|Plugin.vcxproj|\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_skeleton.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|\\\\mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\Skin.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{79F0CACC-457B-4A25-BC54-81277688C361}|Plugin.vcxproj|\\\\Mac\\funbox\\plugins\\plugin-spine\\win32\\Plugin\\SimulatorPluginLibrary.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{79F0CACC-457B-4A25-BC54-81277688C361}|Plugin.vcxproj|\\\\Mac\\funbox\\plugins\\plugin-spine\\win32\\Plugin\\SimulatorPluginLibrary.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{79F0CACC-457B-4A25-BC54-81277688C361}|Plugin.vcxproj|\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_texture.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{79F0CACC-457B-4A25-BC54-81277688C361}|Plugin.vcxproj|\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_renderer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{79F0CACC-457B-4A25-BC54-81277688C361}|Plugin.vcxproj|\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_skeleton.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{79F0CACC-457B-4A25-BC54-81277688C361}|Plugin.vcxproj|\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_texture.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|\\\\mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\Animation.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{79F0CACC-457B-4A25-BC54-81277688C361}|Plugin.vcxproj|C:\\PROGRAM FILES\\MICROSOFT VISUAL STUDIO\\2022\\PREVIEW\\VC\\TOOLS\\MSVC\\14.42.34430\\INCLUDE\\VECTOR||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{79F0CACC-457B-4A25-BC54-81277688C361}|Plugin.vcxproj|C:\\PROGRAM FILES (X86)\\WINDOWS KITS\\10\\INCLUDE\\10.0.22621.0\\UCRT\\ASSERT.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{79F0CACC-457B-4A25-BC54-81277688C361}|Plugin.vcxproj|C:\\PROGRAM FILES\\MICROSOFT VISUAL STUDIO\\2022\\PREVIEW\\VC\\TOOLS\\MSVC\\14.42.34430\\INCLUDE\\SAL.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{79F0CACC-457B-4A25-BC54-81277688C361}|Plugin.vcxproj|C:\\PROGRAM FILES (X86)\\WINDOWS KITS\\10\\INCLUDE\\10.0.22621.0\\UCRT\\CORECRT_WSTDIO.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{79F0CACC-457B-4A25-BC54-81277688C361}|Plugin.vcxproj|C:\\PROGRAM FILES\\MICROSOFT VISUAL STUDIO\\2022\\PREVIEW\\VC\\TOOLS\\MSVC\\14.42.34430\\INCLUDE\\__MSVC_SANITIZER_ANNOTATE_CONTAINER.HPP||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.42.34430\\include\\comdef.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|\\\\Mac\\funbox\\plugins\\plugin-core\\win32\\Utils.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
@@ -30,43 +75,228 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "spine_texture.cpp",
-              "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_texture.cpp",
-              "RelativeDocumentMoniker": "..\\shared\\spine_texture.cpp",
-              "ToolTip": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_texture.cpp",
-              "RelativeToolTip": "..\\shared\\spine_texture.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-11-03T17:36:10.256Z",
+              "Title": "Bone.h",
+              "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\Bone.h",
+              "RelativeDocumentMoniker": "..\\shared\\spine\\Bone.h",
+              "ToolTip": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\Bone.h",
+              "RelativeToolTip": "..\\shared\\spine\\Bone.h",
+              "ViewState": "AgIAABsAAAAAAAAAAAAmwCAAAAAcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-11-10T03:29:48.786Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "comdef.h",
-              "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.42.34430\\include\\comdef.h",
-              "ToolTip": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.42.34430\\include\\comdef.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAUAAAAAAAAAA==",
+              "Title": "PhysicsConstraintTimeline.h",
+              "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\PhysicsConstraintTimeline.h",
+              "RelativeDocumentMoniker": "..\\shared\\spine\\PhysicsConstraintTimeline.h",
+              "ToolTip": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\PhysicsConstraintTimeline.h",
+              "RelativeToolTip": "..\\shared\\spine\\PhysicsConstraintTimeline.h",
+              "ViewState": "AgIAABsAAAAAAAAAAAAmwCAAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-03T17:34:58.266Z",
+              "WhenOpened": "2024-11-10T03:29:09.247Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
+              "Title": "spine_renderer.h",
+              "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_renderer.h",
+              "RelativeDocumentMoniker": "..\\shared\\spine_renderer.h",
+              "ToolTip": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_renderer.h",
+              "RelativeToolTip": "..\\shared\\spine_renderer.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-11-10T02:43:00.008Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "spine_skeleton.cpp",
+              "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_skeleton.cpp",
+              "RelativeDocumentMoniker": "..\\shared\\spine_skeleton.cpp",
+              "ToolTip": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_skeleton.cpp",
+              "RelativeToolTip": "..\\shared\\spine_skeleton.cpp",
+              "ViewState": "AgIAAIsCAAAAAAAAAAAUwJECAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-11-10T02:12:24.192Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
               "Title": "spine_renderer.cpp",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_renderer.cpp",
               "RelativeDocumentMoniker": "..\\shared\\spine_renderer.cpp",
               "ToolTip": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_renderer.cpp",
               "RelativeToolTip": "..\\shared\\spine_renderer.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-11-03T17:24:28.583Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "SimulatorPluginLibrary.h",
+              "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\win32\\Plugin\\SimulatorPluginLibrary.h",
+              "RelativeDocumentMoniker": "Plugin\\SimulatorPluginLibrary.h",
+              "ToolTip": "\\\\Mac\\funbox\\plugins\\plugin-spine\\win32\\Plugin\\SimulatorPluginLibrary.h",
+              "RelativeToolTip": "Plugin\\SimulatorPluginLibrary.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-11-10T02:26:25.854Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "SimulatorPluginLibrary.cpp",
+              "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\win32\\Plugin\\SimulatorPluginLibrary.cpp",
+              "RelativeDocumentMoniker": "Plugin\\SimulatorPluginLibrary.cpp",
+              "ToolTip": "\\\\Mac\\funbox\\plugins\\plugin-spine\\win32\\Plugin\\SimulatorPluginLibrary.cpp",
+              "RelativeToolTip": "Plugin\\SimulatorPluginLibrary.cpp",
+              "ViewState": "AgIAAAwAAAAAAAAAAADwvxwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-11-10T02:24:54.509Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "spine_texture.h",
+              "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_texture.h",
+              "RelativeDocumentMoniker": "..\\shared\\spine_texture.h",
+              "ToolTip": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_texture.h",
+              "RelativeToolTip": "..\\shared\\spine_texture.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-11-10T02:08:53.838Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 4,
+              "Title": "Skin.h",
+              "DocumentMoniker": "\\\\mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\Skin.h",
+              "RelativeDocumentMoniker": "..\\shared\\spine\\Skin.h",
+              "ToolTip": "\\\\mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\Skin.h",
+              "RelativeToolTip": "..\\shared\\spine\\Skin.h",
+              "ViewState": "AgIAAGAAAAAAAAAAAAAQwGgAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-11-10T02:06:50.176Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "spine_skeleton.h",
+              "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_skeleton.h",
+              "RelativeDocumentMoniker": "..\\shared\\spine_skeleton.h",
+              "ToolTip": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_skeleton.h",
+              "RelativeToolTip": "..\\shared\\spine_skeleton.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-11-10T02:40:32.624Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "spine_texture.cpp",
+              "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_texture.cpp",
+              "RelativeDocumentMoniker": "..\\shared\\spine_texture.cpp",
+              "ToolTip": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_texture.cpp",
+              "RelativeToolTip": "..\\shared\\spine_texture.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-11-03T17:36:10.256Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Animation.h",
+              "DocumentMoniker": "\\\\mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\Animation.h",
+              "RelativeDocumentMoniker": "..\\shared\\spine\\Animation.h",
+              "ToolTip": "\\\\mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\Animation.h",
+              "RelativeToolTip": "..\\shared\\spine\\Animation.h",
+              "ViewState": "AgIAABAAAAAAAAAAAAAQwCAAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-11-10T03:08:59.72Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "vector",
+              "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.42.34430\\include\\vector",
+              "ToolTip": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.42.34430\\include\\vector",
+              "ViewState": "AgIAAOIIAAAAAAAAAAAawO8IAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2024-11-10T02:53:44.638Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "assert.h",
+              "DocumentMoniker": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.22621.0\\ucrt\\assert.h",
+              "ToolTip": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.22621.0\\ucrt\\assert.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAApwBAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-11-10T02:46:27.283Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "sal.h",
+              "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.42.34430\\include\\sal.h",
+              "ToolTip": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.42.34430\\include\\sal.h",
+              "ViewState": "AgIAACgJAAAAAAAAAAApwDgJAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-11-10T02:46:21.655Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "corecrt_wstdio.h",
+              "DocumentMoniker": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.22621.0\\ucrt\\corecrt_wstdio.h",
+              "ToolTip": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.22621.0\\ucrt\\corecrt_wstdio.h",
+              "ViewState": "AgIAAP0CAAAAAAAAAAApwA0DAAAmAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-11-10T02:45:30.889Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "__msvc_sanitizer_annotate_container.hpp",
+              "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.42.34430\\include\\__msvc_sanitizer_annotate_container.hpp",
+              "ToolTip": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.42.34430\\include\\__msvc_sanitizer_annotate_container.hpp",
+              "ViewState": "AgIAAGcAAAAAAAAAAAApwHcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-11-10T02:43:26.417Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "comdef.h",
+              "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.42.34430\\include\\comdef.h",
+              "ToolTip": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.42.34430\\include\\comdef.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-11-03T17:34:58.266Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
               "Title": "LuaUtils.cpp",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-core\\win32\\Plugin\\LuaUtils.cpp",
               "RelativeDocumentMoniker": "..\\..\\plugin-core\\win32\\Plugin\\LuaUtils.cpp",
@@ -74,12 +304,11 @@
               "RelativeToolTip": "..\\..\\plugin-core\\win32\\Plugin\\LuaUtils.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-10-18T20:20:35.018Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-18T20:20:35.018Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 18,
               "Title": "Utils.h",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-core\\win32\\Utils.h",
               "RelativeDocumentMoniker": "..\\..\\plugin-core\\win32\\Utils.h",

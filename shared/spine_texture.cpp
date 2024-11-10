@@ -1,9 +1,6 @@
 #include "spine_texture.h"
 #include <string>
 #include <spine/Atlas.h>
-#include "Spine_renderer.h"
-
-#import "CoronaLua.h"
 
 void SpineTextureLoader::load(spine::AtlasPage &page, const spine::String &path)
 {

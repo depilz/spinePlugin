@@ -1,6 +1,5 @@
 #include "spine_renderer.h"
 #include "CoronaGraphics.h"
-#include "BlendMode.h"
 
 void engine_updateMesh(lua_State *L, LuaTableHolder *meshHolder, float *positions, size_t numVertices, float *uvs, unsigned short *indices, size_t numIndices, Texture *texture, spine::BlendMode blendMode, uint32_t *colors)
 {

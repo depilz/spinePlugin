@@ -1,26 +1,10 @@
-// SimulatorPluginLibrary.cpp
-
 #include "SimulatorPluginLibrary.h"
-
-#include "CoronaAssert.h"
 #include "CoronaLua.h"
 #include "CoronaLibrary.h"
-#include <windows.h>
-#include <shellapi.h>
-#include <Audioclient.h>
-#include <Mmdeviceapi.h>
-#include "Utils.h"
-#include "LuaUtils.h"
-#include "DragDropHandler.h"
+#include "spine_skeleton.h"
 
 // Define the version as a constant
 #define VERSION "1.0.0"
-
-// Declare a global variable to store Lua references
-static int lua_listener = LUA_REFNIL;
-static DragDropHandler *pDropHandler = NULL;
-HWND g_hWnd = NULL;
-
 
 extern "C"
 {

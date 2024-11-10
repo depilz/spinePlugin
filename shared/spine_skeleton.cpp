@@ -4,8 +4,6 @@
 #include <spine/Extension.h>
 #include <vector> // Include for std::vector
 
-using namespace spine;
-
 int create(lua_State *L)
 {
     // Parse parameters from Lua
@@ -691,13 +689,14 @@ int skeleton_setAttachment(lua_State *L) {
     }
 
     Attachment* attachment = nullptr;
-//    if (strcmp(attachmentName, "null") != 0) {
-//        attachment = skeletonUserdata->skeletonData->findAttachment(attachmentName, slotName);
-//        if (!attachment) {
-//            luaL_error(L, "Attachment not found: %s", attachmentName);
-//            return 0;
-//        }
-//    }
+    if (strcmp(attachmentName, "null") != 0) {
+        Skin* skin = skeletonUserdata->skeleton->getSkin();
+        attachment = skin->getAttachment(slot->getData().getIndex(), attachmentName);
+        if (!attachment) {
+            luaL_error(L, "Attachment not found: %s", attachmentName);
+            return 0;
+        }
+    }
 
     slot->setAttachment(attachment);
 

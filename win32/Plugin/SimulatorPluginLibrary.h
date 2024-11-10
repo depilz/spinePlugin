@@ -1,10 +1,6 @@
-// PluginCore.h
 
 #pragma once
 
-#include <windows.h>
-#include "lua.h"
-#include "lauxlib.h"
 #include "CoronaLua.h"
 #include "CoronaMacros.h"
 
