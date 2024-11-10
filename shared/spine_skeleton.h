@@ -26,7 +26,7 @@ public:
             meshHolders.push_back(LuaTableHolder());
         }
     }
-
+    
     // Pushes the Lua table at the specified index onto the Lua stack
     void pushMesh(int index)
     {
@@ -55,6 +55,15 @@ public:
         assert(index >= 0 && index < static_cast<int>(meshHolders.size()));
         return meshHolders[index];
     }
+    
+    void clear()
+    {
+        for (auto &mesh : meshHolders)
+        {
+            mesh.releaseTable();
+        }
+    }
+
 };
 
 // SpineSkeleton structure holds various Spine-related objects and Lua tables
@@ -103,12 +112,6 @@ struct SpineSkeleton
     {
         if (this != &other)
         {
-            // Clean up existing resources if necessary
-            // (Assuming ownership semantics; adjust as needed)
-            // For example:
-            // if (skeleton) { delete skeleton; }
-            // Similarly for other pointers
-
             skeleton = other.skeleton;
             state = other.state;
             stateData = other.stateData;
@@ -131,47 +134,56 @@ struct SpineSkeleton
     // Destructor
     ~SpineSkeleton()
     {
-        // Clean up resources
         if (skeleton)
         {
-            delete skeleton;
-        }
-        if (state)
-        {
             delete state;
-        }
-        if (stateData)
-        {
             delete stateData;
-        }
-        if (atlas)
-        {
-            delete atlas;
-        }
-        if (skeletonData)
-        {
+            delete skeleton;
             delete skeletonData;
+            delete atlas;
+
+            group.releaseTable();
+
+            meshIndices.clear();
+            meshes.clear();
+
+            skeleton = nullptr;
+            state = nullptr;
+            stateData = nullptr;
+            atlas = nullptr;
+            skeletonData = nullptr;
         }
     }
 };
 
 // Function declarations
 int create(lua_State *L);
-int set_default_mix(lua_State *L);
-int set_mix(lua_State *L);
+void get_skeleton_metatable(lua_State *L);
+void get_spineObject_metatable(lua_State *L);
+int skeleton_index(lua_State *L);
+int skeleton_newindex(lua_State *L);
+int skeleton_render(lua_State *L, SpineSkeleton *skeletonUserdata, SkeletonRenderer &skeletonRenderer);
+int spine_gc(lua_State *L);
+int skeleton_gc(lua_State *L);
+
+int skeleton_update(lua_State *L);
+int remove_self(lua_State *L);
+
 int skeleton_setAnimation(lua_State *L);
 int skeleton_addAnimation(lua_State *L);
 int skeleton_findAnimation(lua_State *L);
 int skeleton_getAllAnimations(lua_State *L);
+
+int set_default_mix(lua_State *L);
+int set_mix(lua_State *L);
+
 int skeleton_getAllSkins(lua_State *L);
 int skeleton_setSkin(lua_State *L);
-int skeleton_update(lua_State *L);
-int skeleton_render(lua_State *L, SpineSkeleton *skeletonUserdata, SkeletonRenderer &skeletonRenderer);
-int skeleton_dispose(lua_State *L);
-int skeleton_gc(lua_State *L);
+
 int skeleton_setToSetupPose(lua_State *L);
-int skeleton_index(lua_State *L);
-int skeleton_newindex(lua_State *L);
+
+int skeleton_setAttachment(lua_State *L);
+
 SkeletonData *SkeletonJson_readSkeletonDataFile(const char *filename, Atlas *atlas, float scale);
 SkeletonData *SkeletonBinary_readSkeletonDataFile(const char *filename, Atlas *atlas, float scale);
 

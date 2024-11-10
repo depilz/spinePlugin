@@ -75,31 +75,7 @@ int create(lua_State *L)
     
 
     // Set metatable
-    luaL_getmetatable(L, "SpineSkeleton");
-    if (lua_isnil(L, -1))
-    {
-        // Metatable doesn't exist yet; create it
-        lua_pop(L, 1); // Pop nil
-        luaL_newmetatable(L, "SpineSkeleton");
-
-        // Set __index
-        lua_pushstring(L, "__index");
-        lua_pushcfunction(L, skeleton_index);
-        lua_settable(L, -3);
-
-        // Set __newindex
-        lua_pushstring(L, "__newindex");
-        lua_pushcfunction(L, skeleton_newindex);
-        lua_settable(L, -3);
-
-        // Register methods
-        luaL_Reg methods[] = {
-            {NULL, NULL}
-        };
-        luaL_register(L, NULL, methods);
-    }
-
-    // Set the metatable
+    get_skeleton_metatable(L);
     lua_setmetatable(L, -2);
 
     lua_newtable(L);
@@ -126,7 +102,44 @@ int create(lua_State *L)
 
     lua_remove(L, -1);
 
-    // Set metatable
+    // Set the metatable
+    get_spineObject_metatable(L);
+    lua_setmetatable(L, -2);
+
+    return 1;
+}
+
+void get_skeleton_metatable(lua_State *L){
+    luaL_getmetatable(L, "SpineSkeleton");
+    if (lua_isnil(L, -1))
+    {
+        // Metatable doesn't exist yet; create it
+        lua_pop(L, 1); // Pop nil
+        luaL_newmetatable(L, "SpineSkeleton");
+
+        // Set __index
+        lua_pushstring(L, "__index");
+        lua_pushcfunction(L, skeleton_index);
+        lua_settable(L, -3);
+
+        // Set __newindex
+        lua_pushstring(L, "__newindex");
+        lua_pushcfunction(L, skeleton_newindex);
+        lua_settable(L, -3);
+
+        // Register methods
+        luaL_Reg methods[] = {
+            {NULL, NULL}
+        };
+        luaL_register(L, NULL, methods);
+
+        // Add garbage collection method
+        lua_pushcfunction(L, skeleton_gc);
+        lua_setfield(L, -2, "__gc");
+    }
+}
+
+void get_spineObject_metatable(lua_State *L){
     luaL_getmetatable(L, "SpineObject");
     if (lua_isnil(L, -1))
     {
@@ -146,36 +159,32 @@ int create(lua_State *L)
 
         // Register methods
         luaL_Reg methods[] = {
+            {"update", skeleton_update},
+            {"removeSelf", remove_self},
+
             {"setAnimation", skeleton_setAnimation},
+
             {"setDefaultMix", set_default_mix},
             {"setMix", set_mix},
-            {"update", skeleton_update},
-            {"dispose", skeleton_dispose},
+
             {"setToSetupPose", skeleton_setToSetupPose},
-            {"dispose", skeleton_dispose},
 
             {"addAnimation", skeleton_addAnimation},
             {"findAnimation", skeleton_findAnimation},
             {"getAllAnimations", skeleton_getAllAnimations},
+
             {"getAllSkins", skeleton_getAllSkins},
             {"setSkin", skeleton_setSkin},
 
-            // {"setSkin", skeleton_setSkin},
-            // {"setAttachment", skeleton_setAttachment},
-            // {"updateWorldTransform", skeleton_updateWorldTransform},
+            {"setAttachment", skeleton_setAttachment},
+
             {NULL, NULL}};
         luaL_register(L, NULL, methods);
 
         // Add garbage collection method
-        lua_pushcfunction(L, skeleton_gc);
+        lua_pushcfunction(L, spine_gc);
         lua_setfield(L, -2, "__gc");
     }
-
-    // Set the metatable
-    lua_setmetatable(L, -2);
-    
-
-    return 1;
 }
 
 int set_default_mix(lua_State *L){
@@ -367,9 +376,6 @@ int skeleton_update(lua_State *L)
     SkeletonRenderer skeletonRenderer;
     skeleton_render(L, skeletonUserdata, skeletonRenderer);
 
-    int n = lua_gettop(L);
-    lua_pop(L, n);
-
     return 0;
 }
 
@@ -377,12 +383,14 @@ int skeleton_render(lua_State *L, SpineSkeleton * skeletonUserdata, SkeletonRend
 {
     Skeleton *skeleton = skeletonUserdata->skeleton;
     RenderCommand *command = skeletonRenderer.render(*skeleton);
+
     // we need to have ids for each command, so we can update already existing meshes
     // for that we can't use the index, but the slot name
     int i = 0;
 
     auto &meshes = skeletonUserdata->meshes;
     auto &meshIndices = skeletonUserdata->meshIndices;
+
     while (command)
     {
         float *positions = command->positions;
@@ -390,7 +398,7 @@ int skeleton_render(lua_State *L, SpineSkeleton * skeletonUserdata, SkeletonRend
         uint32_t *colors = command->colors;
         uint16_t *indices = command->indices;
         Texture *texture = (Texture *)command->texture;
-        
+
         BlendMode blendMode = command->blendMode;
 
         bool existingMesh = meshes.isMeshValid(i);
@@ -417,13 +425,15 @@ int skeleton_render(lua_State *L, SpineSkeleton * skeletonUserdata, SkeletonRend
             skeletonUserdata->group.pushTable();
             lua_getfield(L, -1, "insert");
             lua_pushvalue(L, -2);
-            lua_pushvalue(L, -4);
-            lua_call(L, 2, 0);
+            lua_pushnumber(L, i + 1);
+            lua_pushvalue(L, -5);
+            lua_call(L, 3, 0);
             lua_pop(L, 1); // Pop the group
 
             // initialize mesh
             meshes.setMesh(L, i);
             meshIndices[i] = command->numIndices;
+
             lua_pop(L, 1);
         }
         command = command->next;
@@ -437,7 +447,9 @@ int skeleton_render(lua_State *L, SpineSkeleton * skeletonUserdata, SkeletonRend
         meshes[i].releaseTable();
         i++;
     }
-    
+
+    lua_pop(L, -1);
+
     return 0;
 }
 
@@ -449,36 +461,67 @@ int skeleton_setToSetupPose(lua_State *L)
     return 0;
 }
 
-int skeleton_dispose(lua_State *L)
+int remove_self(lua_State *L)
 {
-    lua_getfield(L, 1, "_skeleton");
+    if (!lua_istable(L, 1))
+    {
+        luaL_error(L, "table expected. If this is a function call, you might have used '.' instead of ':'");
+        return 0;
+    }
+    
+    lua_pushstring(L, "_skeleton");
+    lua_rawget(L, 1);
+    
+    if (lua_isnil(L, -1))
+    {
+        luaL_error(L, "Skeleton already removed");
+        return 0;
+     }
+
     SpineSkeleton *skeletonUserdata = (SpineSkeleton *)luaL_checkudata(L, -1, "SpineSkeleton");
+    lua_pop(L, 1);
 
-    delete skeletonUserdata->state;
-    delete skeletonUserdata->stateData;
-    delete skeletonUserdata->skeleton;
-    delete skeletonUserdata->skeletonData;
-    delete skeletonUserdata->atlas;
-    // The textureLoader is deleted within atlas destructor
+    // remove skeleton
+    lua_pushnil(L);
+    lua_setfield(L, 1, "_skeleton");
+    lua_pushnil(L);
+    lua_setfield(L, 1, "_proxy");
+    lua_pushnil(L);
+    lua_setfield(L, 1, "_class");
 
-    skeletonUserdata->state = nullptr;
-    skeletonUserdata->stateData = nullptr;
-    skeletonUserdata->skeleton = nullptr;
-    skeletonUserdata->skeletonData = nullptr;
-    skeletonUserdata->atlas = nullptr;
+    // remove display group
+    skeletonUserdata->group.pushTable();
+    lua_getfield(L, -1, "removeSelf");
+    lua_pushvalue(L, -2);
+    lua_call(L, 1, 0);
+
+    skeletonUserdata->~SpineSkeleton();
 
     return 0;
 }
 
 int skeleton_gc(lua_State *L)
 {
-    return skeleton_dispose(L);
+    SpineSkeleton *skeletonUserdata = (SpineSkeleton *)luaL_checkudata(L, -1, "SpineSkeleton");
+
+    if(skeletonUserdata->skeleton)
+    {
+        skeletonUserdata->~SpineSkeleton();
+    }
+
+    return 0;
+}
+
+int spine_gc(lua_State *L)
+{
+    return 0;
 }
 
 int skeleton_index(lua_State* L) {
     const char* key = luaL_checkstring(L, 2);
 
-    lua_getfield(L, 1, "_skeleton");
+    lua_pushstring(L, "_skeleton");
+    lua_rawget(L, 1);
 
     SpineSkeleton* skeletonUserdata = (SpineSkeleton*)luaL_checkudata(L, -1, "SpineSkeleton");
 
@@ -532,7 +575,7 @@ int skeleton_index(lua_State* L) {
     }
 
     // if (strcmp(key, "dispose") == 0) {
-    //     lua_pushcfunction(L, skeleton_dispose);
+    //     lua_pushcfunction(L, remove_self);
     //     return 1;
     // }
 
@@ -629,8 +672,41 @@ int skeleton_newindex(lua_State* L) {
     return 0;
 }
 
-// read skeleton json
-SkeletonData *SkeletonJson_readSkeletonDataFile(const char *filename, Atlas *atlas, float scale)
+int skeleton_setAttachment(lua_State *L) {
+    // 3 arguments: self, slotName, attachmentName
+    if (lua_gettop(L) != 3) {
+        luaL_error(L, "Expected 3 arguments: self, slotName, attachmentName");
+        return 0;
+    }
+
+    lua_getfield(L, 1, "_skeleton");
+    SpineSkeleton* skeletonUserdata = (SpineSkeleton*)luaL_checkudata(L, -1, "SpineSkeleton");
+    const char* slotName = luaL_checkstring(L, 2);
+    const char* attachmentName = luaL_checkstring(L, 3);
+
+    Slot* slot = skeletonUserdata->skeleton->findSlot(slotName);
+    if (!slot) {
+        luaL_error(L, "Slot not found: %s", slotName);
+        return 0;
+    }
+
+    Attachment* attachment = nullptr;
+//    if (strcmp(attachmentName, "null") != 0) {
+//        attachment = skeletonUserdata->skeletonData->findAttachment(attachmentName, slotName);
+//        if (!attachment) {
+//            luaL_error(L, "Attachment not found: %s", attachmentName);
+//            return 0;
+//        }
+//    }
+
+    slot->setAttachment(attachment);
+
+    return 0;
+}
+
+    // read skeleton json
+    SkeletonData *
+    SkeletonJson_readSkeletonDataFile(const char *filename, Atlas *atlas, float scale)
 {
 
     SkeletonJson *json = new SkeletonJson(atlas);
@@ -653,7 +729,7 @@ SkeletonData *SkeletonBinary_readSkeletonDataFile(const char *filename, Atlas *a
 
 
 
-    Solar2dExtension::Solar2dExtension() : DefaultSpineExtension()
+Solar2dExtension::Solar2dExtension() : DefaultSpineExtension()
 {
 }
 
@@ -664,12 +740,3 @@ SpineExtension *spine::getDefaultExtension()
     return new Solar2dExtension();
 }
 
-// Register all functions (if not already done)
-int luaopen_spine_skeleton(lua_State* L) {
-    luaL_Reg functions[] = {
-        {"create", create},
-        {NULL, NULL}
-    };
-    luaL_register(L, "SpineObject", functions);
-    return 1;
-}

@@ -114,6 +114,8 @@ void engine_updateMesh(lua_State *L, LuaTableHolder *meshHolder, float *position
     // lua_pushnumber(L, a);                                // Push a
 
     // lua_call(L, 5, 0);                // Call setFillColor(self, r, g, b, a)
+
+    lua_pop(L, 1); // pop the mesh
 }
 
 void engine_drawMesh(lua_State *L, float *positions, size_t numVertices, float *uvs, unsigned short *indices, size_t numIndices, Texture *texture, spine::BlendMode blendMode, uint32_t *colors)

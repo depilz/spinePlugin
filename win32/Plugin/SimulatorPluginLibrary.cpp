@@ -24,7 +24,7 @@ HWND g_hWnd = NULL;
 
 extern "C"
 {
-    __declspec(dllexport) int luaopen_plugin_core(lua_State *L);
+    __declspec(dllexport) int luaopen_plugin_spine(lua_State *L);
 }
 
 // Register the functions with Lua
@@ -35,7 +35,7 @@ static const luaL_Reg pluginFunctions[] =
     {NULL, NULL}};
 
 // Define the luaopen function using CoronaLibrary
-CORONA_EXPORT int luaopen_plugin_library(lua_State *L)
+CORONA_EXPORT int luaopen_plugin_spine(lua_State *L)
 {
     const char kName[] = "plugin.spine";
     const char kVersion[] = "0.0.1";

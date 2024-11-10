@@ -10,5 +10,5 @@
 
 extern "C"
 {
-    CORONA_EXPORT int luaopen_plugin_core(lua_State *L);
+    CORONA_EXPORT int luaopen_plugin_spine(lua_State *L);
 }
