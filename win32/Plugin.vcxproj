@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\shared\LuaTableHolder.cpp" />
+    <ClCompile Include="..\shared\LuaUtils.cpp" />
     <ClCompile Include="..\shared\spine\Animation.cpp" />
     <ClCompile Include="..\shared\spine\AnimationState.cpp" />
     <ClCompile Include="..\shared\spine\AnimationStateData.cpp" />
@@ -86,6 +87,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\shared\LuaTableHolder.h" />
+    <ClInclude Include="..\shared\LuaUtils.h" />
+    <ClInclude Include="..\shared\lua_animation_state_listener.h" />
     <ClInclude Include="..\shared\spine\Animation.h" />
     <ClInclude Include="..\shared\spine\AnimationState.h" />
     <ClInclude Include="..\shared\spine\AnimationStateData.h" />

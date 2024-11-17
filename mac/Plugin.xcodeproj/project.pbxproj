@@ -171,6 +171,9 @@
 		920C35A22CD7C1E100CD52FA /* RotateTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 920C34BE2CD7C1E100CD52FA /* RotateTimeline.h */; };
 		920C35A32CD7C1E100CD52FA /* PositionMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 920C34B92CD7C1E100CD52FA /* PositionMode.h */; };
 		920C35A42CD7C1E100CD52FA /* AttachmentType.h in Headers */ = {isa = PBXBuildFile; fileRef = 920C346B2CD7C1E100CD52FA /* AttachmentType.h */; };
+		923535CE2CE7C3F700092A55 /* lua_animation_state_listener.h in Headers */ = {isa = PBXBuildFile; fileRef = 923535CD2CE7C3F700092A55 /* lua_animation_state_listener.h */; };
+		923535D12CE7C43800092A55 /* LuaUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 923535CF2CE7C43800092A55 /* LuaUtils.h */; };
+		923535D22CE7C43800092A55 /* LuaUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 923535D02CE7C43800092A55 /* LuaUtils.cpp */; };
 		923BB3092CB07ACD00FC7DD1 /* plugin_spine.mm in Sources */ = {isa = PBXBuildFile; fileRef = 923BB3082CB07ACD00FC7DD1 /* plugin_spine.mm */; };
 		92FD28392CDF97BF00F366BD /* LuaTableHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = 92FD28372CDF97BF00F366BD /* LuaTableHolder.h */; };
 		92FD283A2CDF97BF00F366BD /* LuaTableHolder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92FD28382CDF97BF00F366BD /* LuaTableHolder.cpp */; };
@@ -357,6 +360,9 @@
 		920C34FD2CD7C1E100CD52FA /* spine_skeleton.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = spine_skeleton.cpp; sourceTree = "<group>"; };
 		920C34FE2CD7C1E100CD52FA /* spine_texture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = spine_texture.h; sourceTree = "<group>"; };
 		920C34FF2CD7C1E100CD52FA /* spine_texture.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = spine_texture.cpp; sourceTree = "<group>"; };
+		923535CD2CE7C3F700092A55 /* lua_animation_state_listener.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = lua_animation_state_listener.h; sourceTree = "<group>"; };
+		923535CF2CE7C43800092A55 /* LuaUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LuaUtils.h; sourceTree = "<group>"; };
+		923535D02CE7C43800092A55 /* LuaUtils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LuaUtils.cpp; sourceTree = "<group>"; };
 		923BB3082CB07ACD00FC7DD1 /* plugin_spine.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = plugin_spine.mm; sourceTree = "<group>"; };
 		92FD28372CDF97BF00F366BD /* LuaTableHolder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LuaTableHolder.h; sourceTree = "<group>"; };
 		92FD28382CDF97BF00F366BD /* LuaTableHolder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LuaTableHolder.cpp; sourceTree = "<group>"; };
@@ -553,6 +559,9 @@
 				920C34FF2CD7C1E100CD52FA /* spine_texture.cpp */,
 				92FD28372CDF97BF00F366BD /* LuaTableHolder.h */,
 				92FD28382CDF97BF00F366BD /* LuaTableHolder.cpp */,
+				923535CD2CE7C3F700092A55 /* lua_animation_state_listener.h */,
+				923535CF2CE7C43800092A55 /* LuaUtils.h */,
+				923535D02CE7C43800092A55 /* LuaUtils.cpp */,
 			);
 			name = shared;
 			path = ../shared;
@@ -691,6 +700,7 @@
 				92FD28392CDF97BF00F366BD /* LuaTableHolder.h in Headers */,
 				920C35972CD7C1E100CD52FA /* Bone.h in Headers */,
 				920C35982CD7C1E100CD52FA /* Vector.h in Headers */,
+				923535D12CE7C43800092A55 /* LuaUtils.h in Headers */,
 				920C35992CD7C1E100CD52FA /* TransformConstraintData.h in Headers */,
 				920C359A2CD7C1E100CD52FA /* SkeletonBinary.h in Headers */,
 				920C359B2CD7C1E100CD52FA /* Log.h in Headers */,
@@ -698,6 +708,7 @@
 				920C359D2CD7C1E100CD52FA /* RotateMode.h in Headers */,
 				920C359E2CD7C1E100CD52FA /* RegionAttachment.h in Headers */,
 				920C359F2CD7C1E100CD52FA /* AtlasAttachmentLoader.h in Headers */,
+				923535CE2CE7C3F700092A55 /* lua_animation_state_listener.h in Headers */,
 				920C35A02CD7C1E100CD52FA /* spine_texture.h in Headers */,
 				920C35A12CD7C1E100CD52FA /* Extension.h in Headers */,
 				920C35A22CD7C1E100CD52FA /* RotateTimeline.h in Headers */,
@@ -845,6 +856,7 @@
 				920C35302CD7C1E100CD52FA /* PathConstraintMixTimeline.cpp in Sources */,
 				920C35312CD7C1E100CD52FA /* AttachmentTimeline.cpp in Sources */,
 				920C35322CD7C1E100CD52FA /* Updatable.cpp in Sources */,
+				923535D22CE7C43800092A55 /* LuaUtils.cpp in Sources */,
 				920C35332CD7C1E100CD52FA /* IkConstraintTimeline.cpp in Sources */,
 				920C35342CD7C1E100CD52FA /* ShearTimeline.cpp in Sources */,
 				920C35352CD7C1E100CD52FA /* RTTI.cpp in Sources */,
@@ -876,7 +888,7 @@
 			baseConfigurationReference = F5815AB71EE5C6690027695F /* CoronaNative.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -913,7 +925,7 @@
 			baseConfigurationReference = F5815AB71EE5C6690027695F /* CoronaNative.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;

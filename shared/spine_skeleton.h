@@ -7,7 +7,8 @@
 #include <cassert>
 #include <spine/spine.h>
 #include <vector>
-#include "LuaTableHolder.h" // Use quotes for user-defined headers
+#include "LuaTableHolder.h"
+#include "lua_animation_state_listener.h"
 
 using namespace spine;
 
@@ -74,9 +75,10 @@ struct SpineSkeleton
     spine::AnimationStateData *stateData;
     spine::Atlas *atlas;
     spine::SkeletonData *skeletonData;
+    LuaAnimationStateListener *stateListener;
 
-    LuaTableHolder group;               // Holds a Lua table for the group
-    MeshManager meshes;                 // Manages a collection of Lua tables for meshes
+    LuaTableHolder group;
+    MeshManager meshes;
     std::vector<int> meshIndices;
 
     // Default constructor
@@ -167,6 +169,9 @@ int spine_gc(lua_State *L);
 int skeleton_gc(lua_State *L);
 
 int skeleton_update(lua_State *L);
+int skeleton_setTimeScale(lua_State *L);
+int skeleton_getTimeScale(lua_State *L);
+int skeleton_stop(lua_State *L);
 int remove_self(lua_State *L);
 
 int skeleton_setAnimation(lua_State *L);

@@ -1,6 +1,7 @@
 #include "spine_skeleton.h"
 #include "spine_texture.h"
 #include "spine_renderer.h"
+#include "LuaUtils.h"
 #include <spine/Extension.h>
 #include <vector> // Include for std::vector
 
@@ -24,6 +25,18 @@ int create(lua_State *L)
     lua_getfield(L, 1, "scale");
     float scale = lua_isnumber(L, -1) ? lua_tonumber(L, -1) : 1.0f;
     lua_pop(L, 1);
+
+    // check if lua listener is provided
+    lua_getfield(L, 1, "listener");
+    int lua_listener;
+    if (lua_isfunction(L, -1))
+    {
+        lua_listener = luaL_ref(L, LUA_REGISTRYINDEX);
+    }
+    else
+    {
+        lua_pop(L, 1);
+    }
 
     if (!skeletonFile || !atlasFile)
     {
@@ -70,7 +83,12 @@ int create(lua_State *L)
     skeletonUserdata->stateData = stateData;
     skeletonUserdata->atlas = atlas;
     skeletonUserdata->skeletonData = skeletonData;
-    
+
+    if (lua_listener)
+    {
+        LuaAnimationStateListener *stateListener = new LuaAnimationStateListener(L, lua_listener);
+        state->setListener(stateListener);
+    }
 
     // Set metatable
     get_skeleton_metatable(L);
@@ -173,6 +191,10 @@ void get_spineObject_metatable(lua_State *L){
 
             {"getAllSkins", skeleton_getAllSkins},
             {"setSkin", skeleton_setSkin},
+
+            {"setTimeScale", skeleton_setTimeScale},
+            {"getTimeScale", skeleton_getTimeScale},
+            {"stop", skeleton_stop},
 
             {"setAttachment", skeleton_setAttachment},
 
@@ -365,6 +387,13 @@ int skeleton_update(lua_State *L)
     SpineSkeleton *skeletonUserdata = (SpineSkeleton *)luaL_checkudata(L, -1, "SpineSkeleton");
     float deltaTime = luaL_checknumber(L, 2);
 
+    // check if any tracks are playing
+    if (skeletonUserdata->state->getTracks().size() == 0)
+    {
+        printf("No tracks playing\n");
+        return 0;
+    }
+
     skeletonUserdata->state->update(deltaTime);
     skeletonUserdata->state->apply(*skeletonUserdata->skeleton);
     skeletonUserdata->skeleton->update(deltaTime);
@@ -373,6 +402,49 @@ int skeleton_update(lua_State *L)
     // Render the skeleton
     SkeletonRenderer skeletonRenderer;
     skeleton_render(L, skeletonUserdata, skeletonRenderer);
+
+
+    // trigger events
+    LuaUtils::executeTasks(L);
+
+    return 0;
+}
+
+int skeleton_setTimeScale(lua_State *L)
+{
+    // get skeleton
+    lua_getfield(L, 1, "_skeleton");
+    SpineSkeleton *skeletonUserdata = (SpineSkeleton *)luaL_checkudata(L, -1, "SpineSkeleton");
+
+    // get time scale
+    float timeScale = luaL_checknumber(L, 2);
+
+    // set time scale
+    skeletonUserdata->state->setTimeScale(timeScale);
+
+    return 0;
+}
+int skeleton_getTimeScale(lua_State *L)
+{
+    // get skeleton
+    lua_getfield(L, 1, "_skeleton");
+    SpineSkeleton *skeletonUserdata = (SpineSkeleton *)luaL_checkudata(L, -1, "SpineSkeleton");
+
+    // get time scale
+    float timeScale = skeletonUserdata->state->getTimeScale(); 
+
+    // return time scale
+    lua_pushnumber(L, timeScale);
+
+    return 1;
+}
+int skeleton_stop(lua_State *L)
+{
+    // clear tracks
+    lua_getfield(L, 1, "_skeleton");
+    SpineSkeleton *skeletonUserdata = (SpineSkeleton *)luaL_checkudata(L, -1, "SpineSkeleton");
+
+    skeletonUserdata->state->clearTracks();
 
     return 0;
 }
@@ -523,65 +595,58 @@ int skeleton_index(lua_State* L) {
 
     SpineSkeleton* skeletonUserdata = (SpineSkeleton*)luaL_checkudata(L, -1, "SpineSkeleton");
 
+    if (strcmp(key, "isActive") == 0) {
+        lua_pushboolean(L, skeletonUserdata->state->getTracks().size() > 0);
+        return 1;
+    }
+
     if (strcmp(key, "x") == 0) {
         skeletonUserdata->group.pushTable();
-        lua_pushstring(L, "x");
-        lua_getfield(L, -2, "x");
+        lua_getfield(L, -1, "x");
         return 1;
     }
 
     if (strcmp(key, "y") == 0) {
         skeletonUserdata->group.pushTable();
-        lua_pushstring(L, "y");
-        lua_getfield(L, -2, "y");
+        lua_getfield(L, -1, "y");
         return 1;
     }
 
     if (strcmp(key, "xScale") == 0) {
         skeletonUserdata->group.pushTable();
-        lua_pushstring(L, "xScale");
-        lua_getfield(L, -2, "xScale");
+        lua_getfield(L, -1, "xScale");
         return 1;
     }
 
     if (strcmp(key, "yScale") == 0) {
         skeletonUserdata->group.pushTable();
-        lua_pushstring(L, "yScale");
-        lua_getfield(L, -2, "yScale");
+        lua_getfield(L, -1, "yScale");
         return 1;
     }
 
     if (strcmp(key, "rotation") == 0) {
         skeletonUserdata->group.pushTable();
-        lua_pushstring(L, "rotation");
-        lua_getfield(L, -2, "rotation");
+        lua_getfield(L, -1, "rotation");
         return 1;
     }
 
     if (strcmp(key, "isVisible") == 0) {
         skeletonUserdata->group.pushTable();
-        lua_pushstring(L, "isVisible");
-        lua_getfield(L, -2, "isVisible");
+        lua_getfield(L, -1, "isVisible");
         return 1;
     }
 
     if (strcmp(key, "alpha") == 0) {
         skeletonUserdata->group.pushTable();
-        lua_pushstring(L, "alpha");
-        lua_getfield(L, -2, "alpha");
+        lua_getfield(L, -1, "alpha");
         return 1;
     }
 
-    // if (strcmp(key, "dispose") == 0) {
-    //     lua_pushcfunction(L, remove_self);
-    //     return 1;
-    // }
-
-    // if (strcmp(key, "setToSetupPose") == 0) {
-    //     lua_pushcfunction(L, skeleton_setToSetupPose);
-    //     return 1;
-    // }
-
+    if (strcmp(key, "numChildren") == 0) {
+        skeletonUserdata->group.pushTable();
+        lua_getfield(L, -1, "numChildren");
+        return 1;
+    }
 
 
     // Fallback to methods
