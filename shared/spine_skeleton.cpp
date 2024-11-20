@@ -176,7 +176,8 @@ void get_spineObject_metatable(lua_State *L){
             {"setDefaultMix", set_default_mix},
             {"setMix", set_mix},
 
-            {"setPhysicsPosition", set_physics_position},
+            {"physicsRotate", physics_rotate},
+            {"physicsTranslate", physics_translate},
             {"setToSetupPose", skeleton_setToSetupPose},
 
             {"addAnimation", skeleton_addAnimation},
@@ -218,23 +219,28 @@ int set_default_mix(lua_State *L){
 }
 
 // physics control
-int set_physics_position(lua_State *L){
-    // 4 arguments: self, x, y, angle
-    if (lua_gettop(L) != 4)
-    {
-        luaL_error(L, "Expected 4 arguments: self, x, y, angle");
-        return 0;
-    }
-
+int physics_translate(lua_State *L){
     lua_getfield(L, 1, "_skeleton");
     SpineSkeleton *skeletonUserdata = (SpineSkeleton *)luaL_checkudata(L, -1, "SpineSkeleton");
 
     float x = luaL_checknumber(L, 2);
     float y = luaL_checknumber(L, 3);
-    float angle = luaL_checknumber(L, 4);
 
-    skeletonUserdata->skeleton->setPosition(x, y);
-    // skeletonUserdata->skeleton->setRotation(angle);
+    skeletonUserdata->skeleton->physicsTranslate(x, -y);
+
+    return 0;
+}
+
+int physics_rotate(lua_State *L)
+{
+    lua_getfield(L, 1, "_skeleton");
+    SpineSkeleton *skeletonUserdata = (SpineSkeleton *)luaL_checkudata(L, -1, "SpineSkeleton");
+
+    float x = luaL_checknumber(L, 2);
+    float y = luaL_checknumber(L, 3);
+    float degrees = luaL_checknumber(L, 4);
+
+    skeletonUserdata->skeleton->physicsRotate(x, y, degrees);
 
     return 0;
 }
@@ -571,20 +577,23 @@ int set_fill_color(lua_State *L)
         g = color;
         b = color;
         a = 1;
+
     } else if (argCount == 3)
     {
         // grayscale
         double color = luaL_checknumber(L, 2);
-        a = luaL_checknumber(L, 3);
         r = color;
         g = color;
         b = color;
+        a = luaL_checknumber(L, 3);
 
     } else if (argCount == 4)
     {
         r = luaL_checknumber(L, 2);
         g = luaL_checknumber(L, 3);
         b = luaL_checknumber(L, 4);
+        a = 1;
+
     } else if (argCount == 5)
     {
         r = luaL_checknumber(L, 2);

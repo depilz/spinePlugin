@@ -176,7 +176,8 @@ int skeleton_addAnimation(lua_State *L);
 int skeleton_findAnimation(lua_State *L);
 int skeleton_getAllAnimations(lua_State *L);
 
-int set_physics_position(lua_State *L);
+int physics_rotate(lua_State *L);
+int physics_translate(lua_State *L);
 
 int set_default_mix(lua_State *L);
 int set_mix(lua_State *L);
