@@ -77,14 +77,13 @@ struct SpineSkeleton
     spine::SkeletonData *skeletonData;
     LuaAnimationStateListener *stateListener;
 
-    LuaTableHolder group;
     MeshManager meshes;
     std::vector<int> meshIndices;
 
     // Default constructor
     SpineSkeleton(lua_State *L)
         : skeleton(nullptr), state(nullptr), stateData(nullptr),
-          atlas(nullptr), skeletonData(nullptr), group(),
+          atlas(nullptr), skeletonData(nullptr),
           meshes(100), meshIndices(100)
     {
     }
@@ -98,7 +97,6 @@ struct SpineSkeleton
         : skeleton(other.skeleton), state(other.state),
           stateData(other.stateData), atlas(other.atlas),
           skeletonData(other.skeletonData),
-          group(std::move(other.group)),
           meshes(std::move(other.meshes))
     {
         // Nullify the pointers in the moved-from object to prevent double deletion
@@ -120,7 +118,6 @@ struct SpineSkeleton
             atlas = other.atlas;
             skeletonData = other.skeletonData;
 
-            group = std::move(other.group);
             meshes = std::move(other.meshes);
 
             // Nullify the pointers in the moved-from object
@@ -144,8 +141,6 @@ struct SpineSkeleton
             delete skeletonData;
             delete atlas;
 
-            group.releaseTable();
-
             meshIndices.clear();
             meshes.clear();
 
@@ -164,20 +159,24 @@ void get_skeleton_metatable(lua_State *L);
 void get_spineObject_metatable(lua_State *L);
 int skeleton_index(lua_State *L);
 int skeleton_newindex(lua_State *L);
-int skeleton_render(lua_State *L, SpineSkeleton *skeletonUserdata, SkeletonRenderer &skeletonRenderer);
+int skeleton_render(lua_State *L, SpineSkeleton *skeletonUserdata);
 int spine_gc(lua_State *L);
 int skeleton_gc(lua_State *L);
 
-int skeleton_update(lua_State *L);
+int update_state(lua_State *L);
+int skeleton_draw(lua_State *L);
 int skeleton_setTimeScale(lua_State *L);
 int skeleton_getTimeScale(lua_State *L);
 int skeleton_stop(lua_State *L);
+int set_fill_color(lua_State *L);
 int remove_self(lua_State *L);
 
 int skeleton_setAnimation(lua_State *L);
 int skeleton_addAnimation(lua_State *L);
 int skeleton_findAnimation(lua_State *L);
 int skeleton_getAllAnimations(lua_State *L);
+
+int set_physics_position(lua_State *L);
 
 int set_default_mix(lua_State *L);
 int set_mix(lua_State *L);

@@ -94,31 +94,22 @@ int create(lua_State *L)
     get_skeleton_metatable(L);
     lua_setmetatable(L, -2);
 
-    lua_newtable(L);
-    lua_pushstring(L, "_skeleton");
-    lua_pushvalue(L, -3);
-    lua_settable(L, -3);
-
 
     // attach a display group to our userdata
     lua_getglobal(L, "display");
     lua_getfield(L, -1, "newGroup");
     lua_call(L, 0, 1);
-
-    lua_pushvalue(L, -1);
-
-    skeletonUserdata->group = LuaTableHolder(L);
-
     lua_remove(L, -2);
 
-    lua_getfield(L, -1, "_proxy");
-    lua_setfield(L, -3, "_proxy");
-    lua_getfield(L, -1, "_class");
-    lua_setfield(L, -3, "_class");
-
-    lua_remove(L, -1);
+    lua_pushstring(L, "_skeleton");
+    lua_pushvalue(L, -3);
+    lua_rawset(L, -3);
 
     // Set the metatable
+    lua_pushstring(L, "_groupmt");
+    lua_getmetatable(L, -2);
+    lua_rawset(L, -3);
+
     get_spineObject_metatable(L);
     lua_setmetatable(L, -2);
 
@@ -175,14 +166,17 @@ void get_spineObject_metatable(lua_State *L){
 
         // Register methods
         luaL_Reg methods[] = {
-            {"update", skeleton_update},
+            {"updateState", update_state},
+            {"draw", skeleton_draw},
             {"removeSelf", remove_self},
+            {"setFillColor", set_fill_color},
 
             {"setAnimation", skeleton_setAnimation},
 
             {"setDefaultMix", set_default_mix},
             {"setMix", set_mix},
 
+            {"setPhysicsPosition", set_physics_position},
             {"setToSetupPose", skeleton_setToSetupPose},
 
             {"addAnimation", skeleton_addAnimation},
@@ -221,6 +215,28 @@ int set_default_mix(lua_State *L){
     float mix = luaL_checknumber(L, 2);
 
     skeletonUserdata->stateData->setDefaultMix(mix);
+}
+
+// physics control
+int set_physics_position(lua_State *L){
+    // 4 arguments: self, x, y, angle
+    if (lua_gettop(L) != 4)
+    {
+        luaL_error(L, "Expected 4 arguments: self, x, y, angle");
+        return 0;
+    }
+
+    lua_getfield(L, 1, "_skeleton");
+    SpineSkeleton *skeletonUserdata = (SpineSkeleton *)luaL_checkudata(L, -1, "SpineSkeleton");
+
+    float x = luaL_checknumber(L, 2);
+    float y = luaL_checknumber(L, 3);
+    float angle = luaL_checknumber(L, 4);
+
+    skeletonUserdata->skeleton->setPosition(x, y);
+    // skeletonUserdata->skeleton->setRotation(angle);
+
+    return 0;
 }
 
 int set_mix(lua_State *L){
@@ -381,31 +397,37 @@ int skeleton_setSkin(lua_State *L)
     return 0;
 }
 
-int skeleton_update(lua_State *L)
+int update_state(lua_State *L)
 {
     lua_getfield(L, 1, "_skeleton");
     SpineSkeleton *skeletonUserdata = (SpineSkeleton *)luaL_checkudata(L, -1, "SpineSkeleton");
     float deltaTime = luaL_checknumber(L, 2);
+    deltaTime /= 1000;
 
     // check if any tracks are playing
     if (skeletonUserdata->state->getTracks().size() == 0)
     {
-        printf("No tracks playing\n");
         return 0;
     }
 
     skeletonUserdata->state->update(deltaTime);
     skeletonUserdata->state->apply(*skeletonUserdata->skeleton);
     skeletonUserdata->skeleton->update(deltaTime);
-    skeletonUserdata->skeleton->updateWorldTransform(Physics_Update);
-
-    // Render the skeleton
-    SkeletonRenderer skeletonRenderer;
-    skeleton_render(L, skeletonUserdata, skeletonRenderer);
-
 
     // trigger events
     LuaUtils::executeTasks(L);
+
+    return 0;
+}
+
+int skeleton_draw(lua_State *L)
+{
+    lua_getfield(L, 1, "_skeleton");
+    SpineSkeleton *skeletonUserdata = (SpineSkeleton *)luaL_checkudata(L, -1, "SpineSkeleton");
+
+    skeletonUserdata->skeleton->updateWorldTransform(Physics_Update);
+
+    skeleton_render(L, skeletonUserdata);
 
     return 0;
 }
@@ -449,9 +471,10 @@ int skeleton_stop(lua_State *L)
     return 0;
 }
 
-int skeleton_render(lua_State *L, SpineSkeleton * skeletonUserdata, SkeletonRenderer &skeletonRenderer)
+int skeleton_render(lua_State *L, SpineSkeleton * skeletonUserdata)
 {
     Skeleton *skeleton = skeletonUserdata->skeleton;
+    SkeletonRenderer skeletonRenderer;
     RenderCommand *command = skeletonRenderer.render(*skeleton);
 
     // we need to have ids for each command, so we can update already existing meshes
@@ -492,7 +515,7 @@ int skeleton_render(lua_State *L, SpineSkeleton * skeletonUserdata, SkeletonRend
         {
             engine_drawMesh(L, command->positions, command->numVertices, command->uvs, command->indices, command->numIndices, texture, blendMode, command->colors);
 
-            skeletonUserdata->group.pushTable();
+            lua_pushvalue(L, 1);
             lua_getfield(L, -1, "insert");
             lua_pushvalue(L, -2);
             lua_pushnumber(L, i + 1);
@@ -528,8 +551,53 @@ int skeleton_setToSetupPose(lua_State *L)
     lua_getfield(L, 1, "_skeleton");
     SpineSkeleton *skeletonUserdata = (SpineSkeleton *)luaL_checkudata(L, -1, "SpineSkeleton");
     skeletonUserdata->skeleton->setToSetupPose();
+
     return 0;
 }
+
+int set_fill_color(lua_State *L)
+{
+    lua_getfield(L, 1, "_skeleton");
+    SpineSkeleton *skeletonUserdata = (SpineSkeleton *)luaL_checkudata(L, -1, "SpineSkeleton");
+    lua_pop(L, 1);
+
+    int argCount = lua_gettop(L);
+    double r, g, b, a;
+
+    if (argCount == 2)
+    {
+        double color = luaL_checknumber(L, 2);
+        r = color;
+        g = color;
+        b = color;
+        a = 1;
+    } else if (argCount == 3)
+    {
+        // grayscale
+        double color = luaL_checknumber(L, 2);
+        a = luaL_checknumber(L, 3);
+        r = color;
+        g = color;
+        b = color;
+
+    } else if (argCount == 4)
+    {
+        r = luaL_checknumber(L, 2);
+        g = luaL_checknumber(L, 3);
+        b = luaL_checknumber(L, 4);
+    } else if (argCount == 5)
+    {
+        r = luaL_checknumber(L, 2);
+        g = luaL_checknumber(L, 3);
+        b = luaL_checknumber(L, 4);
+        a = luaL_checknumber(L, 5);
+    }
+
+    skeletonUserdata->skeleton->getColor().set(r, g, b, a);
+
+    return 0;
+}
+
 
 int remove_self(lua_State *L)
 {
@@ -549,23 +617,24 @@ int remove_self(lua_State *L)
      }
 
     SpineSkeleton *skeletonUserdata = (SpineSkeleton *)luaL_checkudata(L, -1, "SpineSkeleton");
+    skeletonUserdata->~SpineSkeleton();
     lua_pop(L, 1);
 
-    // remove skeleton
-    lua_pushnil(L);
-    lua_setfield(L, 1, "_skeleton");
-    lua_pushnil(L);
-    lua_setfield(L, 1, "_proxy");
-    lua_pushnil(L);
-    lua_setfield(L, 1, "_class");
-
     // remove display group
-    skeletonUserdata->group.pushTable();
-    lua_getfield(L, -1, "removeSelf");
-    lua_pushvalue(L, -2);
+    lua_pushstring(L, "_groupmt");
+    lua_rawget(L, 1);
+    lua_pushstring(L, "__index");
+    lua_rawget(L, -2);
+    lua_remove(L, -2);
+    lua_pushvalue(L, 1);
+    lua_pushstring(L, "removeSelf");
+    lua_call(L, 2, 1);
+
+    lua_pushvalue(L, 1);
     lua_call(L, 1, 0);
 
-    skeletonUserdata->~SpineSkeleton();
+    // lua_pushnil(L);
+    // lua_setmetatable(L, 1);
 
     return 0;
 }
@@ -600,55 +669,6 @@ int skeleton_index(lua_State* L) {
         return 1;
     }
 
-    if (strcmp(key, "x") == 0) {
-        skeletonUserdata->group.pushTable();
-        lua_getfield(L, -1, "x");
-        return 1;
-    }
-
-    if (strcmp(key, "y") == 0) {
-        skeletonUserdata->group.pushTable();
-        lua_getfield(L, -1, "y");
-        return 1;
-    }
-
-    if (strcmp(key, "xScale") == 0) {
-        skeletonUserdata->group.pushTable();
-        lua_getfield(L, -1, "xScale");
-        return 1;
-    }
-
-    if (strcmp(key, "yScale") == 0) {
-        skeletonUserdata->group.pushTable();
-        lua_getfield(L, -1, "yScale");
-        return 1;
-    }
-
-    if (strcmp(key, "rotation") == 0) {
-        skeletonUserdata->group.pushTable();
-        lua_getfield(L, -1, "rotation");
-        return 1;
-    }
-
-    if (strcmp(key, "isVisible") == 0) {
-        skeletonUserdata->group.pushTable();
-        lua_getfield(L, -1, "isVisible");
-        return 1;
-    }
-
-    if (strcmp(key, "alpha") == 0) {
-        skeletonUserdata->group.pushTable();
-        lua_getfield(L, -1, "alpha");
-        return 1;
-    }
-
-    if (strcmp(key, "numChildren") == 0) {
-        skeletonUserdata->group.pushTable();
-        lua_getfield(L, -1, "numChildren");
-        return 1;
-    }
-
-
     // Fallback to methods
     lua_getmetatable(L, 1);
     lua_pushvalue(L, 2);
@@ -657,81 +677,35 @@ int skeleton_index(lua_State* L) {
     if (!lua_isnil(L, -1)) {
         return 1;
     }
+
+    lua_pushstring(L, "_groupmt");
+    lua_rawget(L, 1);
+
+    lua_getfield(L, -1, "__index");
+    lua_pushvalue(L, 1);
+    lua_pushvalue(L, 2);
+    lua_call(L, 2, 1);
+    
+    if (!lua_isnil(L, -1)) {
+        return 1;
+    }
+
     return 0;
 }
 
 // __newindex metamethod
 int skeleton_newindex(lua_State* L) {
-    lua_getfield(L, 1, "_skeleton");
-    SpineSkeleton* skeletonUserdata = (SpineSkeleton*)luaL_checkudata(L, -1, "SpineSkeleton");
     const char* key = luaL_checkstring(L, 2);
 
-    if (strcmp(key, "x") == 0) {
-        float x = luaL_checknumber(L, 3);
-        skeletonUserdata->group.pushTable();
-        lua_pushstring(L, "x");
-        lua_pushnumber(L, x);
-        lua_settable(L, -3);
-        return 0;
-    }
-    if (strcmp(key, "y") == 0) {
-        float y = luaL_checknumber(L, 3);
-        skeletonUserdata->group.pushTable();
-        lua_pushstring(L, "y");
-        lua_pushnumber(L, y);
-        lua_settable(L, -3);
-        return 0;
-    }
+    lua_pushstring(L, "_groupmt");
+    lua_rawget(L, 1);
 
-    if (strcmp(key, "xScale") == 0) {
-        float xScale = luaL_checknumber(L, 3);
-        skeletonUserdata->group.pushTable();
-        lua_pushstring(L, "xScale");
-        lua_pushnumber(L, xScale);
-        lua_settable(L, -3);
-        return 0;
-    }
+    lua_getfield(L, -1, "__newindex");
+    lua_pushvalue(L, 1);
+    lua_pushvalue(L, 2);
+    lua_pushvalue(L, 3);
+    lua_call(L, 3, 0);
 
-    if (strcmp(key, "yScale") == 0) {
-        float yScale = luaL_checknumber(L, 3);
-        skeletonUserdata->group.pushTable();
-        lua_pushstring(L, "yScale");
-        lua_pushnumber(L, yScale);
-        lua_settable(L, -3);
-        return 0;
-    }
-
-    if (strcmp(key, "rotation") == 0) {
-        float rotation = luaL_checknumber(L, 3);
-        skeletonUserdata->group.pushTable();
-        lua_pushstring(L, "rotation");
-        lua_pushnumber(L, rotation);
-        lua_settable(L, -3);
-        return 0;
-    }
-
-    if (strcmp(key, "isVisible") == 0) {
-        bool isVisible = lua_toboolean(L, 3);
-        skeletonUserdata->group.pushTable();
-        lua_pushstring(L, "isVisible");
-        lua_pushboolean(L, isVisible);
-        lua_settable(L, -3);
-        return 0;
-    }
-
-    if (strcmp(key, "alpha") == 0) {
-        float alpha = luaL_checknumber(L, 3);
-        skeletonUserdata->group.pushTable();
-        lua_pushstring(L, "alpha");
-        lua_pushnumber(L, alpha);
-        lua_settable(L, -3);
-        return 0;
-    }
-
-
-
-    // Optionally handle other properties or throw an error
-    luaL_error(L, "Attempting to set undefined property '%s'", key);
     return 0;
 }
 

@@ -3,6 +3,9 @@
   "WorkspaceRootPath": "\\\\Mac\\funbox\\plugins\\plugin-spine\\win32\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{79F0CACC-457B-4A25-BC54-81277688C361}|Plugin.vcxproj|\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\IkConstraintTimeline.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{79F0CACC-457B-4A25-BC54-81277688C361}|Plugin.vcxproj|\\\\Mac\\funbox\\plugins\\plugin-spine\\win32\\Plugin\\SimulatorPluginLibrary.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
@@ -70,11 +73,24 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
+              "Title": "IkConstraintTimeline.cpp",
+              "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\IkConstraintTimeline.cpp",
+              "RelativeDocumentMoniker": "..\\shared\\spine\\IkConstraintTimeline.cpp",
+              "ToolTip": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\IkConstraintTimeline.cpp",
+              "RelativeToolTip": "..\\shared\\spine\\IkConstraintTimeline.cpp",
+              "ViewState": "AgIAAIgAAAAAAAAAAAAmwI0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-11-17T19:41:12.656Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "Bone.h",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\Bone.h",
               "RelativeDocumentMoniker": "..\\shared\\spine\\Bone.h",
@@ -82,12 +98,11 @@
               "RelativeToolTip": "..\\shared\\spine\\Bone.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACAAAAAcAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-10T03:29:48.786Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-10T03:29:48.786Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "PhysicsConstraintTimeline.h",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\PhysicsConstraintTimeline.h",
               "RelativeDocumentMoniker": "..\\shared\\spine\\PhysicsConstraintTimeline.h",
@@ -99,7 +114,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "spine_renderer.h",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_renderer.h",
               "RelativeDocumentMoniker": "..\\shared\\spine_renderer.h",
@@ -111,7 +126,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "spine_skeleton.cpp",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_skeleton.cpp",
               "RelativeDocumentMoniker": "..\\shared\\spine_skeleton.cpp",
@@ -123,7 +138,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "spine_renderer.cpp",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_renderer.cpp",
               "RelativeDocumentMoniker": "..\\shared\\spine_renderer.cpp",
@@ -135,7 +150,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "SimulatorPluginLibrary.h",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\win32\\Plugin\\SimulatorPluginLibrary.h",
               "RelativeDocumentMoniker": "Plugin\\SimulatorPluginLibrary.h",
@@ -148,7 +163,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "SimulatorPluginLibrary.cpp",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\win32\\Plugin\\SimulatorPluginLibrary.cpp",
               "RelativeDocumentMoniker": "Plugin\\SimulatorPluginLibrary.cpp",
@@ -160,7 +175,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "spine_texture.h",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_texture.h",
               "RelativeDocumentMoniker": "..\\shared\\spine_texture.h",
@@ -172,7 +187,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 14,
               "Title": "Skin.h",
               "DocumentMoniker": "\\\\mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\Skin.h",
               "RelativeDocumentMoniker": "..\\shared\\spine\\Skin.h",
@@ -184,7 +199,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "spine_skeleton.h",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_skeleton.h",
               "RelativeDocumentMoniker": "..\\shared\\spine_skeleton.h",
@@ -196,7 +211,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 10,
               "Title": "spine_texture.cpp",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_texture.cpp",
               "RelativeDocumentMoniker": "..\\shared\\spine_texture.cpp",
@@ -208,7 +223,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 15,
               "Title": "Animation.h",
               "DocumentMoniker": "\\\\mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\Animation.h",
               "RelativeDocumentMoniker": "..\\shared\\spine\\Animation.h",
@@ -220,7 +235,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 16,
               "Title": "vector",
               "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.42.34430\\include\\vector",
               "ToolTip": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.42.34430\\include\\vector",
@@ -230,7 +245,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 17,
               "Title": "assert.h",
               "DocumentMoniker": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.22621.0\\ucrt\\assert.h",
               "ToolTip": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.22621.0\\ucrt\\assert.h",
@@ -240,7 +255,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 18,
               "Title": "sal.h",
               "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.42.34430\\include\\sal.h",
               "ToolTip": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.42.34430\\include\\sal.h",
@@ -250,7 +265,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 19,
               "Title": "corecrt_wstdio.h",
               "DocumentMoniker": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.22621.0\\ucrt\\corecrt_wstdio.h",
               "ToolTip": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.22621.0\\ucrt\\corecrt_wstdio.h",
@@ -260,7 +275,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 20,
               "Title": "__msvc_sanitizer_annotate_container.hpp",
               "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.42.34430\\include\\__msvc_sanitizer_annotate_container.hpp",
               "ToolTip": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.42.34430\\include\\__msvc_sanitizer_annotate_container.hpp",
@@ -270,7 +285,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 11,
               "Title": "comdef.h",
               "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.42.34430\\include\\comdef.h",
               "ToolTip": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.42.34430\\include\\comdef.h",
@@ -280,7 +295,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 13,
               "Title": "LuaUtils.cpp",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-core\\win32\\Plugin\\LuaUtils.cpp",
               "RelativeDocumentMoniker": "..\\..\\plugin-core\\win32\\Plugin\\LuaUtils.cpp",
@@ -292,7 +307,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 12,
               "Title": "Utils.h",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-core\\win32\\Utils.h",
               "RelativeDocumentMoniker": "..\\..\\plugin-core\\win32\\Utils.h",
