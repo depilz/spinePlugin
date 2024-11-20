@@ -15,6 +15,17 @@ LuaTableHolder::LuaTableHolder(lua_State *L)
     saveReference();
 }
 
+// Constructor from a given index
+LuaTableHolder::LuaTableHolder(lua_State *L, int index)
+    : L_(L), ref_(LUA_NOREF)
+{
+    lua_pushvalue(L, index);
+    saveReference();
+
+    // Pop the table from the stack
+    lua_pop(L, 1);
+}
+
 // Destructor: Releases the Lua table reference if valid
 LuaTableHolder::~LuaTableHolder()
 {
@@ -88,11 +99,6 @@ void LuaTableHolder::saveReference()
 {
     if (L_)
     {
-        // If there's no table on the stack, create a new table
-        if (lua_type(L_, -1) != LUA_TTABLE)
-        {
-            lua_newtable(L_);
-        }
         ref_ = luaL_ref(L_, LUA_REGISTRYINDEX);
         if (ref_ == LUA_REFNIL)
         {

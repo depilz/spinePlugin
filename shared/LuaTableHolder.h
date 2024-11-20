@@ -12,6 +12,9 @@ public:
     // Constructor that creates a new Lua table and stores a reference
     LuaTableHolder(lua_State *L);
 
+    // Constructor providing index
+    LuaTableHolder(lua_State *L, int index);
+
     // Destructor: Releases the Lua table reference if valid
     ~LuaTableHolder();
 

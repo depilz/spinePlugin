@@ -67,6 +67,58 @@ public:
 
 };
 
+// injected object
+// if an object is injected into the skeleton, it will be set to the corresponding slot and will trigger the listener on every update
+// it is used as follows:
+// injection:set("slotName", object, luaListener)
+// where object is a display object
+// then later in the render we first get the slot name and keep an eye on it
+// injection:getSlotName()
+// once we find the slot, we call the listener with sharing the relevant information
+// injection:pushListener()
+class InjectedObject
+{
+private:
+    std::string slotName;
+    LuaTableHolder object;
+    LuaTableHolder listener;
+
+public:
+    void set(const std::string &slotName, LuaTableHolder &object, LuaTableHolder &listener)
+    {
+        this->slotName = slotName;
+        this->object = std::move(object);
+        this->listener = std::move(listener);
+    }
+
+    void clear()
+    {
+        object.releaseTable();
+        listener.releaseTable();
+    }
+
+    const std::string &getSlotName() const
+    {
+        return slotName;
+    }
+
+    void pushListener()
+    {
+        listener.pushTable();
+    }
+
+    void pushObject()
+    {
+        object.pushTable();
+    }
+
+    bool isEmpty()
+    {
+        return slotName.empty();
+    }
+};
+
+
 // SpineSkeleton structure holds various Spine-related objects and Lua tables
 struct SpineSkeleton
 {
@@ -76,6 +128,7 @@ struct SpineSkeleton
     spine::Atlas *atlas;
     spine::SkeletonData *skeletonData;
     LuaAnimationStateListener *stateListener;
+    InjectedObject injection;
 
     MeshManager meshes;
     std::vector<int> meshIndices;
@@ -84,7 +137,8 @@ struct SpineSkeleton
     SpineSkeleton(lua_State *L)
         : skeleton(nullptr), state(nullptr), stateData(nullptr),
           atlas(nullptr), skeletonData(nullptr),
-          meshes(100), meshIndices(100)
+          meshes(20), meshIndices(20),
+          stateListener(nullptr), injection()
     {
     }
 
@@ -143,6 +197,13 @@ struct SpineSkeleton
 
             meshIndices.clear();
             meshes.clear();
+            injection.clear();
+
+            if (stateListener)
+            {
+                delete stateListener;
+                stateListener = nullptr;
+            }
 
             skeleton = nullptr;
             state = nullptr;
@@ -165,16 +226,17 @@ int skeleton_gc(lua_State *L);
 
 int update_state(lua_State *L);
 int skeleton_draw(lua_State *L);
-int skeleton_setTimeScale(lua_State *L);
-int skeleton_getTimeScale(lua_State *L);
+int set_time_scale(lua_State *L);
+int get_time_scale(lua_State *L);
 int skeleton_stop(lua_State *L);
 int set_fill_color(lua_State *L);
 int remove_self(lua_State *L);
 
-int skeleton_setAnimation(lua_State *L);
-int skeleton_addAnimation(lua_State *L);
-int skeleton_findAnimation(lua_State *L);
-int skeleton_getAllAnimations(lua_State *L);
+int set_animation(lua_State *L);
+int add_animation(lua_State *L);
+int find_animation(lua_State *L);
+int get_all_animations(lua_State *L);
+int get_all_slots(lua_State *L);
 
 int physics_rotate(lua_State *L);
 int physics_translate(lua_State *L);
@@ -182,12 +244,15 @@ int physics_translate(lua_State *L);
 int set_default_mix(lua_State *L);
 int set_mix(lua_State *L);
 
-int skeleton_getAllSkins(lua_State *L);
-int skeleton_setSkin(lua_State *L);
+int get_all_skins(lua_State *L);
+int set_skin(lua_State *L);
 
 int skeleton_setToSetupPose(lua_State *L);
 
 int skeleton_setAttachment(lua_State *L);
+
+int inject_object(lua_State *L);
+int eject_object(lua_State *L);
 
 SkeletonData *SkeletonJson_readSkeletonDataFile(const char *filename, Atlas *atlas, float scale);
 SkeletonData *SkeletonBinary_readSkeletonDataFile(const char *filename, Atlas *atlas, float scale);
