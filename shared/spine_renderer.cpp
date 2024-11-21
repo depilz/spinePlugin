@@ -3,24 +3,6 @@
 
 void engine_updateMesh(lua_State *L, LuaTableHolder *meshHolder, float *positions, size_t numVertices, float *uvs, unsigned short *indices, size_t numIndices, Texture *texture, spine::BlendMode blendMode, uint32_t *colors)
 {
-    // get the resources directory from the system using the Lua API
-    lua_getglobal(L, "system");
-    lua_getfield(L, -1, "pathForFile");
-    lua_pushstring(L, "");
-    lua_call(L, 1, 1); // Call 'system.getPathForFile("", system.ResourceDirectory)', expecting 1 result
-    const char* resourcesDir = lua_tostring(L, -1);
-    lua_pop(L, 1); // Pop the result
-    lua_pop(L, 1); // Pop the system object
-
-    
-    // remove the resources directory from the Texture->path
-    std::string texturePath = texture->path;
-    const char* texturePathStart = strstr(texturePath.c_str(), resourcesDir);
-    if (texturePathStart != NULL)
-    {
-        texturePath = texturePathStart + strlen(resourcesDir);
-    }
-
     meshHolder->pushTable();
     lua_getfield(L, -1, "path");
     lua_getfield(L, -1, "update");
@@ -30,14 +12,14 @@ void engine_updateMesh(lua_State *L, LuaTableHolder *meshHolder, float *position
     lua_remove(L, -3); // remove the mesh table
 
     // create the mesh parameters
-    lua_newtable(L);
+    lua_createtable(L, 0, 2);
 
     // create the vertices table
     double minX = 99999999;
     double minY = 99999999;
     double maxX = -99999999;
     double maxY = -99999999;
-    lua_newtable(L);
+    lua_createtable(L, numVertices * 2, 0);
     for (size_t i = 0; i < numIndices; ++i)
     {
         if (positions[indices[i] * 2] < minX) minX = positions[indices[i] * 2];
@@ -52,7 +34,7 @@ void engine_updateMesh(lua_State *L, LuaTableHolder *meshHolder, float *position
     lua_setfield(L, -2, "vertices");
 
     // create the uvs table
-    lua_newtable(L);
+    lua_createtable(L, numVertices * 2, 0);
     for (size_t i = 0; i < numIndices; ++i)
     {
         lua_pushnumber(L, uvs[indices[i] * 2]);
@@ -62,21 +44,11 @@ void engine_updateMesh(lua_State *L, LuaTableHolder *meshHolder, float *position
     }
     lua_setfield(L, -2, "uvs");
 
-    // create the indices table
-    lua_newtable(L);
-    for (size_t i = 0; i < numIndices; ++i)
-    {
-        lua_pushnumber(L, indices[i] + 1);
-        lua_rawseti(L, -2, i + 1);
-    }
-    lua_setfield(L, -2, "indices");
-
     lua_call(L, 2, 0);
 
     meshHolder->pushTable();
-    int meshIndex = lua_gettop(L);
 
-    lua_pushvalue(L, meshIndex);                           // Push mesh
+    lua_pushvalue(L, -1);                           // Push mesh
 
     // offsetx
     lua_pushnumber(L, (minX + maxX) / 2);                 // Push x
@@ -85,34 +57,6 @@ void engine_updateMesh(lua_State *L, LuaTableHolder *meshHolder, float *position
     // offsety
     lua_pushnumber(L, - (minY + maxY) / 2);                 // Push y
     lua_setfield(L, -2, "y");                              // mesh.y = y
-
-    // lua_newtable(L);
-    // lua_pushstring(L, "type");
-    // lua_pushstring(L, "image");
-    // lua_settable(L, -3);
-    // lua_pushstring(L, "filename");
-    // lua_pushstring(L, texturePath.c_str());
-    // lua_settable(L, -3);
-    // lua_setfield(L, meshIndex, "fill");
-
-    // set color with mesh.setFillColor
-    // meshHolder->pushTable();
-    // lua_getfield(L, -1, "setFillColor");         // Push mesh.setFillColor
-    // meshHolder->pushTable();
-    // lua_remove(L, -3);
-
-    // uint32_t color = colors[0];
-    // float r = ((color >> 16) & 0xff) / 255.0f;
-    // float g = ((color >> 8) & 0xff) / 255.0f;
-    // float b = (color & 0xff) / 255.0f;
-    // float a = ((color >> 24) & 0xff) / 255.0f;
-
-    // lua_pushnumber(L, r);                                // Push r
-    // lua_pushnumber(L, g);                                // Push g
-    // lua_pushnumber(L, b);                                // Push b
-    // lua_pushnumber(L, a);                                // Push a
-
-    // lua_call(L, 5, 0);                // Call setFillColor(self, r, g, b, a)
 
     lua_pop(L, 1); // pop the mesh
 }
@@ -152,7 +96,7 @@ void engine_drawMesh(lua_State *L, float *positions, size_t numVertices, float *
     lua_pushnumber(L, 0); // y
 
     // create the mesh parameters
-    lua_newtable(L);
+    lua_createtable(L, 0, 5);
 
     // set the mode
     lua_pushstring(L, "triangles");
@@ -165,7 +109,7 @@ void engine_drawMesh(lua_State *L, float *positions, size_t numVertices, float *
     double minY = 99999999;
     double maxX = -99999999;
     double maxY = -99999999;
-    lua_newtable(L);
+    lua_createtable(L, numVertices * 2, 0);
     for (size_t i = 0; i < numIndices; ++i)
     {
         if (positions[indices[i] * 2] < minX) minX = positions[indices[i] * 2];
@@ -180,7 +124,7 @@ void engine_drawMesh(lua_State *L, float *positions, size_t numVertices, float *
     lua_setfield(L, -2, "vertices");
 
     // create the uvs table
-    lua_newtable(L);
+    lua_createtable(L, numVertices * 2, 0);
     for (size_t i = 0; i < numIndices; ++i)
     {
         lua_pushnumber(L, uvs[indices[i] * 2]);
@@ -190,15 +134,13 @@ void engine_drawMesh(lua_State *L, float *positions, size_t numVertices, float *
     }
     lua_setfield(L, -2, "uvs");
 
-    // create the indices table
-    lua_newtable(L);
-    for (size_t i = 0; i < numIndices; ++i)
-    {
-        lua_pushnumber(L, indices[i] + 1);
-        lua_rawseti(L, -2, i + 1);
-    }
-    lua_setfield(L, -2, "indices");
+    // offsetx
+    lua_pushnumber(L, (minX + maxX) / 2); // Push x
+    lua_setfield(L, -2, "x");             // mesh.x = x
 
+    // offsety
+    lua_pushnumber(L, -(minY + maxY) / 2); // Push y
+    lua_setfield(L, -2, "y");              // mesh.y = y
 
     if (lua_pcall(L, 3, 1, 0) != 0) // Call 'newMesh' with 3 args, expecting 1 result
     {
@@ -214,18 +156,10 @@ void engine_drawMesh(lua_State *L, float *positions, size_t numVertices, float *
 
     lua_pushvalue(L, meshIndex);                           // Push mesh
 
-    // offsetx
-    lua_pushnumber(L, (minX + maxX) / 2);                 // Push x
-    lua_setfield(L, -2, "x");                              // mesh.x = x
-
-    // offsety
-    lua_pushnumber(L, - (minY + maxY) / 2);                 // Push y
-    lua_setfield(L, -2, "y");                              // mesh.y = y
-
     // lua_pop(L, 3); // Pop y, x, and mesh.path.getVertexOffset
 
     // force texture { type "image", filename = "raptor.png"} on mesh.fill
-    lua_newtable(L);
+    lua_createtable(L, 0, 2);
     lua_pushstring(L, "type");
     lua_pushstring(L, "image");
     lua_settable(L, -3);

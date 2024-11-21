@@ -110,25 +110,6 @@ int create(lua_State *L)
     lua_getmetatable(L, -2);
     lua_rawset(L, -3);
 
-    // check if proxy mt is available
-    luaL_getmetatable(L, "Proxy");
-    if (lua_isnil(L, -1))
-    {
-        printf("Proxy metatable not found\n");
-    } else {
-        printf("Proxy metatable found\n");
-        lua_pop(L, 1);
-    }
-
-    // luaL_getmetatable(L, "ProxyConstant");
-    // if (lua_isnil(L, -1))
-    // {
-    //     printf("ProxyConstant metatable not found\n");
-    // } else {
-    //     printf("ProxyConstant metatable found\n");
-    //     lua_pop(L, 1);
-    // }
-
     get_spineObject_metatable(L);
     lua_setmetatable(L, -2);
 
@@ -597,7 +578,7 @@ int skeleton_render(lua_State *L, SpineSkeleton * skeletonUserdata)
         injection.pushListener();
         injection.pushObject();
 
-        lua_newtable(L);
+        lua_createtable(L, 0, 7);
         lua_pushstring(L, "slot");
         lua_pushstring(L, slotName);
         lua_settable(L, -3);
