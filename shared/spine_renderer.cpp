@@ -1,7 +1,7 @@
 #include "spine_renderer.h"
 #include "CoronaGraphics.h"
 
-void engine_updateMesh(lua_State *L, LuaTableHolder *meshHolder, float *positions, size_t numVertices, float *uvs, unsigned short *indices, size_t numIndices, Texture *texture, spine::BlendMode blendMode, uint32_t *colors)
+void engine_updateMesh(lua_State *L, LuaTableHolder *meshHolder, float *positions, size_t numVertices, float *uvs, unsigned short *indices, size_t numIndices, LuaTableHolder *texture, spine::BlendMode blendMode, uint32_t *colors)
 {
     meshHolder->pushTable();
     lua_getfield(L, -1, "path");
@@ -48,50 +48,23 @@ void engine_updateMesh(lua_State *L, LuaTableHolder *meshHolder, float *position
 
     meshHolder->pushTable();
 
-    lua_pushvalue(L, -1);                           // Push mesh
+    lua_pushvalue(L, -1);
 
-    // offsetx
-    lua_pushnumber(L, (minX + maxX) / 2);                 // Push x
-    lua_setfield(L, -2, "x");                              // mesh.x = x
+    lua_pushnumber(L, (minX + maxX) / 2);
+    lua_setfield(L, -2, "x");
 
-    // offsety
-    lua_pushnumber(L, - (minY + maxY) / 2);                 // Push y
-    lua_setfield(L, -2, "y");                              // mesh.y = y
+    lua_pushnumber(L, - (minY + maxY) / 2);
+    lua_setfield(L, -2, "y");
 
     lua_pop(L, 1); // pop the mesh
 }
 
-void engine_drawMesh(lua_State *L, float *positions, size_t numVertices, float *uvs, unsigned short *indices, size_t numIndices, Texture *texture, spine::BlendMode blendMode, uint32_t *colors)
+void engine_drawMesh(lua_State *L, float *positions, size_t numVertices, float *uvs, unsigned short *indices, size_t numIndices, LuaTableHolder *texture, spine::BlendMode blendMode, uint32_t *colors)
 {
-    // get the resources directory from the system using the Lua API
-    lua_getglobal(L, "system");
-    lua_getfield(L, -1, "pathForFile");
-    lua_pushstring(L, "");
-    lua_call(L, 1, 1); // Call 'system.getPathForFile("", system.ResourceDirectory)', expecting 1 result
-    const char* resourcesDir = lua_tostring(L, -1);
-    lua_pop(L, 1); // Pop the result
-    lua_pop(L, 1); // Pop the system object
-
-    
-    // remove the resources directory from the Texture->path
-    std::string texturePath = texture->path;
-    const char* texturePathStart = strstr(texturePath.c_str(), resourcesDir);
-    if (texturePathStart != NULL)
-    {
-        texturePath = texturePathStart + strlen(resourcesDir);
-    }
-
-
-    // first get the global display object
     lua_getglobal(L, "display");
-
-    // get the newRect function from the display object
     lua_getfield(L, -1, "newMesh");
-
-    // remove the display object from the stack
     lua_remove(L, -2);
 
-    // create the mesh
     lua_pushnumber(L, 0); // x
     lua_pushnumber(L, 0); // y
 
@@ -101,7 +74,6 @@ void engine_drawMesh(lua_State *L, float *positions, size_t numVertices, float *
     // set the mode
     lua_pushstring(L, "triangles");
     lua_setfield(L, -2, "mode");
-
 
     // create the vertices table
     // { x, y, x2, y2, x3, y3, ... }
@@ -134,15 +106,13 @@ void engine_drawMesh(lua_State *L, float *positions, size_t numVertices, float *
     }
     lua_setfield(L, -2, "uvs");
 
-    // offsetx
-    lua_pushnumber(L, (minX + maxX) / 2); // Push x
-    lua_setfield(L, -2, "x");             // mesh.x = x
+    lua_pushnumber(L, (minX + maxX) / 2);
+    lua_setfield(L, -2, "x");
 
-    // offsety
-    lua_pushnumber(L, -(minY + maxY) / 2); // Push y
-    lua_setfield(L, -2, "y");              // mesh.y = y
+    lua_pushnumber(L, -(minY + maxY) / 2);
+    lua_setfield(L, -2, "y");
 
-    if (lua_pcall(L, 3, 1, 0) != 0) // Call 'newMesh' with 3 args, expecting 1 result
+    if (lua_pcall(L, 3, 1, 0) != 0) // Call display.newMesh(x, y, { vertices = vertices, uvs = uvs })
     {
         // Handle Lua error
         const char* error = lua_tostring(L, -1);
@@ -151,25 +121,13 @@ void engine_drawMesh(lua_State *L, float *positions, size_t numVertices, float *
         return;
     }
 
-    // 'mesh' is now on top of the stack
     int meshIndex = lua_gettop(L);
+    lua_pushvalue(L, meshIndex);
 
-    lua_pushvalue(L, meshIndex);                           // Push mesh
-
-    // lua_pop(L, 3); // Pop y, x, and mesh.path.getVertexOffset
-
-    // force texture { type "image", filename = "raptor.png"} on mesh.fill
-    lua_createtable(L, 0, 2);
-    lua_pushstring(L, "type");
-    lua_pushstring(L, "image");
-    lua_settable(L, -3);
-    lua_pushstring(L, "filename");
-    lua_pushstring(L, texturePath.c_str());
-    lua_settable(L, -3);
+    // mesh.fill = { type "image", filename = "raptor.png"}
+    texture->pushTable();
     lua_setfield(L, meshIndex, "fill");
 
-
-    // set color with mesh.setFillColor
     lua_getfield(L, meshIndex, "setFillColor");         // Push mesh.setFillColor
     lua_pushvalue(L, meshIndex);                         // Push mesh as 'self'
 
@@ -194,7 +152,6 @@ void engine_drawMesh(lua_State *L, float *positions, size_t numVertices, float *
         return;
     }
 
-    // set the blend mode > mesh.blendMode "normal""add""multiply""sScreen"
     lua_pushstring(L, "blendMode");
     switch (blendMode)
     {
