@@ -16,7 +16,9 @@ static PluginSpine *plugin;
 // Implement the open function
 - (int)open:(lua_State*)L {
     const luaL_Reg lua_functions[] = {
-        {"create", create}, // 'create' function from 'spine_skeleton.cpp'
+        {"loadAtlas", load_atlas},
+        {"loadSkeletonData", load_skeleton_data},
+        {"create", create},
         {NULL, NULL}
     };
 

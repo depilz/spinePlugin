@@ -21,9 +21,6 @@ LuaTableHolder::LuaTableHolder(lua_State *L, int index)
 {
     lua_pushvalue(L, index);
     saveReference();
-
-    // Pop the table from the stack
-    lua_pop(L, 1);
 }
 
 // Destructor: Releases the Lua table reference if valid

@@ -5,7 +5,7 @@
 class LuaAnimationStateListener : public spine::AnimationStateListenerObject
 {
 public:
-    LuaAnimationStateListener(lua_State *L, int listener) : L(L), listener(listener) {}
+    LuaAnimationStateListener(lua_State *L, int listenerRef) : L(L), listenerRef(listenerRef) {}
 
     void callback(spine::AnimationState *state, spine::EventType type, spine::TrackEntry *entry, spine::Event *event) override
     {
@@ -39,12 +39,17 @@ public:
         default:
             break;
         }
-        
 
-        LuaUtils::dispatchEvent(listener, luaEvent);
+        LuaUtils::dispatchEvent(listenerRef, luaEvent);
+    }
+
+    // destructor
+    ~LuaAnimationStateListener()
+    {
+        luaL_unref(L, LUA_REGISTRYINDEX, listenerRef);
     }
 
 private:
     lua_State *L;
-    int listener;
+    int listenerRef;
 };

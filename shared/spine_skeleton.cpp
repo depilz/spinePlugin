@@ -2,56 +2,39 @@
 #include "spine_texture.h"
 #include "spine_renderer.h"
 #include "LuaUtils.h"
+#include "DataHolder.h"
+#include "SkeletonDataHolder.h"
 #include <spine/Extension.h>
 #include <vector> // Include for std::vector
 
-int create(lua_State *L)
+template class DataHolder<Atlas>;
+
+// spine.loadAtlas(absPath)
+int load_atlas(lua_State *L)
 {
-    // Parse parameters from Lua
-    if (!lua_istable(L, 1))
-    {
-        luaL_error(L, "Expected parameter table");
-        return 0;
-    }
+    const char *atlasFile = luaL_checkstring(L, 1);
 
-    lua_getfield(L, 1, "skeletonFile");
-    const char *skeletonFile = lua_tostring(L, -1);
-    lua_pop(L, 1);
-
-    lua_getfield(L, 1, "atlasFile");
-    const char *atlasFile = lua_tostring(L, -1);
-    lua_pop(L, 1);
-
-    lua_getfield(L, 1, "scale");
-    float scale = lua_isnumber(L, -1) ? lua_tonumber(L, -1) : 1.0f;
-    lua_pop(L, 1);
-
-    // check if lua listener is provided
-    lua_getfield(L, 1, "listener");
-    int lua_listener;
-    if (lua_isfunction(L, -1))
-    {
-        lua_listener = luaL_ref(L, LUA_REGISTRYINDEX);
-    }
-    else
-    {
-        lua_pop(L, 1);
-    }
-
-    if (!skeletonFile || !atlasFile)
-    {
-        luaL_error(L, "skeletonFile and atlasFile are required");
-        return 0;
-    }
-
-    // Create a custom texture loader
     SpineTextureLoader *textureLoader = new SpineTextureLoader();
 
-    // Load the atlas
-    Atlas *atlas = new Atlas(atlasFile, textureLoader);
+    auto *atlas = new Atlas(atlasFile, textureLoader);
+    auto atlasUserdata = std::make_shared<DataHolder<Atlas>>(atlas);
 
-    // Load skeleton data
-    // is it a json or binary file?
+    DataHolder<Atlas>::push(L, atlasUserdata);
+
+    return 1;
+}
+
+// spine.loadSkeletonData(absPath, atlas[, scale])
+int load_skeleton_data(lua_State *L)
+{
+    const char *skeletonFile = luaL_checkstring(L, 1);
+
+    // get the atlas userdata
+    auto atlasUserdata = DataHolder<Atlas>::check(L, 2);
+    Atlas *atlas = atlasUserdata->getObject();
+
+    float scale = luaL_optnumber(L, 3, 1.0f);
+
     SkeletonData *skeletonData = nullptr;
     if (strstr(skeletonFile, ".json"))
     {
@@ -65,9 +48,29 @@ int create(lua_State *L)
     if (!skeletonData)
     {
         luaL_error(L, "Failed to load skeleton data");
-        delete atlas;
-        delete textureLoader;
         return 0;
+    }
+
+    auto skeletonDataUserdata = std::make_shared<SkeletonDataHolder>(skeletonData, L, 2);
+
+    DataHolder<SkeletonData>::push(L, skeletonDataUserdata);
+
+    return 1;
+}
+
+// spine.create(skeletonData [,listener])
+int create(lua_State *L)
+{
+    bool hasListener = lua_gettop(L) > 1 && !lua_isnil(L, 2);
+
+    auto skeletonDataUserdata = DataHolder<SkeletonData>::check(L, 1);
+    SkeletonData *skeletonData = skeletonDataUserdata->getObject();
+
+    int listenerRef;
+    if (hasListener)
+    {
+        luaL_checktype(L, 2, LUA_TFUNCTION);
+        listenerRef = luaL_ref(L, LUA_REGISTRYINDEX);
     }
 
     // Create skeleton and animation state
@@ -81,19 +84,21 @@ int create(lua_State *L)
     skeletonUserdata->skeleton = skeleton;
     skeletonUserdata->state = state;
     skeletonUserdata->stateData = stateData;
-    skeletonUserdata->atlas = atlas;
     skeletonUserdata->skeletonData = skeletonData;
 
-    if (lua_listener)
+    lua_pushvalue(L, 1);
+    skeletonUserdata->skeletonDataRef = luaL_ref(L, LUA_REGISTRYINDEX);
+
+    if (hasListener)
     {
-        LuaAnimationStateListener *stateListener = new LuaAnimationStateListener(L, lua_listener);
+        LuaAnimationStateListener *stateListener = new LuaAnimationStateListener(L, listenerRef);
+        skeletonUserdata->stateListener = stateListener;
         state->setListener(stateListener);
     }
 
     // Set metatable
     get_skeleton_metatable(L);
     lua_setmetatable(L, -2);
-
 
     // attach a display group to our userdata
     lua_getglobal(L, "display");
@@ -106,9 +111,14 @@ int create(lua_State *L)
     lua_rawset(L, -3);
 
     // Set the metatable
-    lua_pushstring(L, "_groupmt");
-    lua_getmetatable(L, -2);
-    lua_rawset(L, -3);
+    lua_getmetatable(L, -1);
+    lua_getfield(L, -1, "__index");
+    skeletonUserdata->groupmt__index = new LuaTableHolder(L);
+
+    lua_getfield(L, -1, "__newindex");
+    skeletonUserdata->groupmt__newindex = new LuaTableHolder(L);
+
+    lua_pop(L, 1);
 
     get_spineObject_metatable(L);
     lua_setmetatable(L, -2);
@@ -517,6 +527,8 @@ int skeleton_render(lua_State *L, SpineSkeleton * skeletonUserdata)
         uint32_t *colors = command->colors;
         uint16_t *indices = command->indices;
         Texture *texture = (Texture *)command->texture;
+        size_t numVertices = command->numVertices;
+        size_t numIndices = command->numIndices;
 
         BlendMode blendMode = command->blendMode;
 
@@ -525,7 +537,7 @@ int skeleton_render(lua_State *L, SpineSkeleton * skeletonUserdata)
         if (existingMesh)
         {
             LuaTableHolder &mesh = meshes[i];
-            if(meshIndices[i] != command->numIndices)
+            if(meshIndices[i] != numIndices)
             {
                 engine_removeMesh(L, &mesh);
                 existingMesh = false;
@@ -533,13 +545,13 @@ int skeleton_render(lua_State *L, SpineSkeleton * skeletonUserdata)
             } 
             else
             {   
-                engine_updateMesh(L, &mesh, command->positions, command->numVertices, command->uvs, command->indices, command->numIndices, texture, blendMode, command->colors);
+                engine_updateMesh(L, &mesh, positions, numVertices, uvs, indices, numIndices, texture, blendMode, colors);
             }
         }
 
         if (!existingMesh)
         {
-            engine_drawMesh(L, command->positions, command->numVertices, command->uvs, command->indices, command->numIndices, texture, blendMode, command->colors);
+            engine_drawMesh(L, positions, numVertices, uvs, indices, numIndices, texture, blendMode, colors);
 
             lua_pushvalue(L, 1);
             lua_getfield(L, -1, "insert");
@@ -551,7 +563,7 @@ int skeleton_render(lua_State *L, SpineSkeleton * skeletonUserdata)
 
             // initialize mesh
             meshes.setMesh(L, i);
-            meshIndices[i] = command->numIndices;
+            meshIndices[i] = numIndices;
 
             lua_pop(L, 1);
         }
@@ -567,11 +579,9 @@ int skeleton_render(lua_State *L, SpineSkeleton * skeletonUserdata)
         i++;
     }
 
-    // print injection is existing
     auto &injection = skeletonUserdata->injection;
     if (!injection.isEmpty())
     {
-        // get slot by name
         const char *slotName = injection.getSlotName().c_str();
         Slot *slot = skeleton->findSlot(slotName);
 
@@ -691,15 +701,10 @@ int remove_self(lua_State *L)
      }
 
     SpineSkeleton *skeletonUserdata = (SpineSkeleton *)luaL_checkudata(L, -1, "SpineSkeleton");
-    skeletonUserdata->~SpineSkeleton();
     lua_pop(L, 1);
 
     // remove display group
-    lua_pushstring(L, "_groupmt");
-    lua_rawget(L, 1);
-    lua_pushstring(L, "__index");
-    lua_rawget(L, -2);
-    lua_remove(L, -2);
+    skeletonUserdata->groupmt__index->pushTable();
     lua_pushvalue(L, 1);
     lua_pushstring(L, "removeSelf");
     lua_call(L, 2, 1);
@@ -709,6 +714,8 @@ int remove_self(lua_State *L)
 
     // lua_pushnil(L);
     // lua_setmetatable(L, 1);
+
+    skeletonUserdata->~SpineSkeleton();
 
     return 0;
 }
@@ -752,10 +759,7 @@ int skeleton_index(lua_State* L) {
         return 1;
     }
 
-    lua_pushstring(L, "_groupmt");
-    lua_rawget(L, 1);
-
-    lua_getfield(L, -1, "__index");
+    skeletonUserdata->groupmt__index->pushTable();
     lua_pushvalue(L, 1);
     lua_pushvalue(L, 2);
     lua_call(L, 2, 1);
@@ -769,12 +773,12 @@ int skeleton_index(lua_State* L) {
 
 // __newindex metamethod
 int skeleton_newindex(lua_State* L) {
-    const char* key = luaL_checkstring(L, 2);
-
-    lua_pushstring(L, "_groupmt");
+    lua_pushstring(L, "_skeleton");
     lua_rawget(L, 1);
 
-    lua_getfield(L, -1, "__newindex");
+    SpineSkeleton* skeletonUserdata = (SpineSkeleton*)luaL_checkudata(L, -1, "SpineSkeleton");
+
+    skeletonUserdata->groupmt__newindex->pushTable();
     lua_pushvalue(L, 1);
     lua_pushvalue(L, 2);
     lua_pushvalue(L, 3);

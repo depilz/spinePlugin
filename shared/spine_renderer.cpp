@@ -7,9 +7,9 @@ void engine_updateMesh(lua_State *L, LuaTableHolder *meshHolder, float *position
     lua_getfield(L, -1, "path");
     lua_getfield(L, -1, "update");
 
-    lua_pushvalue(L, -2); // push the mesh table
-    lua_remove(L, -3); // remove the path table
-    lua_remove(L, -3); // remove the mesh table
+    lua_pushvalue(L, -2);
+    lua_remove(L, -3);
+    lua_remove(L, -3);
 
     // create the mesh parameters
     lua_createtable(L, 0, 2);

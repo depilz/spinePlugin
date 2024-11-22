@@ -78,7 +78,7 @@
 		920C36962CD7C8E400CD52FA /* PhysicsConstraint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 920C36032CD7C8E400CD52FA /* PhysicsConstraint.cpp */; };
 		920C36972CD7C8E400CD52FA /* TransformConstraint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 920C363B2CD7C8E400CD52FA /* TransformConstraint.cpp */; };
 		920C36982CD7C8E400CD52FA /* PhysicsConstraintTimeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 920C36072CD7C8E400CD52FA /* PhysicsConstraintTimeline.cpp */; };
-		92E9B00C2CEA54A4002B875C /* LuaUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92E9B00B2CEA54A4002B875C /* LuaUtils.cpp */; };
+		92CF7FA52CF02304009B36D8 /* LuaUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92CF7FA42CF02304009B36D8 /* LuaUtils.cpp */; };
 		92E9B00D2CEA54A4002B875C /* LuaTableHolder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92E9B0092CEA54A4002B875C /* LuaTableHolder.cpp */; };
 /* End PBXBuildFile section */
 
@@ -260,11 +260,13 @@
 		920C364F2CD7C8E400CD52FA /* spine_skeleton.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = spine_skeleton.cpp; sourceTree = "<group>"; };
 		920C36502CD7C8E400CD52FA /* spine_texture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = spine_texture.h; sourceTree = "<group>"; };
 		920C36512CD7C8E400CD52FA /* spine_texture.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = spine_texture.cpp; sourceTree = "<group>"; };
+		9261E94A2CF0C52C0044A3E3 /* DataHolder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataHolder.h; sourceTree = "<group>"; };
+		9261E94B2CF0C52C0044A3E3 /* SkeletonDataHolder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SkeletonDataHolder.h; sourceTree = "<group>"; };
+		92CF7FA32CF02304009B36D8 /* LuaUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LuaUtils.h; sourceTree = "<group>"; };
+		92CF7FA42CF02304009B36D8 /* LuaUtils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LuaUtils.cpp; sourceTree = "<group>"; };
 		92E9B0072CEA54A4002B875C /* lua_animation_state_listener.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = lua_animation_state_listener.h; sourceTree = "<group>"; };
 		92E9B0082CEA54A4002B875C /* LuaTableHolder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LuaTableHolder.h; sourceTree = "<group>"; };
 		92E9B0092CEA54A4002B875C /* LuaTableHolder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LuaTableHolder.cpp; sourceTree = "<group>"; };
-		92E9B00A2CEA54A4002B875C /* LuaUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LuaUtils.h; sourceTree = "<group>"; };
-		92E9B00B2CEA54A4002B875C /* LuaUtils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LuaUtils.cpp; sourceTree = "<group>"; };
 		A4E253B6166D6FB300DCDC2C /* libplugin_spine.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libplugin_spine.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F572F81A1EE0705B001BC814 /* CoronaNative.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CoronaNative.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -455,11 +457,13 @@
 				920C364F2CD7C8E400CD52FA /* spine_skeleton.cpp */,
 				920C36502CD7C8E400CD52FA /* spine_texture.h */,
 				920C36512CD7C8E400CD52FA /* spine_texture.cpp */,
-				92E9B0072CEA54A4002B875C /* lua_animation_state_listener.h */,
 				92E9B0082CEA54A4002B875C /* LuaTableHolder.h */,
 				92E9B0092CEA54A4002B875C /* LuaTableHolder.cpp */,
-				92E9B00A2CEA54A4002B875C /* LuaUtils.h */,
-				92E9B00B2CEA54A4002B875C /* LuaUtils.cpp */,
+				92E9B0072CEA54A4002B875C /* lua_animation_state_listener.h */,
+				92CF7FA32CF02304009B36D8 /* LuaUtils.h */,
+				92CF7FA42CF02304009B36D8 /* LuaUtils.cpp */,
+				9261E94A2CF0C52C0044A3E3 /* DataHolder.h */,
+				9261E94B2CF0C52C0044A3E3 /* SkeletonDataHolder.h */,
 			);
 			name = shared;
 			path = ../shared;
@@ -612,7 +616,6 @@
 				920C367A2CD7C8E400CD52FA /* Animation.cpp in Sources */,
 				920C367B2CD7C8E400CD52FA /* MeshAttachment.cpp in Sources */,
 				920C367C2CD7C8E400CD52FA /* PathAttachment.cpp in Sources */,
-				92E9B00C2CEA54A4002B875C /* LuaUtils.cpp in Sources */,
 				92E9B00D2CEA54A4002B875C /* LuaTableHolder.cpp in Sources */,
 				920C367D2CD7C8E400CD52FA /* IkConstraint.cpp in Sources */,
 				920C367E2CD7C8E400CD52FA /* Json.cpp in Sources */,
@@ -625,6 +628,7 @@
 				920C36852CD7C8E400CD52FA /* AttachmentLoader.cpp in Sources */,
 				920C36862CD7C8E400CD52FA /* Timeline.cpp in Sources */,
 				920C36872CD7C8E400CD52FA /* PhysicsConstraintData.cpp in Sources */,
+				92CF7FA52CF02304009B36D8 /* LuaUtils.cpp in Sources */,
 				920C36882CD7C8E400CD52FA /* LinkedMesh.cpp in Sources */,
 				920C36892CD7C8E400CD52FA /* Extension.cpp in Sources */,
 				920C368A2CD7C8E400CD52FA /* ScaleTimeline.cpp in Sources */,

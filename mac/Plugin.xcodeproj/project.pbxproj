@@ -175,6 +175,8 @@
 		923535D12CE7C43800092A55 /* LuaUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 923535CF2CE7C43800092A55 /* LuaUtils.h */; };
 		923535D22CE7C43800092A55 /* LuaUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 923535D02CE7C43800092A55 /* LuaUtils.cpp */; };
 		923BB3092CB07ACD00FC7DD1 /* plugin_spine.mm in Sources */ = {isa = PBXBuildFile; fileRef = 923BB3082CB07ACD00FC7DD1 /* plugin_spine.mm */; };
+		9261E94E2CF0C7B90044A3E3 /* SkeletonDataHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = 9261E94D2CF0C7B90044A3E3 /* SkeletonDataHolder.h */; };
+		9261E94F2CF0C7B90044A3E3 /* DataHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = 9261E94C2CF0C7B90044A3E3 /* DataHolder.h */; };
 		92FD28392CDF97BF00F366BD /* LuaTableHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = 92FD28372CDF97BF00F366BD /* LuaTableHolder.h */; };
 		92FD283A2CDF97BF00F366BD /* LuaTableHolder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92FD28382CDF97BF00F366BD /* LuaTableHolder.cpp */; };
 /* End PBXBuildFile section */
@@ -364,6 +366,8 @@
 		923535CF2CE7C43800092A55 /* LuaUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LuaUtils.h; sourceTree = "<group>"; };
 		923535D02CE7C43800092A55 /* LuaUtils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LuaUtils.cpp; sourceTree = "<group>"; };
 		923BB3082CB07ACD00FC7DD1 /* plugin_spine.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = plugin_spine.mm; sourceTree = "<group>"; };
+		9261E94C2CF0C7B90044A3E3 /* DataHolder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataHolder.h; sourceTree = "<group>"; };
+		9261E94D2CF0C7B90044A3E3 /* SkeletonDataHolder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SkeletonDataHolder.h; sourceTree = "<group>"; };
 		92FD28372CDF97BF00F366BD /* LuaTableHolder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LuaTableHolder.h; sourceTree = "<group>"; };
 		92FD28382CDF97BF00F366BD /* LuaTableHolder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LuaTableHolder.cpp; sourceTree = "<group>"; };
 		A4430897164C70D800B9117B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -562,6 +566,8 @@
 				923535CD2CE7C3F700092A55 /* lua_animation_state_listener.h */,
 				923535CF2CE7C43800092A55 /* LuaUtils.h */,
 				923535D02CE7C43800092A55 /* LuaUtils.cpp */,
+				9261E94C2CF0C7B90044A3E3 /* DataHolder.h */,
+				9261E94D2CF0C7B90044A3E3 /* SkeletonDataHolder.h */,
 			);
 			name = shared;
 			path = ../shared;
@@ -636,6 +642,8 @@
 				920C35572CD7C1E100CD52FA /* IkConstraintData.h in Headers */,
 				920C35582CD7C1E100CD52FA /* Pool.h in Headers */,
 				920C35592CD7C1E100CD52FA /* Sequence.h in Headers */,
+				9261E94E2CF0C7B90044A3E3 /* SkeletonDataHolder.h in Headers */,
+				9261E94F2CF0C7B90044A3E3 /* DataHolder.h in Headers */,
 				920C355A2CD7C1E100CD52FA /* spine_skeleton.h in Headers */,
 				920C355B2CD7C1E100CD52FA /* RTTI.h in Headers */,
 				920C355C2CD7C1E100CD52FA /* TextureLoader.h in Headers */,

@@ -67,15 +67,6 @@ public:
 
 };
 
-// injected object
-// if an object is injected into the skeleton, it will be set to the corresponding slot and will trigger the listener on every update
-// it is used as follows:
-// injection:set("slotName", object, luaListener)
-// where object is a display object
-// then later in the render we first get the slot name and keep an eye on it
-// injection:getSlotName()
-// once we find the slot, we call the listener with sharing the relevant information
-// injection:pushListener()
 class InjectedObject
 {
 private:
@@ -125,10 +116,13 @@ struct SpineSkeleton
     spine::Skeleton *skeleton;
     spine::AnimationState *state;
     spine::AnimationStateData *stateData;
-    spine::Atlas *atlas;
     spine::SkeletonData *skeletonData;
     LuaAnimationStateListener *stateListener;
+    LuaTableHolder *groupmt__index;
+    LuaTableHolder *groupmt__newindex;
     InjectedObject injection;
+    int skeletonDataRef;
+    lua_State *L;
 
     MeshManager meshes;
     std::vector<int> meshIndices;
@@ -136,9 +130,12 @@ struct SpineSkeleton
     // Default constructor
     SpineSkeleton(lua_State *L)
         : skeleton(nullptr), state(nullptr), stateData(nullptr),
-          atlas(nullptr), skeletonData(nullptr),
+          skeletonData(nullptr),
           meshes(20), meshIndices(20),
-          stateListener(nullptr), injection()
+          stateListener(nullptr), 
+          groupmt__index(nullptr), groupmt__newindex(nullptr),
+          injection(), skeletonDataRef(LUA_NOREF), 
+          L(L)
     {
     }
 
@@ -149,19 +146,16 @@ struct SpineSkeleton
     // Implement move constructor
     SpineSkeleton(SpineSkeleton &&other) noexcept
         : skeleton(other.skeleton), state(other.state),
-          stateData(other.stateData), atlas(other.atlas),
+          stateData(other.stateData),
           skeletonData(other.skeletonData),
           meshes(std::move(other.meshes))
     {
-        // Nullify the pointers in the moved-from object to prevent double deletion
         other.skeleton = nullptr;
         other.state = nullptr;
         other.stateData = nullptr;
-        other.atlas = nullptr;
         other.skeletonData = nullptr;
     }
 
-    // Implement move assignment operator
     SpineSkeleton &operator=(SpineSkeleton &&other) noexcept
     {
         if (this != &other)
@@ -169,22 +163,34 @@ struct SpineSkeleton
             skeleton = other.skeleton;
             state = other.state;
             stateData = other.stateData;
-            atlas = other.atlas;
             skeletonData = other.skeletonData;
+            stateListener = other.stateListener;
 
             meshes = std::move(other.meshes);
+            meshIndices = std::move(other.meshIndices);
+
+            groupmt__index = std::move(other.groupmt__index);
+            groupmt__newindex = std::move(other.groupmt__newindex);
+            stateListener = std::move(other.stateListener);
+            injection = std::move(other.injection);
+
+            skeletonDataRef = other.skeletonDataRef;
+
+            L = other.L;
 
             // Nullify the pointers in the moved-from object
             other.skeleton = nullptr;
             other.state = nullptr;
             other.stateData = nullptr;
-            other.atlas = nullptr;
             other.skeletonData = nullptr;
+            other.groupmt__index = nullptr;
+            other.groupmt__newindex = nullptr;
+            other.stateListener = nullptr;
+            other.skeletonDataRef = LUA_NOREF;
         }
         return *this;
     }
 
-    // Destructor
     ~SpineSkeleton()
     {
         if (skeleton)
@@ -192,8 +198,6 @@ struct SpineSkeleton
             delete state;
             delete stateData;
             delete skeleton;
-            delete skeletonData;
-            delete atlas;
 
             meshIndices.clear();
             meshes.clear();
@@ -205,17 +209,34 @@ struct SpineSkeleton
                 stateListener = nullptr;
             }
 
+            groupmt__index->releaseTable();
+            delete groupmt__index;
+            groupmt__newindex->releaseTable();
+            delete groupmt__newindex;
+
+            luaL_unref(L, LUA_REGISTRYINDEX, skeletonDataRef);
+            skeletonDataRef = LUA_NOREF;
+
+            if (stateListener)
+            {
+                delete stateListener;
+                stateListener = nullptr;
+            }            
+
+            L = nullptr;
+
             skeleton = nullptr;
             state = nullptr;
             stateData = nullptr;
-            atlas = nullptr;
             skeletonData = nullptr;
         }
     }
 };
 
-// Function declarations
+
 int create(lua_State *L);
+int load_atlas(lua_State *L);
+int load_skeleton_data(lua_State *L);
 void get_skeleton_metatable(lua_State *L);
 void get_spineObject_metatable(lua_State *L);
 int skeleton_index(lua_State *L);
