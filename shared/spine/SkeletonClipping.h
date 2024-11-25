@@ -27,8 +27,8 @@
  * SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
-#ifndef Spine_SkeletonClipping_h
-#define Spine_SkeletonClipping_h
+#ifndef SpineSkeletonClipping_h
+#define SpineSkeletonClipping_h
 
 #include <spine/Vector.h>
 #include <spine/Triangulator.h>
@@ -85,4 +85,4 @@ namespace spine {
 	};
 }
 
-#endif /* Spine_SkeletonClipping_h */
+#endif /* SpineSkeletonClipping_h */

@@ -55,7 +55,7 @@ local function touch(e)
 end
 
 local function playAllAnimations(o)
-    local allAnimations = o:getAllAnimations()
+    local allAnimations = o:getAnimations()
     local index = 1
     o:setAnimation(0, allAnimations[index], true)
     timer.performWithDelay(3000, function()
@@ -68,7 +68,7 @@ local function playAllAnimations(o)
 end
 
 local function playFirstAnimation(o)
-    local allAnimations = o:getAllAnimations()
+    local allAnimations = o:getAnimations()
     o:setAnimation(0, allAnimations[1], true)
 end
 
