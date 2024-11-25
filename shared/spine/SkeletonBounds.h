@@ -27,8 +27,8 @@
  * SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
-#ifndef Spine_SkeletonBounds_h
-#define Spine_SkeletonBounds_h
+#ifndef SpineSkeletonBounds_h
+#define SpineSkeletonBounds_h
 
 #include <spine/Vector.h>
 #include <spine/Pool.h>
@@ -118,4 +118,4 @@ namespace spine {
 	};
 }
 
-#endif /* Spine_SkeletonBounds_h */
+#endif /* SpineSkeletonBounds_h */

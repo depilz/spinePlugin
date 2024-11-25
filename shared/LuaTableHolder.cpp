@@ -1,21 +1,17 @@
-// LuaTableHolder.cpp
 #include "LuaTableHolder.h"
-#include "CoronaLua.h" // Ensure this is the correct Lua header for your project
+#include "CoronaLua.h"
 
-// Default constructor: Initializes without creating a Lua table
 LuaTableHolder::LuaTableHolder()
     : L_(nullptr), ref_(LUA_NOREF)
 {
 }
 
-// Constructor that creates a new Lua table and stores a reference
 LuaTableHolder::LuaTableHolder(lua_State *L)
     : L_(L), ref_(LUA_NOREF)
 {
     saveReference();
 }
 
-// Constructor from a given index
 LuaTableHolder::LuaTableHolder(lua_State *L, int index)
     : L_(L), ref_(LUA_NOREF)
 {
@@ -23,7 +19,6 @@ LuaTableHolder::LuaTableHolder(lua_State *L, int index)
     saveReference();
 }
 
-// Destructor: Releases the Lua table reference if valid
 LuaTableHolder::~LuaTableHolder()
 {
     releaseTable();

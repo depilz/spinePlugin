@@ -27,8 +27,8 @@
  * SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
-#ifndef Spine_SkeletonBinary_h
-#define Spine_SkeletonBinary_h
+#ifndef SpineSkeletonBinary_h
+#define SpineSkeletonBinary_h
 
 #include <spine/Inherit.h>
 #include <spine/Vector.h>
@@ -175,4 +175,4 @@ namespace spine {
 	};
 }
 
-#endif /* Spine_SkeletonBinary_h */
+#endif /* SpineSkeletonBinary_h */

@@ -1,7 +1,5 @@
-#ifndef LUAUTILS_H
-#define LUAUTILS_H
+#pragma once
 
-// Include necessary standard headers
 #include <string>
 #include <vector>
 #include <map>
@@ -9,18 +7,15 @@
 #include <iostream>
 #include <cassert>
 
-// Include Solar2D's Lua headers
 #include "CoronaLua.h"
 #include "CoronaMacros.h"
 
-// Forward declarations
 class LuaTask;
 class Table;
 class Scheme;
 
 class LuaUtils {
 public:
-    // Static members
     static std::string TAG;
     static bool isDebug;
     static lua_State* _L;
@@ -31,7 +26,6 @@ public:
     static const std::string CachesDirectory;
     static const std::string TemporaryDirectory;
 
-    // Static methods
     static void setTag(const std::string& tag);
     static void enableDebug();
     static void debugLog(const std::string& message);
@@ -48,11 +42,9 @@ public:
     static void executeTasks(lua_State* L);
 
 private:
-    // Private constructor to prevent instantiation
     LuaUtils() = delete;
 };
 
-// LuaTask class
 class LuaTask {
 public:
     int listener;
@@ -62,12 +54,10 @@ public:
     LuaTask();
 };
 
-// Table class (simplified)
 class Table {
 public:
     Table(lua_State* L, int index);
     void parse(Scheme* scheme);
-    // Additional methods can be declared here
 
 private:
     lua_State* _L;
@@ -76,7 +66,6 @@ private:
     Scheme* _scheme;
 };
 
-// Scheme class (simplified)
 class Scheme {
 public:
     Scheme();
@@ -101,4 +90,3 @@ private:
     std::map<std::string, std::any> scheme;
 };
 
-#endif // LUAUTILS_H

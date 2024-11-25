@@ -1,7 +1,7 @@
 #import <Foundation/Foundation.h>
 #import "CoronaLua.h"
 #import "CoronaMacros.h"
-#import "spine_skeleton.h"
+#import "Lua_Spine.h"
 
 @interface PluginSpine : NSObject
 
@@ -13,23 +13,8 @@
 
 static PluginSpine *plugin;
 
-// Implement the open function
 - (int)open:(lua_State*)L {
-    const luaL_Reg lua_functions[] = {
-        {"loadAtlas", load_atlas},
-        {"loadSkeletonData", load_skeleton_data},
-        {"create", create},
-        {NULL, NULL}
-    };
-
-    const char *plugin_name = lua_tostring(L, 1);
-    luaL_register(L, plugin_name, lua_functions);
-
-    NSLog(@"Spine plugin initialized");
-
-    plugin = self;
-
-    return 1;
+    return luaopen_spine(L);
 }
 
 // Export the plugin

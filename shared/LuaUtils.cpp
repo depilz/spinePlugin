@@ -1,10 +1,9 @@
 #include "LuaUtils.h"
-#include "CoronaLua.h"       // Ensure CoronaLua.h is included
-#include "CoronaMacros.h"    // Ensure CoronaMacros.h is included
+#include "CoronaLua.h"
+#include "CoronaMacros.h"
 #include <iostream>
 #include <cassert>
 
-// Initialize static members
 std::string LuaUtils::TAG = "plugin";
 bool LuaUtils::isDebug = false;
 lua_State* LuaUtils::_L = nullptr;
@@ -15,7 +14,6 @@ const std::string LuaUtils::DocumentsDirectory = "DocumentsDirectory";
 const std::string LuaUtils::CachesDirectory = "CachesDirectory";
 const std::string LuaUtils::TemporaryDirectory = "TemporaryDirectory";
 
-// Implementation of LuaUtils methods
 void LuaUtils::setTag(const std::string& tag) {
     TAG = tag;
 }
@@ -73,11 +71,11 @@ void LuaUtils::pushValue(lua_State *L, const std::any &object)
         lua_pushstring(L, std::any_cast<std::string>(object).c_str());
     }
     else if (object.type() == typeid(const char *))
-    { // Handling const char*
+    {
         lua_pushstring(L, std::any_cast<const char *>(object));
     }
     else if (object.type() == typeid(char *))
-    { // Handling char*
+    {
         lua_pushstring(L, std::any_cast<char *>(object));
     }
     else if (object.type() == typeid(int))
@@ -140,7 +138,6 @@ void LuaUtils::pushValue(lua_State *L, const std::any &object)
     }
     else
     {
-        // If the type is unknown, throw a Lua error with the type name
         luaL_error(L, "LuaUtils.pushValue(): failed to push an object: unknown type %s", object.type().name());
     }
 }
@@ -195,5 +192,4 @@ void LuaUtils::executeTasks(lua_State* L) {
     }
 }
 
-// LuaTask implementation
 LuaTask::LuaTask() : listener(LUA_REFNIL), delete_ref(false) {}

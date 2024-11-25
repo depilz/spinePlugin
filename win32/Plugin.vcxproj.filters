@@ -10,19 +10,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\shared\spine_skeleton.cpp">
+    <ClCompile Include="..\shared\SpineRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\shared\spine_renderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\shared\spine_texture.cpp">
+    <ClCompile Include="..\shared\SpineTexture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\shared\LuaTableHolder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Plugin\SimulatorPluginLibrary.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\shared\spine\PhysicsConstraintTimeline.cpp">
@@ -229,21 +223,27 @@
     <ClCompile Include="..\shared\LuaUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\shared\Lua_Skeleton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\Lua_Spine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\SkeletonDataHolder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Plugin\SimulatorPluginLibrary.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\shared\spine_renderer.h">
+    <ClInclude Include="..\shared\SpineRenderer.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\shared\spine_texture.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\shared\spine_skeleton.h">
+    <ClInclude Include="..\shared\SpineTexture.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\shared\LuaTableHolder.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Plugin\SimulatorPluginLibrary.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\shared\spine\Debug.h">
@@ -519,10 +519,31 @@
     <ClInclude Include="..\shared\spine\AttachmentType.h">
       <Filter>Source Files\spine</Filter>
     </ClInclude>
-    <ClInclude Include="..\shared\lua_animation_state_listener.h">
+    <ClInclude Include="..\shared\LuaUtils.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\shared\LuaUtils.h">
+    <ClInclude Include="..\shared\DataHolder.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\InjectedObject.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\Lua_Skeleton.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\Lua_Spine.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\LuaAnimationStateListener.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\MeshManager.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\SkeletonDataHolder.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Plugin\SimulatorPluginLibrary.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -27,8 +27,8 @@
  * SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
-#ifndef Spine_Skeleton_h
-#define Spine_Skeleton_h
+#ifndef SpineSkeleton_h
+#define SpineSkeleton_h
 
 #include <spine/Vector.h>
 #include <spine/MathUtil.h>
@@ -282,4 +282,4 @@ namespace spine {
 	};
 }
 
-#endif /* Spine_Skeleton_h */
+#endif /* SpineSkeleton_h */

@@ -13,6 +13,11 @@
   <ItemGroup>
     <ClCompile Include="..\shared\LuaTableHolder.cpp" />
     <ClCompile Include="..\shared\LuaUtils.cpp" />
+    <ClCompile Include="..\shared\Lua_Skeleton.cpp" />
+    <ClCompile Include="..\shared\Lua_Spine.cpp" />
+    <ClCompile Include="..\shared\SkeletonDataHolder.cpp" />
+    <ClCompile Include="..\shared\SpineRenderer.cpp" />
+    <ClCompile Include="..\shared\SpineTexture.cpp" />
     <ClCompile Include="..\shared\spine\Animation.cpp" />
     <ClCompile Include="..\shared\spine\AnimationState.cpp" />
     <ClCompile Include="..\shared\spine\AnimationStateData.cpp" />
@@ -80,15 +85,20 @@
     <ClCompile Include="..\shared\spine\Triangulator.cpp" />
     <ClCompile Include="..\shared\spine\Updatable.cpp" />
     <ClCompile Include="..\shared\spine\VertexAttachment.cpp" />
-    <ClCompile Include="..\shared\spine_renderer.cpp" />
-    <ClCompile Include="..\shared\spine_skeleton.cpp" />
-    <ClCompile Include="..\shared\spine_texture.cpp" />
     <ClCompile Include="Plugin\SimulatorPluginLibrary.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\shared\DataHolder.h" />
+    <ClInclude Include="..\shared\InjectedObject.h" />
+    <ClInclude Include="..\shared\LuaAnimationStateListener.h" />
     <ClInclude Include="..\shared\LuaTableHolder.h" />
     <ClInclude Include="..\shared\LuaUtils.h" />
-    <ClInclude Include="..\shared\lua_animation_state_listener.h" />
+    <ClInclude Include="..\shared\Lua_Skeleton.h" />
+    <ClInclude Include="..\shared\Lua_Spine.h" />
+    <ClInclude Include="..\shared\MeshManager.h" />
+    <ClInclude Include="..\shared\SkeletonDataHolder.h" />
+    <ClInclude Include="..\shared\SpineRenderer.h" />
+    <ClInclude Include="..\shared\SpineTexture.h" />
     <ClInclude Include="..\shared\spine\Animation.h" />
     <ClInclude Include="..\shared\spine\AnimationState.h" />
     <ClInclude Include="..\shared\spine\AnimationStateData.h" />
@@ -180,9 +190,6 @@
     <ClInclude Include="..\shared\spine\Version.h" />
     <ClInclude Include="..\shared\spine\VertexAttachment.h" />
     <ClInclude Include="..\shared\spine\Vertices.h" />
-    <ClInclude Include="..\shared\spine_renderer.h" />
-    <ClInclude Include="..\shared\spine_skeleton.h" />
-    <ClInclude Include="..\shared\spine_texture.h" />
     <ClInclude Include="Plugin\SimulatorPluginLibrary.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

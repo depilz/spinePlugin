@@ -27,8 +27,8 @@
  * SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
-#ifndef Spine_SkeletonJson_h
-#define Spine_SkeletonJson_h
+#ifndef SpineSkeletonJson_h
+#define SpineSkeletonJson_h
 
 #include <spine/Vector.h>
 #include <spine/SpineObject.h>
@@ -111,4 +111,4 @@ namespace spine {
 	};
 }
 
-#endif /* Spine_SkeletonJson_h */
+#endif /* SpineSkeletonJson_h */
