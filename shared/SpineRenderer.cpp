@@ -59,11 +59,9 @@ void engine_updateMesh(lua_State *L, LuaTableHolder *meshHolder, float *position
     lua_pop(L, 1); // pop the mesh
 }
 
-void engine_drawMesh(lua_State *L, float *positions, size_t numVertices, float *uvs, unsigned short *indices, size_t numIndices, LuaTableHolder *texture, spine::BlendMode blendMode, uint32_t *colors)
+void engine_drawMesh(lua_State *L, float *positions, size_t numVertices, float *uvs, unsigned short *indices, size_t numIndices, LuaTableHolder *texture, spine::BlendMode blendMode, uint32_t *colors, LuaTableHolder *newMesh)
 {
-    lua_getglobal(L, "display");
-    lua_getfield(L, -1, "newMesh");
-    lua_remove(L, -2);
+    newMesh->pushTable();
 
     lua_pushnumber(L, 0); // x
     lua_pushnumber(L, 0); // y

@@ -21,6 +21,9 @@ struct SpineSkeleton
     LuaAnimationStateListener *stateListener;
     LuaTableHolder *groupmt__index;
     LuaTableHolder *groupmt__newindex;
+    LuaTableHolder *groupInsert;
+    LuaTableHolder *groupRemoveSelf;
+    LuaTableHolder *newMesh;
     InjectedObject injection;
     int skeletonDataRef;
     lua_State *L;
@@ -59,6 +62,9 @@ struct SpineSkeleton
 
             groupmt__index = nullptr;
             groupmt__newindex = nullptr;
+            groupInsert = nullptr;
+            groupRemoveSelf = nullptr;
+            newMesh = nullptr;
 
             luaL_unref(L, LUA_REGISTRYINDEX, skeletonDataRef);
             skeletonDataRef = LUA_NOREF;

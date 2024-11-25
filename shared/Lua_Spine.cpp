@@ -10,12 +10,15 @@ template class DataHolder<Atlas>;
 static LuaTableHolder *newGroup;
 static LuaTableHolder *group__index;
 static LuaTableHolder *group__newindex;
+static LuaTableHolder *groupInsert;
+static LuaTableHolder *groupRemoveSelf;
+static LuaTableHolder *newMesh;
+static SpineTextureLoader *textureLoader;
 
 static void loadGroupReferences(lua_State *L)
 {
     lua_getglobal(L, "display");
     lua_getfield(L, -1, "newGroup");
-    lua_remove(L, -2);
     newGroup = new LuaTableHolder(L);
     newGroup->pushTable();
     lua_call(L, 0, 1);
@@ -29,9 +32,19 @@ static void loadGroupReferences(lua_State *L)
     
     lua_pop(L, 1);
 
+    lua_getfield(L, -1, "insert");
+    groupInsert = new LuaTableHolder(L);
+
     lua_getfield(L, -1, "removeSelf");
+    groupRemoveSelf = new LuaTableHolder(L);
+    groupRemoveSelf->pushTable();
     lua_pushvalue(L, -2);
     lua_call(L, 1, 0);
+
+    lua_pop(L, 1);
+
+    lua_getfield(L, -1, "newMesh");
+    newMesh = new LuaTableHolder(L);
 
     lua_pop(L, 1);
 }
@@ -40,8 +53,6 @@ static void loadGroupReferences(lua_State *L)
 int loadAtlas(lua_State *L)
 {
     const char *atlasFile = luaL_checkstring(L, 1);
-
-    SpineTextureLoader *textureLoader = new SpineTextureLoader(L);
 
     auto *atlas = new Atlas(atlasFile, textureLoader);
     auto atlasUserdata = std::make_shared<DataHolder<Atlas>>(atlas);
@@ -138,6 +149,9 @@ int create(lua_State *L)
 
     skeletonUserdata->groupmt__index = group__index;
     skeletonUserdata->groupmt__newindex = group__newindex;
+    skeletonUserdata->groupInsert = groupInsert;
+    skeletonUserdata->groupRemoveSelf = groupRemoveSelf;
+    skeletonUserdata->newMesh = newMesh;
 
     getSpineObjectMt(L);
     lua_setmetatable(L, -2);
@@ -157,6 +171,7 @@ int luaopen_spine(lua_State *L)
     const char *plugin_name = lua_tostring(L, 1);
     luaL_register(L, plugin_name, spine_functions);
 
+    textureLoader = new SpineTextureLoader(L);
     loadGroupReferences(L);
 
     const char *pluginVersion = "v1.0";

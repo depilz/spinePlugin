@@ -412,6 +412,7 @@ void skeletonRender(lua_State *L, SpineSkeleton *skeletonUserdata)
     Skeleton *skeleton = skeletonUserdata->skeleton;
     SkeletonRenderer skeletonRenderer;
     RenderCommand *command = skeletonRenderer.render(*skeleton);
+    LuaTableHolder *newMesh = skeletonUserdata->newMesh;
 
     int i = 0;
 
@@ -449,10 +450,10 @@ void skeletonRender(lua_State *L, SpineSkeleton *skeletonUserdata)
 
         if (!existingMesh)
         {
-            engine_drawMesh(L, positions, numVertices, uvs, indices, numIndices, texture, blendMode, colors);
+            engine_drawMesh(L, positions, numVertices, uvs, indices, numIndices, texture, blendMode, colors, newMesh);
 
             lua_pushvalue(L, 1);
-            lua_getfield(L, -1, "insert");
+            skeletonUserdata->groupInsert->pushTable();
             lua_pushvalue(L, -2);
             lua_pushnumber(L, i + 1);
             lua_pushvalue(L, -5);
@@ -710,7 +711,7 @@ int injectObject(lua_State *L)
         return 0;
     }
 
-    lua_getfield(L, 1, "insert");
+    skeletonUserdata->groupInsert->pushTable();
     lua_pushvalue(L, 1);
     lua_pushvalue(L, 2);
     lua_call(L, 2, 0);
@@ -783,13 +784,8 @@ int removeSelf(lua_State *L)
      }
 
     SpineSkeleton *skeletonUserdata = (SpineSkeleton *)luaL_checkudata(L, -1, "SpineSkeleton");
-    lua_pop(L, 1);
 
-    skeletonUserdata->groupmt__index->pushTable();
-    lua_pushvalue(L, 1);
-    lua_pushstring(L, "removeSelf");
-    lua_call(L, 2, 1);
-
+    skeletonUserdata->groupRemoveSelf->pushTable();
     lua_pushvalue(L, 1);
     lua_call(L, 1, 0);
 
