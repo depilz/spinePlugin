@@ -1,7 +1,7 @@
 #include "SpineRenderer.h"
 #include "CoronaGraphics.h"
 
-void engine_updateMesh(lua_State *L, LuaTableHolder *meshHolder, float *positions, size_t numVertices, float *uvs, unsigned short *indices, size_t numIndices, LuaTableHolder *texture, spine::BlendMode blendMode, uint32_t *colors)
+void engine_updateMesh(lua_State *L, LuaTableHolder *meshHolder, float *positions, size_t numVertices, float *uvs, unsigned short *indices, size_t numIndices, Texture *texture, spine::BlendMode blendMode, uint32_t *colors)
 {
     meshHolder->pushTable();
     lua_getfield(L, -1, "path");
@@ -59,7 +59,7 @@ void engine_updateMesh(lua_State *L, LuaTableHolder *meshHolder, float *position
     lua_pop(L, 1); // pop the mesh
 }
 
-void engine_drawMesh(lua_State *L, float *positions, size_t numVertices, float *uvs, unsigned short *indices, size_t numIndices, LuaTableHolder *texture, spine::BlendMode blendMode, uint32_t *colors, LuaTableHolder *newMesh)
+void engine_drawMesh(lua_State *L, float *positions, size_t numVertices, float *uvs, unsigned short *indices, size_t numIndices, Texture *texture, spine::BlendMode blendMode, uint32_t *colors, LuaTableHolder *newMesh)
 {
     newMesh->pushTable();
 
@@ -123,7 +123,8 @@ void engine_drawMesh(lua_State *L, float *positions, size_t numVertices, float *
     lua_pushvalue(L, meshIndex);
 
     // mesh.fill = { type "image", filename = "raptor.png"}
-    texture->pushTable();
+    LuaTableHolder *textureTable = ((Texture *)texture)->textureTable;
+    textureTable->pushTable();
     lua_setfield(L, meshIndex, "fill");
 
     lua_getfield(L, meshIndex, "setFillColor");         // Push mesh.setFillColor

@@ -2,6 +2,12 @@
 #include <string>
 #include <spine/Atlas.h>
 
+static LuaTableHolder *newTexture;
+
+// Texture only gets unloaded when the Atlas is deleted
+// and the Atlas IS NOT deleted along the skeleton, but by the garbage collector in Lua
+// once there are no more references to it
+
 SpineTextureLoader::SpineTextureLoader(lua_State *L) : L(L)
 {
     lua_getglobal(L, "system");
@@ -9,34 +15,106 @@ SpineTextureLoader::SpineTextureLoader(lua_State *L) : L(L)
     lua_pushstring(L, "");
     lua_call(L, 1, 1);
     resourcesDir = lua_tostring(L, -1);
-    lua_pop(L, 2);
+
+    lua_getglobal(L, "graphics");
+    lua_getfield(L, -1, "newTexture");
+    newTexture = new LuaTableHolder(L);
+    lua_pop(L, 3);
 }
 
 void SpineTextureLoader::load(spine::AtlasPage &page, const spine::String &path)
 {
-    // remove the resources directory from the Texture->path
-    std::string texturePath = path.buffer();
-    const char* texturePathStart = strstr(texturePath.c_str(), resourcesDir);
-    if (texturePathStart != NULL)
+
+    std::string shortPath = path.buffer();
+    auto it = textures.find(shortPath);
+    
+    if (it != textures.end())
     {
-        texturePath = texturePathStart + strlen(resourcesDir);
+        it->second.refCount++;
+        page.texture = &it->second.texture;
     }
+    else
+    {
+        std::string absPath;
+        const char *texturePathStart = strstr(shortPath.c_str(), resourcesDir);
+        if (texturePathStart != NULL)
+        {
+            absPath = texturePathStart + strlen(resourcesDir);
+        }
 
-    lua_createtable(L, 0, 2);
-    lua_pushstring(L, "image");
-    lua_setfield(L, -2, "type");
+        newTexture->pushTable();
 
-    lua_pushstring(L, texturePath.c_str());
-    lua_setfield(L, -2, "filename");
+        lua_createtable(L, 0, 2);
+        lua_pushstring(L, "image");
+        lua_setfield(L, -2, "type");
 
-    LuaTableHolder *texture = new LuaTableHolder(L, -1); // Assuming LuaTableHolder(L, index)
-    lua_pop(L, 1);
+        lua_pushstring(L, absPath.c_str());
+        lua_setfield(L, -2, "filename");
 
-    page.texture = static_cast<void *>(texture);
+        lua_call(L, 1, 1);
+
+        if (lua_isnil(L, -1))
+        {
+            luaL_error(L, "Failed to load texture: %s", absPath.c_str());
+            return;
+        }
+
+        LuaTableHolder *texture = new LuaTableHolder(L);
+        texture->pushTable();
+
+        lua_createtable(L, 0, 3);
+        lua_pushstring(L, "image");
+        lua_setfield(L, -2, "type");
+
+        lua_getfield(L, -2, "filename");
+        lua_setfield(L, -2, "filename");
+
+        lua_getfield(L, -2, "baseDir");
+        lua_setfield(L, -2, "baseDir");
+
+        LuaTableHolder *textureTable = new LuaTableHolder(L);
+
+        Texture *textureData = new Texture;
+        textureData->texture = texture;
+        textureData->textureTable = textureTable;
+        lua_pop(L, 3);
+
+        TextureRef textRef = {*textureData, 1};
+        textures[shortPath] = textRef;
+        textureToPath[textureData] = shortPath;
+
+        page.texture = textureData;
+    }
 }
 
 void SpineTextureLoader::unload(void *texture)
 {
-    LuaTableHolder *luaTexture = static_cast<LuaTableHolder *>(texture);
-    delete luaTexture;
+    auto it = textureToPath.find((Texture *)texture);
+    if (it != textureToPath.end())
+    {
+        auto textRef = textures.find(it->second);
+        if (textRef != textures.end())
+        {
+            textRef->second.refCount--;
+            if (textRef->second.refCount == 0)
+            {
+                LuaTableHolder *textureHolder = textRef->second.texture.texture;
+                textureHolder->pushTable();
+                lua_getfield(L, -1, "releaseSelf");
+                lua_pushvalue(L, -2);
+                lua_call(L, 1, 0);
+                lua_pop(L, 1);
+
+                textureHolder->releaseTable();
+                LuaTableHolder *textureTableHolder = textRef->second.texture.textureTable;
+                textureTableHolder->releaseTable();
+
+                delete textRef->second.texture.texture;
+                delete textRef->second.texture.textureTable;
+                textures.erase(textRef);
+            }
+        }
+        textureToPath.erase(it);
+    }
+
 }

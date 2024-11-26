@@ -425,7 +425,7 @@ void skeletonRender(lua_State *L, SpineSkeleton *skeletonUserdata)
         float *uvs = command->uvs;
         uint32_t *colors = command->colors;
         uint16_t *indices = command->indices;
-        LuaTableHolder *texture = (LuaTableHolder *)command->texture;
+        Texture *texture = (Texture *)command->texture;
         size_t numVertices = command->numVertices;
         size_t numIndices = command->numIndices;
 
@@ -440,7 +440,7 @@ void skeletonRender(lua_State *L, SpineSkeleton *skeletonUserdata)
             {
                 engine_removeMesh(L, &mesh);
                 existingMesh = false;
-                meshes[i].releaseTable();
+                mesh.releaseTable();
             }
             else
             {
