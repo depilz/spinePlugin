@@ -19,6 +19,7 @@ struct SpineSkeleton
     AnimationStateData *stateData;
     SkeletonData *skeletonData;
     LuaAnimationStateListener *stateListener;
+    LuaTableHolder *luaSelf;
     LuaTableHolder *groupmt__index;
     LuaTableHolder *groupmt__newindex;
     LuaTableHolder *groupInsert;
@@ -50,6 +51,7 @@ struct SpineSkeleton
             delete stateData;
             delete skeleton;
 
+            luaSelf->releaseTable();
             meshIndices.clear();
             meshes.clear();
             injection.clear();
@@ -75,6 +77,7 @@ struct SpineSkeleton
             state = nullptr;
             stateData = nullptr;
             skeletonData = nullptr;
+            luaSelf = nullptr;
         }
     }
 };

@@ -126,13 +126,15 @@ int create(lua_State *L)
     skeletonUserdata->state = state;
     skeletonUserdata->stateData = stateData;
     skeletonUserdata->skeletonData = skeletonData;
+    skeletonUserdata->luaSelf = new LuaTableHolder(L);
+    skeletonUserdata->luaSelf->pushTable();
 
     lua_pushvalue(L, 1);
     skeletonUserdata->skeletonDataRef = luaL_ref(L, LUA_REGISTRYINDEX);
 
     if (hasListener)
     {
-        LuaAnimationStateListener *stateListener = new LuaAnimationStateListener(L, listenerRef);
+        LuaAnimationStateListener *stateListener = new LuaAnimationStateListener(L, skeletonUserdata->luaSelf, listenerRef);
         skeletonUserdata->stateListener = stateListener;
         state->setListener(stateListener);
     }
@@ -146,7 +148,7 @@ int create(lua_State *L)
     lua_pushstring(L, "_skeleton");
     lua_pushvalue(L, -3);
     lua_rawset(L, -3);
-
+    
     skeletonUserdata->groupmt__index = group__index;
     skeletonUserdata->groupmt__newindex = group__newindex;
     skeletonUserdata->groupInsert = groupInsert;

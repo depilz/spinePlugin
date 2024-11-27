@@ -48,5 +48,7 @@ public:
         {
             mesh.releaseTable();
         }
+
+        meshHolders.clear();
     }
 };

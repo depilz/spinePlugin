@@ -116,5 +116,4 @@ void SpineTextureLoader::unload(void *texture)
         }
         textureToPath.erase(it);
     }
-
 }

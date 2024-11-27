@@ -5,7 +5,6 @@
 #include <cassert>
 #include <spine/spine.h>
 #include "LuaTableHolder.h"
-#include "LuaUtils.h"
 #include "DataHolder.h"
 #include "SkeletonDataHolder.h"
 #include "Extension.h"

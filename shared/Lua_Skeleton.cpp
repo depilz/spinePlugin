@@ -387,9 +387,6 @@ int updateState(lua_State *L)
     skeletonUserdata->state->apply(*skeletonUserdata->skeleton);
     skeletonUserdata->skeleton->update(deltaTime);
 
-    // trigger events
-    LuaUtils::executeTasks(L);
-
     return 0;
 }
 
