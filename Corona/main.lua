@@ -122,13 +122,30 @@ local function renewSpine()
 end
 
 
-for i = 1, 20 do
+-- local spineName = "studycat4_2"
+local spine = allSpines[math.random(1, #allSpines)]
+-- for i = 1, 20 do
     -- Not working: 4, 6, 14
-    local o = newSpine(allSpines[1], cx, cy, .4, eventListener)
+    local o = newSpine(spineName, cx, cy, .4, eventListener)
     playAllAnimations(o)
     -- playFirstAnimation(o)
     o:addEventListener('touch', touch)
-end
+    print("------")
+    local slot = o:getSlot("hat")
+    local rect = display.newRect(slot.x, slot.y, 50, 50)
+    -- o:insert(rect)
+    local parent = display.newGroup()
+    parent:insert(rect)
+    parent:scale(.4, .4)
+    parent.x, parent.y = o.x, o.y
+    timer.performWithDelay(0, function ()
+        print("---------- Slot found ----------")
+        rect.x, rect.y = slot.x, slot.y
+        rect.rotation = slot.rotation
+        rect:setFillColor(slot.r, slot.g, slot.b)
+    end, 0)
+    o:setFillColor(1, 0, 0)
+-- end
 
 -- timer.performWithDelay(1, function()
 --     for i = 1, 18 do

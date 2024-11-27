@@ -1,4 +1,5 @@
 #include "Lua_Skeleton.h"
+#include "Lua_Slot.h"
 #include "SpineRenderer.h"
 
 static SpineSkeleton *luaL_getSkeletonUserdata(lua_State *L)
@@ -632,6 +633,25 @@ int getAttachments(lua_State *L)
 // skeleton:getSlot(slotName)
 int getSlot(lua_State *L)
 {
+    SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
+    if (!skeletonUserdata)
+    {
+        return 0;
+    }
+
+    const char *slotName = luaL_checkstring(L, 2);
+
+    Slot *slot = skeletonUserdata->skeleton->findSlot(slotName);
+
+    if (!slot)
+    {
+        luaL_error(L, "Slot not found: %s", slotName);
+        return 0;
+    }
+
+    LuaSlot *slotUserdata = (LuaSlot *)lua_newuserdata(L, sizeof(LuaSlot));
+    new (slotUserdata) LuaSlot(L, slot);
+
     return 1;
 }
 
