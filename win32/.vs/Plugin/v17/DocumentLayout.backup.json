@@ -3,7 +3,16 @@
   "WorkspaceRootPath": "\\\\Mac\\funbox\\plugins\\plugin-spine\\win32\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{79F0CACC-457B-4A25-BC54-81277688C361}|Plugin.vcxproj|\\\\mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\Skin.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{79F0CACC-457B-4A25-BC54-81277688C361}|Plugin.vcxproj|\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\Lua_Skeleton.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{79F0CACC-457B-4A25-BC54-81277688C361}|Plugin.vcxproj|\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\Bone.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{79F0CACC-457B-4A25-BC54-81277688C361}|Plugin.vcxproj|\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\Attachment.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{79F0CACC-457B-4A25-BC54-81277688C361}|Plugin.vcxproj|\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\Skin.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{79F0CACC-457B-4A25-BC54-81277688C361}|Plugin.vcxproj|\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\SkeletonBinary.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
@@ -93,9 +102,6 @@
       "AbsoluteMoniker": "D:0:0:{79F0CACC-457B-4A25-BC54-81277688C361}|Plugin.vcxproj|\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\Lua_Skeleton.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{79F0CACC-457B-4A25-BC54-81277688C361}|Plugin.vcxproj|\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\Lua_Skeleton.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{79F0CACC-457B-4A25-BC54-81277688C361}|Plugin.vcxproj|\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\InjectedObject.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
@@ -124,6 +130,24 @@
     },
     {
       "AbsoluteMoniker": "D:0:0:{79F0CACC-457B-4A25-BC54-81277688C361}|Plugin.vcxproj|\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\LuaTableHolder.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{79F0CACC-457B-4A25-BC54-81277688C361}|Plugin.vcxproj|\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\Lua_IKConstraint.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{79F0CACC-457B-4A25-BC54-81277688C361}|Plugin.vcxproj|\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\Lua_Bone.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{79F0CACC-457B-4A25-BC54-81277688C361}|Plugin.vcxproj|\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\Lua_Bone.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{79F0CACC-457B-4A25-BC54-81277688C361}|Plugin.vcxproj|\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\Lua_Slot.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{79F0CACC-457B-4A25-BC54-81277688C361}|Plugin.vcxproj|\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\Lua_Slot.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{79F0CACC-457B-4A25-BC54-81277688C361}|Plugin.vcxproj|\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\Lua_IKConstraint.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -133,11 +157,122 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 7,
           "Children": [
             {
               "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "Bone.cpp",
+              "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\Bone.cpp",
+              "RelativeDocumentMoniker": "..\\shared\\spine\\Bone.cpp",
+              "ToolTip": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\Bone.cpp",
+              "RelativeToolTip": "..\\shared\\spine\\Bone.cpp",
+              "ViewState": "AgIAABcAAAAAAAAAAADgvyAAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-11-27T22:05:48.226Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Attachment.h",
+              "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\Attachment.h",
+              "RelativeDocumentMoniker": "..\\shared\\spine\\Attachment.h",
+              "ToolTip": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\Attachment.h",
+              "RelativeToolTip": "..\\shared\\spine\\Attachment.h",
+              "ViewState": "AgIAABgAAAAAAAAAAADgvyEAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-11-27T21:58:13.045Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 44,
+              "Title": "Lua_Bone.h",
+              "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\Lua_Bone.h",
+              "RelativeDocumentMoniker": "..\\shared\\Lua_Bone.h",
+              "ToolTip": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\Lua_Bone.h",
+              "RelativeToolTip": "..\\shared\\Lua_Bone.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-11-27T21:57:10.946Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 45,
+              "Title": "Lua_Bone.cpp",
+              "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\Lua_Bone.cpp",
+              "RelativeDocumentMoniker": "..\\shared\\Lua_Bone.cpp",
+              "ToolTip": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\Lua_Bone.cpp",
+              "RelativeToolTip": "..\\shared\\Lua_Bone.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-11-27T21:57:10.867Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 46,
+              "Title": "Lua_Slot.h",
+              "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\Lua_Slot.h",
+              "RelativeDocumentMoniker": "..\\shared\\Lua_Slot.h",
+              "ToolTip": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\Lua_Slot.h",
+              "RelativeToolTip": "..\\shared\\Lua_Slot.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-11-27T21:57:10.809Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 47,
+              "Title": "Lua_Slot.cpp",
+              "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\Lua_Slot.cpp",
+              "RelativeDocumentMoniker": "..\\shared\\Lua_Slot.cpp",
+              "ToolTip": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\Lua_Slot.cpp",
+              "RelativeToolTip": "..\\shared\\Lua_Slot.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-11-27T21:57:10.729Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 48,
+              "Title": "Lua_IKConstraint.h",
+              "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\Lua_IKConstraint.h",
+              "RelativeDocumentMoniker": "..\\shared\\Lua_IKConstraint.h",
+              "ToolTip": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\Lua_IKConstraint.h",
+              "RelativeToolTip": "..\\shared\\Lua_IKConstraint.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-11-27T21:57:10.549Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Lua_Skeleton.cpp",
+              "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\Lua_Skeleton.cpp",
+              "RelativeDocumentMoniker": "..\\shared\\Lua_Skeleton.cpp",
+              "ToolTip": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\Lua_Skeleton.cpp",
+              "RelativeToolTip": "..\\shared\\Lua_Skeleton.cpp",
+              "ViewState": "AgIAAAAAAAAANDMzMzPrvwYAAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-11-24T20:50:51.508Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 43,
+              "Title": "Lua_IKConstraint.cpp",
+              "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\Lua_IKConstraint.cpp",
+              "RelativeDocumentMoniker": "..\\shared\\Lua_IKConstraint.cpp",
+              "ToolTip": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\Lua_IKConstraint.cpp",
+              "RelativeToolTip": "..\\shared\\Lua_IKConstraint.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-11-27T21:57:11.01Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
               "Title": "SkeletonBinary.cpp",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\SkeletonBinary.cpp",
               "RelativeDocumentMoniker": "..\\shared\\spine\\SkeletonBinary.cpp",
@@ -145,12 +280,11 @@
               "RelativeToolTip": "..\\shared\\spine\\SkeletonBinary.cpp",
               "ViewState": "AgIAAC8AAAAAAAAAAADgvzgAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-11-25T01:05:16.804Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-25T01:05:16.804Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 5,
               "Title": "SimulatorPluginLibrary.h",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\win32\\Plugin\\SimulatorPluginLibrary.h",
               "RelativeDocumentMoniker": "Plugin\\SimulatorPluginLibrary.h",
@@ -158,12 +292,11 @@
               "RelativeToolTip": "Plugin\\SimulatorPluginLibrary.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-25T01:04:57.462Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-25T01:04:57.462Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 6,
               "Title": "LuaAnimationStateListener.h",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\LuaAnimationStateListener.h",
               "RelativeDocumentMoniker": "..\\shared\\LuaAnimationStateListener.h",
@@ -171,12 +304,11 @@
               "RelativeToolTip": "..\\shared\\LuaAnimationStateListener.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-24T20:50:52.03Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-24T20:50:52.03Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 9,
               "Title": "MeshAttachment.h",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\MeshAttachment.h",
               "RelativeDocumentMoniker": "..\\shared\\spine\\MeshAttachment.h",
@@ -184,12 +316,11 @@
               "RelativeToolTip": "..\\shared\\spine\\MeshAttachment.h",
               "ViewState": "AgIAACQAAAAAmpmZmZntvyUAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-25T01:02:48.609Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-25T01:02:48.609Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 10,
               "Title": "Vector.h",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\Vector.h",
               "RelativeDocumentMoniker": "..\\shared\\spine\\Vector.h",
@@ -197,12 +328,11 @@
               "RelativeToolTip": "..\\shared\\spine\\Vector.h",
               "ViewState": "AgIAABcAAAAAAAAAAADgvyAAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-25T01:02:46.069Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-25T01:02:46.069Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 8,
               "Title": "Lua_Spine.h",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\Lua_Spine.h",
               "RelativeDocumentMoniker": "..\\shared\\Lua_Spine.h",
@@ -210,25 +340,23 @@
               "RelativeToolTip": "..\\shared\\Lua_Spine.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-24T20:50:51.88Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-24T20:50:51.88Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 3,
               "Title": "Skin.h",
-              "DocumentMoniker": "\\\\mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\Skin.h",
+              "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\Skin.h",
               "RelativeDocumentMoniker": "..\\shared\\spine\\Skin.h",
-              "ToolTip": "\\\\mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\Skin.h",
+              "ToolTip": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\Skin.h",
               "RelativeToolTip": "..\\shared\\spine\\Skin.h",
               "ViewState": "AgIAAF8AAAAAAAAAAADgv2cAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-10T02:06:50.176Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-10T02:06:50.176Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 32,
               "Title": "Lua_Skeleton.h",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\Lua_Skeleton.h",
               "RelativeDocumentMoniker": "..\\shared\\Lua_Skeleton.h",
@@ -240,7 +368,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 11,
               "Title": "DataHolder.h",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\DataHolder.h",
               "RelativeDocumentMoniker": "..\\shared\\DataHolder.h",
@@ -248,12 +376,11 @@
               "RelativeToolTip": "..\\shared\\DataHolder.h",
               "ViewState": "AgIAAAEAAADAAAAAAIAZwA4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-24T20:50:51.299Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-24T20:50:51.299Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 12,
               "Title": "AttachmentLoader.h",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\AttachmentLoader.h",
               "RelativeDocumentMoniker": "..\\shared\\spine\\AttachmentLoader.h",
@@ -265,19 +392,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
-              "Title": "Lua_Skeleton.cpp",
-              "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\Lua_Skeleton.cpp",
-              "RelativeDocumentMoniker": "..\\shared\\Lua_Skeleton.cpp",
-              "ToolTip": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\Lua_Skeleton.cpp",
-              "RelativeToolTip": "..\\shared\\Lua_Skeleton.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-11-24T20:50:51.508Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 7,
               "Title": "LuaTableHolder.cpp",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\LuaTableHolder.cpp",
               "RelativeDocumentMoniker": "..\\shared\\LuaTableHolder.cpp",
@@ -285,12 +400,11 @@
               "RelativeToolTip": "..\\shared\\LuaTableHolder.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-11-24T20:50:50.522Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-24T20:50:50.522Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 31,
               "Title": "Lua_Spine.cpp",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\Lua_Spine.cpp",
               "RelativeDocumentMoniker": "..\\shared\\Lua_Spine.cpp",
@@ -302,7 +416,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
+              "DocumentIndex": 33,
               "Title": "InjectedObject.h",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\InjectedObject.h",
               "RelativeDocumentMoniker": "..\\shared\\InjectedObject.h",
@@ -314,7 +428,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 32,
+              "DocumentIndex": 34,
               "Title": "SpineTexture.h",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\SpineTexture.h",
               "RelativeDocumentMoniker": "..\\shared\\SpineTexture.h",
@@ -326,7 +440,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 33,
+              "DocumentIndex": 35,
               "Title": "SpineTexture.cpp",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\SpineTexture.cpp",
               "RelativeDocumentMoniker": "..\\shared\\SpineTexture.cpp",
@@ -338,7 +452,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 34,
+              "DocumentIndex": 36,
               "Title": "SpineRenderer.h",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\SpineRenderer.h",
               "RelativeDocumentMoniker": "..\\shared\\SpineRenderer.h",
@@ -350,7 +464,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 35,
+              "DocumentIndex": 37,
               "Title": "SpineRenderer.cpp",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\SpineRenderer.cpp",
               "RelativeDocumentMoniker": "..\\shared\\SpineRenderer.cpp",
@@ -362,7 +476,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 36,
+              "DocumentIndex": 38,
               "Title": "SkeletonDataHolder.h",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\SkeletonDataHolder.h",
               "RelativeDocumentMoniker": "..\\shared\\SkeletonDataHolder.h",
@@ -374,7 +488,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 37,
+              "DocumentIndex": 39,
               "Title": "MeshManager.h",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\MeshManager.h",
               "RelativeDocumentMoniker": "..\\shared\\MeshManager.h",
@@ -386,7 +500,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 38,
+              "DocumentIndex": 40,
               "Title": "LuaUtils.h",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\LuaUtils.h",
               "RelativeDocumentMoniker": "..\\shared\\LuaUtils.h",
@@ -398,7 +512,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 39,
+              "DocumentIndex": 41,
               "Title": "LuaUtils.cpp",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\LuaUtils.cpp",
               "RelativeDocumentMoniker": "..\\shared\\LuaUtils.cpp",
@@ -410,7 +524,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 40,
+              "DocumentIndex": 42,
               "Title": "LuaTableHolder.h",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\LuaTableHolder.h",
               "RelativeDocumentMoniker": "..\\shared\\LuaTableHolder.h",
@@ -422,7 +536,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 13,
               "Title": "IkConstraintTimeline.cpp",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\IkConstraintTimeline.cpp",
               "RelativeDocumentMoniker": "..\\shared\\spine\\IkConstraintTimeline.cpp",
@@ -434,7 +548,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 14,
               "Title": "Bone.h",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\Bone.h",
               "RelativeDocumentMoniker": "..\\shared\\spine\\Bone.h",
@@ -446,7 +560,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 15,
               "Title": "PhysicsConstraintTimeline.h",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\PhysicsConstraintTimeline.h",
               "RelativeDocumentMoniker": "..\\shared\\spine\\PhysicsConstraintTimeline.h",
@@ -458,7 +572,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 25,
               "Title": "spine_renderer.h",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_renderer.h",
               "RelativeDocumentMoniker": "..\\shared\\spine_renderer.h",
@@ -470,7 +584,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 26,
               "Title": "spine_skeleton.cpp",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_skeleton.cpp",
               "RelativeDocumentMoniker": "..\\shared\\spine_skeleton.cpp",
@@ -482,7 +596,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
+              "DocumentIndex": 27,
               "Title": "spine_renderer.cpp",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_renderer.cpp",
               "RelativeDocumentMoniker": "..\\shared\\spine_renderer.cpp",
@@ -494,7 +608,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 28,
               "Title": "spine_texture.h",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_texture.h",
               "RelativeDocumentMoniker": "..\\shared\\spine_texture.h",
@@ -506,7 +620,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 29,
               "Title": "spine_skeleton.h",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_skeleton.h",
               "RelativeDocumentMoniker": "..\\shared\\spine_skeleton.h",
@@ -518,7 +632,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
+              "DocumentIndex": 30,
               "Title": "spine_texture.cpp",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-spine\\shared\\spine_texture.cpp",
               "RelativeDocumentMoniker": "..\\shared\\spine_texture.cpp",
@@ -530,7 +644,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 19,
               "Title": "Animation.h",
               "DocumentMoniker": "\\\\mac\\funbox\\plugins\\plugin-spine\\shared\\spine\\Animation.h",
               "RelativeDocumentMoniker": "..\\shared\\spine\\Animation.h",
@@ -542,7 +656,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 20,
               "Title": "vector",
               "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.42.34430\\include\\vector",
               "ToolTip": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.42.34430\\include\\vector",
@@ -552,7 +666,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 21,
               "Title": "assert.h",
               "DocumentMoniker": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.22621.0\\ucrt\\assert.h",
               "ToolTip": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.22621.0\\ucrt\\assert.h",
@@ -562,7 +676,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 22,
               "Title": "sal.h",
               "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.42.34430\\include\\sal.h",
               "ToolTip": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.42.34430\\include\\sal.h",
@@ -572,7 +686,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 23,
               "Title": "corecrt_wstdio.h",
               "DocumentMoniker": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.22621.0\\ucrt\\corecrt_wstdio.h",
               "ToolTip": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.22621.0\\ucrt\\corecrt_wstdio.h",
@@ -582,7 +696,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 24,
               "Title": "__msvc_sanitizer_annotate_container.hpp",
               "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.42.34430\\include\\__msvc_sanitizer_annotate_container.hpp",
               "ToolTip": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.42.34430\\include\\__msvc_sanitizer_annotate_container.hpp",
@@ -592,7 +706,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 16,
               "Title": "comdef.h",
               "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.42.34430\\include\\comdef.h",
               "ToolTip": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.42.34430\\include\\comdef.h",
@@ -602,7 +716,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 18,
               "Title": "LuaUtils.cpp",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-core\\win32\\Plugin\\LuaUtils.cpp",
               "RelativeDocumentMoniker": "..\\..\\plugin-core\\win32\\Plugin\\LuaUtils.cpp",
@@ -614,7 +728,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 17,
               "Title": "Utils.h",
               "DocumentMoniker": "\\\\Mac\\funbox\\plugins\\plugin-core\\win32\\Utils.h",
               "RelativeDocumentMoniker": "..\\..\\plugin-core\\win32\\Utils.h",

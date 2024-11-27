@@ -1,5 +1,7 @@
 #include "Lua_Skeleton.h"
 #include "Lua_Slot.h"
+#include "Lua_Bone.h"
+#include "Lua_IKConstraint.h"
 #include "SpineRenderer.h"
 
 static SpineSkeleton *luaL_getSkeletonUserdata(lua_State *L)
@@ -27,77 +29,8 @@ static SpineSkeleton *luaL_getSkeletonUserdata(lua_State *L)
     return skeletonUserdata;
 }
 
-void getSkeletonMt(lua_State *L){
-    luaL_getmetatable(L, "SpineSkeleton");
-    if (lua_isnil(L, -1))
-    {
-        lua_pop(L, 1);
-        luaL_newmetatable(L, "SpineSkeleton");
 
-        lua_pushcfunction(L, skeleton_gc);
-        lua_setfield(L, -2, "__gc");
-    }
-}
-
-void getSpineObjectMt(lua_State *L)
-{
-    luaL_getmetatable(L, "SpineObject");
-    if (lua_isnil(L, -1))
-    {
-        lua_pop(L, 1);
-        luaL_newmetatable(L, "SpineObject");
-
-        lua_pushstring(L, "__index");
-        lua_pushcfunction(L, skeleton_index);
-        lua_settable(L, -3);
-
-        lua_pushstring(L, "__newindex");
-        lua_pushcfunction(L, skeleton_newindex);
-        lua_settable(L, -3);
-
-        luaL_Reg methods[] = {
-            {"updateState", updateState},
-            {"draw", skeletonDraw},
-            {"removeSelf", removeSelf},
-            {"setFillColor", setFillColor},
-
-            {"setDefaultMix", setDefaultMix},
-            {"setMix", setMix},
-
-            {"physicsRotate", physicsRotate},
-            {"physicsTranslate", physicsTranslate},
-            {"setToSetupPose", setToSetupPose},
-
-            {"setAnimation", setAnimation},
-            {"addAnimation", addAnimation},
-            {"findAnimation", findAnimation},
-            {"getCurrentAnimation", getCurrentAnimation},
-            {"getAnimations", getAnimations},
-
-            {"getSlot", getSlot},
-            {"getSlotNames", getSlotNames},
-
-            {"getIKConstraint", getIKConstraint},
-
-            {"getSkins", getSkins},
-            {"setSkin", setSkin},
-
-            {"setTimeScale", setTimeScale},
-            {"getTimeScale", getTimeScale},
-            {"clearTracks", clearTracks},
-
-            {"setAttachment", setAttachment},
-            {"getAttachments", getAttachments},
-
-            {"inject", injectObject},
-            {"eject", ejectObject},
-
-            {NULL, NULL}};
-        luaL_register(L, NULL, methods);
-    }
-}
-
-int skeleton_index(lua_State *L)
+static int skeleton_index(lua_State *L)
 {
     const char *key = luaL_checkstring(L, 2);
 
@@ -109,6 +42,60 @@ int skeleton_index(lua_State *L)
     if (strcmp(key, "isActive") == 0)
     {
         lua_pushboolean(L, skeletonUserdata->state->getTracks().size() > 0);
+        return 1;
+    } 
+    else if (strcmp(key, "timeScale") == 0)
+    {
+        lua_pushnumber(L, skeletonUserdata->state->getTimeScale());
+        return 1;
+    }
+    else if (strcmp(key, "slots") == 0)
+    {
+        Skeleton *skeleton = skeletonUserdata->skeleton;
+        Vector<Slot *> &slots = skeleton->getSlots();
+        int n = slots.size();
+        lua_createtable(L, n, 0);
+
+        for (int i = 0; i < n; i++)
+        {
+            LuaSlot *slotUserdata = (LuaSlot *)lua_newuserdata(L, sizeof(LuaSlot));
+            new (slotUserdata) LuaSlot(L, slots[i]);
+        }
+
+        return 1;
+    }
+    else if (strcmp(key, "bones") == 0)
+    {
+        Skeleton *skeleton = skeletonUserdata->skeleton;
+        Vector<Bone *> &bones = skeleton->getBones();
+        int n = bones.size();
+        lua_createtable(L, n, 0);
+
+        for (int i = 0; i < n; i++)
+        {
+            LuaBone *boneUserdata = (LuaBone *)lua_newuserdata(L, sizeof(LuaBone));
+            new (boneUserdata) LuaBone(L, bones[i]);
+
+            lua_rawseti(L, -2, i + 1);
+        }
+
+        return 1;
+    } else if (strcmp(key, "ikConstraints") == 0)
+    {
+        Skeleton *skeleton = skeletonUserdata->skeleton;
+        Vector<IkConstraint *> &ikConstraints = skeleton->getIkConstraints();
+        int n = ikConstraints.size();
+        lua_createtable(L, n, 0);
+
+        for (int i = 0; i < n; i++)
+        {
+            IkConstraint *ikConstraint = ikConstraints[i];
+            LuaIKConstraint *ikConstraintUserdata = (LuaIKConstraint *)lua_newuserdata(L, sizeof(LuaIKConstraint));
+            new (ikConstraintUserdata) LuaIKConstraint(L, ikConstraint);
+
+            lua_rawseti(L, -2, i + 1);
+        }
+
         return 1;
     }
 
@@ -135,12 +122,21 @@ int skeleton_index(lua_State *L)
     return 0;
 }
 
-int skeleton_newindex(lua_State *L)
+static int skeleton_newindex(lua_State *L)
 {
     lua_pushstring(L, "_skeleton");
     lua_rawget(L, 1);
 
     SpineSkeleton *skeletonUserdata = (SpineSkeleton *)luaL_checkudata(L, -1, "SpineSkeleton");
+
+    const char *key = luaL_checkstring(L, 2);
+
+    if (strcmp(key, "timeScale") == 0)
+    {
+        float timeScale = luaL_checknumber(L, 3);
+        skeletonUserdata->state->setTimeScale(timeScale);
+        return 0;
+    }
 
     skeletonUserdata->groupmt__newindex->pushTable();
     lua_pushvalue(L, 1);
@@ -151,7 +147,7 @@ int skeleton_newindex(lua_State *L)
     return 0;
 }
 
-int skeleton_gc(lua_State *L)
+static int skeleton_gc(lua_State *L)
 {
     SpineSkeleton *skeletonUserdata = (SpineSkeleton *)luaL_checkudata(L, 1, "SpineSkeleton");
 
@@ -167,7 +163,7 @@ int skeleton_gc(lua_State *L)
 
 
 // skeleton:getSkins()
-int getSkins(lua_State *L)
+static int getSkins(lua_State *L)
 {
     SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
     if (!skeletonUserdata)
@@ -190,7 +186,7 @@ int getSkins(lua_State *L)
 }
 
 // skeleton:setSkin(skinName)
-int setSkin(lua_State *L)
+static int setSkin(lua_State *L)
 {
     if (lua_gettop(L) != 2)
     {
@@ -232,7 +228,7 @@ int setSkin(lua_State *L)
 
 
 // skeleton:setToSetupPose()
-int setToSetupPose(lua_State *L)
+static int setToSetupPose(lua_State *L)
 {
     SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
     if (!skeletonUserdata)
@@ -248,7 +244,7 @@ int setToSetupPose(lua_State *L)
 
 
 // skeleton:setAnimation(trackIndex, animationName, loop)
-int setAnimation(lua_State *L)
+static int setAnimation(lua_State *L)
 {
     SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
     if (!skeletonUserdata)
@@ -271,7 +267,7 @@ int setAnimation(lua_State *L)
 }
 
 // skeleton:addAnimation(trackIndex, animationName, loop, delay)
-int addAnimation(lua_State *L)
+static int addAnimation(lua_State *L)
 {
     SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
     if (!skeletonUserdata)
@@ -295,7 +291,7 @@ int addAnimation(lua_State *L)
 }
 
 // skeleton:findAnimation(animationName)
-int findAnimation(lua_State *L)
+static int findAnimation(lua_State *L)
 {
     SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
     if (!skeletonUserdata)
@@ -312,7 +308,7 @@ int findAnimation(lua_State *L)
 }
 
 // skeleton:getCurrentAnimation()
-int getCurrentAnimation(lua_State *L)
+static int getCurrentAnimation(lua_State *L)
 {
     SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
     if (!skeletonUserdata)
@@ -334,7 +330,7 @@ int getCurrentAnimation(lua_State *L)
 }
 
 // skeleton:getAnimations()
-int getAnimations(lua_State *L)
+static int getAnimations(lua_State *L)
 {
     SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
     if (!skeletonUserdata)
@@ -359,7 +355,7 @@ int getAnimations(lua_State *L)
 
 
 // skeleton:setDefaultMix(mix)
-int setDefaultMix(lua_State *L)
+static int setDefaultMix(lua_State *L)
 {
     SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
     if (!skeletonUserdata)
@@ -373,7 +369,7 @@ int setDefaultMix(lua_State *L)
 }
 
 // skeleton:setMix(from, to, mix)
-int setMix(lua_State *L)
+static int setMix(lua_State *L)
 {
     SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
     if (!skeletonUserdata)
@@ -408,7 +404,7 @@ int setMix(lua_State *L)
 
 
 // skeleton:updateState(deltaTime)
-int updateState(lua_State *L)
+static int updateState(lua_State *L)
 {
     SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
     if (!skeletonUserdata)
@@ -431,23 +427,7 @@ int updateState(lua_State *L)
     return 0;
 }
 
-// skeleton:draw()
-int skeletonDraw(lua_State *L)
-{
-    SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
-    if (!skeletonUserdata)
-    {
-        return 0;
-    }
-
-    skeletonUserdata->skeleton->updateWorldTransform(Physics_Update);
-
-    skeletonRender(L, skeletonUserdata);
-
-    return 0;
-}
-
-void skeletonRender(lua_State *L, SpineSkeleton *skeletonUserdata)
+static void skeletonRender(lua_State *L, SpineSkeleton *skeletonUserdata)
 {
     Skeleton *skeleton = skeletonUserdata->skeleton;
     SkeletonRenderer skeletonRenderer;
@@ -562,9 +542,25 @@ void skeletonRender(lua_State *L, SpineSkeleton *skeletonUserdata)
     lua_pop(L, -1);
 }
 
+// skeleton:draw()
+static int skeletonDraw(lua_State *L)
+{
+    SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
+    if (!skeletonUserdata)
+    {
+        return 0;
+    }
+
+    skeletonUserdata->skeleton->updateWorldTransform(Physics_Update);
+
+    skeletonRender(L, skeletonUserdata);
+
+    return 0;
+}
+
 
 // skeleton:setAttachment(slotName, attachmentName)
-int setAttachment(lua_State *L) {
+static int setAttachment(lua_State *L) {
     if (lua_gettop(L) != 3) {
         luaL_error(L, "Expected 3 arguments: self, slotName, attachmentName");
         return 0;
@@ -602,7 +598,7 @@ int setAttachment(lua_State *L) {
 
 
 // skeleton:getAttachments(slot)
-int getAttachments(lua_State *L)
+static int getAttachments(lua_State *L)
 {
     SpineSkeleton* skeletonUserdata = luaL_getSkeletonUserdata(L);
     if (!skeletonUserdata) {
@@ -631,7 +627,7 @@ int getAttachments(lua_State *L)
 }
 
 // skeleton:getSlot(slotName)
-int getSlot(lua_State *L)
+static int getSlot(lua_State *L)
 {
     SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
     if (!skeletonUserdata)
@@ -657,7 +653,7 @@ int getSlot(lua_State *L)
 
 
 // skeleton:getSlotNames()
-int getSlotNames(lua_State *L)
+static int getSlotNames(lua_State *L)
 {
     SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
     if (!skeletonUserdata)
@@ -680,15 +676,60 @@ int getSlotNames(lua_State *L)
 }
 
 // skeleton:getIKConstraint(ikConstraintName)
-int getIKConstraint(lua_State *L)
+static int getIKConstraint(lua_State *L)
 {
+    SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
+    if (!skeletonUserdata)
+    {
+        return 0;
+    }
+
+    const char *ikConstraintName = luaL_checkstring(L, 2);
+
+    Skeleton *skeleton = skeletonUserdata->skeleton;
+
+    IkConstraint *ikConstraint = skeleton->findIkConstraint(ikConstraintName);
+
+    if (!ikConstraint)
+    {
+        luaL_error(L, "IKConstraint not found: %s", ikConstraintName);
+        return 0;
+    }
+
+    LuaIKConstraint *ikConstraintUserdata = (LuaIKConstraint *)lua_newuserdata(L, sizeof(LuaIKConstraint));
+    new (ikConstraintUserdata) LuaIKConstraint(L, ikConstraint);
+
+    return 1;
+}
+
+// skeleton:getIKConstraint(ikConstraintName)
+static int getIKConstraintNames(lua_State *L)
+{
+    SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
+    if (!skeletonUserdata)
+    {
+        return 0;
+    }
+
+    SkeletonData *skeletonData = skeletonUserdata->skeletonData;
+    Vector<IkConstraintData *> &ikConstraints = skeletonData->getIkConstraints();
+
+    int n = ikConstraints.size();
+    lua_createtable(L, n, 0);
+
+    for (int i = 0; i < n; i++)
+    {
+        lua_pushstring(L, ikConstraints[i]->getName().buffer());
+        lua_rawseti(L, -2, i + 1);
+    }
+
     return 1;
 }
 
 
 
 // skeleton:setTimeScale(timeScale)
-int setTimeScale(lua_State *L)
+static int setTimeScale(lua_State *L)
 {
     SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
     if (!skeletonUserdata)
@@ -703,7 +744,7 @@ int setTimeScale(lua_State *L)
 }
 
 // skeleton:getTimeScale()
-int getTimeScale(lua_State *L)
+static int getTimeScale(lua_State *L)
 {
     SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
     if (!skeletonUserdata)
@@ -722,7 +763,7 @@ int getTimeScale(lua_State *L)
 
 
 // skeleton:physicsTranslate(x, y)
-int physicsTranslate(lua_State *L){
+static int physicsTranslate(lua_State *L){
     SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
     if (!skeletonUserdata)
     {
@@ -738,7 +779,7 @@ int physicsTranslate(lua_State *L){
 }
 
 // skeleton:physicsRotate(x, y, degrees)
-int physicsRotate(lua_State *L)
+static int physicsRotate(lua_State *L)
 {
     SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
     if (!skeletonUserdata)
@@ -759,7 +800,7 @@ int physicsRotate(lua_State *L)
 
 
 // skeleton:setFillColor(r, g, b, a)
-int setFillColor(lua_State *L)
+static int setFillColor(lua_State *L)
 {
     SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
     if (!skeletonUserdata)
@@ -810,7 +851,7 @@ int setFillColor(lua_State *L)
 
 
 // skeleton:inject(slotName, object, listener)
-int injectObject(lua_State *L)
+static int injectObject(lua_State *L)
 {
     SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
     if (!skeletonUserdata)
@@ -853,7 +894,7 @@ int injectObject(lua_State *L)
 }
 
 // skeleton:eject()
-int ejectObject(lua_State *L)
+static int ejectObject(lua_State *L)
 {
     SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
     if (!skeletonUserdata)
@@ -869,7 +910,7 @@ int ejectObject(lua_State *L)
 
 
 // skeleton:clearTracks()
-int clearTracks(lua_State *L)
+static int clearTracks(lua_State *L)
 {
     SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
     if (!skeletonUserdata)
@@ -883,7 +924,7 @@ int clearTracks(lua_State *L)
 }
 
 // skeleton:removeSelf()
-int removeSelf(lua_State *L)
+static int removeSelf(lua_State *L)
 {
     if (!lua_istable(L, 1))
     {
@@ -914,3 +955,73 @@ int removeSelf(lua_State *L)
     return 0;
 }
 
+
+void getSkeletonMt(lua_State *L)
+{
+    luaL_getmetatable(L, "SpineSkeleton");
+    if (lua_isnil(L, -1))
+    {
+        lua_pop(L, 1);
+        luaL_newmetatable(L, "SpineSkeleton");
+
+        lua_pushcfunction(L, skeleton_gc);
+        lua_setfield(L, -2, "__gc");
+    }
+}
+
+void getSpineObjectMt(lua_State *L)
+{
+    luaL_getmetatable(L, "SpineObject");
+    if (lua_isnil(L, -1))
+    {
+        lua_pop(L, 1);
+        luaL_newmetatable(L, "SpineObject");
+
+        lua_pushstring(L, "__index");
+        lua_pushcfunction(L, skeleton_index);
+        lua_settable(L, -3);
+
+        lua_pushstring(L, "__newindex");
+        lua_pushcfunction(L, skeleton_newindex);
+        lua_settable(L, -3);
+
+        luaL_Reg methods[] = {
+            {"updateState", updateState},
+            {"draw", skeletonDraw},
+            {"removeSelf", removeSelf},
+            {"setFillColor", setFillColor},
+
+            {"setDefaultMix", setDefaultMix},
+            {"setMix", setMix},
+
+            {"physicsRotate", physicsRotate},
+            {"physicsTranslate", physicsTranslate},
+            {"setToSetupPose", setToSetupPose},
+
+            {"setAnimation", setAnimation},
+            {"addAnimation", addAnimation},
+            {"findAnimation", findAnimation},
+            {"getCurrentAnimation", getCurrentAnimation},
+            {"getAnimations", getAnimations},
+
+            {"getSlot", getSlot},
+            {"getSlotNames", getSlotNames},
+
+            {"getIKConstraint", getIKConstraint},
+            {"getIKConstraintNames", getIKConstraintNames},
+
+            {"getSkins", getSkins},
+            {"setSkin", setSkin},
+
+            {"clearTracks", clearTracks},
+
+            {"setAttachment", setAttachment},
+            {"getAttachments", getAttachments},
+
+            {"inject", injectObject},
+            {"eject", ejectObject},
+
+            {NULL, NULL}};
+        luaL_register(L, NULL, methods);
+    }
+}

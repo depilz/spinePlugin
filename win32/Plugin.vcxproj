@@ -13,7 +13,10 @@
   <ItemGroup>
     <ClCompile Include="..\shared\LuaTableHolder.cpp" />
     <ClCompile Include="..\shared\LuaUtils.cpp" />
+    <ClCompile Include="..\shared\Lua_Bone.cpp" />
+    <ClCompile Include="..\shared\Lua_IKConstraint.cpp" />
     <ClCompile Include="..\shared\Lua_Skeleton.cpp" />
+    <ClCompile Include="..\shared\Lua_Slot.cpp" />
     <ClCompile Include="..\shared\Lua_Spine.cpp" />
     <ClCompile Include="..\shared\SkeletonDataHolder.cpp" />
     <ClCompile Include="..\shared\SpineRenderer.cpp" />
@@ -93,7 +96,10 @@
     <ClInclude Include="..\shared\LuaAnimationStateListener.h" />
     <ClInclude Include="..\shared\LuaTableHolder.h" />
     <ClInclude Include="..\shared\LuaUtils.h" />
+    <ClInclude Include="..\shared\Lua_Bone.h" />
+    <ClInclude Include="..\shared\Lua_IKConstraint.h" />
     <ClInclude Include="..\shared\Lua_Skeleton.h" />
+    <ClInclude Include="..\shared\Lua_Slot.h" />
     <ClInclude Include="..\shared\Lua_Spine.h" />
     <ClInclude Include="..\shared\MeshManager.h" />
     <ClInclude Include="..\shared\SkeletonDataHolder.h" />

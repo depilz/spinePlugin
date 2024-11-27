@@ -20,11 +20,8 @@ struct LuaSlot
 
     ~LuaSlot()
     {
-        if (slot)
-        {
-            slot = nullptr;
-            L = nullptr;
-        }
+        slot = nullptr;
+        L = nullptr;
     }
 };
 

@@ -76,6 +76,8 @@
 		920C36972CD7C8E400CD52FA /* TransformConstraint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 920C363B2CD7C8E400CD52FA /* TransformConstraint.cpp */; };
 		920C36982CD7C8E400CD52FA /* PhysicsConstraintTimeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 920C36072CD7C8E400CD52FA /* PhysicsConstraintTimeline.cpp */; };
 		924F5F5F2CF7671900B83E0F /* Lua_Slot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 924F5F5E2CF7671900B83E0F /* Lua_Slot.cpp */; };
+		924F5F622CF78D3C00B83E0F /* Lua_IKConstraint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 924F5F612CF78D3C00B83E0F /* Lua_IKConstraint.cpp */; };
+		924F5F652CF79DA900B83E0F /* Lua_Bone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 924F5F642CF79DA900B83E0F /* Lua_Bone.cpp */; };
 		9261E9632CF3B8F70044A3E3 /* LuaUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9261E9582CF3B8F70044A3E3 /* LuaUtils.cpp */; };
 		9261E9642CF3B8F70044A3E3 /* LuaTableHolder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9261E9562CF3B8F70044A3E3 /* LuaTableHolder.cpp */; };
 		9261E9652CF3B8F70044A3E3 /* SpineRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9261E95E2CF3B8F70044A3E3 /* SpineRenderer.cpp */; };
@@ -259,6 +261,10 @@
 		920C364A2CD7C8E400CD52FA /* Vertices.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Vertices.h; sourceTree = "<group>"; };
 		924F5F5D2CF7671900B83E0F /* Lua_Slot.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Lua_Slot.h; sourceTree = "<group>"; };
 		924F5F5E2CF7671900B83E0F /* Lua_Slot.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Lua_Slot.cpp; sourceTree = "<group>"; };
+		924F5F602CF78D3C00B83E0F /* Lua_IKConstraint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Lua_IKConstraint.h; sourceTree = "<group>"; };
+		924F5F612CF78D3C00B83E0F /* Lua_IKConstraint.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Lua_IKConstraint.cpp; sourceTree = "<group>"; };
+		924F5F632CF79DA900B83E0F /* Lua_Bone.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Lua_Bone.h; sourceTree = "<group>"; };
+		924F5F642CF79DA900B83E0F /* Lua_Bone.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Lua_Bone.cpp; sourceTree = "<group>"; };
 		9261E9522CF3B8F70044A3E3 /* DataHolder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataHolder.h; sourceTree = "<group>"; };
 		9261E9532CF3B8F70044A3E3 /* InjectedObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InjectedObject.h; sourceTree = "<group>"; };
 		9261E9542CF3B8F70044A3E3 /* LuaAnimationStateListener.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LuaAnimationStateListener.h; sourceTree = "<group>"; };
@@ -481,6 +487,10 @@
 				9261E96F2CF3C1610044A3E3 /* Lua_Spine.cpp */,
 				924F5F5D2CF7671900B83E0F /* Lua_Slot.h */,
 				924F5F5E2CF7671900B83E0F /* Lua_Slot.cpp */,
+				924F5F602CF78D3C00B83E0F /* Lua_IKConstraint.h */,
+				924F5F612CF78D3C00B83E0F /* Lua_IKConstraint.cpp */,
+				924F5F632CF79DA900B83E0F /* Lua_Bone.h */,
+				924F5F642CF79DA900B83E0F /* Lua_Bone.cpp */,
 			);
 			name = shared;
 			path = ../shared;
@@ -634,6 +644,7 @@
 				920C367E2CD7C8E400CD52FA /* Json.cpp in Sources */,
 				920C367F2CD7C8E400CD52FA /* Atlas.cpp in Sources */,
 				920C36802CD7C8E400CD52FA /* EventData.cpp in Sources */,
+				924F5F622CF78D3C00B83E0F /* Lua_IKConstraint.cpp in Sources */,
 				920C36812CD7C8E400CD52FA /* AtlasAttachmentLoader.cpp in Sources */,
 				920C36822CD7C8E400CD52FA /* PointAttachment.cpp in Sources */,
 				920C36832CD7C8E400CD52FA /* SkeletonJson.cpp in Sources */,
@@ -641,6 +652,7 @@
 				920C36852CD7C8E400CD52FA /* AttachmentLoader.cpp in Sources */,
 				9261E9702CF3C1610044A3E3 /* Lua_Skeleton.cpp in Sources */,
 				9261E9712CF3C1610044A3E3 /* Lua_Spine.cpp in Sources */,
+				924F5F652CF79DA900B83E0F /* Lua_Bone.cpp in Sources */,
 				920C36862CD7C8E400CD52FA /* Timeline.cpp in Sources */,
 				920C36872CD7C8E400CD52FA /* PhysicsConstraintData.cpp in Sources */,
 				920C36882CD7C8E400CD52FA /* LinkedMesh.cpp in Sources */,

@@ -123,28 +123,54 @@ end
 
 
 -- local spineName = "studycat4_2"
-local spine = allSpines[math.random(1, #allSpines)]
+local spineName = "spineboy"
+-- local spine = allSpines[math.random(1, #allSpines)]
 -- for i = 1, 20 do
     -- Not working: 4, 6, 14
     local o = newSpine(spineName, cx, cy, .4, eventListener)
-    playAllAnimations(o)
-    -- playFirstAnimation(o)
+    -- playAllAnimations(o)
+    playFirstAnimation(o)
     o:addEventListener('touch', touch)
-    print("------")
-    local slot = o:getSlot("hat")
-    local rect = display.newRect(slot.x, slot.y, 50, 50)
-    -- o:insert(rect)
-    local parent = display.newGroup()
-    parent:insert(rect)
-    parent:scale(.4, .4)
-    parent.x, parent.y = o.x, o.y
-    timer.performWithDelay(0, function ()
-        print("---------- Slot found ----------")
-        rect.x, rect.y = slot.x, slot.y
-        rect.rotation = slot.rotation
-        rect:setFillColor(slot.r, slot.g, slot.b)
-    end, 0)
-    o:setFillColor(1, 0, 0)
+
+    -- local ikNames = o:getIKConstraintNames()
+    -- for i = 1, #ikNames do
+    --     print(ikNames[i])
+    -- end
+
+    local ikConstraints = o.ikConstraints
+
+    local ik = ikConstraints[1]
+    print(ik.name)
+    for i = 1, #ik.bones do
+        print(ik.bones[i].name)
+    end
+    local target = ik.target
+
+    local touchLayer = display.newRect(parent, cx, cy, w, h)
+    touchLayer:setFillColor(0, 0, 0, 0)
+    touchLayer.isHitTestable = true
+    local prevX, prevY
+    touchLayer:addEventListener('touch', function(e)
+        if e.phase == "began" then
+            prevX, prevY = e.x, e.y
+        end
+
+        if e.phase == "moved" then
+            local dx, dy = e.x - prevX, e.y - prevY
+            prevX, prevY = e.x, e.y
+            target.x = target.x + dx/ o.xScale
+            target.y = target.y + dy/ o.xScale
+
+            target.rotation = target.rotation + dx
+        end
+
+        return true
+    end)
+
+    -- local bones = o.bones
+
+    -- print(ik)
+
 -- end
 
 -- timer.performWithDelay(1, function()
