@@ -108,8 +108,12 @@ int skeletonDraw(lua_State *L);
 void skeletonRender(lua_State *L, SpineSkeleton *skeletonUserdata);
 
 int setAttachment(lua_State *L);
+int getAttachments(lua_State *L);
 
-int getSlots(lua_State *L);
+int getSlot(lua_State *L);
+int getSlotNames(lua_State *L);
+
+int getIKConstraint(lua_State *L);
 
 int setTimeScale(lua_State *L);
 int getTimeScale(lua_State *L);
