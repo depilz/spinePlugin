@@ -8,17 +8,25 @@ display.setDefault('background', 0.1)
 local cx, cy = display.contentCenterX, display.contentCenterY
 local w, h = display.actualContentWidth, display.actualContentHeight
 
-local spines = {
-    spineboy = { atlas = "spineboy.atlas", skeleton = "spineboy.skel"},
-}
-
 local parent = display.newGroup()
 
+local allSpines = {"alien", "celestial-circus", "chibi-stickers", "cloud-pot", "coin", "dragon", "goblins", "hero", "mix-and-match", "owl", "powerup", "raptor", "sack", "snowglobe", "speedy", "spineboy", "stretchyman", "tank", "vine", "windmill" }
+
 local function newSpine(name, x, y, scale, listener)
-    local atlas = Spine.getAtlasData("spines/" .. spines[name].atlas)
-    local skeleton = Spine.getSkeletonData("spines/" .. spines[name].skeleton, atlas)
+    local atlas = Spine.getAtlasData(name)
+    local skeleton = Spine.getSkeletonData(name, atlas)
 
     local o = Spine.create(parent, skeleton, x, y, listener)
+    local skins = o:getSkins()
+    for i = 1, #skins do
+        print(skins[i])
+    end
+    local index = 1
+    o:setSkin(skins[1])
+    timer.performWithDelay(2000, function()
+        index = (index%#skins) + 1
+        o:setSkin(skins[index])
+    end, 0)
     o:setDefaultMix(0.3)
 
     instances[#instances + 1] = o
@@ -92,25 +100,54 @@ end
 Runtime:addEventListener('enterFrame', enterFrame)
 
 local function eventListener(e)
-    print("------ NEW EVENT -------")
-    for k, v in pairs(e) do
-        print(k, v)
-    end
+    -- print("------ NEW EVENT -------")
+    -- for k, v in pairs(e) do
+    --     print(k, v)
+    -- end
 end
+
+
+local spineName = "studycat4_2"
+-- local spineName = "chibi_stickers"
 
 local function renewSpine()
     local o = table.remove(instances, 1)
     o:removeSelf()
 
-    local spineboy = newSpine('spineboy', cx, cy, .4, eventListener)
-    playFirstAnimation(spineboy)
-    spineboy:addEventListener('touch', touch)
+    local x, y = math.random(0, w), math.random(0, h)
+
+    local o = newSpine(spineName, x, y, .4, eventListener)
+    playFirstAnimation(o)
+    o:addEventListener('touch', touch)
 end
 
 
-local spineboy = newSpine('spineboy', cx, cy, .4, eventListener)
-playFirstAnimation(spineboy)
-spineboy:addEventListener('touch', touch)
+for i = 1, 20 do
+    -- Not working: 4, 6, 14
+    local o = newSpine(allSpines[1], cx, cy, .4, eventListener)
+    playAllAnimations(o)
+    -- playFirstAnimation(o)
+    o:addEventListener('touch', touch)
+end
 
-timer.performWithDelay(100, renewSpine, 0)
+-- timer.performWithDelay(1, function()
+--     for i = 1, 18 do
+--         renewSpine()
+--     end
+-- end, 0)
 
+
+local lastTime = system.getTimer()
+local frameCount = 0
+local lastMark = lastTime
+Runtime:addEventListener("enterFrame", function(event)
+    local time = event.time
+    local dt = time - lastTime
+    lastTime = time
+    frameCount = frameCount + 1
+    if time - lastMark > 1000 then
+        print(("SPINES: %d, FPS: %d"):format(#instances, frameCount)) 
+        frameCount = 0
+        lastMark = time
+    end
+end)

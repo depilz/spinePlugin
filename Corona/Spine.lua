@@ -5,24 +5,27 @@ local atlases = {}
 local skeletons = {}
 
 
-function Spine.getAtlasData(atlasPath)
-    if atlases[atlasPath] then return atlases[atlasPath] end
+function Spine.getAtlasData(name)
+    if atlases[name] then return atlases[name] end
 
-    local absPath = system.pathForFile(atlasPath, system.ResourceDirectory)
+    local path = ("spines/%s/%s.atlas"):format(name, name)
+    print(path)
+    local absPath = system.pathForFile(path, system.ResourceDirectory)
     local atlas = SpinePlugin.loadAtlas(absPath)
 
-    atlases[atlasPath] = atlas
+    atlases[name] = atlas
 
     return atlas
 end
 
-function Spine.getSkeletonData(skelPath, atlas)
-    if skeletons[skelPath] then return skeletons[skelPath] end
+function Spine.getSkeletonData(name, atlas)
+    if skeletons[name] then return skeletons[name] end
 
-    local absPath = system.pathForFile(skelPath, system.ResourceDirectory)
+    local path = ("spines/%s/%s.skel"):format(name, name)
+    local absPath = system.pathForFile(path, system.ResourceDirectory)
     local skeleton = SpinePlugin.loadSkeletonData(absPath, atlas)
 
-    skeletons[skelPath] = skeleton
+    skeletons[name] = skeleton
 
     return skeleton
 end

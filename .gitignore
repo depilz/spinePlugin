@@ -128,3 +128,6 @@ env/
 /local.properties
 **/.idea/**
 **/build/**
+
+# Private spines
+Corona/spines/studycat4_2
