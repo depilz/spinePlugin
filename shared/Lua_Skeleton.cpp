@@ -277,7 +277,7 @@ static int addAnimation(lua_State *L)
     int trackIndex = luaL_checkint(L, 2);
     const char *animationName = luaL_checkstring(L, 3);
     bool loop = lua_toboolean(L, 4);
-    float delay = luaL_checknumber(L, 5);
+    float delay = luaL_checknumber(L, 5) / 1000;
 
     Animation *animation = skeletonUserdata->skeletonData->findAnimation(animationName);
     if (!animation)
@@ -365,7 +365,7 @@ static int setDefaultMix(lua_State *L)
 
     float mix = luaL_checknumber(L, 2);
 
-    skeletonUserdata->stateData->setDefaultMix(mix);
+    skeletonUserdata->stateData->setDefaultMix(mix / 1000);
 }
 
 // skeleton:setMix(from, to, mix)
