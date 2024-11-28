@@ -13,6 +13,10 @@ settings =
 	},
 	--]]
 
+    plugins =
+    {    
+        ['plugin.spine'] = {publisherId = 'com.studycat'},
+    },
 	iphone =
 	{
 		xcassets = "Images.xcassets",
