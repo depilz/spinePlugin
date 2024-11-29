@@ -1,4 +1,4 @@
-local SpinePlugin = require('plugin.spine')
+SpinePlugin = require('plugin.spine')
 
 local Spine = {}
 local atlases = {}
@@ -10,7 +10,9 @@ local skeletons = {}
 function Spine.getAtlasData(name)
     if atlases[name] then return atlases[name] end
 
-    local path = ("spines/%s/%s.atlas"):format(name, name)
+    local folder = name:gsub("-pma", "")
+
+    local path = ("spines/%s/%s.atlas"):format(folder, name)
     local absPath = system.pathForFile(path, system.ResourceDirectory)
     local atlas = SpinePlugin.loadAtlas(absPath)
 
@@ -19,12 +21,12 @@ function Spine.getAtlasData(name)
     return atlas
 end
 
-function Spine.getSkeletonData(name, atlas)
+function Spine.getSkeletonData(name, atlas, scale)
     if skeletonsData[name] then return skeletonsData[name] end
 
     local path = ("spines/%s/%s.skel"):format(name, name)
     local absPath = system.pathForFile(path, system.ResourceDirectory)
-    local data = SpinePlugin.loadSkeletonData(absPath, atlas)
+    local data = SpinePlugin.loadSkeletonData(absPath, atlas, scale)
 
     skeletonsData[name] = data
 

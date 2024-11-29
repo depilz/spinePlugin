@@ -1,11 +1,10 @@
 display.setStatusBar(display.HiddenStatusBar)
 
-display.setDefault('background', 0.1)
+display.setDefault('background', 0.2)
 
-local cx, cy = display.contentCenterX, display.contentCenterY
-local w, h = display.actualContentWidth, display.actualContentHeight
-
-local parent = display.newGroup()
+ox, oy = display.safeScreenOriginX, display.safeScreenOriginY
+cx, cy = display.contentCenterX, display.contentCenterY
+w, h = display.actualContentWidth, display.actualContentHeight
 
 _G.Spine = require('Spine')
 
@@ -18,12 +17,14 @@ local tests = {
     {"Inverse Kinematics", "InverseKinematics"},
     {"Skins", "Skins"},
     {"Animations", "PlayAnimations"},
+    {"Performance", "Performance"},
+    {"Performance 2", "Performance2"},
 }
 
 
 local buttons = display.newGroup()
-local yStart = 50
-local ySpacing = 50
+local ySpacing = 100
+local yStart = oy + ySpacing
 local Widget = require('widget')
 for i, spine in ipairs(tests) do
     local name, file = spine[1], spine[2]
@@ -31,11 +32,11 @@ for i, spine in ipairs(tests) do
     local button = Widget.newButton{
         x = cx,
         y = yStart + (i - 1) * ySpacing,
-        width = 200,
-        height = 40,
+        width = 400,
+        height = 80,
         label = name,
         shape = "roundedRect",
-        fontSize = 20,
+        fontSize = 40,
         fillColor = { default={0.3,0.7,1,1}, over={0.2,0.5,0.7,1} },
         labelColor = { default={1,1,1,1}, over={.9,.9,.9,1} },
         onRelease = function()
@@ -47,3 +48,7 @@ for i, spine in ipairs(tests) do
     buttons:insert(button)
 end
 
+-- require("tests.InverseKinematics")
+-- require("tests.Performance")
+-- require("tests.Performance2")
+-- buttons.isVisible = false

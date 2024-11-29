@@ -180,14 +180,12 @@
 		9261E98B2CF401300044A3E3 /* SpineTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 9261E9842CF401300044A3E3 /* SpineTexture.h */; };
 		9261E98C2CF401300044A3E3 /* LuaTableHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = 9261E97B2CF401300044A3E3 /* LuaTableHolder.h */; };
 		9261E98D2CF401300044A3E3 /* SkeletonDataHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = 9261E9802CF401300044A3E3 /* SkeletonDataHolder.h */; };
-		9261E98E2CF401300044A3E3 /* LuaUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 9261E97D2CF401300044A3E3 /* LuaUtils.h */; };
 		9261E98F2CF401300044A3E3 /* Lua_Spine.h in Headers */ = {isa = PBXBuildFile; fileRef = 9261E9782CF401300044A3E3 /* Lua_Spine.h */; };
 		9261E9902CF401300044A3E3 /* InjectedObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 9261E9752CF401300044A3E3 /* InjectedObject.h */; };
 		9261E9912CF401300044A3E3 /* Lua_Skeleton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9261E9772CF401300044A3E3 /* Lua_Skeleton.cpp */; };
 		9261E9922CF401300044A3E3 /* LuaTableHolder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9261E97C2CF401300044A3E3 /* LuaTableHolder.cpp */; };
 		9261E9932CF401300044A3E3 /* SpineTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9261E9852CF401300044A3E3 /* SpineTexture.cpp */; };
 		9261E9942CF401300044A3E3 /* SkeletonDataHolder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9261E9812CF401300044A3E3 /* SkeletonDataHolder.cpp */; };
-		9261E9952CF401300044A3E3 /* LuaUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9261E97E2CF401300044A3E3 /* LuaUtils.cpp */; };
 		9261E9962CF401300044A3E3 /* Lua_Spine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9261E9792CF401300044A3E3 /* Lua_Spine.cpp */; };
 		9261E9972CF401300044A3E3 /* SpineRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9261E9832CF401300044A3E3 /* SpineRenderer.cpp */; };
 /* End PBXBuildFile section */
@@ -383,8 +381,6 @@
 		9261E97A2CF401300044A3E3 /* LuaAnimationStateListener.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LuaAnimationStateListener.h; sourceTree = "<group>"; };
 		9261E97B2CF401300044A3E3 /* LuaTableHolder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LuaTableHolder.h; sourceTree = "<group>"; };
 		9261E97C2CF401300044A3E3 /* LuaTableHolder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LuaTableHolder.cpp; sourceTree = "<group>"; };
-		9261E97D2CF401300044A3E3 /* LuaUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LuaUtils.h; sourceTree = "<group>"; };
-		9261E97E2CF401300044A3E3 /* LuaUtils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LuaUtils.cpp; sourceTree = "<group>"; };
 		9261E97F2CF401300044A3E3 /* MeshManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MeshManager.h; sourceTree = "<group>"; };
 		9261E9802CF401300044A3E3 /* SkeletonDataHolder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SkeletonDataHolder.h; sourceTree = "<group>"; };
 		9261E9812CF401300044A3E3 /* SkeletonDataHolder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SkeletonDataHolder.cpp; sourceTree = "<group>"; };
@@ -586,8 +582,6 @@
 				9261E97A2CF401300044A3E3 /* LuaAnimationStateListener.h */,
 				9261E97B2CF401300044A3E3 /* LuaTableHolder.h */,
 				9261E97C2CF401300044A3E3 /* LuaTableHolder.cpp */,
-				9261E97D2CF401300044A3E3 /* LuaUtils.h */,
-				9261E97E2CF401300044A3E3 /* LuaUtils.cpp */,
 				9261E97F2CF401300044A3E3 /* MeshManager.h */,
 				9261E9802CF401300044A3E3 /* SkeletonDataHolder.h */,
 				9261E9812CF401300044A3E3 /* SkeletonDataHolder.cpp */,
@@ -668,7 +662,6 @@
 				9261E98B2CF401300044A3E3 /* SpineTexture.h in Headers */,
 				9261E98C2CF401300044A3E3 /* LuaTableHolder.h in Headers */,
 				9261E98D2CF401300044A3E3 /* SkeletonDataHolder.h in Headers */,
-				9261E98E2CF401300044A3E3 /* LuaUtils.h in Headers */,
 				9261E98F2CF401300044A3E3 /* Lua_Spine.h in Headers */,
 				9261E9902CF401300044A3E3 /* InjectedObject.h in Headers */,
 				920C354B2CD7C1E100CD52FA /* MixBlend.h in Headers */,
@@ -923,7 +916,6 @@
 				9261E9922CF401300044A3E3 /* LuaTableHolder.cpp in Sources */,
 				9261E9932CF401300044A3E3 /* SpineTexture.cpp in Sources */,
 				9261E9942CF401300044A3E3 /* SkeletonDataHolder.cpp in Sources */,
-				9261E9952CF401300044A3E3 /* LuaUtils.cpp in Sources */,
 				9261E9962CF401300044A3E3 /* Lua_Spine.cpp in Sources */,
 				9261E9972CF401300044A3E3 /* SpineRenderer.cpp in Sources */,
 				920C35442CD7C1E100CD52FA /* PathAttachment.cpp in Sources */,
