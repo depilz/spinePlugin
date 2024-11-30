@@ -4,6 +4,7 @@
 #include "SkeletonDataHolder.h"
 #include "SpineTexture.h"
 #include "LuaTableHolder.h"
+#include "CoronaLibrary.h"
 
 template class DataHolder<Atlas>;
 
@@ -161,28 +162,6 @@ int create(lua_State *L)
     return 1;
 }
 
-int luaopen_spine(lua_State *L)
-{
-    const luaL_Reg spine_functions[] = {
-        {"loadAtlas", loadAtlas},
-        {"loadSkeletonData", loadSkeletonData},
-        {"create", create},
-        {NULL, NULL}
-    };
-
-    const char *plugin_name = lua_tostring(L, 1);
-    luaL_register(L, plugin_name, spine_functions);
-
-    textureLoader = new SpineTextureLoader(L);
-    loadGroupReferences(L);
-
-    const char *pluginVersion = "v1.0";
-    const char *spineVersion = "4.2.XX";
-    printf("Spine plugin %s loaded. Spine runtime version: %s\n", pluginVersion, spineVersion);
-
-    return 1;
-}
-
 Solar2dExtension::Solar2dExtension() : DefaultSpineExtension()
 {
 }
@@ -192,4 +171,28 @@ Solar2dExtension::~Solar2dExtension() {}
 SpineExtension *spine::getDefaultExtension()
 {
     return new Solar2dExtension();
+}
+
+CORONA_EXPORT int luaopen_plugin_spine(lua_State *L) {
+
+    lua_newtable(L);
+
+    const luaL_Reg spine_functions[] = {
+        {"loadAtlas", loadAtlas},
+        {"loadSkeletonData", loadSkeletonData},
+        {"create", create},
+        {NULL, NULL}
+    };
+
+    luaL_register(L, NULL, spine_functions);
+
+    textureLoader = new SpineTextureLoader(L);
+    loadGroupReferences(L);
+
+    const char *pluginVersion = "v1.0";
+    const char *spineVersion = "4.2.XX";
+
+    printf("Solar2d Spine plugin %s loaded with Spine %s\n", pluginVersion, spineVersion);
+
+    return 1;
 }

@@ -2,18 +2,16 @@ local text = display.newText("Drag me!", display.contentCenterX, display.screenO
 
 local animationName = "raptor"
 local atlas = Spine.getAtlasData(animationName)
-local skeleton = Spine.getSkeletonData(animationName, atlas)
+local skeleton = Spine.getSkeletonData(animationName, atlas, .5)
 
 local parent = display.newGroup()
 local o = Spine.create(parent, skeleton, display.contentCenterX, display.contentCenterY+300)
-o:scale(0.5, 0.5)
 
 ------- ANIMATIONS ------------------------------------------------------------------------------------------------------
 
 local animations = o:getAnimations()
 
 o:setDefaultMix(300)
-
 o:setMix(animations[1], animations[2], 100)
 
 o:setAnimation(0, animations[1], false)

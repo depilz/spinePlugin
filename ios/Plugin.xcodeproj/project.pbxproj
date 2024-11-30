@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		920C35AC2CD7C8D100CD52FA /* plugin_spine.mm in Sources */ = {isa = PBXBuildFile; fileRef = 920C35AB2CD7C8D100CD52FA /* plugin_spine.mm */; };
 		920C36532CD7C8E400CD52FA /* Attachment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 920C35B82CD7C8E400CD52FA /* Attachment.cpp */; };
 		920C36542CD7C8E400CD52FA /* Triangulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 920C36432CD7C8E400CD52FA /* Triangulator.cpp */; };
 		920C36552CD7C8E400CD52FA /* ConstraintData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 920C35CC2CD7C8E400CD52FA /* ConstraintData.cpp */; };
@@ -99,7 +98,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		920C35AB2CD7C8D100CD52FA /* plugin_spine.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = plugin_spine.mm; path = Plugin/plugin_spine.mm; sourceTree = "<group>"; };
 		920C35AD2CD7C8E400CD52FA /* Animation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Animation.h; sourceTree = "<group>"; };
 		920C35AE2CD7C8E400CD52FA /* Animation.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Animation.cpp; sourceTree = "<group>"; };
 		920C35AF2CD7C8E400CD52FA /* AnimationState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AnimationState.h; sourceTree = "<group>"; };
@@ -494,7 +492,6 @@
 		A447B609165D72A6009EA762 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				920C35AB2CD7C8D100CD52FA /* plugin_spine.mm */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -595,7 +592,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				920C35AC2CD7C8D100CD52FA /* plugin_spine.mm in Sources */,
 				920C36532CD7C8E400CD52FA /* Attachment.cpp in Sources */,
 				920C36542CD7C8E400CD52FA /* Triangulator.cpp in Sources */,
 				920C36552CD7C8E400CD52FA /* ConstraintData.cpp in Sources */,

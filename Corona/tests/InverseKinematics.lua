@@ -1,11 +1,10 @@
 local text = display.newText("Drag me!", display.contentCenterX, display.screenOriginY + 50, native.systemFont, 24)
 
 local atlas = Spine.getAtlasData("spineboy")
-local skeleton = Spine.getSkeletonData("spineboy", atlas)
+local skeleton = Spine.getSkeletonData("spineboy", atlas, .6)
 
 local parent = display.newGroup()
 local o = Spine.create(parent, skeleton, display.contentCenterX, display.contentCenterY+100)
-o:scale(.6, .6)
 local animations = o:getAnimations()
 o:setAnimation(0, animations[1], true)
 

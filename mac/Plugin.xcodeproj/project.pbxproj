@@ -165,7 +165,6 @@
 		920C35A22CD7C1E100CD52FA /* RotateTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 920C34BE2CD7C1E100CD52FA /* RotateTimeline.h */; };
 		920C35A32CD7C1E100CD52FA /* PositionMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 920C34B92CD7C1E100CD52FA /* PositionMode.h */; };
 		920C35A42CD7C1E100CD52FA /* AttachmentType.h in Headers */ = {isa = PBXBuildFile; fileRef = 920C346B2CD7C1E100CD52FA /* AttachmentType.h */; };
-		923BB3092CB07ACD00FC7DD1 /* plugin_spine.mm in Sources */ = {isa = PBXBuildFile; fileRef = 923BB3082CB07ACD00FC7DD1 /* plugin_spine.mm */; };
 		924F5F6C2CF7CC2900B83E0F /* Lua_Bone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 924F5F672CF7CC2900B83E0F /* Lua_Bone.cpp */; };
 		924F5F6D2CF7CC2900B83E0F /* Lua_IKConstraint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 924F5F692CF7CC2900B83E0F /* Lua_IKConstraint.cpp */; };
 		924F5F6E2CF7CC2900B83E0F /* Lua_Slot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 924F5F6B2CF7CC2900B83E0F /* Lua_Slot.cpp */; };
@@ -365,7 +364,6 @@
 		920C34F62CD7C1E100CD52FA /* VertexAttachment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VertexAttachment.h; sourceTree = "<group>"; };
 		920C34F72CD7C1E100CD52FA /* VertexAttachment.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VertexAttachment.cpp; sourceTree = "<group>"; };
 		920C34F82CD7C1E100CD52FA /* Vertices.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Vertices.h; sourceTree = "<group>"; };
-		923BB3082CB07ACD00FC7DD1 /* plugin_spine.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = plugin_spine.mm; sourceTree = "<group>"; };
 		924F5F662CF7CC2900B83E0F /* Lua_Bone.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Lua_Bone.h; sourceTree = "<group>"; };
 		924F5F672CF7CC2900B83E0F /* Lua_Bone.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Lua_Bone.cpp; sourceTree = "<group>"; };
 		924F5F682CF7CC2900B83E0F /* Lua_IKConstraint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Lua_IKConstraint.h; sourceTree = "<group>"; };
@@ -600,19 +598,10 @@
 			path = ../shared;
 			sourceTree = SOURCE_ROOT;
 		};
-		925D03F32CAF183D00645B0D /* Plugin */ = {
-			isa = PBXGroup;
-			children = (
-				923BB3082CB07ACD00FC7DD1 /* plugin_spine.mm */,
-			);
-			path = Plugin;
-			sourceTree = "<group>";
-		};
 		A482DA7815F9B7E70084DC42 = {
 			isa = PBXGroup;
 			children = (
 				920C35002CD7C1E100CD52FA /* shared */,
-				925D03F32CAF183D00645B0D /* Plugin */,
 				F5815AB61EE5C6540027695F /* CoronaNative */,
 				A482DA8615F9B7E70084DC42 /* Frameworks */,
 				A482DA8515F9B7E70084DC42 /* Products */,
@@ -844,7 +833,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				923BB3092CB07ACD00FC7DD1 /* plugin_spine.mm in Sources */,
 				924F5F6C2CF7CC2900B83E0F /* Lua_Bone.cpp in Sources */,
 				924F5F6D2CF7CC2900B83E0F /* Lua_IKConstraint.cpp in Sources */,
 				924F5F6E2CF7CC2900B83E0F /* Lua_Slot.cpp in Sources */,

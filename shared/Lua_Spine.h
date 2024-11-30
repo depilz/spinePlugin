@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoronaLua.h"
+#include "CoronaMacros.h"
 #include <string>
 #include <cassert>
 #include <spine/spine.h>
@@ -11,8 +12,6 @@
 
 using namespace spine;
 
-
-int luaopen_spine(lua_State *L);
 
 static void loadGroupReferences(lua_State *L);
 
@@ -28,3 +27,7 @@ public:
     virtual ~Solar2dExtension();
 };
 
+extern "C"
+{
+    int luaopen_plugin_spine(lua_State *L);
+}
