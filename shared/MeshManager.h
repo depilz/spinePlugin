@@ -7,6 +7,7 @@
 struct MeshData
 {
     LuaTableHolder mesh;
+    int index;
     size_t numIndices;
     Texture *texture;
     spine::BlendMode blendMode;
@@ -51,13 +52,14 @@ public:
         }
     }
 
-    void addMesh(lua_State *L, size_t numIndices, Texture *texture, spine::BlendMode blendMode, uint32_t *colors, bool used)
+    void newMesh(lua_State *L, int index, size_t numIndices, Texture *texture, spine::BlendMode blendMode, uint32_t *colors, bool used)
     {
         for (auto &meshData : meshDataList)
         {
             if (!meshData.mesh.isValid())
             {
                 meshData.mesh = LuaTableHolder(L);
+                meshData.index = index;
                 meshData.numIndices = numIndices;
                 meshData.texture = texture;
                 meshData.blendMode = blendMode;
@@ -68,7 +70,7 @@ public:
         }
 
         // If no empty slot was found, add a new mesh
-        meshDataList.push_back({LuaTableHolder(L), numIndices, texture, blendMode, colors, used});
+        meshDataList.push_back({LuaTableHolder(L), index, numIndices, texture, blendMode, colors, used});
     }
 
     bool isMeshValid(int index) const
@@ -92,6 +94,7 @@ public:
         // if (index >= 0 && index < static_cast<int>(meshDataList.size()))
         // {
             meshDataList[index].mesh.releaseTable();
+            meshDataList[index].index = -1;
             meshDataList[index].numIndices = 0;
             meshDataList[index].texture = nullptr;
             meshDataList[index].colors = nullptr;

@@ -433,8 +433,9 @@ static void skeletonRender(lua_State *L, SpineSkeleton *skeletonUserdata)
     SkeletonRenderer skeletonRenderer;
     RenderCommand *command = skeletonRenderer.render(*skeleton);
     LuaTableHolder *newMesh = skeletonUserdata->newMesh;
+    bool insertMesh = false;
 
-    int i = 0;
+    int i = 1;
 
     auto &meshes = skeletonUserdata->meshes;
 
@@ -442,20 +443,22 @@ static void skeletonRender(lua_State *L, SpineSkeleton *skeletonUserdata)
     {
         meshData.used = false;
     }
+
     while (command)
     {
+        size_t numIndices = command->numIndices;
+        uint16_t *indices = command->indices;
         float *positions = command->positions;
         float *uvs = command->uvs;
-        uint32_t *colors = command->colors;
-        uint16_t *indices = command->indices;
         Texture *texture = (Texture *)command->texture;
-        size_t numVertices = command->numVertices;
-        size_t numIndices = command->numIndices;
-
         BlendMode blendMode = command->blendMode;
+        uint32_t *colors = command->colors;
+        
+        bool updateBlendMode = false;
+        bool updateColor = false;
+        bool updateTexture = false;
 
         MeshData *meshData = nullptr;
-
 
         for (auto &meshCandidate : meshes)
         {
@@ -468,31 +471,63 @@ static void skeletonRender(lua_State *L, SpineSkeleton *skeletonUserdata)
 
         if (meshData)
         {
-            meshData->used = true;
             LuaTableHolder &mesh = meshData->mesh;
-            engine_updateMesh(L, &mesh, positions, numVertices, uvs, indices, numIndices, texture, blendMode, colors);
+            engine_updateMesh(L, &mesh, numIndices, indices, positions, uvs);
+
+            insertMesh = insertMesh || meshData->index != i;
+            updateTexture = meshData->texture != texture;
+            updateBlendMode = meshData->blendMode != blendMode;
+            updateColor = meshData->colors != colors;
+
+            meshData->used = true;
+            meshData->index = i;
         } 
         else
         {
-            engine_drawMesh(L, positions, numVertices, uvs, indices, numIndices, texture, blendMode, colors, newMesh);
+            engine_drawMesh(L, newMesh, numIndices, indices, positions, uvs);
+            
+            lua_pushvalue(L, -1);
+            meshes.newMesh(L, i, numIndices, texture, blendMode, colors, true);
+            meshData = &meshes[i];
 
-            lua_pushvalue(L, 1);
-            skeletonUserdata->groupInsert->pushTable();
-            lua_pushvalue(L, -2);
-            lua_pushnumber(L, i + 1);
-            lua_pushvalue(L, -5);
-            lua_call(L, 3, 0);
-            lua_pop(L, 1);
-
-            meshes.addMesh(L, numIndices, texture, blendMode, colors, true);
-
-            lua_pop(L, 1);
+            insertMesh = true;
+            updateBlendMode = true;
+            updateColor = true;
+            updateTexture = true;
         }
+
+
+        if (insertMesh)
+        {
+            skeletonUserdata->groupInsert->pushTable();
+            lua_pushvalue(L, 1);
+            lua_pushnumber(L, i);
+            lua_pushvalue(L, -4);
+            lua_call(L, 3, 0);
+        }
+
+        if (updateTexture) 
+        {
+            meshData->texture = texture;
+            set_texture(L, texture);
+        }
+        if (updateBlendMode) 
+        {
+            meshData->blendMode = blendMode;
+            set_blendMode(L, blendMode);
+        }
+        if (updateColor) 
+        {
+            meshData-> colors = colors;
+            set_fill_color(L, colors);
+        }
+
+        lua_pop(L, 1);
+
         command = command->next;
         i++;
     }
 
-    i = 0;
     for (auto &meshCandidate : meshes)
     {
         if (!meshCandidate.used && meshCandidate.mesh.isValid())
@@ -500,7 +535,6 @@ static void skeletonRender(lua_State *L, SpineSkeleton *skeletonUserdata)
             engine_removeMesh(L, &meshCandidate.mesh);
             meshCandidate.mesh.releaseTable();
         }
-        i++;
     }
 
     auto &injection = skeletonUserdata->injection;

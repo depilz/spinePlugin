@@ -9,7 +9,6 @@ struct Vertex2
     float y;
 };
 
-// Helper function to create userdata with the required memory interface
 void CreateBufferUserdata(lua_State *L, const void *buffer, size_t size)
 {
     void *userdata = lua_newuserdata(L, size);
@@ -45,7 +44,75 @@ void CreateBufferUserdata(lua_State *L, const void *buffer, size_t size)
     lua_setmetatable(L, -2);
 }
 
-void engine_updateMesh(lua_State *L, LuaTableHolder *meshHolder, float *positions, size_t numVertices, float *uvs, unsigned short *indices, size_t numIndices, Texture *texture, spine::BlendMode blendMode, uint32_t *colors)
+void engine_drawMesh(lua_State *L, LuaTableHolder *newMesh, size_t numIndices, unsigned short *indices, float *positions, float *uvs)
+{
+    newMesh->pushTable();
+
+    // create the mesh parameters
+    lua_createtable(L, 0, 3);
+
+    // set the mode
+    lua_pushstring(L, "triangles");
+    lua_setfield(L, -2, "mode");
+
+    // Set up 'vertices' field
+    {
+        lua_pushstring(L, "vertices");
+        lua_createtable(L, 2, 0);
+
+        Vertex2 *vertices = new Vertex2[numIndices];
+        for (size_t i = 0; i < numIndices; ++i)
+        {
+            vertices[i].x = positions[indices[i] * 2];
+            vertices[i].y = -positions[indices[i] * 2 + 1];
+        }
+
+        lua_pushstring(L, "buffer");
+
+        size_t verticesBufferSize = numIndices * sizeof(Vertex2);
+        CreateBufferUserdata(L, vertices, verticesBufferSize); // "vertices", t, "buffer", userdata
+        lua_settable(L, -3);
+
+        delete[] vertices;
+
+        lua_pushstring(L, "count");
+        lua_pushinteger(L, numIndices);
+        lua_settable(L, -3);
+
+        lua_settable(L, -3);
+    }
+
+    // Set up 'uvs' field
+    {
+        lua_pushstring(L, "uvs");
+        lua_createtable(L, 2, 0);
+
+        Vertex2 *uvVertices = new Vertex2[numIndices];
+        for (size_t i = 0; i < numIndices; ++i)
+        {
+            uvVertices[i].x = uvs[indices[i] * 2];
+            uvVertices[i].y = uvs[indices[i] * 2 + 1];
+        }
+
+        lua_pushstring(L, "buffer");
+
+        size_t uvsBufferSize = numIndices * sizeof(Vertex2);
+        CreateBufferUserdata(L, uvVertices, uvsBufferSize);
+        lua_settable(L, -3);
+
+        delete[] uvVertices;
+
+        lua_pushstring(L, "count");
+        lua_pushinteger(L, numIndices);
+        lua_settable(L, -3);
+
+        lua_settable(L, -3);
+    }
+
+    lua_call(L, 1, 1); // Call newMesh
+}
+
+void engine_updateMesh(lua_State *L, LuaTableHolder *meshHolder, size_t numIndices, unsigned short *indices, float *positions, float *uvs)
 {
     meshHolder->pushTable();       // meshTable
     lua_getfield(L, -1, "path");   // meshTable, path
@@ -53,7 +120,6 @@ void engine_updateMesh(lua_State *L, LuaTableHolder *meshHolder, float *position
 
     lua_pushvalue(L, -2); // meshTable, path, update, path
     lua_remove(L, -3);    // meshTable, update, path
-    lua_remove(L, -3);    // update, path
 
     lua_newtable(L);
 
@@ -127,111 +193,34 @@ void engine_updateMesh(lua_State *L, LuaTableHolder *meshHolder, float *position
 
     lua_call(L, 2, 0); // Call update(path, { vertices = vertices, uvs = uvs })
 
-    meshHolder->pushTable();
-
-    lua_pushvalue(L, -1);
-
     lua_pushnumber(L, (minX + maxX) / 2);
     lua_setfield(L, -2, "x");
 
     lua_pushnumber(L, -(minY + maxY) / 2);
     lua_setfield(L, -2, "y");
-
-    lua_pop(L, 1); // pop the mesh
 }
 
-void engine_drawMesh(lua_State *L, float *positions, size_t numVertices, float *uvs, unsigned short *indices, size_t numIndices, Texture *texture, spine::BlendMode blendMode, uint32_t *colors, LuaTableHolder *newMesh)
+void engine_removeMesh(lua_State *L, LuaTableHolder *meshHolder)
 {
-    newMesh->pushTable();
+    meshHolder->pushTable();
+    lua_getfield(L, -1, "removeSelf");
+    meshHolder->pushTable();
+    lua_call(L, 1, 0);
+    lua_pop(L, 1);
+}
 
-    // create the mesh parameters
-    lua_createtable(L, 0, 3);
 
-    // set the mode
-    lua_pushstring(L, "triangles");
-    lua_setfield(L, -2, "mode");
 
-    // Set up 'vertices' field
-    {
-        lua_pushstring(L, "vertices");
-        lua_createtable(L, 2, 0);
-
-        Vertex2 *vertices = new Vertex2[numIndices];
-        for (size_t i = 0; i < numIndices; ++i)
-        {
-            vertices[i].x = positions[indices[i] * 2];
-            vertices[i].y = -positions[indices[i] * 2 + 1];
-        }
-
-        lua_pushstring(L, "buffer");
-
-        size_t verticesBufferSize = numIndices * sizeof(Vertex2);
-        CreateBufferUserdata(L, vertices, verticesBufferSize); // "vertices", t, "buffer", userdata
-        lua_settable(L, -3);
-
-        delete[] vertices;
-
-        lua_pushstring(L, "count");
-        lua_pushinteger(L, numIndices);
-        lua_settable(L, -3);
-
-        lua_settable(L, -3);
-    }
-
-    // Set up 'uvs' field
-    {
-        lua_pushstring(L, "uvs");
-        lua_createtable(L, 2, 0);
-
-        Vertex2 *uvVertices = new Vertex2[numIndices];
-        for (size_t i = 0; i < numIndices; ++i)
-        {
-            uvVertices[i].x = uvs[indices[i] * 2];
-            uvVertices[i].y = uvs[indices[i] * 2 + 1];
-        }
-
-        lua_pushstring(L, "buffer");
-
-        size_t uvsBufferSize = numIndices * sizeof(Vertex2);
-        CreateBufferUserdata(L, uvVertices, uvsBufferSize);
-        lua_settable(L, -3);
-
-        delete[] uvVertices;
-
-        lua_pushstring(L, "count");
-        lua_pushinteger(L, numIndices);
-        lua_settable(L, -3);
-
-        lua_settable(L, -3);
-    }
-
-    lua_call(L, 1, 1); // Call newMesh
-
-    int meshIndex = lua_gettop(L);
-    lua_pushvalue(L, meshIndex);
-
+void set_texture(lua_State *L, Texture *texture)
+{
     // mesh.fill = { type "image", filename = "raptor.png"}
-    LuaTableHolder *textureTable = ((Texture *)texture)->textureTable;
-    textureTable->pushTable();
-    lua_setfield(L, meshIndex, "fill");
+   LuaTableHolder *textureTable = ((Texture *)texture)->textureTable;
+   textureTable->pushTable();
+   lua_setfield(L, -2, "fill");
+}
 
-    lua_getfield(L, meshIndex, "setFillColor");         // Push mesh.setFillColor
-    lua_pushvalue(L, meshIndex);                         // Push mesh as 'self'
-
-    uint32_t color = colors[0];
-    float r = ((color >> 16) & 0xff) / 255.0f;
-    float g = ((color >> 8) & 0xff) / 255.0f;
-    float b = (color & 0xff) / 255.0f;
-    float a = ((color >> 24) & 0xff) / 255.0f;
-
-    lua_pushnumber(L, r);                                // Push r
-    lua_pushnumber(L, g);                                // Push g
-    lua_pushnumber(L, b);                                // Push b
-    lua_pushnumber(L, a);                                // Push a
-
-    lua_call(L, 5, 0);                            // Call mesh.setFillColor(mesh, r, g, b, a)
-
-    lua_pushstring(L, "blendMode");
+void set_blendMode(lua_State *L, BlendMode blendMode)
+{
     switch (blendMode)
     {
     case spine::BlendMode_Normal:
@@ -250,14 +239,24 @@ void engine_drawMesh(lua_State *L, float *positions, size_t numVertices, float *
         lua_pushstring(L, "normal");
         break;
     }
-    lua_settable(L, -3);
+    lua_setfield(L, -2, "blendMode");
 }
 
-void engine_removeMesh(lua_State *L, LuaTableHolder *meshHolder)
+void set_fill_color(lua_State *L, uint32_t *colors)
 {
-    meshHolder->pushTable();
-    lua_getfield(L, -1, "removeSelf");
-    meshHolder->pushTable();
-    lua_call(L, 1, 0);
-    lua_pop(L, 1);
+    lua_getfield(L, -1, "setFillColor");
+    lua_pushvalue(L, -2);
+
+    uint32_t color = colors[0];
+    float r = ((color >> 16) & 0xff) / 255.0f;
+    float g = ((color >> 8) & 0xff) / 255.0f;
+    float b = (color & 0xff) / 255.0f;
+    float a = ((color >> 24) & 0xff) / 255.0f;
+
+    lua_pushnumber(L, r);
+    lua_pushnumber(L, g);
+    lua_pushnumber(L, b);
+    lua_pushnumber(L, a);
+
+    lua_call(L, 5, 0); // Call mesh.setFillColor(mesh, r, g, b, a)
 }
