@@ -189,7 +189,7 @@ CORONA_EXPORT int luaopen_plugin_spine(lua_State *L) {
     textureLoader = new SpineTextureLoader(L);
     loadGroupReferences(L);
 
-    const char *pluginVersion = "v1.0";
+    const char *pluginVersion = "v0.1.0";
     const char *spineVersion = "4.2.XX";
 
     printf("Solar2d Spine plugin %s loaded with Spine %s\n", pluginVersion, spineVersion);

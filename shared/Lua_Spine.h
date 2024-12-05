@@ -27,7 +27,15 @@ public:
     virtual ~Solar2dExtension();
 };
 
+#ifdef _WIN32
+extern "C"
+{
+    __declspec(dllexport) int luaopen_plugin_spine(lua_State *L);
+}
+#else
 extern "C"
 {
     int luaopen_plugin_spine(lua_State *L);
 }
+#endif
+

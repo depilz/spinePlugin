@@ -220,9 +220,6 @@
     <ClCompile Include="..\shared\spine\SkeletonBinary.cpp">
       <Filter>Source Files\spine</Filter>
     </ClCompile>
-    <ClCompile Include="..\shared\LuaUtils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\shared\Lua_Skeleton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -230,9 +227,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\shared\SkeletonDataHolder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Plugin\SimulatorPluginLibrary.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\shared\Lua_IKConstraint.cpp">
@@ -528,9 +522,6 @@
     <ClInclude Include="..\shared\spine\AttachmentType.h">
       <Filter>Source Files\spine</Filter>
     </ClInclude>
-    <ClInclude Include="..\shared\LuaUtils.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\shared\DataHolder.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -552,9 +543,6 @@
     <ClInclude Include="..\shared\SkeletonDataHolder.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Plugin\SimulatorPluginLibrary.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\shared\Lua_IKConstraint.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -562,6 +550,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\shared\Lua_Bone.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="\\Mac\AllFiles\Volumes\Projects\studycats\funbox\plugins\plugin-spine\shared\Texture.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

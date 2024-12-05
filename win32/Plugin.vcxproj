@@ -12,7 +12,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\shared\LuaTableHolder.cpp" />
-    <ClCompile Include="..\shared\LuaUtils.cpp" />
     <ClCompile Include="..\shared\Lua_Bone.cpp" />
     <ClCompile Include="..\shared\Lua_IKConstraint.cpp" />
     <ClCompile Include="..\shared\Lua_Skeleton.cpp" />
@@ -88,14 +87,12 @@
     <ClCompile Include="..\shared\spine\Triangulator.cpp" />
     <ClCompile Include="..\shared\spine\Updatable.cpp" />
     <ClCompile Include="..\shared\spine\VertexAttachment.cpp" />
-    <ClCompile Include="Plugin\SimulatorPluginLibrary.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\shared\DataHolder.h" />
     <ClInclude Include="..\shared\InjectedObject.h" />
     <ClInclude Include="..\shared\LuaAnimationStateListener.h" />
     <ClInclude Include="..\shared\LuaTableHolder.h" />
-    <ClInclude Include="..\shared\LuaUtils.h" />
     <ClInclude Include="..\shared\Lua_Bone.h" />
     <ClInclude Include="..\shared\Lua_IKConstraint.h" />
     <ClInclude Include="..\shared\Lua_Skeleton.h" />
@@ -196,7 +193,7 @@
     <ClInclude Include="..\shared\spine\Version.h" />
     <ClInclude Include="..\shared\spine\VertexAttachment.h" />
     <ClInclude Include="..\shared\spine\Vertices.h" />
-    <ClInclude Include="Plugin\SimulatorPluginLibrary.h" />
+    <ClInclude Include="\\Mac\AllFiles\Volumes\Projects\studycats\funbox\plugins\plugin-spine\shared\Texture.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{79F0CACC-457B-4A25-BC54-81277688C361}</ProjectGuid>

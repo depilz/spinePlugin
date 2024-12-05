@@ -165,6 +165,7 @@
 		920C35A22CD7C1E100CD52FA /* RotateTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 920C34BE2CD7C1E100CD52FA /* RotateTimeline.h */; };
 		920C35A32CD7C1E100CD52FA /* PositionMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 920C34B92CD7C1E100CD52FA /* PositionMode.h */; };
 		920C35A42CD7C1E100CD52FA /* AttachmentType.h in Headers */ = {isa = PBXBuildFile; fileRef = 920C346B2CD7C1E100CD52FA /* AttachmentType.h */; };
+		9226770C2D024DCB000256AF /* Texture.h in Headers */ = {isa = PBXBuildFile; fileRef = 9226770B2D024DCB000256AF /* Texture.h */; };
 		924F5F6C2CF7CC2900B83E0F /* Lua_Bone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 924F5F672CF7CC2900B83E0F /* Lua_Bone.cpp */; };
 		924F5F6D2CF7CC2900B83E0F /* Lua_IKConstraint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 924F5F692CF7CC2900B83E0F /* Lua_IKConstraint.cpp */; };
 		924F5F6E2CF7CC2900B83E0F /* Lua_Slot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 924F5F6B2CF7CC2900B83E0F /* Lua_Slot.cpp */; };
@@ -364,6 +365,7 @@
 		920C34F62CD7C1E100CD52FA /* VertexAttachment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VertexAttachment.h; sourceTree = "<group>"; };
 		920C34F72CD7C1E100CD52FA /* VertexAttachment.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VertexAttachment.cpp; sourceTree = "<group>"; };
 		920C34F82CD7C1E100CD52FA /* Vertices.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Vertices.h; sourceTree = "<group>"; };
+		9226770B2D024DCB000256AF /* Texture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Texture.h; sourceTree = "<group>"; };
 		924F5F662CF7CC2900B83E0F /* Lua_Bone.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Lua_Bone.h; sourceTree = "<group>"; };
 		924F5F672CF7CC2900B83E0F /* Lua_Bone.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Lua_Bone.cpp; sourceTree = "<group>"; };
 		924F5F682CF7CC2900B83E0F /* Lua_IKConstraint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Lua_IKConstraint.h; sourceTree = "<group>"; };
@@ -593,6 +595,7 @@
 				924F5F692CF7CC2900B83E0F /* Lua_IKConstraint.cpp */,
 				924F5F6A2CF7CC2900B83E0F /* Lua_Slot.h */,
 				924F5F6B2CF7CC2900B83E0F /* Lua_Slot.cpp */,
+				9226770B2D024DCB000256AF /* Texture.h */,
 			);
 			name = shared;
 			path = ../shared;
@@ -642,6 +645,7 @@
 				920C35472CD7C1E100CD52FA /* ContainerUtil.h in Headers */,
 				920C35482CD7C1E100CD52FA /* BoundingBoxAttachment.h in Headers */,
 				920C35492CD7C1E100CD52FA /* ColorTimeline.h in Headers */,
+				9226770C2D024DCB000256AF /* Texture.h in Headers */,
 				920C354A2CD7C1E100CD52FA /* Inherit.h in Headers */,
 				9261E9862CF401300044A3E3 /* MeshManager.h in Headers */,
 				9261E9872CF401300044A3E3 /* DataHolder.h in Headers */,
