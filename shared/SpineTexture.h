@@ -6,12 +6,7 @@
 
 #include <unordered_map>
 #include <string>
-
-struct Texture
-{
-    LuaTableHolder *texture;
-    LuaTableHolder *textureTable;
-};
+#include "Texture.h"
 
 struct TextureRef
 {

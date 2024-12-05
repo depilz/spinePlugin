@@ -11,7 +11,6 @@
 
 using namespace spine;
 
-
 struct SpineSkeleton
 {
     Skeleton *skeleton;
@@ -30,12 +29,11 @@ struct SpineSkeleton
     lua_State *L;
 
     MeshManager meshes;
-    std::vector<int> meshIndices;
 
     SpineSkeleton(lua_State *L)
         : skeleton(nullptr), state(nullptr), stateData(nullptr),
           skeletonData(nullptr),
-          meshes(20), meshIndices(20),
+          meshes(3),
           stateListener(nullptr), 
           groupmt__index(nullptr), groupmt__newindex(nullptr),
           injection(), skeletonDataRef(LUA_NOREF), 
@@ -52,7 +50,6 @@ struct SpineSkeleton
             delete skeleton;
 
             luaSelf->releaseTable();
-            meshIndices.clear();
             meshes.clear();
             injection.clear();
 

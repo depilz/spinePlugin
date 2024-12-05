@@ -278,6 +278,7 @@
 		9261E96E2CF3C1610044A3E3 /* Lua_Spine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Lua_Spine.h; sourceTree = "<group>"; };
 		9261E96F2CF3C1610044A3E3 /* Lua_Spine.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Lua_Spine.cpp; sourceTree = "<group>"; };
 		9261E9722CF3F8B00044A3E3 /* SkeletonDataHolder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SkeletonDataHolder.cpp; sourceTree = "<group>"; };
+		92FC4F522D01523600753BD6 /* Texture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Texture.h; sourceTree = "<group>"; };
 		A4E253B6166D6FB300DCDC2C /* libplugin_spine.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libplugin_spine.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F572F81A1EE0705B001BC814 /* CoronaNative.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CoronaNative.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -484,6 +485,7 @@
 				924F5F612CF78D3C00B83E0F /* Lua_IKConstraint.cpp */,
 				924F5F632CF79DA900B83E0F /* Lua_Bone.h */,
 				924F5F642CF79DA900B83E0F /* Lua_Bone.cpp */,
+				92FC4F522D01523600753BD6 /* Texture.h */,
 			);
 			name = shared;
 			path = ../shared;

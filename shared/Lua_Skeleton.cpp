@@ -437,8 +437,11 @@ static void skeletonRender(lua_State *L, SpineSkeleton *skeletonUserdata)
     int i = 0;
 
     auto &meshes = skeletonUserdata->meshes;
-    auto &meshIndices = skeletonUserdata->meshIndices;
 
+    for (auto &meshData : meshes)
+    {
+        meshData.used = false;
+    }
     while (command)
     {
         float *positions = command->positions;
@@ -451,24 +454,25 @@ static void skeletonRender(lua_State *L, SpineSkeleton *skeletonUserdata)
 
         BlendMode blendMode = command->blendMode;
 
-        bool existingMesh = meshes.isMeshValid(i);
+        MeshData *meshData = nullptr;
 
-        if (existingMesh)
+
+        for (auto &meshCandidate : meshes)
         {
-            LuaTableHolder &mesh = meshes[i];
-            if (meshIndices[i] != numIndices)
+            if (!meshCandidate.used && meshCandidate.numIndices == numIndices && meshCandidate.mesh.isValid())
             {
-                engine_removeMesh(L, &mesh);
-                existingMesh = false;
-                mesh.releaseTable();
-            }
-            else
-            {
-                engine_updateMesh(L, &mesh, positions, numVertices, uvs, indices, numIndices, texture, blendMode, colors);
+                meshData = &meshCandidate;
+                break;
             }
         }
 
-        if (!existingMesh)
+        if (meshData)
+        {
+            meshData->used = true;
+            LuaTableHolder &mesh = meshData->mesh;
+            engine_updateMesh(L, &mesh, positions, numVertices, uvs, indices, numIndices, texture, blendMode, colors);
+        } 
+        else
         {
             engine_drawMesh(L, positions, numVertices, uvs, indices, numIndices, texture, blendMode, colors, newMesh);
 
@@ -480,8 +484,7 @@ static void skeletonRender(lua_State *L, SpineSkeleton *skeletonUserdata)
             lua_call(L, 3, 0);
             lua_pop(L, 1);
 
-            meshes.setMesh(L, i);
-            meshIndices[i] = numIndices;
+            meshes.addMesh(L, numIndices, texture, blendMode, colors, true);
 
             lua_pop(L, 1);
         }
@@ -489,11 +492,14 @@ static void skeletonRender(lua_State *L, SpineSkeleton *skeletonUserdata)
         i++;
     }
 
-    while (meshes.isMeshValid(i))
+    i = 0;
+    for (auto &meshCandidate : meshes)
     {
-        LuaTableHolder &mesh = meshes[i];
-        engine_removeMesh(L, &mesh);
-        meshes[i].releaseTable();
+        if (!meshCandidate.used && meshCandidate.mesh.isValid())
+        {
+            engine_removeMesh(L, &meshCandidate.mesh);
+            meshCandidate.mesh.releaseTable();
+        }
         i++;
     }
 
