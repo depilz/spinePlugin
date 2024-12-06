@@ -26,5 +26,4 @@ private:
     lua_State *L;
     std::unordered_map<std::string, TextureRef> textures;
     std::unordered_map<Texture*, std::string> textureToPath;
-    const char *resourcesDir;
 };

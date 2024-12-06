@@ -19,6 +19,7 @@ struct SpineSkeleton
     SkeletonData *skeletonData;
     LuaAnimationStateListener *stateListener;
     LuaTableHolder *luaSelf;
+    LuaTableHolder *group__mt;
     LuaTableHolder *groupmt__index;
     LuaTableHolder *groupmt__newindex;
     LuaTableHolder *groupInsert;
@@ -34,7 +35,7 @@ struct SpineSkeleton
         : skeleton(nullptr), state(nullptr), stateData(nullptr),
           skeletonData(nullptr),
           meshes(3),
-          stateListener(nullptr), 
+          stateListener(nullptr), luaSelf(nullptr), group__mt(nullptr),
           groupmt__index(nullptr), groupmt__newindex(nullptr),
           injection(), skeletonDataRef(LUA_NOREF), 
           L(L)
@@ -59,6 +60,7 @@ struct SpineSkeleton
                 stateListener = nullptr;
             }
 
+            group__mt = nullptr;
             groupmt__index = nullptr;
             groupmt__newindex = nullptr;
             groupInsert = nullptr;

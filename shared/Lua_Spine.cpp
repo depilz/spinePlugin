@@ -9,11 +9,13 @@
 template class DataHolder<Atlas>;
 
 static LuaTableHolder *newGroup;
+static LuaTableHolder *group__mt;
 static LuaTableHolder *group__index;
 static LuaTableHolder *group__newindex;
 static LuaTableHolder *groupInsert;
 static LuaTableHolder *groupRemoveSelf;
 static LuaTableHolder *newMesh;
+static LuaTableHolder *pathForFile;
 static SpineTextureLoader *textureLoader;
 
 static void loadGroupReferences(lua_State *L)
@@ -25,6 +27,8 @@ static void loadGroupReferences(lua_State *L)
     lua_call(L, 0, 1);
 
     lua_getmetatable(L, -1);
+    lua_pushvalue(L, -1);
+    group__mt = new LuaTableHolder(L);
     lua_getfield(L, -1, "__index");
     group__index = new LuaTableHolder(L);
 
@@ -48,25 +52,84 @@ static void loadGroupReferences(lua_State *L)
     newMesh = new LuaTableHolder(L);
 
     lua_pop(L, 1);
+
+    lua_getglobal(L, "system");
+    lua_getfield(L, -1, "pathForFile");
+    pathForFile = new LuaTableHolder(L);
+
+    lua_pop(L, 1);
 }
 
-// spine.loadAtlas(absPath)
+// spine.loadAtlas(path)
 int loadAtlas(lua_State *L)
 {
-    const char *atlasFile = luaL_checkstring(L, 1);
+    const char *shortPath = luaL_checkstring(L, 1);
 
-    auto *atlas = new Atlas(atlasFile, textureLoader);
+    int dirLength;
+    char *dir;
+    int length;
+    const char *data;
+
+    /* Get directory from atlas path. */
+    const char *lastForwardSlash = strrchr(shortPath, '/');
+    const char *lastBackwardSlash = strrchr(shortPath, '\\');
+    const char *lastSlash = lastForwardSlash > lastBackwardSlash ? lastForwardSlash : lastBackwardSlash;
+    if (lastSlash == shortPath)
+        lastSlash++; /* Never drop starting slash. */
+    dirLength = (int)(lastSlash ? lastSlash - shortPath : 0);
+    dir = SpineExtension::calloc<char>(dirLength + 1, __FILE__, __LINE__);
+    memcpy(dir, shortPath, dirLength);
+    dir[dirLength] = '\0';
+
+
+    pathForFile->pushTable();
+    lua_pushvalue(L, 1);
+    lua_call(L, 1, 1);
+
+    const char *absPath = lua_tostring(L, -1);
+
+    if (!absPath)
+    {
+        luaL_error(L, "File not found: %s", shortPath);
+        return 0;
+    }
+
+    data = SpineExtension::readFile(absPath, &length);
+
+    if (!data)
+    {
+        luaL_error(L, "Failed to load atlas file: %s", absPath);
+        return 0;
+    }
+
+    Atlas *atlas = new Atlas(data, length, dir, textureLoader, true);
     auto atlasUserdata = std::make_shared<DataHolder<Atlas>>(atlas);
 
     DataHolder<Atlas>::push(L, atlasUserdata);
 
+    SpineExtension::free(data, __FILE__, __LINE__);
+    SpineExtension::free(dir, __FILE__, __LINE__);
+
     return 1;
 }
 
-// spine.loadSkeletonData(absPath, atlas[, scale])
+// spine.loadSkeletonData(path, atlas[, scale])
 int loadSkeletonData(lua_State *L)
 {
-    const char *skeletonFile = luaL_checkstring(L, 1);
+    // assert path is a string
+    const char *shortPath = luaL_checkstring(L, 1);
+
+    pathForFile->pushTable();
+    lua_pushvalue(L, 1);
+    lua_call(L, 1, 1);
+
+    const char *absPath = lua_tostring(L, -1);
+
+    if (!absPath)
+    {
+        luaL_error(L, "File not found: %s", shortPath);
+        return 0;
+    }
 
     auto atlasUserdata = DataHolder<Atlas>::check(L, 2);
     Atlas *atlas = atlasUserdata->getObject();
@@ -74,24 +137,24 @@ int loadSkeletonData(lua_State *L)
     float scale = luaL_optnumber(L, 3, 1.0f);
 
     SkeletonData *skeletonData = nullptr;
-    if (strstr(skeletonFile, ".json"))
+    if (strstr(absPath, ".json"))
     {
         SkeletonJson *json = new SkeletonJson(atlas);
         json->setScale(scale);
-        skeletonData = json->readSkeletonDataFile(skeletonFile);
+        skeletonData = json->readSkeletonDataFile(absPath);
         delete json;
     }
-    else if (strstr(skeletonFile, ".skel"))
+    else if (strstr(absPath, ".skel"))
     {
         SkeletonBinary *binary = new SkeletonBinary(atlas);
         binary->setScale(scale);
-        skeletonData = binary->readSkeletonDataFile(skeletonFile);
+        skeletonData = binary->readSkeletonDataFile(absPath);
         delete binary;
     }
 
     if (!skeletonData)
     {
-        luaL_error(L, "Failed to load skeleton data");
+        luaL_error(L, "Failed to load skeleton data: %s", absPath);
         return 0;
     }
 
@@ -149,7 +212,8 @@ int create(lua_State *L)
     lua_pushstring(L, "_skeleton");
     lua_pushvalue(L, -3);
     lua_rawset(L, -3);
-    
+
+    skeletonUserdata->group__mt = group__mt;
     skeletonUserdata->groupmt__index = group__index;
     skeletonUserdata->groupmt__newindex = group__newindex;
     skeletonUserdata->groupInsert = groupInsert;
@@ -189,7 +253,7 @@ CORONA_EXPORT int luaopen_plugin_spine(lua_State *L) {
     textureLoader = new SpineTextureLoader(L);
     loadGroupReferences(L);
 
-    const char *pluginVersion = "v0.1.0";
+    const char *pluginVersion = "v0.2.0";
     const char *spineVersion = "4.2.XX";
 
     printf("Solar2d Spine plugin %s loaded with Spine %s\n", pluginVersion, spineVersion);

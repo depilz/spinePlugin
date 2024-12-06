@@ -5,35 +5,23 @@
 
 static LuaTableHolder *newTexture;
 
-static const char *ResourceDirectory = "ResourceDirectory";
-static int resourcesRef = LUA_REFNIL;
-
 // Texture only gets unloaded when the Atlas is deleted
 // and the Atlas IS NOT deleted along the skeleton, but by the garbage collector in Lua
 // once there are no more references to it
 
 SpineTextureLoader::SpineTextureLoader(lua_State *L) : L(L)
 {
-    lua_getglobal(L, "system");
-    lua_getfield(L, -1, "pathForFile");
-    lua_pushstring(L, "");
-    lua_getfield(L, -3, "ResourceDirectory");
-    lua_pushvalue(L, -1);
-    resourcesRef = luaL_ref(L, LUA_REGISTRYINDEX);
-    lua_call(L, 2, 1);
-    resourcesDir = strdup(lua_tostring(L, -1));
-
     lua_getglobal(L, "graphics");
     lua_getfield(L, -1, "newTexture");
     newTexture = new LuaTableHolder(L);
-    lua_pop(L, 3);
+    lua_pop(L, 1);
 }
 
 void SpineTextureLoader::load(spine::AtlasPage &page, const spine::String &path)
 {
 
-    std::string absPath = path.buffer();
-    auto it = textures.find(absPath);
+    std::string shortPath = path.buffer();
+    auto it = textures.find(shortPath);
 
     if (it != textures.end())
     {
@@ -42,16 +30,6 @@ void SpineTextureLoader::load(spine::AtlasPage &page, const spine::String &path)
     }
     else
     {
-        std::string shortPath;
-        if (absPath.find(resourcesDir) == 0)
-        {
-            shortPath = absPath.substr(strlen(resourcesDir));
-        }
-        else
-        {
-            shortPath = absPath;
-        }
-
         newTexture->pushTable();
 
         lua_createtable(L, 0, 3);
@@ -61,14 +39,11 @@ void SpineTextureLoader::load(spine::AtlasPage &page, const spine::String &path)
         lua_pushstring(L, shortPath.c_str());
         lua_setfield(L, -2, "filename");
 
-        lua_rawgeti(L, LUA_REGISTRYINDEX, resourcesRef);
-        lua_setfield(L, -2, "baseDir");
-
         lua_call(L, 1, 1);
 
         if (lua_isnil(L, -1))
         {
-            luaL_error(L, "Failed to load texture???: %s", shortPath.c_str());
+            luaL_error(L, "Failed to load texture: %s", shortPath.c_str());
         }
 
         LuaTableHolder *texture = new LuaTableHolder(L);
@@ -92,8 +67,8 @@ void SpineTextureLoader::load(spine::AtlasPage &page, const spine::String &path)
         lua_pop(L, 3);
 
         TextureRef textRef = {*textureData, 1};
-        textures[absPath] = textRef;
-        textureToPath[textureData] = absPath;
+        textures[shortPath] = textRef;
+        textureToPath[textureData] = shortPath;
 
         page.texture = textureData;
     }

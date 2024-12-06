@@ -6,7 +6,6 @@
 
 static SpineSkeleton *luaL_getSkeletonUserdata(lua_State *L)
 {
-    // check first argument is a table
     if (!lua_istable(L, 1))
     {
         luaL_argerror(L, 1, "SpineSkeleton expected. If this is a function call, you might have used '.' instead of ':'");
@@ -365,7 +364,9 @@ static int setDefaultMix(lua_State *L)
 
     float mix = luaL_checknumber(L, 2);
 
-    skeletonUserdata->stateData->setDefaultMix(mix / 1000);
+    mix = mix / 1000;
+
+    skeletonUserdata->stateData->setDefaultMix(mix);
 }
 
 // skeleton:setMix(from, to, mix)
@@ -803,7 +804,8 @@ static int getTimeScale(lua_State *L)
 
 
 // skeleton:physicsTranslate(x, y)
-static int physicsTranslate(lua_State *L){
+static int physicsTranslate(lua_State *L)
+{
     SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
     if (!skeletonUserdata)
     {
@@ -981,14 +983,23 @@ static int removeSelf(lua_State *L)
         return 0;
      }
 
+    lua_pushvalue(L, -1);
+
     SpineSkeleton *skeletonUserdata = (SpineSkeleton *)luaL_checkudata(L, -1, "SpineSkeleton");
+
+    lua_pushnil(L);
+    lua_setmetatable(L, -2);
+
+    lua_pushstring(L, "_skeleton");
+    lua_pushnil(L);
+    lua_rawset(L, 1);
 
     skeletonUserdata->groupRemoveSelf->pushTable();
     lua_pushvalue(L, 1);
     lua_call(L, 1, 0);
 
-    // lua_pushnil(L);
-    // lua_setmetatable(L, 1);
+    skeletonUserdata->group__mt->pushTable();
+    lua_setmetatable(L, 1);
 
     skeletonUserdata->~SpineSkeleton();
 
