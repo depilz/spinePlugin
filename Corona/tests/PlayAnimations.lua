@@ -15,9 +15,25 @@ o:setDefaultMix(300)
 o:setMix(animations[1], animations[2], 100)
 
 o:setAnimation(0, animations[1], false)
-o:addAnimation(0, animations[2], false, 0)
-o:addAnimation(0, animations[3], false, 0)
-o:addAnimation(0, animations[4], false, 0)
-o:addAnimation(0, animations[5], true, 0)
-o:addAnimation(0, animations[4], false, 3000)
-o:addAnimation(0, animations[5], true, 0)
+-- o:addAnimation(0, animations[2], false, 0)
+-- o:addAnimation(0, animations[3], false, 0)
+-- o:addAnimation(0, animations[4], false, 0)
+-- o:addAnimation(0, animations[5], true, 0)
+-- o:addAnimation(0, animations[4], false, 3000)
+-- o:addAnimation(0, animations[5], true, 0)
+-- o:addAnimation(1, animations[5], true, 0)
+-- o:addAnimation(1, animations[5], true, 0)
+
+
+
+local tracks = o.tracks
+
+print("TRACKS", #tracks)
+local track = tracks[1]
+
+print("track", #track)
+
+local entry = track[0]
+print("entry", entry)
+
+entry.reverse = true

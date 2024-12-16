@@ -2,6 +2,8 @@
 #include "Lua_Slot.h"
 #include "Lua_Bone.h"
 #include "Lua_IKConstraint.h"
+#include "Lua_Physics.h"
+#include "Lua_Track.h"
 #include "SpineRenderer.h"
 
 static SpineSkeleton *luaL_getSkeletonUserdata(lua_State *L)
@@ -96,10 +98,35 @@ static int skeleton_index(lua_State *L)
         }
 
         return 1;
+    } else if (strcmp(key, "physics") == 0)
+    {
+        Vector<PhysicsConstraint*> PhysicsConstraints = skeletonUserdata->skeleton->getPhysicsConstraints();
+
+        LuaPhysics *physicsUserdata = (LuaPhysics *)lua_newuserdata(L, sizeof(LuaPhysics));
+        new (physicsUserdata) LuaPhysics(L, PhysicsConstraints);
+
+        return 1;
+    }
+    else if (strcmp(key, "tracks") == 0)
+    {
+        Vector<TrackEntry *> &tracks = skeletonUserdata->state->getTracks();
+        int n = tracks.size();
+        lua_createtable(L, n, 0);
+
+        for (int i = 0; i < n; i++)
+        {
+            LuaTrack *entryUserdata = (LuaTrack *)lua_newuserdata(L, sizeof(LuaTrack));
+            new (entryUserdata) LuaTrack(L, i, tracks);
+
+            lua_rawseti(L, -2, i + 1);
+        }
+
+        return 1;
     }
 
-    // Fallback to methods
-    lua_getmetatable(L, 1);
+
+        // Fallback to methods
+        lua_getmetatable(L, 1);
     lua_pushvalue(L, 2);
     lua_rawget(L, -2);
 
@@ -239,6 +266,32 @@ static int setToSetupPose(lua_State *L)
     return 0;
 }
 
+// skeleton:setBonesToSetupPose()
+static int setBonesToSetupPose(lua_State *L)
+{
+    SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
+    if (!skeletonUserdata)
+    {
+        return 0;
+    }
+    skeletonUserdata->skeleton->setBonesToSetupPose();
+
+    return 0;
+}
+
+// skeleton:setSlotsToSetupPose()
+static int setSlotsToSetupPose(lua_State *L)
+{
+    SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
+    if (!skeletonUserdata)
+    {
+        return 0;
+    }
+    skeletonUserdata->skeleton->setSlotsToSetupPose();
+
+    return 0;
+}
+
 
 
 
@@ -289,6 +342,37 @@ static int addAnimation(lua_State *L)
     return 0;
 }
 
+// skeleton:setEmptyAnimation(trackIndex, mixDuration)
+static int setEmptyAnimation(lua_State *L)
+{
+    SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
+    if (!skeletonUserdata)
+    {
+        return 0;
+    }
+    int trackIndex = luaL_checkint(L, 2);
+    float mixDuration = luaL_checknumber(L, 3) / 1000;
+
+    skeletonUserdata->state->setEmptyAnimation(trackIndex, mixDuration);
+    return 0;
+}
+
+// skeleton:addEmptyAnimation(trackIndex, mixDuration, delay)
+static int addEmptyAnimation(lua_State *L)
+{
+    SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
+    if (!skeletonUserdata)
+    {
+        return 0;
+    }
+    int trackIndex = luaL_checkint(L, 2);
+    float mixDuration = luaL_checknumber(L, 3) / 1000;
+    float delay = luaL_checknumber(L, 4) / 1000;
+
+    skeletonUserdata->state->addEmptyAnimation(trackIndex, mixDuration, delay);
+    return 0;
+}
+
 // skeleton:findAnimation(animationName)
 static int findAnimation(lua_State *L)
 {
@@ -306,7 +390,7 @@ static int findAnimation(lua_State *L)
     return 1;
 }
 
-// skeleton:getCurrentAnimation()
+// skeleton:getCurrentAnimation(trackIndex)
 static int getCurrentAnimation(lua_State *L)
 {
     SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
@@ -315,7 +399,10 @@ static int getCurrentAnimation(lua_State *L)
         return 0;
     }
 
-    TrackEntry *entry = skeletonUserdata->state->getCurrent(0);
+    // optional trackIndex
+    int trackIndex = luaL_optint(L, 2, 0);
+
+    TrackEntry *entry = skeletonUserdata->state->getCurrent(trackIndex);
     if (!entry)
     {
         lua_pushnil(L);
@@ -592,7 +679,13 @@ static int skeletonDraw(lua_State *L)
         return 0;
     }
 
-    skeletonUserdata->skeleton->updateWorldTransform(Physics_Update);
+    // if (skeletonUserdata->skeleton->getPhysicsConstraints()[0]->isActive())
+    // {
+        skeletonUserdata->skeleton->updateWorldTransform(Physics_Update);
+    // } else
+    // {
+    //     skeletonUserdata->skeleton->updateWorldTransform(Physics_None);
+    // }
 
     skeletonRender(L, skeletonUserdata);
 
@@ -653,21 +746,37 @@ static int getAttachments(lua_State *L)
         luaL_error(L, "Slot not found: %s", slotName);
         return 0;
     }
+
+//   Skin* skin = skeletonUserdata->skeleton->getSkin();
+//   const Vector<const char*>& attachmentNames = skin->getAttachments(slot->getData().getIndex());
+//   int n = attachmentNames.size();
+//   lua_createtable(L, n, 0);
 //
-//    Skin* skin = skeletonUserdata->skeleton->getSkin();
-//    const Vector<const char*>& attachmentNames = skin->getAttachments(slot->getData().getIndex());
-//    int n = attachmentNames.size();
-//    lua_createtable(L, n, 0);
-//
-//    for (int i = 0; i < n; i++) {
-//        lua_pushstring(L, attachmentNames[i]);
-//        lua_rawseti(L, -2, i + 1);
-//    }
+//   for (int i = 0; i < n; i++) {
+//       lua_pushstring(L, attachmentNames[i]);
+//       lua_rawseti(L, -2, i + 1);
+//   }
 
     return 1;
 }
 
-// skeleton:getSlot(slotName)
+// skeleton:findSlot(slotName) : bool
+static int findSlot(lua_State *L)
+{
+    SpineSkeleton* skeletonUserdata = luaL_getSkeletonUserdata(L);
+    if (!skeletonUserdata) {
+        return 0;
+    }
+
+    const char* slotName = luaL_checkstring(L, 2);
+
+    Slot* slot = skeletonUserdata->skeleton->findSlot(slotName);
+    lua_pushboolean(L, slot != nullptr);
+
+    return 1;
+}
+
+// skeleton:getSlot(slotName) : Slot
 static int getSlot(lua_State *L)
 {
     SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
@@ -693,7 +802,7 @@ static int getSlot(lua_State *L)
 }
 
 
-// skeleton:getSlotNames()
+// skeleton:getSlotNames() : Array<string>
 static int getSlotNames(lua_State *L)
 {
     SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
@@ -716,7 +825,7 @@ static int getSlotNames(lua_State *L)
     return 1;
 }
 
-// skeleton:getIKConstraint(ikConstraintName)
+// skeleton:getIKConstraint(ikConstraintName) : LuaIKConstraint
 static int getIKConstraint(lua_State *L)
 {
     SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
@@ -743,7 +852,7 @@ static int getIKConstraint(lua_State *L)
     return 1;
 }
 
-// skeleton:getIKConstraint(ikConstraintName)
+// skeleton:getIKConstraint(ikConstraintName) : Array<string>
 static int getIKConstraintNames(lua_State *L)
 {
     SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
@@ -766,7 +875,6 @@ static int getIKConstraintNames(lua_State *L)
 
     return 1;
 }
-
 
 
 // skeleton:setTimeScale(timeScale)
@@ -797,7 +905,40 @@ static int getTimeScale(lua_State *L)
     lua_pushnumber(L, timeScale);
 
     return 1;
+} 
+
+// skeleton:setTractTimeScale(trackIndex, timeScale)
+static int setTrackTimeScale(lua_State *L)
+{
+    if (lua_gettop(L) != 3)
+    {
+        luaL_error(L, "Expected 3 arguments: self, trackIndex, timeScale");
+        return 0;
+    }
+
+    SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
+    if (!skeletonUserdata)
+    {
+        return 0;
+    }
+
+    int trackIndex = luaL_checkint(L, 2);
+    float timeScale = luaL_checknumber(L, 3);
+
+    // get track
+    TrackEntry *track = skeletonUserdata->state->getCurrent(trackIndex);
+    if (!track)
+    {
+        luaL_error(L, "Track not found: %d", trackIndex);
+        return 0;
+    }
+
+    track->setTimeScale(timeScale);
+
+    return 0;
 }
+
+
 
 
 
@@ -965,6 +1106,21 @@ static int clearTracks(lua_State *L)
     return 0;
 }
 
+// skeleton:clearTrack(trackIndex)
+static int clearTrack(lua_State *L)
+{
+    SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
+    if (!skeletonUserdata)
+    {
+        return 0;
+    }
+    int trackIndex = luaL_checkint(L, 2);
+
+    skeletonUserdata->state->clearTrack(trackIndex);
+
+    return 0;
+}
+
 // skeleton:removeSelf()
 static int removeSelf(lua_State *L)
 {
@@ -1048,13 +1204,18 @@ void getSpineObjectMt(lua_State *L)
             {"physicsRotate", physicsRotate},
             {"physicsTranslate", physicsTranslate},
             {"setToSetupPose", setToSetupPose},
+            {"setBonesToSetupPose", setBonesToSetupPose},
+            {"setSlotsToSetupPose", setSlotsToSetupPose},
 
             {"setAnimation", setAnimation},
             {"addAnimation", addAnimation},
+            {"setEmptyAnimation", setEmptyAnimation},
+            {"addEmptyAnimation", addEmptyAnimation},
             {"findAnimation", findAnimation},
             {"getCurrentAnimation", getCurrentAnimation},
             {"getAnimations", getAnimations},
 
+            {"findSlot", findSlot},
             {"getSlot", getSlot},
             {"getSlotNames", getSlotNames},
 
