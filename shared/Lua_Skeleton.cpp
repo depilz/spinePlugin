@@ -454,6 +454,8 @@ static int setDefaultMix(lua_State *L)
     mix = mix / 1000;
 
     skeletonUserdata->stateData->setDefaultMix(mix);
+
+    return 0;
 }
 
 // skeleton:setMix(from, to, mix)
