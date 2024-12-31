@@ -40,23 +40,23 @@ static int entry_index(lua_State *L)
         return 1;
     }
     else if (strcmp(key, "trackTime") == 0) {
-        lua_pushnumber(L, entry.getTrackTime());
+        lua_pushnumber(L, entry.getTrackTime() * 1000);
         return 1;
     }
     else if (strcmp(key, "trackEnd") == 0) {
-        lua_pushnumber(L, entry.getTrackEnd());
+        lua_pushnumber(L, entry.getTrackEnd() * 1000);
         return 1;
     }
     else if (strcmp(key, "animationStart") == 0) {
-        lua_pushnumber(L, entry.getAnimationStart());
+        lua_pushnumber(L, entry.getAnimationStart() * 1000);
         return 1;
     }
     else if (strcmp(key, "animationLast") == 0) {
-        lua_pushnumber(L, entry.getAnimationLast());
+        lua_pushnumber(L, entry.getAnimationLast() * 1000);
         return 1;
     }
     else if (strcmp(key, "animationTime") == 0) {
-        lua_pushnumber(L, entry.getAnimationTime());
+        lua_pushnumber(L, entry.getAnimationTime() * 1000);
         return 1;
     }
 

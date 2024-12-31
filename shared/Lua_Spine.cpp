@@ -23,7 +23,7 @@ static void loadGroupReferences(lua_State *L)
     lua_getglobal(L, "display");
     lua_getfield(L, -1, "newGroup");
     newGroup = new LuaTableHolder(L);
-    newGroup->pushTable();
+    newGroup->pushTable(L);
     lua_call(L, 0, 1);
 
     lua_getmetatable(L, -1);
@@ -42,7 +42,7 @@ static void loadGroupReferences(lua_State *L)
 
     lua_getfield(L, -1, "removeSelf");
     groupRemoveSelf = new LuaTableHolder(L);
-    groupRemoveSelf->pushTable();
+    groupRemoveSelf->pushTable(L);
     lua_pushvalue(L, -2);
     lua_call(L, 1, 0);
 
@@ -82,11 +82,12 @@ int loadAtlas(lua_State *L)
     dir[dirLength] = '\0';
 
 
-    pathForFile->pushTable();
+    pathForFile->pushTable(L);
     lua_pushvalue(L, 1);
     lua_call(L, 1, 1);
 
     const char *absPath = lua_tostring(L, -1);
+    lua_pop(L, 1);
 
     if (!absPath)
     {
@@ -118,12 +119,14 @@ int loadSkeletonData(lua_State *L)
 {
     // assert path is a string
     const char *shortPath = luaL_checkstring(L, 1);
+    float scale = luaL_optnumber(L, 3, 1.0f);
 
-    pathForFile->pushTable();
+    pathForFile->pushTable(L);
     lua_pushvalue(L, 1);
     lua_call(L, 1, 1);
 
     const char *absPath = lua_tostring(L, -1);
+    lua_pop(L, 1);
 
     if (!absPath)
     {
@@ -132,9 +135,13 @@ int loadSkeletonData(lua_State *L)
     }
 
     auto atlasUserdata = DataHolder<Atlas>::check(L, 2);
-    Atlas *atlas = atlasUserdata->getObject();
+    if (!atlasUserdata)
+    {
+        luaL_error(L, "Invalid atlas");
+        return 0;
+    }
 
-    float scale = luaL_optnumber(L, 3, 1.0f);
+    Atlas *atlas = atlasUserdata->getObject();
 
     SkeletonData *skeletonData = nullptr;
     if (strstr(absPath, ".json"))
@@ -171,6 +178,12 @@ int create(lua_State *L)
     bool hasListener = lua_gettop(L) > 1 && !lua_isnil(L, 2);
 
     auto skeletonDataUserdata = DataHolder<SkeletonData>::check(L, 1);
+    if (!skeletonDataUserdata)
+    {
+        luaL_error(L, "Invalid skeletonData");
+        return 0;
+    }
+
     SkeletonData *skeletonData = skeletonDataUserdata->getObject();
 
     int listenerRef;
@@ -191,7 +204,7 @@ int create(lua_State *L)
     skeletonUserdata->stateData = stateData;
     skeletonUserdata->skeletonData = skeletonData;
     skeletonUserdata->luaSelf = new LuaTableHolder(L);
-    skeletonUserdata->luaSelf->pushTable();
+    skeletonUserdata->luaSelf->pushTable(L);
 
     lua_pushvalue(L, 1);
     skeletonUserdata->skeletonDataRef = luaL_ref(L, LUA_REGISTRYINDEX);
@@ -206,7 +219,7 @@ int create(lua_State *L)
     getSkeletonMt(L);
     lua_setmetatable(L, -2);
 
-    newGroup->pushTable();
+    newGroup->pushTable(L);
     lua_call(L, 0, 1);
 
     lua_pushstring(L, "_skeleton");

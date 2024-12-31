@@ -44,11 +44,11 @@ public:
     }
 
     // Pushes the Lua table at the specified index onto the Lua stack
-    void pushMesh(int index)
+    void pushMesh(lua_State *L, int index)
     {
         if (index >= 0 && index < static_cast<int>(meshDataList.size()))
         {
-            meshDataList[index].mesh.pushTable();
+            meshDataList[index].mesh.pushTable(L);
         }
     }
 

@@ -125,8 +125,8 @@ static int skeleton_index(lua_State *L)
     }
 
 
-        // Fallback to methods
-        lua_getmetatable(L, 1);
+    // Fallback to methods
+    lua_getmetatable(L, 1);
     lua_pushvalue(L, 2);
     lua_rawget(L, -2);
 
@@ -135,7 +135,7 @@ static int skeleton_index(lua_State *L)
         return 1;
     }
 
-    skeletonUserdata->groupmt__index->pushTable();
+    skeletonUserdata->groupmt__index->pushTable(L);
     lua_pushvalue(L, 1);
     lua_pushvalue(L, 2);
     lua_call(L, 2, 1);
@@ -164,7 +164,7 @@ static int skeleton_newindex(lua_State *L)
         return 0;
     }
 
-    skeletonUserdata->groupmt__newindex->pushTable();
+    skeletonUserdata->groupmt__newindex->pushTable(L);
     lua_pushvalue(L, 1);
     lua_pushvalue(L, 2);
     lua_pushvalue(L, 3);
@@ -587,7 +587,7 @@ static void skeletonRender(lua_State *L, SpineSkeleton *skeletonUserdata)
 
         if (insertMesh)
         {
-            skeletonUserdata->groupInsert->pushTable();
+            skeletonUserdata->groupInsert->pushTable(L);
             lua_pushvalue(L, 1);
             lua_pushnumber(L, i);
             lua_pushvalue(L, -4);
@@ -631,8 +631,8 @@ static void skeletonRender(lua_State *L, SpineSkeleton *skeletonUserdata)
         const char *slotName = injection.getSlotName().c_str();
         Slot *slot = skeleton->findSlot(slotName);
 
-        injection.pushListener();
-        injection.pushObject();
+        injection.pushListener(L);
+        injection.pushObject(L);
 
         lua_createtable(L, 0, 7);
         lua_pushstring(L, "slot");
@@ -1048,7 +1048,7 @@ static int injectObject(lua_State *L)
         return 0;
     }
 
-    skeletonUserdata->groupInsert->pushTable();
+    skeletonUserdata->groupInsert->pushTable(L);
     lua_pushvalue(L, 1);
     lua_pushvalue(L, 2);
     lua_call(L, 2, 0);
@@ -1150,11 +1150,11 @@ static int removeSelf(lua_State *L)
     lua_pushnil(L);
     lua_rawset(L, 1);
 
-    skeletonUserdata->groupRemoveSelf->pushTable();
+    skeletonUserdata->groupRemoveSelf->pushTable(L);
     lua_pushvalue(L, 1);
     lua_call(L, 1, 0);
 
-    skeletonUserdata->group__mt->pushTable();
+    skeletonUserdata->group__mt->pushTable(L);
     lua_setmetatable(L, 1);
 
     skeletonUserdata->~SpineSkeleton();

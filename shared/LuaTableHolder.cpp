@@ -1,5 +1,6 @@
 #include "LuaTableHolder.h"
 #include "CoronaLua.h"
+#include <cassert>
 
 LuaTableHolder::LuaTableHolder()
     : L_(nullptr), ref_(LUA_NOREF)
@@ -7,15 +8,31 @@ LuaTableHolder::LuaTableHolder()
 }
 
 LuaTableHolder::LuaTableHolder(lua_State *L)
-    : L_(L), ref_(LUA_NOREF)
+    : L_(CoronaLuaGetCoronaThread(L)) // the *main* Lua state in Corona
+      ,
+      ref_(LUA_NOREF)
 {
+    // If the main state is not the same as L, move the top item over.
+    if (L_ != L)
+    {
+        lua_xmove(L, L_, 1);
+    }
+
     saveReference();
 }
 
 LuaTableHolder::LuaTableHolder(lua_State *L, int index)
-    : L_(L), ref_(LUA_NOREF)
+    : L_(CoronaLuaGetCoronaThread(L))
+      ,
+      ref_(LUA_NOREF)
 {
     lua_pushvalue(L, index);
+
+    if (L_ != L)
+    {
+        lua_xmove(L, L_, 1);
+    }
+
     saveReference();
 }
 
@@ -24,7 +41,6 @@ LuaTableHolder::~LuaTableHolder()
     releaseTable();
 }
 
-// Move constructor
 LuaTableHolder::LuaTableHolder(LuaTableHolder &&other) noexcept
     : L_(other.L_), ref_(other.ref_)
 {
@@ -32,7 +48,6 @@ LuaTableHolder::LuaTableHolder(LuaTableHolder &&other) noexcept
     other.ref_ = LUA_NOREF;
 }
 
-// Move assignment operator
 LuaTableHolder &LuaTableHolder::operator=(LuaTableHolder &&other) noexcept
 {
     if (this != &other)
@@ -40,42 +55,46 @@ LuaTableHolder &LuaTableHolder::operator=(LuaTableHolder &&other) noexcept
         releaseTable();
         L_ = other.L_;
         ref_ = other.ref_;
+
         other.L_ = nullptr;
         other.ref_ = LUA_NOREF;
     }
     return *this;
 }
 
-// Pushes the Lua table onto the stack; pushes nil if invalid
-void LuaTableHolder::pushTable()
+void LuaTableHolder::pushTable(lua_State *L)
 {
     if (isValid())
     {
         lua_rawgeti(L_, LUA_REGISTRYINDEX, ref_);
+        lua_xmove(L_, L, 1);
     }
     else
     {
-        lua_pushnil(L_);
+        lua_pushnil(L);
     }
 }
 
-// Checks if the Lua table reference is valid
 bool LuaTableHolder::isValid() const
 {
-    return L_ != nullptr && ref_ != LUA_NOREF && ref_ != LUA_REFNIL;
+    return (L_ != nullptr) && (ref_ != LUA_NOREF) && (ref_ != LUA_REFNIL);
 }
 
-// Initializes the Lua table if not already initialized
 void LuaTableHolder::initialize(lua_State *L)
 {
     if (!isValid())
     {
-        L_ = L;
+        L_ = CoronaLuaGetCoronaThread(L);
+
+        if (L_ != L)
+        {
+            lua_xmove(L, L_, 1);
+        }
+
         saveReference();
     }
 }
 
-// Releases the Lua table reference
 void LuaTableHolder::releaseTable()
 {
     if (isValid())
@@ -86,12 +105,11 @@ void LuaTableHolder::releaseTable()
     }
 }
 
-// Saves the reference of the table stored at the top of the stack
 void LuaTableHolder::saveReference()
 {
     if (L_)
     {
-        ref_ = luaL_ref(L_, LUA_REGISTRYINDEX);
+        ref_ = luaL_ref(L_, LUA_REGISTRYINDEX); // pops the value
         if (ref_ == LUA_REFNIL)
         {
             L_ = nullptr;

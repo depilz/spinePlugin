@@ -15,7 +15,7 @@ public:
 
     ~LuaTableHolder();
 
-    void pushTable();
+    void pushTable(lua_State *L);
     bool isValid() const;
     void initialize(lua_State *L);
     void releaseTable();

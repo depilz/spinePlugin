@@ -24,14 +24,14 @@ public:
         return slotName;
     }
 
-    void pushListener()
+    void pushListener(lua_State *L)
     {
-        listener.pushTable();
+        listener.pushTable(L);
     }
 
-    void pushObject()
+    void pushObject(lua_State *L)
     {
-        object.pushTable();
+        object.pushTable(L);
     }
 
     bool isEmpty()

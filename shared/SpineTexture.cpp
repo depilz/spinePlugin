@@ -30,7 +30,7 @@ void SpineTextureLoader::load(spine::AtlasPage &page, const spine::String &path)
     }
     else
     {
-        newTexture->pushTable();
+        newTexture->pushTable(L);
 
         lua_createtable(L, 0, 3);
         lua_pushstring(L, "image");
@@ -44,10 +44,11 @@ void SpineTextureLoader::load(spine::AtlasPage &page, const spine::String &path)
         if (lua_isnil(L, -1))
         {
             luaL_error(L, "Failed to load texture: %s", shortPath.c_str());
+            return;
         }
 
         LuaTableHolder *texture = new LuaTableHolder(L);
-        texture->pushTable();
+        texture->pushTable(L);
 
         lua_createtable(L, 0, 3);
         lua_pushstring(L, "image");
@@ -64,7 +65,7 @@ void SpineTextureLoader::load(spine::AtlasPage &page, const spine::String &path)
         Texture *textureData = new Texture;
         textureData->texture = texture;
         textureData->textureTable = textureTable;
-        lua_pop(L, 3);
+        lua_pop(L, 1);
 
         TextureRef textRef = {*textureData, 1};
         textures[shortPath] = textRef;
@@ -86,7 +87,7 @@ void SpineTextureLoader::unload(void *texture)
             if (textRef->second.refCount == 0)
             {
                 LuaTableHolder *textureHolder = textRef->second.texture.texture;
-                textureHolder->pushTable();
+                textureHolder->pushTable(L);
                 lua_getfield(L, -1, "releaseSelf");
                 lua_pushvalue(L, -2);
                 lua_call(L, 1, 0);

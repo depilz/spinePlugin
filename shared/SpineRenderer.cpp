@@ -46,7 +46,7 @@ void CreateBufferUserdata(lua_State *L, const void *buffer, size_t size)
 
 void engine_drawMesh(lua_State *L, LuaTableHolder *newMesh, size_t numIndices, unsigned short *indices, float *positions, float *uvs)
 {
-    newMesh->pushTable();
+    newMesh->pushTable(L);
 
     // create the mesh parameters
     lua_createtable(L, 0, 3);
@@ -114,7 +114,7 @@ void engine_drawMesh(lua_State *L, LuaTableHolder *newMesh, size_t numIndices, u
 
 void engine_updateMesh(lua_State *L, LuaTableHolder *meshHolder, size_t numIndices, unsigned short *indices, float *positions, float *uvs)
 {
-    meshHolder->pushTable();       // meshTable
+    meshHolder->pushTable(L);       // meshTable
     lua_getfield(L, -1, "path");   // meshTable, path
     lua_getfield(L, -1, "update"); // meshTable, path, update
 
@@ -202,9 +202,9 @@ void engine_updateMesh(lua_State *L, LuaTableHolder *meshHolder, size_t numIndic
 
 void engine_removeMesh(lua_State *L, LuaTableHolder *meshHolder)
 {
-    meshHolder->pushTable();
+    meshHolder->pushTable(L);
     lua_getfield(L, -1, "removeSelf");
-    meshHolder->pushTable();
+    meshHolder->pushTable(L);
     lua_call(L, 1, 0);
     lua_pop(L, 1);
 }
@@ -215,7 +215,7 @@ void set_texture(lua_State *L, Texture *texture)
 {
     // mesh.fill = { type "image", filename = "raptor.png"}
    LuaTableHolder *textureTable = ((Texture *)texture)->textureTable;
-   textureTable->pushTable();
+   textureTable->pushTable(L);
    lua_setfield(L, -2, "fill");
 }
 
