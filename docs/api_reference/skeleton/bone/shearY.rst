@@ -1,0 +1,22 @@
+===================================
+bone.shearY
+===================================
+
+| **Type:** number (read/write)
+| **See also:** :doc:`index`
+
+Overview:
+.........
+--------
+
+Represents the **shear** along the bone’s Y-axis. This skews attachments vertically for
+stylized stretching or angled shapes.
+
+Example:
+........
+--------
+
+.. code-block:: lua
+
+   local legBone = hero.bones[6]
+   legBone.shearY = -5
