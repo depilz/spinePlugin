@@ -1,8 +1,8 @@
 ===================================
-skeleton:getIKConstraint(ikConstraintName)
+skeleton:getIKConstraint()
 ===================================
 
-| **Type:** Method
+| **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`getIkConstraintNames`, :doc:`ikConstraint/index`
 
 Overview:

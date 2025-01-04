@@ -1,8 +1,8 @@
 ==========================================
-spine.create(skeletonData, [listener])
+spine.create()
 ==========================================
 
-| **Type:** Function
+| **Type:** ``function``
 | **Return value:** :doc:`../skeleton/index`
 | **See also:** :doc:`index`
 
@@ -32,7 +32,7 @@ Syntax:
     ``userdata`` – The SkeletonData userdata returned by ``spine.loadSkeletonData()``.
 
 - ``listener`` *(optional)*:
-    ``function`` – A Lua callback function that handles animation events. See :doc:`events` for more details.
+    ``function`` – A Lua callback function that handles animation events. See :doc:`event` for more details.
 
 
 

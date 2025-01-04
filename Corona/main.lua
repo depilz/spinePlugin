@@ -8,8 +8,7 @@ w, h = display.actualContentWidth, display.actualContentHeight
 
 _G.Spine = require('Spine')
 
-_G.allSpines = {"alien", "celestial-circus", "cloud-pot", "coin", "goblins", "hero", "mix-and-match", "owl", "powerup", "raptor", "sack", "speedy", "spineboy", "stretchyman",  "vine", "tank", "windmill" }
--- not working: "chibi-stickers", "snowglobe", "dragon"
+_G.allSpines = {"chibi-stickers", "snowglobe", "dragon", "alien", "celestial-circus", "cloud-pot", "coin", "goblins", "hero", "mix-and-match", "owl", "powerup", "raptor", "sack", "speedy", "spineboy", "stretchyman",  "vine", "tank", "windmill" }
 
 
 local tests = {
@@ -20,7 +19,6 @@ local tests = {
     {"Performance", "Performance"},
     {"Performance 2", "Performance2"},
 }
-
 
 local buttons = display.newGroup()
 local ySpacing = 100

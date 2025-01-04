@@ -1,8 +1,8 @@
 ===================================
-skeleton:updateState(deltaTime)
+skeleton:updateState()
 ===================================
 
-| **Type:** Method
+| **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`draw`
 
 Overview:

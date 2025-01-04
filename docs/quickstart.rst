@@ -127,7 +127,7 @@ Take it further by:
 - Controlling advanced transitions with :doc:`trackEntry <../api_reference/skeleton/trackEntry/index>`.
 - Setting up :doc:`physics <../api_reference/skeleton/physics/index>` for physically driven
   skeleton constraints.
-- Changing skins with :doc:`skeleton.setSkin<../api_reference/skeleton/setSkin>` for
+- Changing skins with :doc:`skeleton.setSkin <api_reference/skeleton/setSkin>` for
   different costumes.
 
 ------------------------------

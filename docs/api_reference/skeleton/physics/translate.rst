@@ -1,8 +1,8 @@
 ===================================
-physics:translate(x, y)
+physics:translate()
 ===================================
 
-| **Type:** Method
+| **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`rotate`
 
 Overview:

@@ -2,14 +2,14 @@
 skeleton.ikConstraints
 ===================================
 
-| **Type:** table (read-only)
+| **Type:** ``table`` (read-only)
 | **See also:** :doc:`index`, :doc:`ikConstraint/index`
 
 Overview:
 .........
 --------
 
-An array of :doc:`IkConstraint/index` objects, each defining inverse-kinematics relationships in the skeleton (e.g., controlling how limbs bend).
+An array of :doc:`ikConstraint/index` objects, each defining inverse-kinematics relationships in the skeleton (e.g., controlling how limbs bend).
 
 Example:
 --------

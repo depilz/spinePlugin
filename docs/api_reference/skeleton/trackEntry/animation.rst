@@ -2,7 +2,7 @@
 trackEntry.animation
 ===================================
 
-| **Type:** string
+| **Type:** ``string``
 | **See also:** :doc:`index`
 
 Overview:

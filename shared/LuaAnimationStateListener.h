@@ -69,7 +69,7 @@ public:
         lua_pushstring(L, entry->getAnimation()->getName().buffer());
         lua_rawset(L, -3);
 
-        lua_pushstring(L, "track");
+        lua_pushstring(L, "trackIndex");
         lua_pushnumber(L, entry->getTrackIndex());
         lua_rawset(L, -3);
 

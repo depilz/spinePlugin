@@ -2,7 +2,7 @@
 skeleton:getIKConstraintNames()
 ===================================
 
-| **Type:** Method
+| **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`getIKConstraint`
 
 Overview:

@@ -1,19 +1,18 @@
-==================================
-API Reference: Spine Plugin Index
-==================================
+================================
+API Reference: Spine Plugin
+================================
 
-Overview
-........
---------
+This section contains the detailed API documentation for all major objects in the
+Spine plugin, along with their properties, methods, and internal details. Click
+on an object name below to explore its docs.
 
-Below is the list of all major objects in this plugin, each with its own
-methods and properties. Click on an object name for detailed
-documentation.
+.. toctree::
+   :maxdepth: 4
 
-- :doc:`spine/index`
-- :doc:`skeleton/index`
-- :doc:`skeleton/slot/index`
-- :doc:`skeleton/bone/index`
-- :doc:`skeleton/ikConstraint/index`
-- :doc:`skeleton/physics/index`
-- :doc:`skeleton/trackEntry/index`
+   spine/index
+   skeleton/index
+   skeleton/physics/index
+   skeleton/slot/index
+   skeleton/bone/index
+   skeleton/ikConstraint/index
+   skeleton/trackEntry/index

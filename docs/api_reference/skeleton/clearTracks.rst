@@ -2,7 +2,7 @@
 skeleton:clearTracks()
 ===================================
 
-| **Type:** Method
+| **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`clearTrack`
 
 Overview:

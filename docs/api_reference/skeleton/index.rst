@@ -5,10 +5,10 @@ skeleton
 | **Parent**: `DisplayObject <https://docs.coronalabs.com/api/type/DisplayObject/index.html>`_
 | **See also**: :doc:`../spine/create`
 
-........
-Overview
-........
---------
+..........
+Overview:
+..........
+----------
 
 A **Skeleton** object is returned when you call:
 
@@ -72,11 +72,13 @@ Animation Control
 
    setAnimation
    addAnimation
+   findAnimation
+   getAnimations
+   getCurrentAnimation
    setEmptyAnimation
    addEmptyAnimation
-   findAnimation
-   getCurrentAnimation
-   getAnimations
+   clearTracks
+   clearTrack
 
 Animation Mixing
 ................
@@ -117,14 +119,30 @@ IK Constraints
    getIKConstraint
    getIKConstraintNames
 
-Miscellaneous
+Injections
+.............
+
+.. toctree::
+   :maxdepth: 1
+
+   inject
+   injectionEvent
+   eject
+
+Splits
+.............
+
+.. toctree::
+   :maxdepth: 1
+
+    split
+    reassamble
+
+
+Effects
 .............
 
 .. toctree::
    :maxdepth: 1
 
    setFillColor
-   inject
-   eject
-   clearTracks
-   clearTrack

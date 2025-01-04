@@ -2,7 +2,7 @@
 bone.b
 ===================================
 
-| **Type:** number (read/write)
+| **Type:** ``number`` (read/write)
 | **See also:** :doc:`index`
 
 Overview:

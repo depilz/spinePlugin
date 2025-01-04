@@ -2,7 +2,7 @@
 ikConstraint.bendDirection
 ===================================
 
-| **Type:** integer (read/write)
+| **Type:** ``number``
 | **See also:** :doc:`index`
 
 Overview:

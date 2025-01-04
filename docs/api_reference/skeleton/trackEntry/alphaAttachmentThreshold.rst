@@ -2,7 +2,7 @@
 trackEntry.alphaAttachmentThreshold
 ===================================
 
-| **Type:** number
+| **Type:** ``number``
 | **See also:** :doc:`index`
 
 Overview:
@@ -10,7 +10,7 @@ Overview:
 --------
 
 When :doc:`alpha` is greater than alphaAttachmentThreshold, attachment timelines are applied. 
-Defaults to 0, so attachment timelines are always applied.
+Defaults to ``0``, so attachment timelines are always applied.
 
 Example:
 --------

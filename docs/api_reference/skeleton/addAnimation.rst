@@ -1,8 +1,8 @@
 ===================================
-skeleton:addAnimation(trackIndex, animationName, loop, delay)
+skeleton:addAnimation()
 ===================================
 
-| **Type:** Method
+| **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`setAnimation`
 
 Overview:

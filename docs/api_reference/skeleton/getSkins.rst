@@ -2,25 +2,33 @@
 skeleton:getSkins()
 ===================================
 
-| **Type:** Method
+| **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`setSkin`
 
 Overview:
 .........
+---------
+
 Returns a list of all available skin names within this skeleton’s data. Skins define different sets of attachments or character appearances.
 
 Syntax:
 --------
+--------
+
 .. code-block:: lua
 
    local skins = skeleton:getSkins()
 
 Return Value:
 -------------
+-------------
+
 - **table** – An array of skin names as strings.
 
 Example:
 --------
+--------
+
 .. code-block:: lua
 
    local spine = require("plugin.spine")

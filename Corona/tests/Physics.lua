@@ -1,6 +1,6 @@
 local text = display.newText("Drag me!", display.contentCenterX, display.screenOriginY + 50, native.systemFont, 24)
 
-_G.allSpines = {"alien", "celestial-circus", "cloud-pot", "coin", "goblins", "hero", "mix-and-match", "owl", "powerup", "raptor", "sack", "speedy", "spineboy", "stretchyman",  "vine", "tank", "windmill" }
+-- _G.allSpines = {"alien", "celestial-circus", "cloud-pot", "coin", "goblins", "hero", "mix-and-match", "owl", "powerup", "raptor", "sack", "speedy", "spineboy", "stretchyman",  "vine", "tank", "windmill" }
 -- local atlas = Spine.getAtlasData("celestial-circus")
 -- local skeleton = Spine.getSkeletonData("celestial-circus", atlas)
 local atlas = Spine.getAtlasData(allSpines[2])
@@ -9,7 +9,7 @@ local skeleton = Spine.getSkeletonData(allSpines[2], atlas, .3)
 local parent = display.newGroup()
 local o = Spine.create(parent, skeleton, display.contentCenterX, display.contentCenterY+100)
 local animations = o:getAnimations()
-o:setAnimation(0, animations[1], true)
+o:setAnimation(1, animations[1], true)
 
 local prevX, prevY
 local physics = o.physics

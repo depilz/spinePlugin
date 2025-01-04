@@ -2,7 +2,7 @@
 skeleton.timeScale
 ===================================
 
-| **Type:** number
+| **Type:** ``number``
 | **See also:** :doc:`index`
 
 Overview:

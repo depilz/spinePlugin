@@ -6,7 +6,7 @@ local skeleton = Spine.getSkeletonData("spineboy", atlas, .6)
 local parent = display.newGroup()
 local o = Spine.create(parent, skeleton, display.contentCenterX, display.contentCenterY+100)
 local animations = o:getAnimations()
-o:setAnimation(0, animations[1], true)
+o:setAnimation(1, animations[1], true)
 
 local crosshair = o.ikConstraints[1].target
 

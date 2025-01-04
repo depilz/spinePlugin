@@ -2,14 +2,14 @@
 ikConstraint.bones
 ===================================
 
-| **Type:** table (read-only)
+| **Type:** ``table`` (read-only)
 | **See also:** :doc:`index`
 
 Overview:
 .........
 --------
 
-An array of **Bone** objects controlled by this IK constraint.
+An array of :doc:`bone <../bone/index>` objects controlled by this IK constraint.
 
 Example:
 --------

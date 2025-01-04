@@ -2,7 +2,7 @@
 trackEntry.loop
 ===================================
 
-| **Type:** boolean
+| **Type:** ``boolean``
 | **See also:** :doc:`index`
 
 Overview:

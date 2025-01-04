@@ -2,7 +2,7 @@
 slot.b
 ===================================
 
-| **Type:** number (read/write)
+| **Type:** ``number``
 | **See also:** :doc:`index`, :doc:`color`
 
 Overview:

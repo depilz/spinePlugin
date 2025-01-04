@@ -2,7 +2,7 @@
 trackEntry.holdPrevious
 ===================================
 
-| **Type:** boolean
+| **Type:** ``boolean``
 | **See also:** :doc:`index`
 
 Overview:
@@ -10,7 +10,7 @@ Overview:
 --------
 
 The `holdPrevious` attribute determines whether the current animation should hold the pose of the 
-previous animation when it completes. Setting `holdPrevious` to `true` ensures that the skeleton 
+previous animation when it completes. Setting `holdPrevious` to ``true`` ensures that the skeleton 
 retains the final pose of the previous animation after the current animation finishes.
 
 Example:

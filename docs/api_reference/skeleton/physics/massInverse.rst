@@ -2,7 +2,7 @@
 physics.massInverse
 ===================================
 
-| **Type:** number
+| **Type:** ``number``
 | **See also:** :doc:`index`
 
 Overview:

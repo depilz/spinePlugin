@@ -1,8 +1,8 @@
 ===================================
-skeleton:getCurrentAnimation([trackIndex])
+skeleton:getCurrentAnimation()
 ===================================
 
-| **Type:** Method
+| **Type:** ``function``
 | **See also:** :doc:`index`
 
 Overview:
@@ -18,7 +18,7 @@ Syntax:
 
 .. code-block:: lua
 
-   local animName = skeleton:getCurrentAnimation(trackIndex)
+   local animName = skeleton:getCurrentAnimation([trackIndex])
 
 - ``trackIndex`` *(optional)*:
     ``number`` – The track index to query.

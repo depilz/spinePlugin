@@ -6,6 +6,21 @@ local skeletonsData = {}
 
 local skeletons = {}
 
+function _G.printpath(...)
+    local s = "✧ 🚏 "
+    for i = 1, #arg do
+        if type(arg[i]) == "string" then
+            for c in arg[i]:gmatch(".") do
+                s = s .. c .. "‎" -- take care, invisible characters here!
+            end
+        else
+            s = s .. tostring(arg[i])
+        end
+        s = s .. "\t"
+    end
+    print(s)
+end
+
 
 function Spine.getAtlasData(name)
     if atlases[name] then return atlases[name] end
@@ -13,9 +28,7 @@ function Spine.getAtlasData(name)
     local folder = name:gsub("-pma", "")
 
     local path = ("spines/%s/%s.atlas"):format(folder, name)
-    local absPath = system.pathForFile(path, system.ResourceDirectory)
-    local atlas = SpinePlugin.loadAtlas(absPath)
-
+    local atlas = SpinePlugin.loadAtlas(path)
     atlases[name] = atlas
 
     return atlas
@@ -25,8 +38,8 @@ function Spine.getSkeletonData(name, atlas, scale)
     if skeletonsData[name] then return skeletonsData[name] end
 
     local path = ("spines/%s/%s.skel"):format(name, name)
-    local absPath = system.pathForFile(path, system.ResourceDirectory)
-    local data = SpinePlugin.loadSkeletonData(absPath, atlas, scale)
+
+    local data = SpinePlugin.loadSkeletonData(path, atlas, scale)
 
     skeletonsData[name] = data
 
@@ -43,6 +56,18 @@ function Spine.create(parent, skeletonData, x, y, listener)
     skeleton:draw()
 
     return skeleton
+end
+
+local remove = table.remove
+function Spine.remove(skeleton)
+    for i = 1, #skeletons do
+        if skeletons[i] == skeleton then
+            remove(skeletons, i)
+            break
+        end
+    end
+
+    skeleton:removeSelf()
 end
 
 local time = system.getTimer()

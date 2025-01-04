@@ -2,7 +2,7 @@
 slot.attachment
 ===================================
 
-| **Type:** string (read/write) or nil
+| **Type:** ``string`` | ``nil``
 | **See also:** :doc:`index`
 
 Overview:
@@ -10,8 +10,8 @@ Overview:
 --------
 
 Indicates the **name** of the current attachment displayed by this slot.
-Set `nil` to clear, or any valid attachment name to switch images/meshes.
-Reading returns the attachment name or `nil` if no attachment is set.
+Set ``nil`` to clear, or any valid attachment name to switch images/meshes.
+Reading returns the attachment name or ``nil`` if no attachment is set.
 
 Example:
 --------

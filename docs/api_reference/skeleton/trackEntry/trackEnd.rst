@@ -2,7 +2,7 @@
 trackEntry.trackEnd
 ===================================
 
-| **Type:** number
+| **Type:** ``number``
 | **See also:** :doc:`index`
 
 Overview:

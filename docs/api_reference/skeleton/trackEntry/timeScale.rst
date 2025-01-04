@@ -2,7 +2,7 @@
 trackEntry.timeScale
 ===================================
 
-| **Type:** number
+| **Type:** ``number``
 | **See also:** :doc:`index`, :doc:`../timeScale`
 
 Overview:

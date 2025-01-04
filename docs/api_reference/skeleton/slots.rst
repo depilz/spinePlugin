@@ -2,7 +2,7 @@
 skeleton.slots
 ===================================
 
-| **Type:** table (read-only)
+| **Type:** ``table`` (read-only)
 | **See also:** :doc:`index`, :doc:`slot/index`
 
 Overview:

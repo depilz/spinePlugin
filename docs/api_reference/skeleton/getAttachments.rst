@@ -1,8 +1,8 @@
 ===================================
-skeleton:getAttachments(slotName)
+skeleton:getAttachments()
 ===================================
 
-| **Type:** Method
+| **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`setAttachment`
 
 Overview:

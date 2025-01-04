@@ -2,7 +2,7 @@
 bone.worldY
 ===================================
 
-| **Type:** number (read-only)
+| **Type:** ``number`` (read-only)
 | **See also:** :doc:`index`
 
 Overview:

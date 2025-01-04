@@ -2,19 +2,20 @@
 skeleton.tracks
 ===================================
 
-| **Type:** table
-| **See also:** :doc:`trackEntry/index`
+| **Type:** ``table`` (read-only)
+| **See also:** :doc:`index`, :doc:`trackEntry/index`
 
 Overview:
 ---------
-The `tracks` attribute is a read-only value of a skeleton object that provides access to all the 
-animation tracks managed by the skeleton's `AnimationState`. Animation tracks allow multiple animations 
-to play simultaneously or in sequence on different layers of the skeleton.
+---------
 
+An array of :doc:`trackEntry/index` objects, each representing an active animation track on the skeleton.
 
 
 Syntax:
 -------
+-------
+
 .. code-block:: lua
 
    -- Accessing a specific animation track
@@ -30,6 +31,8 @@ Syntax:
 
 Example:
 --------
+--------
+
 .. code-block:: lua
 
    local spine = require("plugin.spine")

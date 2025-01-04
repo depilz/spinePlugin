@@ -9,20 +9,20 @@ local parent = display.newGroup()
 local o = Spine.create(parent, skeleton, display.contentCenterX, display.contentCenterY+100)
 local animations = o:getAnimations()
 local anim = animations[1]
-o:removeSelf()
+Spine.remove(o)
 
 
 local instances = {}
-for i = 1, 50 do
+for i = 1, 150 do
     instances[i] = Spine.create(parent, skeleton, math.random(0, display.actualContentWidth), math.random(0, display.actualContentHeight))
-    instances[i]:setAnimation(0, anim, true)
+    instances[i]:setAnimation(1, anim, true)
 end
 
 local function renew()
-    for i = 1, 50 do
-        instances[i]:removeSelf()
+    for i = 1, 150 do
+        Spine.remove(instances[i])
         instances[i] = Spine.create(parent, skeleton, math.random(0, display.actualContentWidth), math.random(0, display.actualContentHeight))
-        instances[i]:setAnimation(0, anim, true)
+        instances[i]:setAnimation(1, anim, true)
     end
 end
 

@@ -4,15 +4,17 @@
    contain the root `toctree` directive.
 
 ================================================
-Welcome to the Spine Plugin for Solar2D’s Docs!
+Welcome to the Solar2D's Spine Documentation!
 ================================================
+
+| *(Jump straight to the* :doc:`API reference page <api_reference/index>`)
 
 Introduction
 ------------
 ------------
 
 This documentation is your comprehensive guide to integrating and using
-the **Spine Plugin** within your Solar2D projects. If you’re looking for
+the **Spine Plugin** within your `Solar2D <https://solar2d.com>`_ projects. If you’re looking for
 powerful 2D skeletal animations—complete with mixing, blending, skin
 switching, and event handling—this plugin is designed to streamline your
 animation workflow.
@@ -78,9 +80,9 @@ Differences from the Original Spine Runtime:
 I built this plugin trying to make a complete integration to the original C++ Runtime. However, 
 there are some key differences to keep in mind:
 
-* **indexes**: Indexes start at 1, not 0, including track indexes. Not my favorite change, but I want to prioritize consistency with the language and the engine first, and then with the original runtime.
+* **indexes**: Indexes start at ``1``, not ``0``, including track indexes. Not my favorite change, but I want to prioritize consistency with the language and the engine first, and then with the original runtime.
 
-* **events**: Events have been customized to be more Solar2D-friendly. Event phases are "began", "completed", and "ended" instead of "start", "complete", and "end". (See :doc:`events` for more details).
+* **events**: Events have been customized to be more Solar2D-friendly. Event phases are ``"began"``, ``"completed"``, and ``"ended"`` instead of ``"start"``, ``"complete"``, and ``"end"``. (See :doc:`api_reference/spine/event` for more details).
 
 * **times**: All times are in milliseconds, not seconds. This is to keep consistency with Solar2D's time units.
 
@@ -105,20 +107,22 @@ Documentation Contents
 
 Below is a quick look at the main sections of this documentation:
 
-- **Quick Start Guide**:
-   - :doc:`quickstart`
+.. toctree::
+    :maxdepth: 1
 
-- **API Reference**:
-   - :doc:`api_reference/spine/index`
-   - :doc:`api_reference/skeleton/index`
-   - :doc:`api_reference/spine/events/index`
-   - :doc:`api_reference/skeleton/slot/index`
-   - :doc:`api_reference/skeleton/bone/index`
-   - :doc:`api_reference/skeleton/ikConstraint/index`
-   - :doc:`api_reference/skeleton/physics/index`
-   - :doc:`api_reference/skeleton/trackEntry/index`
+    quickstart
 
+.. toctree::
+   :maxdepth: 2
 
+   api_reference/index
+
+.. toctree::
+   :maxdepth: 1
+
+   about
+   contact
+   legal
 
 Feedback & Contributions
 ------------------------
@@ -127,7 +131,7 @@ Feedback & Contributions
 We’re always looking to improve! If you run into any issues or have
 suggestions:
 
-- **GitHub**: Submit bug reports, feature requests, or pull requests to our `repository <https://github.com/depilz/spinePlugin>`_.
+- **GitHub**: Submit bug reports, feature requests, or pull requests to the `repository <https://github.com/depilz/spinePlugin>`_.
 
 - **Community Forums**: Join the discussion on the `Solar2D Community Forums <https://forums.solar2d.com/>`_.
 

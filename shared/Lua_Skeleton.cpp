@@ -102,6 +102,11 @@ static int skeleton_index(lua_State *L)
     {
         Vector<PhysicsConstraint*> PhysicsConstraints = skeletonUserdata->skeleton->getPhysicsConstraints();
 
+        if (PhysicsConstraints.size() == 0)
+        {
+            return 0;
+        }
+
         LuaPhysics *physicsUserdata = (LuaPhysics *)lua_newuserdata(L, sizeof(LuaPhysics));
         new (physicsUserdata) LuaPhysics(L, PhysicsConstraints);
 
@@ -304,6 +309,11 @@ static int setAnimation(lua_State *L)
     if (!animation)
     {
         luaL_error(L, "Animation not found: %s", animationName);
+        return 0;
+    } 
+    else if (trackIndex < 0 )
+    {
+        luaL_error(L, "Invalid track index: %d", trackIndex + 1);
         return 0;
     }
 
@@ -630,7 +640,7 @@ static void skeletonRender(lua_State *L, SpineSkeleton *skeletonUserdata)
         injection.pushObject(L);
 
         lua_createtable(L, 0, 7);
-        lua_pushstring(L, "slot");
+        lua_pushstring(L, "slotName");
         lua_pushstring(L, slotName);
         lua_settable(L, -3);
 
@@ -674,13 +684,14 @@ static int skeletonDraw(lua_State *L)
         return 0;
     }
 
-    // if (skeletonUserdata->skeleton->getPhysicsConstraints()[0]->isActive())
-    // {
+    if (skeletonUserdata->skeleton->getPhysicsConstraints().size() > 0 && skeletonUserdata->skeleton->getPhysicsConstraints()[0]->isActive())
+    {
         skeletonUserdata->skeleton->updateWorldTransform(Physics_Update);
-    // } else
-    // {
-    //     skeletonUserdata->skeleton->updateWorldTransform(Physics_None);
-    // }
+    } 
+    else
+    {
+        skeletonUserdata->skeleton->updateWorldTransform(Physics_None);
+    }
 
     skeletonRender(L, skeletonUserdata);
 

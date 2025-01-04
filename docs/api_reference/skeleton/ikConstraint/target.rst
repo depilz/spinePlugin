@@ -2,14 +2,14 @@
 ikConstraint.target
 ===================================
 
-| **Type:** Bone (read/write) or nil
+| **Type:** :doc:`bone <../bone/index>` | ``nil``
 | **See also:** :doc:`index`
 
 Overview:
 .........
 --------
 
-The **Bone** object serving as the IK target. The chain of bones controlled
+The :doc:`bone <../bone/index>` object serving as the IK target. The chain of bones controlled
 by this IK will try to point towards or reach this target bone.
 
 

@@ -1,8 +1,8 @@
 ===================================
-physics:rotate(x, y, degrees)
+physics:rotate()
 ===================================
 
-| **Type:** Method
+| **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`translate`
 
 Overview:

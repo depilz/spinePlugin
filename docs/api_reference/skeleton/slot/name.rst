@@ -2,7 +2,7 @@
 slot.name
 ===================================
 
-| **Type:** string (read-only)
+| **Type:** ``string`` (read-only)
 | **See also:** :doc:`index`
 
 Overview:

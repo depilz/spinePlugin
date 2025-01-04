@@ -2,29 +2,27 @@
 trackEntry
 ===================================
 
-| **Type:** userdata
-| **See also:** :doc:`../tracks`
+| **Type:** ``userdata``
+| **See also:** :doc:`../index`, :doc:`../tracks`
 
-
-Overview
---------
---------
+Overview:
+..........
+----------
 
 A **trackEntry** object represents an individual animation track within a Spine skeleton. 
 It manages the playback state of a specific animation, including its timing, looping behavior, 
 mixing parameters, and more.
 
 
-Attributes
-..........
---------
+Properties
+----------
+----------
 
 **Common**
 
 .. toctree::
    :maxdepth: 1
 
-   index
    animation
    timeScale
    loop

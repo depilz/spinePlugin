@@ -1,39 +1,22 @@
 ===================================
-skeleton.physics
+physics.strength
 ===================================
 
-Overview
-........
+| **Type:** ``number``
+| **See also:** :doc:`index`
+
+Overview:
+.........
 --------
 
-The **physics** object exposes physics constraints on a Spine skeleton if they exist. 
-All physics constraints in the skeleton share the same properties (wind, inertia, etc.), 
-so changing a property on this object affects **all** constraints.
+Controls the **strength** of the physics constraints, determining how strongly
+bones try to return to their original positions.
 
-Properties
-----------
-----------
+Example:
+--------
+--------
 
-.. toctree::
-   :maxdepth: 1
+.. code-block:: lua
 
-   wind
-   inertia
-   strength
-   damping
-   massInverse
-   gravity
-   mix
-   xVelocity
-   yVelocity
-   isActive
-
-Methods
--------
--------
-
-.. toctree::
-   :maxdepth: 1
-
-   translate
-   rotate
+   hero.physics.strength = 1.5
+   print("Physics constraint strength:", hero.physics.strength)

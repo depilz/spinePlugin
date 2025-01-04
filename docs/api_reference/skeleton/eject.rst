@@ -2,7 +2,7 @@
 skeleton:eject()
 ===================================
 
-| **Type:** Method
+| **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`inject`
 
 Overview:

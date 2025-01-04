@@ -1,8 +1,8 @@
 ===================================
-skeleton:clearTrack(trackIndex)
+skeleton:clearTrack()
 ===================================
 
-| **Type:** Method
+| **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`clearTracks`
 
 Overview:

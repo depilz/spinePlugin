@@ -1,8 +1,8 @@
 ===================================
-skeleton:setSkin(skinName)
+skeleton:setSkin()
 ===================================
 
-| **Type:** Method
+| **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`getSkins`
 
 Overview:

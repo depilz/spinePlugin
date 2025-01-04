@@ -2,7 +2,7 @@
 trackEntry.reverse
 ===================================
 
-| **Type:** boolean
+| **Type:** ``boolean``
 | **See also:** :doc:`index`
 
 Overview:

@@ -1,5 +1,6 @@
 
-local animationName = "spineboy"
+-- local animationName = "studycat4_2"
+local animationName = "celestial-circus"
 local atlas = Spine.getAtlasData(animationName)
 
 local skeleton = Spine.getSkeletonData(animationName, atlas, .3)
@@ -10,9 +11,11 @@ local animations = o:getAnimations()
 o:removeSelf()
 
 local timeStart = system.getTimer()
-for i = 1, 200 do
+for i = 1, 150 do
     local o = Spine.create(parent, skeleton, math.random(0, display.actualContentWidth), math.random(0, display.actualContentHeight))
-    o:setAnimation(0, animations[1], true)
+    -- o:setAnimation(0, "walk", true)
+    -- o:setSkin("goblin")
+    o:setAnimation(1, animations[1], true)
 end
 
 print("Time: ", system.getTimer() - timeStart)

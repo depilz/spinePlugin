@@ -1,8 +1,8 @@
 ===================================
-skeleton:setDefaultMix(mix)
+skeleton:setDefaultMix()
 ===================================
 
-| **Type:** Method
+| **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`setMix`
 
 Overview:

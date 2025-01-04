@@ -1,8 +1,8 @@
 ===================================
-skeleton:addEmptyAnimation(trackIndex, mixDuration, delay)
+skeleton:addEmptyAnimation()
 ===================================
 
-| **Type:** Method
+| **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`setEmptyAnimation`
 
 Overview:

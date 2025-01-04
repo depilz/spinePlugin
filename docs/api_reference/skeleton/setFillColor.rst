@@ -1,8 +1,8 @@
 ===================================
-skeleton:setFillColor(r, g, b, a)
+skeleton:setFillColor()
 ===================================
 
-| **Type:** Method
+| **Type:** ``function``
 | **See also:** :doc:`index`
 
 Overview:

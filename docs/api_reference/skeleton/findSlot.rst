@@ -1,8 +1,8 @@
 ===================================
-skeleton:findSlot(slotName)
+skeleton:findSlot()
 ===================================
 
-| **Type:** Method
+| **Type:** ``function``
 | **See also:** :doc:`index`
 
 Overview:

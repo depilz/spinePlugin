@@ -2,7 +2,7 @@
 trackEntry.animationLast
 ===================================
 
-| **Type:** number
+| **Type:** ``number``
 | **See also:** :doc:`index`
 
 Overview:
@@ -11,7 +11,7 @@ Overview:
 
 The time in milliseconds this animation was last applied. Some timelines use this for one-time triggers. Eg, 
 when this animation is applied, event timelines will fire all events between the animationLast time 
-(exclusive) and animationTime (inclusive). Defaults to -1 to ensure triggers on frame 0 happen the first 
+(exclusive) and animationTime (inclusive). Defaults to ``-1`` to ensure triggers on frame 0 happen the first 
 time this animation is applied.
 
 Example:

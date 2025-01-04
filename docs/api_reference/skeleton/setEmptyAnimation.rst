@@ -1,8 +1,8 @@
 ===================================
-skeleton:setEmptyAnimation(trackIndex, mixDuration)
+skeleton:setEmptyAnimation()
 ===================================
 
-| **Type:** Method
+| **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`addEmptyAnimation`
 
 Overview:
@@ -39,7 +39,7 @@ Syntax:
     ``number (ms)`` – The duration of the fade-out.
 
 Example:
-........
+--------
 --------
 
 .. code-block:: lua

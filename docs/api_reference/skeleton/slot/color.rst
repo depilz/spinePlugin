@@ -2,7 +2,7 @@
 slot.color
 ===================================
 
-| **Type:** table (read-only)
+| **Type:** ``table`` (read-only)
 | **See also:** :doc:`index`, :doc:`r`, :doc:`g`, :doc:`b`, :doc:`alpha`
 
 Overview:

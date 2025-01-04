@@ -2,7 +2,7 @@
 skeleton:setSlotsToSetupPose()
 ===================================
 
-| **Type:** Method
+| **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`setToSetupPose`, :doc:`setBonesToSetupPose`
 
 Overview:

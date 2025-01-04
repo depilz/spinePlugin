@@ -2,7 +2,7 @@
 slot.r
 ===================================
 
-| **Type:** number (read/write)
+| **Type:** ``number``
 | **See also:** :doc:`index`, :doc:`color`, :doc:`../setFillColor`
 
 Overview:

@@ -2,9 +2,13 @@
 slot
 ===================================
 
+| **Type:** ``userdata``
+| **See also:** :doc:`../slots`, :doc:`../index`
+
+
 Overview:
-.........
----------
+..........
+----------
 
 A **Slot** object represents the attachment slot for a bone in a Spine skeleton. It holds color 
 tints (RGBA), a current attachment, and a reference to its owning bone. 

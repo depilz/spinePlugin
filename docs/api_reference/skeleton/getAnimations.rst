@@ -2,7 +2,7 @@
 skeleton:getAnimations()
 ===================================
 
-| **Type:** Method
+| **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`findAnimation`
 
 Overview:

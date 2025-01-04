@@ -2,7 +2,7 @@
 trackEntry.alpha
 ===================================
 
-| **Type:** number
+| **Type:** ``number``
 | **See also:** :doc:`index`
 
 Overview:

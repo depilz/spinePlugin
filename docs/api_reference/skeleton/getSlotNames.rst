@@ -2,7 +2,7 @@
 skeleton:getSlotNames()
 ===================================
 
-| **Type:** Method
+| **Type:** ``function``
 | **See also:** :doc:`index`
 
 Overview:
@@ -20,6 +20,7 @@ Syntax:
    local names = skeleton:getSlotNames()
 
 Return value:
+-------------
 -------------
 
 ``table`` – A table of strings, each representing a slot name.

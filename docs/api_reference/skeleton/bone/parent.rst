@@ -2,14 +2,14 @@
 bone.parent
 ===================================
 
-| **Type:** Bone (read-only) or nil
-| **See also:** :doc:`index`
+| **Type:** :doc:`bone <index>` | ``nil`` (read-only)
+| **See also:** :doc:`../bones`
 
 Overview:
 .........
 --------
 
-Returns the **parent** bone, or `nil` if this bone has no parent (i.e., it's a root bone).
+Returns the **parent** bone, or ``nil`` if this bone has no parent (i.e., it's a root bone).
 
 Example:
 --------

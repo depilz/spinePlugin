@@ -2,7 +2,7 @@
 ikConstraint.order
 ===================================
 
-| **Type:** integer (read-only)
+| **Type:** ``number`` (read-only)
 | **See also:** :doc:`index`
 
 Overview:

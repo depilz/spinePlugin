@@ -2,7 +2,7 @@
 trackEntry.delay
 ===================================
 
-| **Type:** number
+| **Type:** ``number``
 | **See also:** :doc:`index`
 
 Overview:

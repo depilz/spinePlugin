@@ -2,7 +2,7 @@
 bone.shearX
 ===================================
 
-| **Type:** number (read/write)
+| **Type:** ``number``
 | **See also:** :doc:`index`
 
 Overview:

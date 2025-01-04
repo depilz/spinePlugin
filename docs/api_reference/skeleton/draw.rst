@@ -2,7 +2,7 @@
 skeleton:draw()
 ===================================
 
-| **Type:** Method
+| **Type:** ``function``
 | **See also:** :doc:`skeleton.index`
 
 Overview:

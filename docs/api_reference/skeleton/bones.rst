@@ -2,7 +2,7 @@
 skeleton.bones
 ===================================
 
-| **Type:** table (read-only)
+| **Type:** ``table`` (read-only)
 | **See also:** :doc:`index`, :doc:`bone/index`
 
 Overview:

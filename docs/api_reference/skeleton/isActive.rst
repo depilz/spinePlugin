@@ -2,7 +2,7 @@
 skeleton.isActive
 ===================================
 
-| **Type:** boolean (read-only)
+| **Type:** ``boolean`` (read-only)
 | **See also:** :doc:`index`
 
 Overview:
@@ -34,7 +34,7 @@ Example:
 
        -- Check if the skeleton is playing any animations
        print("Is the skeleton active?", hero.isActive)
-       if not hero.isActive then
+       if hero.isActive then
           hero:updateState(dt)
           hero:draw()
        end

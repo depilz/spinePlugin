@@ -1,8 +1,8 @@
 =======================================
-spine.loadAtlas(path)
+spine.loadAtlas()
 =======================================
 
-| **Type:** Function
+| **Type:** ``function``
 | **Return value:** Atlas userdata
 | **See also:** :doc:`index`, :doc:`loadSkeletonData`
 

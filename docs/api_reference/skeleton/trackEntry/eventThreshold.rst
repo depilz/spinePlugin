@@ -2,7 +2,7 @@
 trackEntry.eventThreshold
 ===================================
 
-| **Type:** number
+| **Type:** ``number``
 | **See also:** :doc:`index`
 
 Overview:
@@ -10,7 +10,7 @@ Overview:
 --------
 
 When the mix percentage (mixTime / mixDuration) is less than the eventThreshold, event timelines are 
-applied while this animation is being mixed out. Defaults to 0, so event timelines are not applied while 
+applied while this animation is being mixed out. Defaults to ``0``, so event timelines are not applied while 
 this animation is being mixed out.
 
 Example:

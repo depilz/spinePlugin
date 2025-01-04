@@ -1,8 +1,8 @@
 ===================================
-skeleton:findAnimation(animationName)
+skeleton:findAnimation()
 ===================================
 
-| **Type:** Method
+| **Type:** ``function``
 | **See also:** :doc:`index`
 
 Overview:

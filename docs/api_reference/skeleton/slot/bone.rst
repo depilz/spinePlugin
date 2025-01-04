@@ -2,8 +2,8 @@
 slot.bone
 ===================================
 
-| **Type:** Bone (read-only)
-| **See also:** :doc:`index`, :doc:`../bone/index`
+| **Type:** :doc:`bone <../bone/index>` (read-only)
+| **See also:** :doc:`index`
 
 Overview:
 .........
