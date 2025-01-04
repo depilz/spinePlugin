@@ -9,13 +9,61 @@ static int entry_index(lua_State *L)
         return 0;
     }
 
+
     const char *key = luaL_checkstring(L, 2);
 
     TrackEntry &entry = *entryUserdata->entry;
 
-    if (strcmp(key, "timeScale") == 0)
+    if (strcmp(key, "index") == 0)
     {
-        lua_pushnumber(L, entry.getTimeScale());
+        lua_pushnumber(L, entry.getTrackIndex());
+        return 1;
+    }
+    else if (strcmp(key, "animation") == 0)
+    {
+        const char *animationName = entry.getAnimation()->getName().buffer();
+        lua_pushstring(L, animationName);
+
+        return 1;
+    }
+    else if (strcmp(key, "shortestRotation") == 0)
+    {
+        lua_pushboolean(L, entry.getShortestRotation());
+        return 1;
+    }
+    else if (strcmp(key, "alpha") == 0)
+    {
+        lua_pushnumber(L, entry.getAlpha());
+        return 1;
+    }
+    else if (strcmp(key, "eventThreshold") == 0)
+    {
+        lua_pushnumber(L, entry.getEventThreshold());
+        return 1;
+    }
+    else if (strcmp(key, "mixAttachmentThreshold") == 0)
+    {
+        lua_pushnumber(L, entry.getMixAttachmentThreshold());
+        return 1;
+    }
+    else if (strcmp(key, "alphaAttachmentThreshold") == 0)
+    {
+        lua_pushnumber(L, entry.getAlphaAttachmentThreshold());
+        return 1;
+    }
+    else if (strcmp(key, "mixDrawOrderThreshold") == 0)
+    {
+        lua_pushnumber(L, entry.getMixDrawOrderThreshold());
+        return 1;
+    }
+    else if (strcmp(key, "mixTime") == 0)
+    {
+        lua_pushnumber(L, entry.getMixTime() * 1000);
+        return 1;
+    }
+    else if (strcmp(key, "timeScale") == 0)
+    {
+        lua_pushnumber(L, entry.getTimeScale() * 1000);
         return 1;
     }
     else if (strcmp(key, "loop") == 0)
@@ -36,7 +84,7 @@ static int entry_index(lua_State *L)
         return 1;
     }
     else if (strcmp(key, "delay") == 0) {
-        lua_pushnumber(L, entry.getDelay());
+        lua_pushnumber(L, entry.getDelay() * 1000);
         return 1;
     }
     else if (strcmp(key, "trackTime") == 0) {
@@ -59,8 +107,11 @@ static int entry_index(lua_State *L)
         lua_pushnumber(L, entry.getAnimationTime() * 1000);
         return 1;
     }
-
-
+    else if (strcmp(key, "animationEnd") == 0)
+    {
+        lua_pushnumber(L, entry.getAnimationEnd() * 1000);
+        return 1;
+    }
 
     // fallback to methods
     lua_getmetatable(L, 1);
@@ -87,9 +138,33 @@ static int entry_newindex(lua_State *L)
 
     TrackEntry &entry = *entryUserdata->entry;
 
-    if (strcmp(key, "timeScale") == 0)
+    if (strcmp(key, "shortestRotation") == 0)
     {
-        float timeScale = luaL_checknumber(L, 3);
+        bool shortestRotation = lua_toboolean(L, 3);
+        entry.setShortestRotation(shortestRotation);
+        return 0;
+    }
+    else if (strcmp(key, "alpha") == 0) 
+    {
+        float alpha = luaL_checknumber(L, 3);
+        entry.setAlpha(alpha);
+        return 0;
+    }
+    else if (strcmp(key, "eventThreshold") == 0)
+    {
+        float eventThreshold = luaL_checknumber(L, 3);
+        entry.setEventThreshold(eventThreshold);
+        return 0;
+    }
+    else if (strcmp(key, "mixAttachmentThreshold") == 0)
+    {
+        float mixAttachmentThreshold = luaL_checknumber(L, 3);
+        entry.setMixAttachmentThreshold(mixAttachmentThreshold);
+        return 0;
+    }
+    else if (strcmp(key, "timeScale") == 0)
+    {
+        float timeScale = luaL_checknumber(L, 3) / 1000;
         entry.setTimeScale(timeScale);
         return 0;
     }
@@ -100,42 +175,42 @@ static int entry_newindex(lua_State *L)
         return 0;
     }
     else if (strcmp(key, "holdPrevious") == 0) {
-        bool holdPrevious = lua_toboolean(L, 3);
+        bool holdPrevious = lua_toboolean(L, 3) / 1000;
         entry.setHoldPrevious(holdPrevious);
         return 0;
     }
     else if (strcmp(key, "reverse") == 0) {
-        bool reverse = lua_toboolean(L, 3);
+        bool reverse = lua_toboolean(L, 3) / 1000;
         entry.setReverse(reverse);
         return 0;
     }
     else if (strcmp(key, "delay") == 0) {
-        float delay = luaL_checknumber(L, 3);
+        float delay = luaL_checknumber(L, 3) / 1000;
         entry.setDelay(delay);
         return 0;
     }
     else if (strcmp(key, "trackTime") == 0) {
-        float trackTime = luaL_checknumber(L, 3);
+        float trackTime = luaL_checknumber(L, 3) / 1000;
         entry.setTrackTime(trackTime);
         return 0;
     }
     else if (strcmp(key, "trackEnd") == 0) {
-        float trackEnd = luaL_checknumber(L, 3);
+        float trackEnd = luaL_checknumber(L, 3) / 1000;
         entry.setTrackEnd(trackEnd);
         return 0;
     }
     else if (strcmp(key, "animationStart") == 0) {
-        float animationStart = luaL_checknumber(L, 3);
+        float animationStart = luaL_checknumber(L, 3) / 1000;
         entry.setAnimationStart(animationStart);
         return 0;
     }
     else if (strcmp(key, "animationEnd") == 0) {
-        float animationEnd = luaL_checknumber(L, 3);
+        float animationEnd = luaL_checknumber(L, 3) / 1000;
         entry.setAnimationEnd(animationEnd);
         return 0;
     }
     else if (strcmp(key, "animationLast") == 0) {
-        float animationLast = luaL_checknumber(L, 3);
+        float animationLast = luaL_checknumber(L, 3) / 1000;
         entry.setAnimationLast(animationLast);
         return 0;
     }

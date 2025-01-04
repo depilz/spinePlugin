@@ -110,16 +110,9 @@ static int skeleton_index(lua_State *L)
     else if (strcmp(key, "tracks") == 0)
     {
         Vector<TrackEntry *> &tracks = skeletonUserdata->state->getTracks();
-        int n = tracks.size();
-        lua_createtable(L, n, 0);
 
-        for (int i = 0; i < n; i++)
-        {
-            LuaTrack *entryUserdata = (LuaTrack *)lua_newuserdata(L, sizeof(LuaTrack));
-            new (entryUserdata) LuaTrack(L, i, tracks);
-
-            lua_rawseti(L, -2, i + 1);
-        }
+        LuaTrack *entryUserdata = (LuaTrack *)lua_newuserdata(L, sizeof(LuaTrack));
+        new (entryUserdata) LuaTrack(L, tracks);
 
         return 1;
     }
@@ -303,7 +296,7 @@ static int setAnimation(lua_State *L)
     {
         return 0;
     }
-    int trackIndex = luaL_checkint(L, 2);
+    int trackIndex = luaL_checkint(L, 2) - 1;
     const char *animationName = luaL_checkstring(L, 3);
     bool loop = lua_toboolean(L, 4);
 
@@ -326,7 +319,7 @@ static int addAnimation(lua_State *L)
     {
         return 0;
     }
-    int trackIndex = luaL_checkint(L, 2);
+    int trackIndex = luaL_checkint(L, 2) - 1;
     const char *animationName = luaL_checkstring(L, 3);
     bool loop = lua_toboolean(L, 4);
     float delay = luaL_checknumber(L, 5) / 1000;
@@ -350,7 +343,7 @@ static int setEmptyAnimation(lua_State *L)
     {
         return 0;
     }
-    int trackIndex = luaL_checkint(L, 2);
+    int trackIndex = luaL_checkint(L, 2) - 1;
     float mixDuration = luaL_checknumber(L, 3) / 1000;
 
     skeletonUserdata->state->setEmptyAnimation(trackIndex, mixDuration);
@@ -365,7 +358,7 @@ static int addEmptyAnimation(lua_State *L)
     {
         return 0;
     }
-    int trackIndex = luaL_checkint(L, 2);
+    int trackIndex = luaL_checkint(L, 2) - 1;
     float mixDuration = luaL_checknumber(L, 3) / 1000;
     float delay = luaL_checknumber(L, 4) / 1000;
 
@@ -400,7 +393,7 @@ static int getCurrentAnimation(lua_State *L)
     }
 
     // optional trackIndex
-    int trackIndex = luaL_optint(L, 2, 0);
+    int trackIndex = luaL_optint(L, 2, 1) - 1;
 
     TrackEntry *entry = skeletonUserdata->state->getCurrent(trackIndex);
     if (!entry)
@@ -702,14 +695,14 @@ static int setAttachment(lua_State *L) {
         return 0;
     }
 
+    const char *slotName = luaL_checkstring(L, 2);
+    const char *attachmentName = luaL_optstring(L, 3, "null");
+
     SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
     if (!skeletonUserdata)
     {
         return 0;
     }
-
-    const char *slotName = luaL_checkstring(L, 2);
-    const char* attachmentName = luaL_checkstring(L, 3);
 
     Slot* slot = skeletonUserdata->skeleton->findSlot(slotName);
     if (!slot) {
@@ -894,92 +887,7 @@ static int setTimeScale(lua_State *L)
     return 0;
 }
 
-// skeleton:getTimeScale()
-static int getTimeScale(lua_State *L)
-{
-    SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
-    if (!skeletonUserdata)
-    {
-        return 0;
-    }
 
-    float timeScale = skeletonUserdata->state->getTimeScale(); 
-    lua_pushnumber(L, timeScale);
-
-    return 1;
-} 
-
-// skeleton:setTractTimeScale(trackIndex, timeScale)
-static int setTrackTimeScale(lua_State *L)
-{
-    if (lua_gettop(L) != 3)
-    {
-        luaL_error(L, "Expected 3 arguments: self, trackIndex, timeScale");
-        return 0;
-    }
-
-    SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
-    if (!skeletonUserdata)
-    {
-        return 0;
-    }
-
-    int trackIndex = luaL_checkint(L, 2);
-    float timeScale = luaL_checknumber(L, 3);
-
-    // get track
-    TrackEntry *track = skeletonUserdata->state->getCurrent(trackIndex);
-    if (!track)
-    {
-        luaL_error(L, "Track not found: %d", trackIndex);
-        return 0;
-    }
-
-    track->setTimeScale(timeScale);
-
-    return 0;
-}
-
-
-
-
-
-
-
-// skeleton:physicsTranslate(x, y)
-static int physicsTranslate(lua_State *L)
-{
-    SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
-    if (!skeletonUserdata)
-    {
-        return 0;
-    }
-
-    float x = luaL_checknumber(L, 2);
-    float y = luaL_checknumber(L, 3);
-
-    skeletonUserdata->skeleton->physicsTranslate(x, -y);
-
-    return 0;
-}
-
-// skeleton:physicsRotate(x, y, degrees)
-static int physicsRotate(lua_State *L)
-{
-    SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
-    if (!skeletonUserdata)
-    {
-        return 0;
-    }
-
-    float x = luaL_checknumber(L, 2);
-    float y = luaL_checknumber(L, 3);
-    float degrees = luaL_checknumber(L, 4);
-
-    skeletonUserdata->skeleton->physicsRotate(x, y, degrees);
-
-    return 0;
-}
 
 
 
@@ -1116,7 +1024,7 @@ static int clearTrack(lua_State *L)
     {
         return 0;
     }
-    int trackIndex = luaL_checkint(L, 2);
+    int trackIndex = luaL_checkint(L, 2) - 1;
 
     skeletonUserdata->state->clearTrack(trackIndex);
 
@@ -1203,8 +1111,6 @@ void getSpineObjectMt(lua_State *L)
             {"setDefaultMix", setDefaultMix},
             {"setMix", setMix},
 
-            {"physicsRotate", physicsRotate},
-            {"physicsTranslate", physicsTranslate},
             {"setToSetupPose", setToSetupPose},
             {"setBonesToSetupPose", setBonesToSetupPose},
             {"setSlotsToSetupPose", setSlotsToSetupPose},

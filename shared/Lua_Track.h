@@ -11,9 +11,8 @@ struct LuaTrack
 {
     lua_State *L;
     Vector<TrackEntry *> &tracks;
-    int trackIndex;
 
-    LuaTrack(lua_State *L, int trackIndex, Vector<TrackEntry *> &tracks) : L(L), trackIndex(trackIndex), tracks(tracks)
+    LuaTrack(lua_State *L, Vector<TrackEntry *> &tracks) : L(L), tracks(tracks)
     {
         getTrackMt(L);
         lua_setmetatable(L, -2);

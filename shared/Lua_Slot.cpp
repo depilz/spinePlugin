@@ -120,7 +120,7 @@ static int slot_newindex(lua_State *L)
     }
     else if (strcmp(key, "attachment") == 0)
     {
-        const char *attachmentName = luaL_checkstring(L, 3);
+        const char *attachmentName = luaL_optstring(L, 3, "null");
 
         if (strcmp(attachmentName, "null") == 0)
         {

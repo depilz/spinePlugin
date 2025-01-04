@@ -188,6 +188,12 @@
 		9261E9942CF401300044A3E3 /* SkeletonDataHolder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9261E9812CF401300044A3E3 /* SkeletonDataHolder.cpp */; };
 		9261E9962CF401300044A3E3 /* Lua_Spine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9261E9792CF401300044A3E3 /* Lua_Spine.cpp */; };
 		9261E9972CF401300044A3E3 /* SpineRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9261E9832CF401300044A3E3 /* SpineRenderer.cpp */; };
+		92EAEFCB2D146BAB005CF5C6 /* Lua_Physics.h in Headers */ = {isa = PBXBuildFile; fileRef = 92EAEFC52D146BAB005CF5C6 /* Lua_Physics.h */; };
+		92EAEFCC2D146BAB005CF5C6 /* Lua_Track.h in Headers */ = {isa = PBXBuildFile; fileRef = 92EAEFC72D146BAB005CF5C6 /* Lua_Track.h */; };
+		92EAEFCD2D146BAB005CF5C6 /* Lua_TrackEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 92EAEFC92D146BAB005CF5C6 /* Lua_TrackEntry.h */; };
+		92EAEFCE2D146BAB005CF5C6 /* Lua_Physics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92EAEFC62D146BAB005CF5C6 /* Lua_Physics.cpp */; };
+		92EAEFCF2D146BAB005CF5C6 /* Lua_Track.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92EAEFC82D146BAB005CF5C6 /* Lua_Track.cpp */; };
+		92EAEFD02D146BAB005CF5C6 /* Lua_TrackEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92EAEFCA2D146BAB005CF5C6 /* Lua_TrackEntry.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -388,6 +394,12 @@
 		9261E9832CF401300044A3E3 /* SpineRenderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SpineRenderer.cpp; sourceTree = "<group>"; };
 		9261E9842CF401300044A3E3 /* SpineTexture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpineTexture.h; sourceTree = "<group>"; };
 		9261E9852CF401300044A3E3 /* SpineTexture.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SpineTexture.cpp; sourceTree = "<group>"; };
+		92EAEFC52D146BAB005CF5C6 /* Lua_Physics.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Lua_Physics.h; sourceTree = "<group>"; };
+		92EAEFC62D146BAB005CF5C6 /* Lua_Physics.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Lua_Physics.cpp; sourceTree = "<group>"; };
+		92EAEFC72D146BAB005CF5C6 /* Lua_Track.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Lua_Track.h; sourceTree = "<group>"; };
+		92EAEFC82D146BAB005CF5C6 /* Lua_Track.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Lua_Track.cpp; sourceTree = "<group>"; };
+		92EAEFC92D146BAB005CF5C6 /* Lua_TrackEntry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Lua_TrackEntry.h; sourceTree = "<group>"; };
+		92EAEFCA2D146BAB005CF5C6 /* Lua_TrackEntry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Lua_TrackEntry.cpp; sourceTree = "<group>"; };
 		A4430897164C70D800B9117B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		A49186401641DDB800A39286 /* plugin_spine.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = plugin_spine.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		F5815AB71EE5C6690027695F /* CoronaNative.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CoronaNative.xcconfig; sourceTree = "<group>"; };
@@ -596,6 +608,12 @@
 				924F5F6A2CF7CC2900B83E0F /* Lua_Slot.h */,
 				924F5F6B2CF7CC2900B83E0F /* Lua_Slot.cpp */,
 				9226770B2D024DCB000256AF /* Texture.h */,
+				92EAEFC52D146BAB005CF5C6 /* Lua_Physics.h */,
+				92EAEFC62D146BAB005CF5C6 /* Lua_Physics.cpp */,
+				92EAEFC72D146BAB005CF5C6 /* Lua_Track.h */,
+				92EAEFC82D146BAB005CF5C6 /* Lua_Track.cpp */,
+				92EAEFC92D146BAB005CF5C6 /* Lua_TrackEntry.h */,
+				92EAEFCA2D146BAB005CF5C6 /* Lua_TrackEntry.cpp */,
 			);
 			name = shared;
 			path = ../shared;
@@ -668,6 +686,9 @@
 				920C35542CD7C1E100CD52FA /* PhysicsConstraintData.h in Headers */,
 				920C35552CD7C1E100CD52FA /* spine.h in Headers */,
 				920C35562CD7C1E100CD52FA /* Timeline.h in Headers */,
+				92EAEFCB2D146BAB005CF5C6 /* Lua_Physics.h in Headers */,
+				92EAEFCC2D146BAB005CF5C6 /* Lua_Track.h in Headers */,
+				92EAEFCD2D146BAB005CF5C6 /* Lua_TrackEntry.h in Headers */,
 				920C35572CD7C1E100CD52FA /* IkConstraintData.h in Headers */,
 				920C35582CD7C1E100CD52FA /* Pool.h in Headers */,
 				920C35592CD7C1E100CD52FA /* Sequence.h in Headers */,
@@ -839,6 +860,9 @@
 			files = (
 				924F5F6C2CF7CC2900B83E0F /* Lua_Bone.cpp in Sources */,
 				924F5F6D2CF7CC2900B83E0F /* Lua_IKConstraint.cpp in Sources */,
+				92EAEFCE2D146BAB005CF5C6 /* Lua_Physics.cpp in Sources */,
+				92EAEFCF2D146BAB005CF5C6 /* Lua_Track.cpp in Sources */,
+				92EAEFD02D146BAB005CF5C6 /* Lua_TrackEntry.cpp in Sources */,
 				924F5F6E2CF7CC2900B83E0F /* Lua_Slot.cpp in Sources */,
 				920C35012CD7C1E100CD52FA /* CurveTimeline.cpp in Sources */,
 				920C35022CD7C1E100CD52FA /* InheritTimeline.cpp in Sources */,

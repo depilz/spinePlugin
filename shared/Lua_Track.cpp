@@ -10,7 +10,11 @@ static int track_index(lua_State *L)
         return 0;
     }
 
-    int index = luaL_checkint(L, 2);
+    if (!lua_isnumber(L, 2))
+    {
+        return 0;
+    }
+    int index = luaL_checkint(L, 2) - 1;
 
     if (index >= 0 && index < trackUserdata->tracks.size())
     {

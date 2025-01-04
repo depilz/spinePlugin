@@ -14,9 +14,12 @@
     <ClCompile Include="..\shared\LuaTableHolder.cpp" />
     <ClCompile Include="..\shared\Lua_Bone.cpp" />
     <ClCompile Include="..\shared\Lua_IKConstraint.cpp" />
+    <ClCompile Include="..\shared\Lua_Physics.cpp" />
     <ClCompile Include="..\shared\Lua_Skeleton.cpp" />
     <ClCompile Include="..\shared\Lua_Slot.cpp" />
     <ClCompile Include="..\shared\Lua_Spine.cpp" />
+    <ClCompile Include="..\shared\Lua_Track.cpp" />
+    <ClCompile Include="..\shared\Lua_TrackEntry.cpp" />
     <ClCompile Include="..\shared\SkeletonDataHolder.cpp" />
     <ClCompile Include="..\shared\SpineRenderer.cpp" />
     <ClCompile Include="..\shared\SpineTexture.cpp" />
@@ -95,9 +98,12 @@
     <ClInclude Include="..\shared\LuaTableHolder.h" />
     <ClInclude Include="..\shared\Lua_Bone.h" />
     <ClInclude Include="..\shared\Lua_IKConstraint.h" />
+    <ClInclude Include="..\shared\Lua_Physics.h" />
     <ClInclude Include="..\shared\Lua_Skeleton.h" />
     <ClInclude Include="..\shared\Lua_Slot.h" />
     <ClInclude Include="..\shared\Lua_Spine.h" />
+    <ClInclude Include="..\shared\Lua_Track.h" />
+    <ClInclude Include="..\shared\Lua_TrackEntry.h" />
     <ClInclude Include="..\shared\MeshManager.h" />
     <ClInclude Include="..\shared\SkeletonDataHolder.h" />
     <ClInclude Include="..\shared\SpineRenderer.h" />

@@ -238,6 +238,15 @@
     <ClCompile Include="..\shared\Lua_Bone.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\shared\Lua_Physics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\Lua_Track.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\Lua_TrackEntry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\shared\SpineRenderer.h">
@@ -553,6 +562,15 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="\\Mac\AllFiles\Volumes\Projects\studycats\funbox\plugins\plugin-spine\shared\Texture.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\Lua_Physics.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\Lua_Track.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\Lua_TrackEntry.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
