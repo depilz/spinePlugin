@@ -24,12 +24,12 @@ Properties:
    :maxdepth: 1
 
    name
-   bones
+   target
    isActive
+   bones
+   order
    mix
    stretch
    softness
    bendDirection
    compress
-   order
-   target

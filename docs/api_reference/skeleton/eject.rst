@@ -18,7 +18,7 @@ Syntax:
 
 .. code-block:: lua
 
-   skeleton:eject()
+   skeleton:eject(object)
 
 Example:
 --------
@@ -27,7 +27,7 @@ Example:
 .. code-block:: lua
 
    -- Inject an object
-   hero:inject("head", myHatObject, onUpdateHat)
+   hero:inject(myHatObject, "head", onUpdateHat)
    ...
    -- Later, remove that object
-   hero:eject()
+   hero:eject(myHatObject)

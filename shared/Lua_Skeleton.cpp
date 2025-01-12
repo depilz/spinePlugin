@@ -61,6 +61,8 @@ static int skeleton_index(lua_State *L)
         {
             LuaSlot *slotUserdata = (LuaSlot *)lua_newuserdata(L, sizeof(LuaSlot));
             new (slotUserdata) LuaSlot(L, slots[i]);
+
+            lua_rawseti(L, -2, i + 1);
         }
 
         return 1;
@@ -308,7 +310,7 @@ static int setAnimation(lua_State *L)
     Animation *animation = skeletonUserdata->skeletonData->findAnimation(animationName);
     if (!animation)
     {
-        luaL_error(L, "Animation not found: %s", animationName);
+        printf("WARNING: Animation not found: %s\n", animationName);
         return 0;
     } 
     else if (trackIndex < 0 )
@@ -337,7 +339,7 @@ static int addAnimation(lua_State *L)
     Animation *animation = skeletonUserdata->skeletonData->findAnimation(animationName);
     if (!animation)
     {
-        luaL_error(L, "Animation not found: %s", animationName);
+        printf("WARNING: Animation not found: %s\n", animationName);
         return 0;
     }
 
@@ -520,12 +522,98 @@ static int updateState(lua_State *L)
     return 0;
 }
 
+
+static void callInjectionListener(lua_State *L, InjectedObject *injection, spine::Skeleton *skeleton)
+{
+    if (!injection->hasListener())
+    {
+        return;
+    }
+
+    const char *slotName = injection->getSlotName().buffer();
+    Slot *slot = skeleton->findSlot(slotName);
+
+    injection->pushListener(L);
+
+    lua_createtable(L, 0, 7);
+    lua_pushstring(L, "slotName");
+    lua_pushstring(L, slotName);
+    lua_settable(L, -3);
+
+    lua_pushstring(L, "x");
+    lua_pushnumber(L, slot->getBone().getWorldX());
+    lua_settable(L, -3);
+
+    lua_pushstring(L, "y");
+    lua_pushnumber(L, -slot->getBone().getWorldY());
+    lua_settable(L, -3);
+
+    lua_pushstring(L, "rotation");
+    lua_pushnumber(L, -slot->getBone().getWorldRotationX());
+    lua_settable(L, -3);
+
+    lua_pushstring(L, "xScale");
+    lua_pushnumber(L, slot->getBone().getWorldScaleX());
+    lua_settable(L, -3);
+
+    lua_pushstring(L, "yScale");
+    lua_pushnumber(L, slot->getBone().getWorldScaleY());
+    lua_settable(L, -3);
+
+    lua_pushstring(L, "alpha");
+    lua_pushnumber(L, slot->getColor().a);
+    lua_settable(L, -3);
+
+    lua_pushstring(L, "isVisible");
+    lua_pushboolean(L, slot->getBone().isActive());
+    lua_settable(L, -3);
+
+    lua_pushstring(L, "target");
+    injection->pushObject(L);
+    lua_settable(L, -3);
+
+    lua_call(L, 1, 0);
+}
+
+static bool isObjectValid(lua_State *L)
+{
+    // check -1 has a parent
+    lua_pushstring(L, "parent");
+    lua_gettable(L, -2);
+    bool valid = !lua_isnil(L, -1);
+    lua_pop(L, 1);
+
+    return valid;
+}
+
+static std::vector<String> checkInjections(lua_State *L, SpineSkeleton *skeletonUserdata)
+{
+    std::vector<InjectedObject> &injections = skeletonUserdata->injections;
+    std::vector<String> injectionSlotNames = {};
+    for (auto it = injections.begin(); it != injections.end();)
+    {
+        it->updated = false;
+        it->pushObject(L);
+        if (isObjectValid(L)) {
+            injectionSlotNames.emplace_back(it->getSlotName());
+            ++it;
+        }
+        else {
+            it = injections.erase(it);
+        }
+    }
+
+    return injectionSlotNames;
+}
+
 static void skeletonRender(lua_State *L, SpineSkeleton *skeletonUserdata)
 {
     Skeleton *skeleton = skeletonUserdata->skeleton;
     SkeletonRenderer skeletonRenderer;
-    RenderCommand *command = skeletonRenderer.render(*skeleton);
+
+    RenderCommand *command = skeletonRenderer.render(*skeleton, checkInjections(L, skeletonUserdata));
     LuaTableHolder *newMesh = skeletonUserdata->newMesh;
+    u_int32_t drawIndex = 1;
     bool insertMesh = false;
 
     int i = 1;
@@ -562,63 +650,99 @@ static void skeletonRender(lua_State *L, SpineSkeleton *skeletonUserdata)
             }
         }
 
-        if (meshData)
+        if (numIndices >= 3)
         {
-            LuaTableHolder &mesh = meshData->mesh;
-            engine_updateMesh(L, &mesh, numIndices, indices, positions, uvs);
+            if (meshData)
+            {
+                LuaTableHolder &mesh = meshData->mesh;
+                engine_updateMesh(L, &mesh, numIndices, indices, positions, uvs);
 
-            insertMesh = insertMesh || meshData->index != i;
-            updateTexture = meshData->texture != texture;
-            updateBlendMode = meshData->blendMode != blendMode;
-            updateColor = meshData->colors != colors;
+                insertMesh = insertMesh || meshData->index != drawIndex;
+                updateTexture = meshData->texture != texture;
+                updateBlendMode = meshData->blendMode != blendMode;
+                updateColor = meshData->colors != colors;
 
-            meshData->used = true;
-            meshData->index = i;
-        } 
-        else
-        {
-            engine_drawMesh(L, newMesh, numIndices, indices, positions, uvs);
-            
-            lua_pushvalue(L, -1);
-            meshes.newMesh(L, i, numIndices, texture, blendMode, colors, true);
-            meshData = &meshes[i];
+                meshData->used = true;
+                meshData->index = drawIndex;
+            }
+            else
+            {
+                engine_drawMesh(L, newMesh, numIndices, indices, positions, uvs);
 
-            insertMesh = true;
-            updateBlendMode = true;
-            updateColor = true;
-            updateTexture = true;
+                lua_pushvalue(L, -1);
+                meshes.newMesh(L, i, numIndices, texture, blendMode, colors, true);
+                meshData = &meshes[i];
+
+                insertMesh = true;
+                updateBlendMode = true;
+                updateColor = true;
+                updateTexture = true;
+            }
+
+            if (insertMesh)
+            {
+                skeletonUserdata->groupInsert->pushTable(L);
+                lua_pushvalue(L, 1);
+                lua_pushnumber(L, drawIndex);
+                lua_pushvalue(L, -4);
+                lua_call(L, 3, 0);
+            }
+
+            if (updateTexture)
+            {
+                meshData->texture = texture;
+                set_texture(L, texture);
+            }
+            if (updateBlendMode)
+            {
+                meshData->blendMode = blendMode;
+                set_blendMode(L, blendMode);
+            }
+            if (updateColor)
+            {
+                meshData->colors = colors;
+                set_fill_color(L, colors);
+            }
+
+        } else {
+            drawIndex--;
         }
 
 
-        if (insertMesh)
+        if (command->injectionSlotName.length() > 0)
         {
-            skeletonUserdata->groupInsert->pushTable(L);
-            lua_pushvalue(L, 1);
-            lua_pushnumber(L, i);
-            lua_pushvalue(L, -4);
-            lua_call(L, 3, 0);
-        }
+            for (auto &injection : skeletonUserdata->injections)
+            {
+                if (injection.getSlotName() == command->injectionSlotName)
+                {
+                    drawIndex++;
+                    skeletonUserdata->groupInsert->pushTable(L);
+                    lua_pushvalue(L, 1);
+                    lua_pushnumber(L, drawIndex);
+                    injection.pushObject(L);
+                    lua_call(L, 3, 0);
 
-        if (updateTexture) 
-        {
-            meshData->texture = texture;
-            set_texture(L, texture);
-        }
-        if (updateBlendMode) 
-        {
-            meshData->blendMode = blendMode;
-            set_blendMode(L, blendMode);
-        }
-        if (updateColor) 
-        {
-            meshData-> colors = colors;
-            set_fill_color(L, colors);
+                    callInjectionListener(L, &injection, skeleton);
+
+                    injection.updated = true;
+                }
+            }
         }
 
         lua_pop(L, 1);
+        
+        // finish updating injections
+        for (auto &injection : skeletonUserdata->injections)
+        {
+            if (!injection.updated)
+            {
+                callInjectionListener(L, &injection, skeleton);
+            }
+        }
 
         command = command->next;
         i++;
+        drawIndex++;
     }
 
     for (auto &meshCandidate : meshes)
@@ -628,48 +752,6 @@ static void skeletonRender(lua_State *L, SpineSkeleton *skeletonUserdata)
             engine_removeMesh(L, &meshCandidate.mesh);
             meshCandidate.mesh.releaseTable();
         }
-    }
-
-    auto &injection = skeletonUserdata->injection;
-    if (!injection.isEmpty())
-    {
-        const char *slotName = injection.getSlotName().c_str();
-        Slot *slot = skeleton->findSlot(slotName);
-
-        injection.pushListener(L);
-        injection.pushObject(L);
-
-        lua_createtable(L, 0, 7);
-        lua_pushstring(L, "slotName");
-        lua_pushstring(L, slotName);
-        lua_settable(L, -3);
-
-        lua_pushstring(L, "x");
-        lua_pushnumber(L, slot->getBone().getWorldX());
-        lua_settable(L, -3);
-
-        lua_pushstring(L, "y");
-        lua_pushnumber(L, -slot->getBone().getWorldY());
-        lua_settable(L, -3);
-
-        lua_pushstring(L, "rotation");
-        lua_pushnumber(L, -slot->getBone().getWorldRotationX());
-        lua_settable(L, -3);
-
-        lua_pushstring(L, "xScale");
-        lua_pushnumber(L, slot->getBone().getWorldScaleX());
-        lua_settable(L, -3);
-
-        lua_pushstring(L, "yScale");
-        lua_pushnumber(L, slot->getBone().getWorldScaleY());
-        lua_settable(L, -3);
-
-        lua_pushstring(L, "alpha");
-        lua_pushnumber(L, slot->getColor().a);
-        lua_settable(L, -3);
-
-        lua_call(L, 2, 0);
-        lua_pop(L, 1);
     }
 
     lua_pop(L, -1);
@@ -903,6 +985,78 @@ static int setTimeScale(lua_State *L)
 
 
 
+// skeleton:getBounds()
+static int getBounds(lua_State *L)
+{
+    SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
+    if (!skeletonUserdata)
+    {
+        return 0;
+    }
+
+    auto skeleton = skeletonUserdata->skeleton; 
+    SkeletonBounds bounds;
+    bounds.update(*skeleton, true);
+
+    // using skeleton->getBounds
+    float outX, outY, outWidth, outHeight;
+    Vector<float> outVertexBuffer;
+
+    skeleton->getBounds(outX, outY, outWidth, outHeight, outVertexBuffer);
+
+    lua_createtable(L, 0, 4);
+
+    lua_pushnumber(L, outX);
+    lua_setfield(L, -2, "xMin");
+
+    lua_pushnumber(L, outY);
+    lua_setfield(L, -2, "yMin");
+
+    lua_pushnumber(L, outX + outWidth);
+    lua_setfield(L, -2, "xMax");
+
+    lua_pushnumber(L, outY + outHeight);
+    lua_setfield(L, -2, "yMax");
+
+    return 1;
+}
+
+// skeleton:getSize()
+static int getSize(lua_State *L)
+{
+    SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
+    if (!skeletonUserdata)
+    {
+        return 0;
+    }
+
+    auto skeleton = skeletonUserdata->skeleton;
+    SkeletonBounds bounds;
+    bounds.update(*skeleton, true);
+
+    // using skeleton->getBounds
+    float outX, outY, outWidth, outHeight;
+    Vector<float> outVertexBuffer;
+
+    skeleton->getBounds(outX, outY, outWidth, outHeight, outVertexBuffer);
+
+    lua_createtable(L, 0, 4);
+
+    lua_pushnumber(L, outX);
+    lua_setfield(L, -2, "offsetX");
+
+    lua_pushnumber(L, -outY);
+    lua_setfield(L, -2, "offsetY");
+
+    lua_pushnumber(L, outWidth);
+    lua_setfield(L, -2, "width");
+
+    lua_pushnumber(L, outHeight);
+    lua_setfield(L, -2, "height");
+
+    return 1;
+}
+
 // skeleton:setFillColor(r, g, b, a)
 static int setFillColor(lua_State *L)
 {
@@ -954,7 +1108,32 @@ static int setFillColor(lua_State *L)
 
 
 
-// skeleton:inject(slotName, object, listener)
+
+
+
+static int getDrawOrder(lua_State *L)
+{
+    SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
+    if (!skeletonUserdata)
+    {
+        return 0;
+    }
+
+    Skeleton *skeleton = skeletonUserdata->skeleton;
+    Vector<Slot *> &drawOrder = skeleton->getDrawOrder();
+    int n = drawOrder.size();
+    lua_createtable(L, n, 0);
+
+    for (int i = 0; i < n; i++)
+    {
+        lua_pushstring(L, drawOrder[i]->getData().getName().buffer());
+        lua_rawseti(L, -2, i + 1);
+    }
+
+    return 1;
+}
+
+// skeleton:inject(slotName, object, [listener])
 static int injectObject(lua_State *L)
 {
     SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
@@ -963,10 +1142,27 @@ static int injectObject(lua_State *L)
         return 0;
     }
 
-    if (!skeletonUserdata->injection.isEmpty())
+    if (!lua_istable(L, 2))
     {
-        luaL_error(L, "SpineObject already has an injected object");
+        luaL_argerror(L, 3, "Expected displayObject");
         return 0;
+    }
+
+    // if object has been already injected, then eject first
+    auto &injections = skeletonUserdata->injections;
+    for (auto it = injections.begin(); it != injections.end();)
+    {
+        it->pushObject(L);
+        if (lua_equal(L, -1, 2))
+        {
+            it = injections.erase(it);
+            break;
+        }
+        else
+        {
+            ++it;
+        }
+        lua_pop(L, 1);
     }
 
     skeletonUserdata->groupInsert->pushTable(L);
@@ -974,30 +1170,61 @@ static int injectObject(lua_State *L)
     lua_pushvalue(L, 2);
     lua_call(L, 2, 0);
 
-    if (!lua_istable(L, 2))
-    {
-        luaL_argerror(L, 3, "Expected displayObject");
-        return 0;
-    }
-
     LuaTableHolder object(L, 2);
 
     const char *slotName = luaL_checkstring(L, 3);
-
-    if (!lua_isfunction(L, 4))
+    Slot *slot = skeletonUserdata->skeleton->findSlot(slotName);
+    if (!slot)
     {
-        luaL_argerror(L, 4, "Expected listener function");
+        luaL_error(L, "Slot not found: %s", slotName);
         return 0;
     }
 
-    LuaTableHolder callback(L, 4);
 
-    skeletonUserdata->injection.set(slotName, object, callback);
+    if (lua_isfunction(L, 4))
+    {
+        LuaTableHolder callback(L, 4);
+        skeletonUserdata->injections.emplace_back(slotName, object, callback);
+    }
+    else
+    {
+        skeletonUserdata->injections.emplace_back(slotName, object);
+    }
 
     return 0;
 }
 
-// skeleton:eject()
+// skeleton:changeInjectionSlot(object, slotName)
+static int changeInjectionSlot(lua_State *L)
+{
+    SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
+    if (!skeletonUserdata)
+    {
+        return 0;
+    }
+    const char *slotName = luaL_checkstring(L, 3);
+
+    auto &injections = skeletonUserdata->injections;
+    for (auto it = injections.begin(); it != injections.end();)
+    {
+        it->pushObject(L);
+        if (lua_equal(L, -1, 2))
+        {
+            it->setSlotName(slotName);
+            break;
+        }
+        else
+        {
+            ++it;
+        }
+        lua_pop(L, 1);
+    }
+
+    return 0;
+}
+
+
+// skeleton:eject(obj)
 static int ejectObject(lua_State *L)
 {
     SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
@@ -1006,7 +1233,32 @@ static int ejectObject(lua_State *L)
         return 0;
     }
 
-    skeletonUserdata->injection.clear();
+    if (!lua_istable(L, 2))
+    {
+        luaL_argerror(L, 2, "Expected displayObject");
+        return 0;
+    }
+
+    auto &injections = skeletonUserdata->injections;
+    for (auto it = injections.begin(); it != injections.end();)
+    {
+        it->pushObject(L);
+        if (lua_equal(L, -1, 2))
+        {
+            it = injections.erase(it);
+            break;
+        }
+        else
+        {
+            ++it;
+        }
+        lua_pop(L, 1);
+    }
+
+    skeletonUserdata->groupInsert->pushTable(L);
+    lua_getfield(L, 1, "stage");
+    lua_pushvalue(L, 2);
+    lua_call(L, 2, 0);
 
     return 0;
 }
@@ -1050,7 +1302,7 @@ static int removeSelf(lua_State *L)
         luaL_error(L, "SpineSkeleton expected. If this is a function call, you might have used '.' instead of ':'");
         return 0;
     }
-    
+
     lua_pushstring(L, "_skeleton");
     lua_rawget(L, 1);
     
@@ -1118,6 +1370,8 @@ void getSpineObjectMt(lua_State *L)
             {"draw", skeletonDraw},
             {"removeSelf", removeSelf},
             {"setFillColor", setFillColor},
+            {"getBounds", getBounds},
+            {"getSize", getSize},
 
             {"setDefaultMix", setDefaultMix},
             {"setMix", setMix},
@@ -1149,8 +1403,10 @@ void getSpineObjectMt(lua_State *L)
             {"setAttachment", setAttachment},
             {"getAttachments", getAttachments},
 
+            {"getDrawOrder", getDrawOrder},
             {"inject", injectObject},
             {"eject", ejectObject},
+            {"changeInjectionSlot", changeInjectionSlot},
 
             {NULL, NULL}};
         luaL_register(L, NULL, methods);

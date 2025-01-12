@@ -18,6 +18,7 @@ local tests = {
     {"Animations", "PlayAnimations"},
     {"Performance", "Performance"},
     {"Performance 2", "Performance2"},
+    {"Injections", "Injections"},
 }
 
 local buttons = display.newGroup()

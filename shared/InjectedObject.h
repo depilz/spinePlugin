@@ -1,16 +1,51 @@
+using namespace spine;
+
 class InjectedObject
 {
 private:
-    std::string slotName;
+    String slotName;
     LuaTableHolder object;
     LuaTableHolder listener;
 
 public:
-    void set(const std::string &slotName, LuaTableHolder &object, LuaTableHolder &listener)
+    bool updated;
+
+    InjectedObject(const InjectedObject &) = delete;
+    InjectedObject &operator=(const InjectedObject &) = delete;
+
+    InjectedObject()
+    {
+    }
+
+    InjectedObject(const String &slotName, LuaTableHolder &object)
+    {
+        this->slotName = slotName;
+        this->object = std::move(object);
+    }
+
+    InjectedObject(const String &slotName, LuaTableHolder &object, LuaTableHolder &listener)
     {
         this->slotName = slotName;
         this->object = std::move(object);
         this->listener = std::move(listener);
+    }
+
+    InjectedObject(InjectedObject &&other) noexcept
+        : slotName(std::move(other.slotName)),
+          object(std::move(other.object)),
+          listener(std::move(other.listener))
+    {
+    }
+
+    InjectedObject &operator=(InjectedObject &&other) noexcept
+    {
+        if (this != &other)
+        {
+            slotName = std::move(other.slotName);
+            object = std::move(other.object);
+            listener = std::move(other.listener);
+        }
+        return *this;
     }
 
     void clear()
@@ -19,7 +54,12 @@ public:
         listener.releaseTable();
     }
 
-    const std::string &getSlotName() const
+    void setSlotName(const String &slotName)
+    {
+        this->slotName = slotName;
+    }
+
+    const String &getSlotName() const
     {
         return slotName;
     }
@@ -36,6 +76,11 @@ public:
 
     bool isEmpty()
     {
-        return slotName.empty();
+        return slotName.isEmpty();
+    }
+
+    bool hasListener()
+    {
+        return listener.isValid();
     }
 };

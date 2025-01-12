@@ -50,19 +50,28 @@ SkeletonRenderer::SkeletonRenderer() : _allocator(4096), _worldVertices(), _quad
 SkeletonRenderer::~SkeletonRenderer() {
 }
 
-static RenderCommand *createRenderCommand(BlockAllocator &allocator, int numVertices, int32_t numIndices, BlendMode blendMode, void *texture) {
-	RenderCommand *cmd = allocator.allocate<RenderCommand>(1);
-	cmd->positions = allocator.allocate<float>(numVertices << 1);
-	cmd->uvs = allocator.allocate<float>(numVertices << 1);
-	cmd->colors = allocator.allocate<uint32_t>(numVertices);
-	cmd->darkColors = allocator.allocate<uint32_t>(numVertices);
-	cmd->numVertices = numVertices;
-	cmd->indices = allocator.allocate<uint16_t>(numIndices);
-	cmd->numIndices = numIndices;
-	cmd->blendMode = blendMode;
-	cmd->texture = texture;
-	cmd->next = nullptr;
-	return cmd;
+
+static RenderCommand *createRenderCommand(BlockAllocator &allocator,
+                                          int numVertices,
+                                          int32_t numIndices,
+                                          BlendMode blendMode,
+                                          void *texture)
+{
+    void *mem = allocator.allocate<RenderCommand>(1);
+
+    RenderCommand *cmd = new (mem) RenderCommand();
+    cmd->positions = allocator.allocate<float>(numVertices << 1);
+    cmd->uvs = allocator.allocate<float>(numVertices << 1);
+    cmd->colors = allocator.allocate<uint32_t>(numVertices);
+    cmd->darkColors = allocator.allocate<uint32_t>(numVertices);
+    cmd->numVertices = numVertices;
+    cmd->indices = allocator.allocate<uint16_t>(numIndices);
+    cmd->numIndices = numIndices;
+    cmd->blendMode = blendMode;
+    cmd->texture = texture;
+    cmd->next = nullptr;
+
+    return cmd;
 }
 
 static RenderCommand *batchSubCommands(BlockAllocator &allocator, Vector<RenderCommand *> &commands, int first, int last, int numVertices, int numIndices) {
@@ -75,7 +84,13 @@ static RenderCommand *batchSubCommands(BlockAllocator &allocator, Vector<RenderC
 	int indicesOffset = 0;
 	for (int i = first; i <= last; i++) {
 		RenderCommand *cmd = commands[i];
-		memcpy(positions, cmd->positions, sizeof(float) * 2 * cmd->numVertices);
+
+        if (cmd->injectionSlotName.length() > 0)
+        {
+            batched->injectionSlotName = cmd->injectionSlotName;
+        }
+
+        memcpy(positions, cmd->positions, sizeof(float) * 2 * cmd->numVertices);
 		memcpy(uvs, cmd->uvs, sizeof(float) * 2 * cmd->numVertices);
 		memcpy(colors, cmd->colors, sizeof(int32_t) * cmd->numVertices);
 		memcpy(darkColors, cmd->darkColors, sizeof(int32_t) * cmd->numVertices);
@@ -110,15 +125,19 @@ static RenderCommand *batchCommands(BlockAllocator &allocator, Vector<RenderComm
 			continue;
 		}
 
-		if (cmd != nullptr && cmd->texture == first->texture &&
-			cmd->blendMode == first->blendMode &&
-			cmd->colors[0] == first->colors[0] &&
-			cmd->darkColors[0] == first->darkColors[0] &&
-			numIndices + cmd->numIndices < 0xffff) {
-			numVertices += cmd->numVertices;
+        if (cmd != nullptr && cmd->texture == first->texture &&
+            (first->injectionSlotName.length() == 0 && cmd->injectionSlotName.length() == 0) &&
+            cmd->blendMode == first->blendMode &&
+            cmd->colors[0] == first->colors[0] &&
+            cmd->darkColors[0] == first->darkColors[0] &&
+            numIndices + cmd->numIndices < 0xffff)
+        {
+            numVertices += cmd->numVertices;
 			numIndices += cmd->numIndices;
-		} else {
-			RenderCommand *batched = batchSubCommands(allocator, commands, startIndex, i - 1, numVertices, numIndices);
+        }
+        else
+        {
+            RenderCommand *batched = batchSubCommands(allocator, commands, startIndex, i - 1, numVertices, numIndices);
 			if (!last) {
 				root = last = batched;
 			} else {
@@ -130,117 +149,176 @@ static RenderCommand *batchCommands(BlockAllocator &allocator, Vector<RenderComm
 			startIndex = i;
 			numVertices = first->numVertices;
 			numIndices = first->numIndices;
-		}
-		i++;
+        }
+        i++;
 	}
 	return root;
 }
 
-RenderCommand *SkeletonRenderer::render(Skeleton &skeleton) {
-	_allocator.compress();
-	_renderCommands.clear();
+RenderCommand *SkeletonRenderer::render(Skeleton &skeleton, const std::vector<String> &injectionSlotNames) {
+    _allocator.compress();
+    _renderCommands.clear();
 
-	SkeletonClipping &clipper = _clipping;
+    SkeletonClipping &clipper = _clipping;
 
-	for (unsigned i = 0; i < skeleton.getSlots().size(); ++i) {
-		Slot &slot = *skeleton.getDrawOrder()[i];
-		Attachment *attachment = slot.getAttachment();
-		if (!attachment) {
-			clipper.clipEnd(slot);
-			continue;
-		}
+    for (unsigned i = 0; i < skeleton.getSlots().size(); ++i)
+    {
+        Slot &slot = *skeleton.getDrawOrder()[i];
+        Attachment *attachment = slot.getAttachment();
+        if (!attachment)
+        {
+            clipper.clipEnd(slot);
+            continue;
+        }
 
-		// Early out if the slot color is 0 or the bone is not active
-		if ((slot.getColor().a == 0 || !slot.getBone().isActive()) && !attachment->getRTTI().isExactly(ClippingAttachment::rtti)) {
-			clipper.clipEnd(slot);
-			continue;
-		}
+        // Early out if the slot color is 0 or the bone is not active,
+        // unless it's a clipping attachment.
+        if ((slot.getColor().a == 0 || !slot.getBone().isActive()) &&
+            !attachment->getRTTI().isExactly(ClippingAttachment::rtti))
+        {
+            clipper.clipEnd(slot);
+            continue;
+        }
 
-		Vector<float> *worldVertices = &_worldVertices;
-		Vector<unsigned short> *quadIndices = &_quadIndices;
-		Vector<float> *vertices = worldVertices;
-		int32_t verticesCount;
-		Vector<float> *uvs;
-		Vector<unsigned short> *indices;
-		int32_t indicesCount;
-		Color *attachmentColor;
-		void *texture;
+        Vector<float> *worldVertices = &_worldVertices;
+        Vector<unsigned short> *quadIndices = &_quadIndices;
+        Vector<float> *vertices = worldVertices;
+        int32_t verticesCount;
+        Vector<float> *uvs;
+        Vector<unsigned short> *indices;
+        int32_t indicesCount;
+        Color *attachmentColor;
+        void *texture = nullptr;
 
-		if (attachment->getRTTI().isExactly(RegionAttachment::rtti)) {
-			RegionAttachment *regionAttachment = (RegionAttachment *) attachment;
-			attachmentColor = &regionAttachment->getColor();
+        if (attachment->getRTTI().isExactly(RegionAttachment::rtti))
+        {
+            RegionAttachment *regionAttachment = (RegionAttachment *)attachment;
+            attachmentColor = &regionAttachment->getColor();
+            if (attachmentColor->a == 0)
+            {
+                // Even if alpha is zero, we may need a dummy command if this slot is an injection slot
+                bool isInjectionSlot = false;
+                for (size_t si = 0; si < injectionSlotNames.size(); si++)
+                {
+                    if (slot.getData().getName() == injectionSlotNames[si])
+                    {
+                        isInjectionSlot = true;
+                        break;
+                    }
+                }
+                if (isInjectionSlot)
+                {
+                    RenderCommand *cmd = createRenderCommand( _allocator, 0, 0, slot.getData().getBlendMode(), nullptr);
+                    cmd->injectionSlotName = slot.getData().getName();
+                    _renderCommands.add(cmd);
+                }
+                clipper.clipEnd(slot);
+                continue;
+            }
+            worldVertices->setSize(8, 0);
+            regionAttachment->computeWorldVertices(slot, *worldVertices, 0, 2);
+            verticesCount = 4;
+            uvs = &regionAttachment->getUVs();
+            indices = quadIndices;
+            indicesCount = 6;
+            texture = regionAttachment->getRegion()->rendererObject;
+        }
+        else if (attachment->getRTTI().isExactly(MeshAttachment::rtti))
+        {
+            MeshAttachment *mesh = (MeshAttachment *)attachment;
+            attachmentColor = &mesh->getColor();
+            if (attachmentColor->a == 0)
+            {
+                clipper.clipEnd(slot);
+                continue;
+            }
+            worldVertices->setSize(mesh->getWorldVerticesLength(), 0);
+            mesh->computeWorldVertices(slot, 0, mesh->getWorldVerticesLength(),
+                                       worldVertices->buffer(), 0, 2);
+            verticesCount = (int32_t)(mesh->getWorldVerticesLength() >> 1);
+            uvs = &mesh->getUVs();
+            indices = &mesh->getTriangles();
+            indicesCount = (int32_t)(indices->size());
+            texture = mesh->getRegion()->rendererObject;
+        }
+        else if (attachment->getRTTI().isExactly(ClippingAttachment::rtti))
+        {
+            ClippingAttachment *clip = (ClippingAttachment *)slot.getAttachment();
+            clipper.clipStart(slot, clip);
+            continue;
+        }
+        else
+        {
+            continue;
+        }
 
-			// Early out if the slot color is 0
-			if (attachmentColor->a == 0) {
-				clipper.clipEnd(slot);
-				continue;
-			}
+        uint8_t r = static_cast<uint8_t>(skeleton.getColor().r *
+                                         slot.getColor().r *
+                                         attachmentColor->r * 255);
+        uint8_t g = static_cast<uint8_t>(skeleton.getColor().g *
+                                         slot.getColor().g *
+                                         attachmentColor->g * 255);
+        uint8_t b = static_cast<uint8_t>(skeleton.getColor().b *
+                                         slot.getColor().b *
+                                         attachmentColor->b * 255);
+        uint8_t a = static_cast<uint8_t>(skeleton.getColor().a *
+                                         slot.getColor().a *
+                                         attachmentColor->a * 255);
 
-			worldVertices->setSize(8, 0);
-			regionAttachment->computeWorldVertices(slot, *worldVertices, 0, 2);
-			verticesCount = 4;
-			uvs = &regionAttachment->getUVs();
-			indices = quadIndices;
-			indicesCount = 6;
-			texture = regionAttachment->getRegion()->rendererObject;
+        uint32_t color = (a << 24) | (r << 16) | (g << 8) | b;
+        uint32_t darkColor = 0xff000000;
+        if (slot.hasDarkColor())
+        {
+            Color &slotDarkColor = slot.getDarkColor();
+            darkColor = 0xff000000 | (static_cast<uint8_t>(slotDarkColor.r * 255) << 16) | (static_cast<uint8_t>(slotDarkColor.g * 255) << 8) | (static_cast<uint8_t>(slotDarkColor.b * 255));
+        }
 
-		} else if (attachment->getRTTI().isExactly(MeshAttachment::rtti)) {
-			MeshAttachment *mesh = (MeshAttachment *) attachment;
-			attachmentColor = &mesh->getColor();
+        if (clipper.isClipping())
+        {
+            clipper.clipTriangles(*worldVertices, *indices, *uvs, 2);
+            vertices = &clipper.getClippedVertices();
+            verticesCount = (int32_t)(clipper.getClippedVertices().size() >> 1);
+            uvs = &clipper.getClippedUVs();
+            indices = &clipper.getClippedTriangles();
+            indicesCount = (int32_t)(clipper.getClippedTriangles().size());
+        }
 
-			// Early out if the slot color is 0
-			if (attachmentColor->a == 0) {
-				clipper.clipEnd(slot);
-				continue;
-			}
+        RenderCommand *cmd = createRenderCommand(
+            _allocator,
+            verticesCount,
+            indicesCount,
+            slot.getData().getBlendMode(),
+            texture);
 
-			worldVertices->setSize(mesh->getWorldVerticesLength(), 0);
-			mesh->computeWorldVertices(slot, 0, mesh->getWorldVerticesLength(), worldVertices->buffer(), 0, 2);
-			verticesCount = (int32_t) (mesh->getWorldVerticesLength() >> 1);
-			uvs = &mesh->getUVs();
-			indices = &mesh->getTriangles();
-			indicesCount = (int32_t) indices->size();
-			texture = mesh->getRegion()->rendererObject;
+        // scan the vector of injectionSlotNames
+        bool isInjectionSlot = false;
+        for (size_t si = 0; si < injectionSlotNames.size(); si++)
+        {
+            if (slot.getData().getName() == injectionSlotNames[si])
+            {
+                isInjectionSlot = true;
+                break;
+            }
+        }
 
-		} else if (attachment->getRTTI().isExactly(ClippingAttachment::rtti)) {
-			ClippingAttachment *clip = (ClippingAttachment *) slot.getAttachment();
-			clipper.clipStart(slot, clip);
-			continue;
-		} else
-			continue;
+        if (isInjectionSlot)
+        {
+            cmd->injectionSlotName = slot.getData().getName();
+        }
 
-		uint8_t r = static_cast<uint8_t>(skeleton.getColor().r * slot.getColor().r * attachmentColor->r * 255);
-		uint8_t g = static_cast<uint8_t>(skeleton.getColor().g * slot.getColor().g * attachmentColor->g * 255);
-		uint8_t b = static_cast<uint8_t>(skeleton.getColor().b * slot.getColor().b * attachmentColor->b * 255);
-		uint8_t a = static_cast<uint8_t>(skeleton.getColor().a * slot.getColor().a * attachmentColor->a * 255);
-		uint32_t color = (a << 24) | (r << 16) | (g << 8) | b;
-		uint32_t darkColor = 0xff000000;
-		if (slot.hasDarkColor()) {
-			Color &slotDarkColor = slot.getDarkColor();
-			darkColor = 0xff000000 | (static_cast<uint8_t>(slotDarkColor.r * 255) << 16) | (static_cast<uint8_t>(slotDarkColor.g * 255) << 8) | static_cast<uint8_t>(slotDarkColor.b * 255);
-		}
+        _renderCommands.add(cmd);
+        memcpy(cmd->positions, vertices->buffer(), (verticesCount << 1) * sizeof(float));
+        memcpy(cmd->uvs, uvs->buffer(), (verticesCount << 1) * sizeof(float));
 
-		if (clipper.isClipping()) {
-			clipper.clipTriangles(*worldVertices, *indices, *uvs, 2);
-			vertices = &clipper.getClippedVertices();
-			verticesCount = (int32_t) (clipper.getClippedVertices().size() >> 1);
-			uvs = &clipper.getClippedUVs();
-			indices = &clipper.getClippedTriangles();
-			indicesCount = (int32_t) (clipper.getClippedTriangles().size());
-		}
+        for (int ii = 0; ii < verticesCount; ii++)
+        {
+            cmd->colors[ii] = color;
+            cmd->darkColors[ii] = darkColor;
+        }
+        memcpy(cmd->indices, indices->buffer(), indices->size() * sizeof(uint16_t));
+        clipper.clipEnd(slot);
+    }
+    clipper.clipEnd();
 
-		RenderCommand *cmd = createRenderCommand(_allocator, verticesCount, indicesCount, slot.getData().getBlendMode(), texture);
-		_renderCommands.add(cmd);
-		memcpy(cmd->positions, vertices->buffer(), (verticesCount << 1) * sizeof(float));
-		memcpy(cmd->uvs, uvs->buffer(), (verticesCount << 1) * sizeof(float));
-		for (int ii = 0; ii < verticesCount; ii++) {
-			cmd->colors[ii] = color;
-			cmd->darkColors[ii] = darkColor;
-		}
-		memcpy(cmd->indices, indices->buffer(), indices->size() * sizeof(uint16_t));
-		clipper.clipEnd(slot);
-	}
-	clipper.clipEnd();
-
-	return batchCommands(_allocator, _renderCommands);
+    return batchCommands(_allocator, _renderCommands);
 }

@@ -32,21 +32,28 @@
 #include <spine/BlockAllocator.h>
 #include <spine/BlendMode.h>
 #include <spine/SkeletonClipping.h>
+#include <vector>
 
 namespace spine {
     class Skeleton;
 
     struct SP_API RenderCommand {
-        float *positions;
-        float *uvs;
-        uint32_t *colors;
-        uint32_t *darkColors;
-        int32_t numVertices;
-        uint16_t *indices;
-        int32_t numIndices;
-        BlendMode blendMode;
-        void *texture;
-        RenderCommand *next;
+            RenderCommand()
+                : positions(nullptr), uvs(nullptr), colors(nullptr), darkColors(nullptr), numVertices(0), indices(nullptr), numIndices(0), blendMode(BlendMode_Normal), texture(nullptr), next(nullptr), injectionSlotName() // String (or std::string) constructor
+            {
+            }
+
+            float *positions;
+            float *uvs;
+            uint32_t *colors;
+            uint32_t *darkColors;
+            int32_t numVertices;
+            uint16_t *indices;
+            int32_t numIndices;
+            BlendMode blendMode;
+            void *texture;
+            RenderCommand *next;
+            String injectionSlotName;
     };
 
     class SP_API SkeletonRenderer: public SpineObject {
@@ -55,7 +62,8 @@ namespace spine {
 
         ~SkeletonRenderer();
 
-        RenderCommand *render(Skeleton &skeleton);
+        RenderCommand *render(Skeleton &skeleton, const std::vector<String> &injectionSlotNames);
+
     private:
         BlockAllocator _allocator;
         Vector<float> _worldVertices;

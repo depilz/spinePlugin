@@ -33,10 +33,42 @@ public:
         {
             lua_pushstring(L, event->getData().getName().buffer());
             lua_rawset(L, -3);
+
+            lua_pushstring(L, "int");
+            lua_pushnumber(L, event->getData().getIntValue());
+            lua_rawset(L, -3);
+
+            lua_pushstring(L, "float");
+            lua_pushnumber(L, event->getData().getFloatValue());
+            lua_rawset(L, -3);
+
+            lua_pushstring(L, "string");
+            lua_pushstring(L, event->getData().getStringValue().buffer());
+            lua_rawset(L, -3);
+
+            // Is this an audio event?
+            if (event->getData().getAudioPath().length() > 0)
+            {
+                lua_pushstring(L, "audioPath");
+                lua_pushstring(L, event->getData().getAudioPath().buffer());
+                lua_rawset(L, -3);
+
+                lua_pushstring(L, "volume");
+                lua_pushnumber(L, event->getData().getVolume());
+                lua_rawset(L, -3);
+
+                lua_pushstring(L, "balance");
+                lua_pushnumber(L, event->getData().getBalance());
+                lua_rawset(L, -3);
+            }
         }
         else
         {
             lua_pushstring(L, "spine");
+            lua_rawset(L, -3);
+
+            lua_pushstring(L, "looping");
+            lua_pushboolean(L, entry->getLoop() ? 1 : 0);
             lua_rawset(L, -3);
 
             lua_pushstring(L, "phase");
@@ -70,11 +102,7 @@ public:
         lua_rawset(L, -3);
 
         lua_pushstring(L, "trackIndex");
-        lua_pushnumber(L, entry->getTrackIndex());
-        lua_rawset(L, -3);
-
-        lua_pushstring(L, "looping");
-        lua_pushboolean(L, entry->getLoop() ? 1 : 0);
+        lua_pushnumber(L, entry->getTrackIndex() + 1);
         lua_rawset(L, -3);
 
         lua_pushstring(L, "target");

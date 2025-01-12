@@ -25,7 +25,7 @@ struct SpineSkeleton
     LuaTableHolder *groupInsert;
     LuaTableHolder *groupRemoveSelf;
     LuaTableHolder *newMesh;
-    InjectedObject injection;
+    std::vector<InjectedObject> injections;
     int skeletonDataRef;
     lua_State *L;
 
@@ -37,7 +37,7 @@ struct SpineSkeleton
           meshes(3),
           stateListener(nullptr), luaSelf(nullptr), group__mt(nullptr),
           groupmt__index(nullptr), groupmt__newindex(nullptr),
-          injection(), skeletonDataRef(LUA_NOREF), 
+          injections(0), skeletonDataRef(LUA_NOREF),
           L(L)
     {
     }
@@ -52,7 +52,7 @@ struct SpineSkeleton
 
             luaSelf->releaseTable();
             meshes.clear();
-            injection.clear();
+            injections.clear();
 
             if (stateListener)
             {
