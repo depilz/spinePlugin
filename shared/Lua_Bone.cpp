@@ -39,12 +39,12 @@ static int bone_index(lua_State *L)
     }
     else if (strcmp(key, "y") == 0)
     {
-        lua_pushnumber(L, -bone.getY());
+        lua_pushnumber(L, bone.getY());
         return 1;
     }
     else if (strcmp(key, "rotation") == 0)
     {
-        lua_pushnumber(L, -bone.getRotation());
+        lua_pushnumber(L, bone.getRotation());
         return 1;
     }
     else if (strcmp(key, "xScale") == 0)
@@ -69,7 +69,7 @@ static int bone_index(lua_State *L)
     }
     else if (strcmp(key, "appliedRotation") == 0)
     {
-        lua_pushnumber(L, -bone.getAppliedRotation());
+        lua_pushnumber(L, bone.getAppliedRotation());
         return 1;
     }
     else if (strcmp(key, "worldX") == 0)
@@ -84,7 +84,7 @@ static int bone_index(lua_State *L)
     }
     else if (strcmp(key, "worldRotation") == 0)
     {
-        lua_pushnumber(L, -bone.getWorldRotationX());
+        lua_pushnumber(L, bone.getWorldRotationX());
         return 1;
     }
     else if (strcmp(key, "worldScaleX") == 0)
@@ -94,7 +94,7 @@ static int bone_index(lua_State *L)
     }
     else if (strcmp(key, "worldScaleY") == 0)
     {
-        lua_pushnumber(L, -bone.getWorldScaleY());
+        lua_pushnumber(L, bone.getWorldScaleY());
         return 1;
     }
     else if (strcmp(key, "a") == 0)
@@ -153,13 +153,13 @@ static int bone_newindex(lua_State *L)
     else if (strcmp(key, "y") == 0)
     {
         float y = luaL_checknumber(L, 3);
-        bone.setY(-y);
+        bone.setY(y);
         return 0;
     }
     else if (strcmp(key, "rotation") == 0)
     {
         float rotation = luaL_checknumber(L, 3);
-        bone.setRotation(-rotation);
+        bone.setRotation(rotation);
         return 0;
     }
     else if (strcmp(key, "xScale") == 0)
@@ -189,7 +189,7 @@ static int bone_newindex(lua_State *L)
     else if (strcmp(key, "appliedRotation") == 0)
     {
         float appliedRotation = luaL_checknumber(L, 3);
-        bone.setAppliedRotation(-appliedRotation);
+        bone.setAppliedRotation(appliedRotation);
         return 0;
     }
     else if (strcmp(key, "a") == 0)

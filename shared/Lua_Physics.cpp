@@ -11,7 +11,7 @@ static int translate(lua_State *L)
     }
 
     float x = luaL_checknumber(L, 2);
-    float y = -luaL_checknumber(L, 3);
+    float y = luaL_checknumber(L, 3);
 
     Vector<PhysicsConstraint *> &PhysicsConstraints = physicsUserdata->constraints;
 
@@ -35,7 +35,7 @@ static int rotate(lua_State *L)
     }
 
     float x = luaL_checknumber(L, 2);
-    float y = -luaL_checknumber(L, 3);
+    float y = luaL_checknumber(L, 3);
     float degrees = luaL_checknumber(L, 4);
 
     Vector<PhysicsConstraint *> &PhysicsConstraints = physicsUserdata->constraints;

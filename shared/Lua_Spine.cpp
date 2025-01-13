@@ -194,6 +194,8 @@ int create(lua_State *L)
     }
 
     Skeleton *skeleton = new Skeleton(skeletonData);
+    skeleton->setScaleY(-1);
+
     AnimationStateData *stateData = new AnimationStateData(skeletonData);
     AnimationState *state = new AnimationState(stateData);
 

@@ -545,11 +545,11 @@ static void callInjectionListener(lua_State *L, InjectedObject *injection, spine
     lua_settable(L, -3);
 
     lua_pushstring(L, "y");
-    lua_pushnumber(L, -slot->getBone().getWorldY());
+    lua_pushnumber(L, slot->getBone().getWorldY());
     lua_settable(L, -3);
 
     lua_pushstring(L, "rotation");
-    lua_pushnumber(L, -slot->getBone().getWorldRotationX());
+    lua_pushnumber(L, slot->getBone().getWorldRotationX());
     lua_settable(L, -3);
 
     lua_pushstring(L, "xScale");

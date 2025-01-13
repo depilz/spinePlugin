@@ -40,7 +40,7 @@ void engine_updateMesh(lua_State *L, LuaTableHolder *meshHolder, size_t numIndic
             maxY = positions[indices[i] * 2 + 1];
         lua_pushnumber(L, positions[indices[i] * 2]);
         lua_rawseti(L, -2, i * 2 + 1);
-        lua_pushnumber(L, -positions[indices[i] * 2 + 1]);
+        lua_pushnumber(L, positions[indices[i] * 2 + 1]);
         lua_rawseti(L, -2, i * 2 + 2);
     }
     lua_setfield(L, -2, "vertices");
@@ -65,7 +65,7 @@ void engine_updateMesh(lua_State *L, LuaTableHolder *meshHolder, size_t numIndic
     lua_pushnumber(L, (minX + maxX) / 2);
     lua_setfield(L, -2, "x");
 
-    lua_pushnumber(L, -(minY + maxY) / 2);
+    lua_pushnumber(L, (minY + maxY) / 2);
     lua_setfield(L, -2, "y");
 
     lua_pop(L, 1); // pop the mesh
@@ -104,7 +104,7 @@ void engine_drawMesh(lua_State *L, LuaTableHolder *newMesh, size_t numIndices, u
             maxY = positions[indices[i] * 2 + 1];
         lua_pushnumber(L, positions[indices[i] * 2]);
         lua_rawseti(L, -2, i * 2 + 1);
-        lua_pushnumber(L, -positions[indices[i] * 2 + 1]);
+        lua_pushnumber(L, positions[indices[i] * 2 + 1]);
         lua_rawseti(L, -2, i * 2 + 2);
     }
     lua_setfield(L, -2, "vertices");
@@ -123,7 +123,7 @@ void engine_drawMesh(lua_State *L, LuaTableHolder *newMesh, size_t numIndices, u
     lua_pushnumber(L, (minX + maxX) / 2);
     lua_setfield(L, -2, "x");
 
-    lua_pushnumber(L, -(minY + maxY) / 2);
+    lua_pushnumber(L, (minY + maxY) / 2);
     lua_setfield(L, -2, "y");
 
     if (lua_pcall(L, 3, 1, 0) != 0) // Call display.newMesh(x, y, { vertices = vertices, uvs = uvs })
