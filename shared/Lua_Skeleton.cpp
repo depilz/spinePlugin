@@ -819,35 +819,6 @@ static int setAttachment(lua_State *L) {
 }
 
 
-// skeleton:getAttachments(slot)
-static int getAttachments(lua_State *L)
-{
-    SpineSkeleton* skeletonUserdata = luaL_getSkeletonUserdata(L);
-    if (!skeletonUserdata) {
-        return 0;
-    }
-
-    const char* slotName = luaL_checkstring(L, 2);
-
-    Slot* slot = skeletonUserdata->skeleton->findSlot(slotName);
-    if (!slot) {
-        luaL_error(L, "Slot not found: %s", slotName);
-        return 0;
-    }
-
-//   Skin* skin = skeletonUserdata->skeleton->getSkin();
-//   const Vector<const char*>& attachmentNames = skin->getAttachments(slot->getData().getIndex());
-//   int n = attachmentNames.size();
-//   lua_createtable(L, n, 0);
-//
-//   for (int i = 0; i < n; i++) {
-//       lua_pushstring(L, attachmentNames[i]);
-//       lua_rawseti(L, -2, i + 1);
-//   }
-
-    return 1;
-}
-
 // skeleton:findSlot(slotName) : bool
 static int findSlot(lua_State *L)
 {
@@ -1401,7 +1372,6 @@ void getSpineObjectMt(lua_State *L)
             {"clearTracks", clearTracks},
 
             {"setAttachment", setAttachment},
-            {"getAttachments", getAttachments},
 
             {"getDrawOrder", getDrawOrder},
             {"inject", injectObject},

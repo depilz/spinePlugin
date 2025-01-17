@@ -16,6 +16,7 @@ local tests = {
     {"Inverse Kinematics", "InverseKinematics"},
     {"Skins", "Skins"},
     {"Animations", "PlayAnimations"},
+    {"Attachments", "Attachments"},
     {"Performance", "Performance"},
     {"Performance 2", "Performance2"},
     {"Injections", "Injections"},
@@ -47,7 +48,10 @@ for i, spine in ipairs(tests) do
     buttons:insert(button)
 end
 
+-- require("tests.Physics")
+-- require("tests.Attachments")
 -- require("tests.InverseKinematics")
 -- require("tests.Performance")
 -- require("tests.Performance2")
+-- require("tests.Injections")
 -- buttons.isVisible = false

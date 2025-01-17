@@ -97,6 +97,8 @@ Update & Rendering
 
    updateState
    draw
+   getSize
+   getBounds
 
 Attachment / Slot Management
 .............................
@@ -105,10 +107,10 @@ Attachment / Slot Management
    :maxdepth: 1
 
    setAttachment
-   getAttachments
    findSlot
    getSlot
    getSlotNames
+   getDrawOrder
 
 IK Constraints
 ..............
@@ -127,6 +129,7 @@ Injections
 
    inject
    injectionEvent
+   changeInjectionSlot
    eject
 
 Splits

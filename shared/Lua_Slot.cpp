@@ -79,7 +79,67 @@ static int slot_index(lua_State *L)
         return 1;
     }
 
+    // fallback to methods
+    lua_getmetatable(L, 1);
+    lua_pushvalue(L, 2);
+    lua_rawget(L, -2);
+    if (!lua_isnil(L, -1))
+    {
+        return 1;
+    }
+
     return 0;
+}
+
+static void setAttachment(lua_State *L, LuaSlot *slotUserdata)
+{
+    const char *attachmentName = luaL_checkstring(L, 3);
+
+    if (strcmp(attachmentName, "null") == 0)
+    {
+        slotUserdata->slot->setAttachment(nullptr);
+        return;
+    }
+
+    Slot &slot = *slotUserdata->slot;
+    int slotIndex = slot.getData().getIndex();
+    
+    Skin *skin;
+    spine::String attachmentNameStr;
+
+    // does the attachment name includes the skin name?
+    const char *skinName = strchr(attachmentName, '/');
+
+    if (skinName)
+    {
+        spine::String fullStr(attachmentName);
+        int skinNameLength = static_cast<int>(skinName - attachmentName);
+        spine::String skinNameStr = fullStr.substring(0, skinNameLength);
+
+        skin = slotUserdata->slot->getSkeleton().getData()->findSkin(skinNameStr);
+        if (!skin)
+        {
+            printf("Skin not found: %s\n", skinNameStr.buffer());
+            return;
+        }
+
+        attachmentNameStr = fullStr.substring(skinNameLength + 1);
+    }
+    else
+    {
+        skin = slotUserdata->slot->getSkeleton().getData()->getDefaultSkin();
+        attachmentNameStr = attachmentName;
+    }
+
+    Attachment *attachment = skin->getAttachment(slotIndex, attachmentNameStr);
+
+    if (!attachment)
+    {
+        printf("Attachment \"%s\" not found in skin \"%s\"\n", attachmentName, skin->getName().buffer());
+        return;
+    }
+
+    slotUserdata->slot->setAttachment(attachment);
 }
 
 static int slot_newindex(lua_State *L)
@@ -120,27 +180,90 @@ static int slot_newindex(lua_State *L)
     }
     else if (strcmp(key, "attachment") == 0)
     {
-        const char *attachmentName = luaL_optstring(L, 3, "null");
-
-        if (strcmp(attachmentName, "null") == 0)
-        {
-            slotUserdata->slot->setAttachment(nullptr);
-            return 0;
-        }
-
-        Attachment *attachment = slotUserdata->slot->getSkeleton().getAttachment(slotUserdata->slot->getData().getIndex(), attachmentName);
-        if (!attachment)
-        {
-            slotUserdata->slot->setAttachment(nullptr);
-            return 0;
-        }
-
-        slotUserdata->slot->setAttachment(attachment);
+        setAttachment(L, slotUserdata);
 
         return 0;
     }
 
     return 0;
+}
+
+static int getAttachments(lua_State *L)
+{
+    LuaSlot *slotUserdata = (LuaSlot *)luaL_checkudata(L, 1, "SpineSlot");
+
+    if (!slotUserdata->slot)
+    {
+        return 0;
+    }
+
+    Slot &slot = *slotUserdata->slot;
+
+    // return a table with all the attachments available in all the skins
+    lua_newtable(L);
+
+    int i = 1;
+    SkeletonData *skeletonData = slot.getSkeleton().getData();
+
+    for (int skinIndex = 0; skinIndex < skeletonData->getSkins().size(); ++skinIndex)
+    {
+        Skin *skin = skeletonData->getSkins()[skinIndex];
+
+        Vector<Attachment *> attachments;
+        skin->findAttachmentsForSlot(slot.getData().getIndex(), attachments);
+
+        for (int attachmentIndex = 0; attachmentIndex < attachments.size(); ++attachmentIndex)
+        {
+            Attachment *attachment = attachments[attachmentIndex];
+
+            lua_pushstring(L, attachment->getName().buffer());
+            lua_rawseti(L, -2, i++);
+        }
+
+        attachments.clear();
+    }
+
+    return 1;
+}
+
+static int getSkinAttachments(lua_State *L)
+{
+    LuaSlot *slotUserdata = (LuaSlot *)luaL_checkudata(L, 1, "SpineSlot");
+    const char *skinName = luaL_checkstring(L, 2);
+
+    if (!slotUserdata->slot)
+    {
+        return 0;
+    }
+
+    Slot &slot = *slotUserdata->slot;
+
+    // return a table with all the attachments available in the skin
+    lua_newtable(L);
+
+    SkeletonData *skeletonData = slot.getSkeleton().getData();
+    Skin *skin = skeletonData->findSkin(skinName);
+
+    if (!skin)
+    {
+        return 0;
+    }
+
+    int i = 1;
+    Vector<Attachment *> attachments;
+    skin->findAttachmentsForSlot(slot.getData().getIndex(), attachments);
+
+    for (int attachmentIndex = 0; attachmentIndex < attachments.size(); ++attachmentIndex)
+    {
+        Attachment *attachment = attachments[attachmentIndex];
+
+        lua_pushstring(L, attachment->getName().buffer());
+        lua_rawseti(L, -2, i++);
+    }
+
+    attachments.clear();
+
+    return 1;
 }
 
 static int slot_gc(lua_State *L)
@@ -154,19 +277,19 @@ static int slot_gc(lua_State *L)
 
 void getSlotMt(lua_State *L)
 {
-    luaL_getmetatable(L, "SpineSlot");
-    if (lua_isnil(L, -1))
+    if (luaL_newmetatable(L, "SpineSlot"))
     {
-        lua_pop(L, 1);
-        luaL_newmetatable(L, "SpineSlot");
-
-        lua_pushstring(L, "__index");
         lua_pushcfunction(L, slot_index);
-        lua_settable(L, -3);
+        lua_setfield(L, -2, "__index");
 
-        lua_pushstring(L, "__newindex");
         lua_pushcfunction(L, slot_newindex);
-        lua_settable(L, -3);
+        lua_setfield(L, -2, "__newindex");
+
+        lua_pushcfunction(L, getAttachments);
+        lua_setfield(L, -2, "getAttachments");
+
+        lua_pushcfunction(L, getSkinAttachments);
+        lua_setfield(L, -2, "getSkinAttachments");
 
         lua_pushcfunction(L, slot_gc);
         lua_setfield(L, -2, "__gc");

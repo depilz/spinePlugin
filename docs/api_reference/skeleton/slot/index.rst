@@ -33,3 +33,5 @@ Properties:
    b
    alpha
    color
+   getAttachments
+   getSkinAttachments

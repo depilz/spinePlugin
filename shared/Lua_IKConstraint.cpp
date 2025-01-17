@@ -155,22 +155,15 @@ static int ikConstraint_gc(lua_State *L)
 
 void getIKConstraintMt(lua_State *L)
 {
-    luaL_getmetatable(L, "SpineIKConstraint");
-    if (lua_isnil(L, -1))
+    if (luaL_newmetatable(L, "SpineIKConstraint"))
     {
-        lua_pop(L, 1);
-        luaL_newmetatable(L, "SpineIKConstraint");
-
-        lua_pushstring(L, "__index");
         lua_pushcfunction(L, ikConstraint_index);
-        lua_settable(L, -3);
+        lua_setfield(L, -2, "__index");
 
-        lua_pushstring(L, "__newindex");
         lua_pushcfunction(L, ikConstraint_newindex);
-        lua_settable(L, -3);
+        lua_setfield(L, -2, "__newindex");
 
-        lua_pushstring(L, "__gc");
         lua_pushcfunction(L, ikConstraint_gc);
-        lua_settable(L, -3);
+        lua_setfield(L, -2, "__gc");
     }
 }

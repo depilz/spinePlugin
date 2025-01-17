@@ -26,15 +26,13 @@ o:addEventListener("touch", function(event)
 
         o.x = o.x + dx
         o.y = o.y + dy
-        o.y = 800
         -- print(o.y)
         physics:translate(dx, dy)
 
     elseif event.phase == "ended" or event.phase == "cancelled" then
         prevX, prevY = nil, nil
         o.stage:setFocus(nil)
-    end
-end)
+    endend)
 
 -- local windIn, windOut
 -- function windIn()

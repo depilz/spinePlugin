@@ -56,23 +56,16 @@ static int track_gc(lua_State *L)
 
 void getTrackMt(lua_State *L)
 {
-    luaL_getmetatable(L, "SpineTrack");
-    if (lua_isnil(L, -1))
+    if (luaL_newmetatable(L, "SpineTrack"))
     {
-        lua_pop(L, 1);
-        luaL_newmetatable(L, "SpineTrack");
-
-        lua_pushstring(L, "__index");
         lua_pushcfunction(L, track_index);
-        lua_settable(L, -3);
+        lua_setfield(L, -2, "__index");
 
-        lua_pushstring(L, "__newindex");
         lua_pushcfunction(L, track_newindex);
-        lua_settable(L, -3);
+        lua_setfield(L, -2, "__newindex");
 
-        lua_pushstring(L, "__len");
         lua_pushcfunction(L, track_len);
-        lua_settable(L, -3);
+        lua_setfield(L, -2, "__len");
 
         lua_pushcfunction(L, track_gc);
         lua_setfield(L, -2, "__gc");
