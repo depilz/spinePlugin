@@ -85,9 +85,9 @@ static RenderCommand *batchSubCommands(BlockAllocator &allocator, Vector<RenderC
 	for (int i = first; i <= last; i++) {
 		RenderCommand *cmd = commands[i];
 
-        if (cmd->injectionSlotName.length() > 0)
+        if (cmd->injectionSlotIndex >= 0)
         {
-            batched->injectionSlotName = cmd->injectionSlotName;
+            batched->injectionSlotIndex = cmd->injectionSlotIndex;
         }
 
         memcpy(positions, cmd->positions, sizeof(float) * 2 * cmd->numVertices);
@@ -126,7 +126,7 @@ static RenderCommand *batchCommands(BlockAllocator &allocator, Vector<RenderComm
 		}
 
         if (cmd != nullptr && cmd->texture == first->texture &&
-            (first->injectionSlotName.length() == 0 && cmd->injectionSlotName.length() == 0) &&
+            (first->injectionSlotIndex >= 0 && cmd->injectionSlotIndex >= 0) &&
             cmd->blendMode == first->blendMode &&
             cmd->colors[0] == first->colors[0] &&
             cmd->darkColors[0] == first->darkColors[0] &&
@@ -155,7 +155,7 @@ static RenderCommand *batchCommands(BlockAllocator &allocator, Vector<RenderComm
 	return root;
 }
 
-RenderCommand *SkeletonRenderer::render(Skeleton &skeleton, const std::vector<String> &injectionSlotNames) {
+RenderCommand *SkeletonRenderer::render(Skeleton &skeleton, const std::vector<int> &injectionSlotIndices) {
     _allocator.compress();
     _renderCommands.clear();
 
@@ -198,9 +198,9 @@ RenderCommand *SkeletonRenderer::render(Skeleton &skeleton, const std::vector<St
             {
                 // Even if alpha is zero, we may need a dummy command if this slot is an injection slot
                 bool isInjectionSlot = false;
-                for (size_t si = 0; si < injectionSlotNames.size(); si++)
+                for (size_t si = 0; si < injectionSlotIndices.size(); si++)
                 {
-                    if (slot.getData().getName() == injectionSlotNames[si])
+                    if (slot.getData().getIndex() == injectionSlotIndices[si])
                     {
                         isInjectionSlot = true;
                         break;
@@ -209,7 +209,7 @@ RenderCommand *SkeletonRenderer::render(Skeleton &skeleton, const std::vector<St
                 if (isInjectionSlot)
                 {
                     RenderCommand *cmd = createRenderCommand( _allocator, 0, 0, slot.getData().getBlendMode(), nullptr);
-                    cmd->injectionSlotName = slot.getData().getName();
+                    cmd->injectionSlotIndex = slot.getData().getIndex();
                     _renderCommands.add(cmd);
                 }
                 clipper.clipEnd(slot);
@@ -290,11 +290,11 @@ RenderCommand *SkeletonRenderer::render(Skeleton &skeleton, const std::vector<St
             slot.getData().getBlendMode(),
             texture);
 
-        // scan the vector of injectionSlotNames
+        // scan the vector of injectionSlotIndices
         bool isInjectionSlot = false;
-        for (size_t si = 0; si < injectionSlotNames.size(); si++)
+        for (size_t si = 0; si < injectionSlotIndices.size(); si++)
         {
-            if (slot.getData().getName() == injectionSlotNames[si])
+            if (slot.getData().getIndex() == injectionSlotIndices[si])
             {
                 isInjectionSlot = true;
                 break;
@@ -303,7 +303,7 @@ RenderCommand *SkeletonRenderer::render(Skeleton &skeleton, const std::vector<St
 
         if (isInjectionSlot)
         {
-            cmd->injectionSlotName = slot.getData().getName();
+            cmd->injectionSlotIndex = slot.getData().getIndex();
         }
 
         _renderCommands.add(cmd);
@@ -321,4 +321,192 @@ RenderCommand *SkeletonRenderer::render(Skeleton &skeleton, const std::vector<St
     clipper.clipEnd();
 
     return batchCommands(_allocator, _renderCommands);
+}
+
+std::pair<RenderCommand *, RenderCommand *> *SkeletonRenderer::render(Skeleton &skeleton, const std::vector<int> &injectionSlotIndices, const std::vector<int> &splitSlotIndices)
+{
+    _allocator.compress();
+
+    SkeletonClipping &clipper = _clipping;
+    Vector<RenderCommand *> commandsInSplit;
+    Vector<RenderCommand *> commandsNotInSplit;
+
+    for (unsigned i = 0; i < skeleton.getSlots().size(); ++i)
+    {
+        Slot &slot = *skeleton.getDrawOrder()[i];
+        Attachment *attachment = slot.getAttachment();
+        if (!attachment)
+        {
+            clipper.clipEnd(slot);
+            continue;
+        }
+
+        // Early out if the slot color is 0 or the bone is not active,
+        // unless it's a clipping attachment.
+        if ((slot.getColor().a == 0 || !slot.getBone().isActive()) &&
+            !attachment->getRTTI().isExactly(ClippingAttachment::rtti))
+        {
+            clipper.clipEnd(slot);
+            continue;
+        }
+
+        Vector<float> *worldVertices = &_worldVertices;
+        Vector<unsigned short> *quadIndices = &_quadIndices;
+        Vector<float> *vertices = worldVertices;
+        int32_t verticesCount;
+        Vector<float> *uvs;
+        Vector<unsigned short> *indices;
+        int32_t indicesCount;
+        Color *attachmentColor;
+        void *texture = nullptr;
+
+        if (attachment->getRTTI().isExactly(RegionAttachment::rtti))
+        {
+            RegionAttachment *regionAttachment = (RegionAttachment *)attachment;
+            attachmentColor = &regionAttachment->getColor();
+            if (attachmentColor->a == 0)
+            {
+                // Even if alpha is zero, we may need a dummy command if this slot is an injection slot
+                bool isInjectionSlot = false;
+                for (size_t si = 0; si < injectionSlotIndices.size(); si++)
+                {
+                    if (slot.getData().getIndex() == injectionSlotIndices[si])
+                    {
+                        isInjectionSlot = true;
+                        break;
+                    }
+                }
+                if (isInjectionSlot)
+                {
+                    RenderCommand *cmd = createRenderCommand(_allocator, 0, 0, slot.getData().getBlendMode(), nullptr);
+                    cmd->injectionSlotIndex = slot.getData().getIndex();
+                    // Also check if this slot is in the "split" list, to push into correct vector.
+                    bool isInSplit =
+                        std::find(splitSlotIndices.begin(), splitSlotIndices.end(), slot.getData().getIndex()) != splitSlotIndices.end();
+                    if (isInSplit)
+                        commandsInSplit.add(cmd);
+                    else
+                        commandsNotInSplit.add(cmd);
+                }
+                clipper.clipEnd(slot);
+                continue;
+            }
+            worldVertices->setSize(8, 0);
+            regionAttachment->computeWorldVertices(slot, *worldVertices, 0, 2);
+            verticesCount = 4;
+            uvs = &regionAttachment->getUVs();
+            indices = quadIndices;
+            indicesCount = 6;
+            texture = regionAttachment->getRegion()->rendererObject;
+        }
+        else if (attachment->getRTTI().isExactly(MeshAttachment::rtti))
+        {
+            MeshAttachment *mesh = (MeshAttachment *)attachment;
+            attachmentColor = &mesh->getColor();
+            if (attachmentColor->a == 0)
+            {
+                clipper.clipEnd(slot);
+                continue;
+            }
+            worldVertices->setSize(mesh->getWorldVerticesLength(), 0);
+            mesh->computeWorldVertices(slot, 0, mesh->getWorldVerticesLength(),
+                                       worldVertices->buffer(), 0, 2);
+            verticesCount = (int32_t)(mesh->getWorldVerticesLength() >> 1);
+            uvs = &mesh->getUVs();
+            indices = &mesh->getTriangles();
+            indicesCount = (int32_t)(indices->size());
+            texture = mesh->getRegion()->rendererObject;
+        }
+        else if (attachment->getRTTI().isExactly(ClippingAttachment::rtti))
+        {
+            ClippingAttachment *clip = (ClippingAttachment *)slot.getAttachment();
+            clipper.clipStart(slot, clip);
+            continue;
+        }
+        else
+        {
+            continue;
+        }
+
+        uint8_t r = static_cast<uint8_t>(skeleton.getColor().r *
+                                         slot.getColor().r *
+                                         attachmentColor->r * 255);
+        uint8_t g = static_cast<uint8_t>(skeleton.getColor().g *
+                                         slot.getColor().g *
+                                         attachmentColor->g * 255);
+        uint8_t b = static_cast<uint8_t>(skeleton.getColor().b *
+                                         slot.getColor().b *
+                                         attachmentColor->b * 255);
+        uint8_t a = static_cast<uint8_t>(skeleton.getColor().a *
+                                         slot.getColor().a *
+                                         attachmentColor->a * 255);
+
+        uint32_t color = (a << 24) | (r << 16) | (g << 8) | b;
+        uint32_t darkColor = 0xff000000;
+        if (slot.hasDarkColor())
+        {
+            Color &slotDarkColor = slot.getDarkColor();
+            darkColor = 0xff000000 | (static_cast<uint8_t>(slotDarkColor.r * 255) << 16) | (static_cast<uint8_t>(slotDarkColor.g * 255) << 8) | (static_cast<uint8_t>(slotDarkColor.b * 255));
+        }
+
+        if (clipper.isClipping())
+        {
+            clipper.clipTriangles(*worldVertices, *indices, *uvs, 2);
+            vertices = &clipper.getClippedVertices();
+            verticesCount = (int32_t)(clipper.getClippedVertices().size() >> 1);
+            uvs = &clipper.getClippedUVs();
+            indices = &clipper.getClippedTriangles();
+            indicesCount = (int32_t)(clipper.getClippedTriangles().size());
+        }
+
+        RenderCommand *cmd = createRenderCommand(
+            _allocator,
+            verticesCount,
+            indicesCount,
+            slot.getData().getBlendMode(),
+            texture);
+
+        // scan the vector of injectionSlotIndices
+        bool isInjectionSlot = false;
+        for (size_t si = 0; si < injectionSlotIndices.size(); si++)
+        {
+            if (slot.getData().getIndex() == injectionSlotIndices[si])
+            {
+                isInjectionSlot = true;
+                break;
+            }
+        }
+
+        if (isInjectionSlot)
+        {
+            cmd->injectionSlotIndex = slot.getData().getIndex();
+        }
+
+        // Check if this slot index belongs to the "split" group
+        bool isInSplit =
+            std::find(splitSlotIndices.begin(), splitSlotIndices.end(), slot.getData().getIndex()) != splitSlotIndices.end();
+
+        // Also insert the command into one of the two output vectors
+        if (isInSplit)
+            commandsInSplit.add(cmd);
+        else
+            commandsNotInSplit.add(cmd);
+
+        memcpy(cmd->positions, vertices->buffer(), (verticesCount << 1) * sizeof(float));
+        memcpy(cmd->uvs, uvs->buffer(), (verticesCount << 1) * sizeof(float));
+
+        for (int ii = 0; ii < verticesCount; ii++)
+        {
+            cmd->colors[ii] = color;
+            cmd->darkColors[ii] = darkColor;
+        }
+        memcpy(cmd->indices, indices->buffer(), indices->size() * sizeof(uint16_t));
+        clipper.clipEnd(slot);
+    }
+    clipper.clipEnd();
+
+    RenderCommand *commandsInSplitBatched = batchCommands(_allocator, commandsInSplit);
+    RenderCommand *commandsNotInSplitBatched = batchCommands(_allocator, commandsNotInSplit);
+
+    return new std::pair<RenderCommand *, RenderCommand *>(commandsNotInSplitBatched, commandsInSplitBatched);
 }

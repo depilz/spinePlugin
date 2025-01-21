@@ -8,6 +8,7 @@
 #include "LuaAnimationStateListener.h"
 #include "MeshManager.h"
 #include "InjectedObject.h"
+#include "SplitData.h"
 
 using namespace spine;
 
@@ -22,10 +23,12 @@ struct SpineSkeleton
     LuaTableHolder *group__mt;
     LuaTableHolder *groupmt__index;
     LuaTableHolder *groupmt__newindex;
+    LuaTableHolder *newGroup;
     LuaTableHolder *groupInsert;
     LuaTableHolder *groupRemoveSelf;
     LuaTableHolder *newMesh;
     std::vector<InjectedObject> injections;
+    SplitData splitData;
     int skeletonDataRef;
     lua_State *L;
 
@@ -38,6 +41,7 @@ struct SpineSkeleton
           stateListener(nullptr), luaSelf(nullptr), group__mt(nullptr),
           groupmt__index(nullptr), groupmt__newindex(nullptr),
           injections(0), skeletonDataRef(LUA_NOREF),
+          splitData(SplitData()),
           L(L)
     {
     }
@@ -53,6 +57,7 @@ struct SpineSkeleton
             luaSelf->releaseTable();
             meshes.clear();
             injections.clear();
+            splitData.clear();
 
             if (stateListener)
             {
@@ -63,6 +68,7 @@ struct SpineSkeleton
             group__mt = nullptr;
             groupmt__index = nullptr;
             groupmt__newindex = nullptr;
+            newGroup = nullptr;
             groupInsert = nullptr;
             groupRemoveSelf = nullptr;
             newMesh = nullptr;

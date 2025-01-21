@@ -59,8 +59,8 @@ attack triggers).
 .. code-block:: lua
 
    local function onSpineEvent(event)
-       if event.type == "event" then
-           print("Custom Spine event:", event.eventName)
+       if event.name == "spine" then
+           print("Custom Spine event:", event.phase)
        end
    end
 

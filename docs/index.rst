@@ -149,6 +149,8 @@ Acknowledgments
 ---------------
 ---------------
 
+- Thanks to **Studycat Limited** for supporting me in bringing this project to
+  life while I was working at the company.
 - Big thanks to `Steven Johnson (ggcrunchy) <https://github.com/ggcrunchy>`_
   for his unwavering support and contributions.
 - Thanks to the `Esoteric Software <https://esotericsoftware.com>`_

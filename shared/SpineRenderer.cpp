@@ -278,3 +278,186 @@ void set_fill_color(lua_State *L, uint32_t *colors)
 
     lua_call(L, 5, 0); // Call mesh.setFillColor(mesh, r, g, b, a)
 }
+
+static void callInjectionListener(lua_State *L, InjectedObject *injection, spine::Skeleton *skeleton)
+{
+    if (!injection->hasListener())
+    {
+        return;
+    }
+
+    int slotIndex = injection->getSlotIndex();
+    const char *slotName = skeleton->getSlots()[slotIndex]->getData().getName().buffer();
+    Slot *slot = skeleton->findSlot(slotName);
+
+    injection->pushListener(L);
+
+    lua_createtable(L, 0, 7);
+    lua_pushstring(L, "slotName");
+    lua_pushstring(L, slotName);
+    lua_settable(L, -3);
+
+    lua_pushstring(L, "x");
+    lua_pushnumber(L, slot->getBone().getWorldX());
+    lua_settable(L, -3);
+
+    lua_pushstring(L, "y");
+    lua_pushnumber(L, slot->getBone().getWorldY());
+    lua_settable(L, -3);
+
+    lua_pushstring(L, "rotation");
+    lua_pushnumber(L, slot->getBone().getWorldRotationX());
+    lua_settable(L, -3);
+
+    lua_pushstring(L, "xScale");
+    lua_pushnumber(L, slot->getBone().getWorldScaleX());
+    lua_settable(L, -3);
+
+    lua_pushstring(L, "yScale");
+    lua_pushnumber(L, slot->getBone().getWorldScaleY());
+    lua_settable(L, -3);
+
+    lua_pushstring(L, "alpha");
+    lua_pushnumber(L, slot->getColor().a);
+    lua_settable(L, -3);
+
+    lua_pushstring(L, "isVisible");
+    lua_pushboolean(L, slot->getBone().isActive());
+    lua_settable(L, -3);
+
+    lua_pushstring(L, "target");
+    injection->pushObject(L);
+    lua_settable(L, -3);
+
+    lua_call(L, 1, 0);
+}
+
+void renderCommands(lua_State *L, SpineSkeleton *skeletonUserdata, RenderCommand *command, MeshManager &meshes, int parentIndex)
+{
+    Skeleton *skeleton = skeletonUserdata->skeleton;
+    LuaTableHolder *groupInsert = skeletonUserdata->groupInsert;
+    LuaTableHolder *newMesh = skeletonUserdata->newMesh;
+
+    int i = 1;
+    u_int32_t drawIndex = 1;
+    bool insertMesh = false;
+
+    while (command)
+    {
+        size_t numIndices = command->numIndices;
+        uint16_t *indices = command->indices;
+        float *positions = command->positions;
+        float *uvs = command->uvs;
+        Texture *texture = (Texture *)command->texture;
+        BlendMode blendMode = command->blendMode;
+        uint32_t *colors = command->colors;
+
+        bool updateBlendMode = false;
+        bool updateColor = false;
+        bool updateTexture = false;
+
+        MeshData *meshData = nullptr;
+
+        for (auto &meshCandidate : meshes)
+        {
+            if (!meshCandidate.used && meshCandidate.numIndices == numIndices && meshCandidate.mesh.isValid())
+            {
+                meshData = &meshCandidate;
+                break;
+            }
+        }
+
+        if (numIndices >= 3)
+        {
+            if (meshData)
+            {
+                LuaTableHolder &mesh = meshData->mesh;
+                engine_updateMesh(L, &mesh, numIndices, indices, positions, uvs);
+
+                insertMesh = insertMesh || meshData->index != drawIndex;
+                updateTexture = meshData->texture != texture;
+                updateBlendMode = meshData->blendMode != blendMode;
+                updateColor = meshData->colors != colors;
+
+                meshData->used = true;
+                meshData->index = drawIndex;
+            }
+            else
+            {
+                engine_drawMesh(L, newMesh, numIndices, indices, positions, uvs);
+
+                lua_pushvalue(L, -1);
+                meshData = &meshes.newMesh(L, i, numIndices, texture, blendMode, colors, true);
+
+                insertMesh = true;
+                updateBlendMode = true;
+                updateColor = true;
+                updateTexture = true;
+            }
+
+            if (insertMesh)
+            {
+                skeletonUserdata->groupInsert->pushTable(L);
+                lua_pushvalue(L, parentIndex);
+                lua_pushnumber(L, drawIndex);
+                meshData->mesh.pushTable(L);
+                lua_call(L, 3, 0);
+            }
+
+            if (updateTexture)
+            {
+                meshData->texture = texture;
+                set_texture(L, texture);
+            }
+            if (updateBlendMode)
+            {
+                meshData->blendMode = blendMode;
+                set_blendMode(L, blendMode);
+            }
+            if (updateColor)
+            {
+                meshData->colors = colors;
+                set_fill_color(L, colors);
+            }
+        }
+        else
+        {
+            drawIndex--;
+        }
+
+        if (command->injectionSlotIndex >= 0)
+        {
+            for (auto &injection : skeletonUserdata->injections)
+            {
+                if (injection.getSlotIndex() == command->injectionSlotIndex)
+                {
+                    drawIndex++;
+                    skeletonUserdata->groupInsert->pushTable(L);
+                    lua_pushvalue(L, parentIndex);
+                    lua_pushnumber(L, drawIndex);
+                    injection.pushObject(L);
+                    lua_call(L, 3, 0);
+
+                    callInjectionListener(L, &injection, skeleton);
+
+                    injection.updated = true;
+                }
+            }
+        }
+
+        lua_pop(L, 1);
+
+        // finish updating injections
+        for (auto &injection : skeletonUserdata->injections)
+        {
+            if (!injection.updated)
+            {
+                callInjectionListener(L, &injection, skeleton);
+            }
+        }
+
+        command = command->next;
+        i++;
+        drawIndex++;
+    }
+}

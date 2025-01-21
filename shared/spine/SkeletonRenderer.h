@@ -39,7 +39,7 @@ namespace spine {
 
     struct SP_API RenderCommand {
             RenderCommand()
-                : positions(nullptr), uvs(nullptr), colors(nullptr), darkColors(nullptr), numVertices(0), indices(nullptr), numIndices(0), blendMode(BlendMode_Normal), texture(nullptr), next(nullptr), injectionSlotName() // String (or std::string) constructor
+                : positions(nullptr), uvs(nullptr), colors(nullptr), darkColors(nullptr), numVertices(0), indices(nullptr), numIndices(0), blendMode(BlendMode_Normal), texture(nullptr), next(nullptr), injectionSlotIndex(-1) // String (or std::string) constructor
             {
             }
 
@@ -53,7 +53,7 @@ namespace spine {
             BlendMode blendMode;
             void *texture;
             RenderCommand *next;
-            String injectionSlotName;
+            int injectionSlotIndex;
     };
 
     class SP_API SkeletonRenderer: public SpineObject {
@@ -62,7 +62,8 @@ namespace spine {
 
         ~SkeletonRenderer();
 
-        RenderCommand *render(Skeleton &skeleton, const std::vector<String> &injectionSlotNames);
+        RenderCommand *render(Skeleton &skeleton, const std::vector<int> &injectionSlotIndices);
+        std::pair<RenderCommand *, RenderCommand *> *render(Skeleton &skeleton, const std::vector<int> &injectionSlotIndices, const std::vector<int> &splitSlotIndices);
 
     private:
         BlockAllocator _allocator;

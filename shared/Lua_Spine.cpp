@@ -234,6 +234,7 @@ int create(lua_State *L)
     skeletonUserdata->groupInsert = groupInsert;
     skeletonUserdata->groupRemoveSelf = groupRemoveSelf;
     skeletonUserdata->newMesh = newMesh;
+    skeletonUserdata->newGroup = newGroup;
 
     getSpineObjectMt(L);
     lua_setmetatable(L, -2);

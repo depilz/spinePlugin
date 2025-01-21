@@ -67,7 +67,7 @@ timer.performWithDelay(1000, function()
     -- o:eject(o2)
     -- o2.x, o2.y = display.contentCenterX, display.contentCenterY
     
-    -- o:changeInjectionSlot(o4, "raptor-back-leg")
+    o:changeInjectionSlot(o4, "stirrup-front")
     
     -- o4:removeSelf()
 end, 1)

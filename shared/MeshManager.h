@@ -52,7 +52,7 @@ public:
         }
     }
 
-    void newMesh(lua_State *L, int index, size_t numIndices, Texture *texture, spine::BlendMode blendMode, uint32_t *colors, bool used)
+    MeshData &newMesh(lua_State *L, int index, size_t numIndices, Texture *texture, spine::BlendMode blendMode, uint32_t *colors, bool used)
     {
         for (auto &meshData : meshDataList)
         {
@@ -65,12 +65,14 @@ public:
                 meshData.blendMode = blendMode;
                 meshData.colors = colors;
                 meshData.used = used;
-                return;
+                return meshData;
             }
         }
 
         // If no empty slot was found, add a new mesh
         meshDataList.push_back({LuaTableHolder(L), index, numIndices, texture, blendMode, colors, used});
+
+        return meshDataList.back();
     }
 
     bool isMeshValid(int index) const

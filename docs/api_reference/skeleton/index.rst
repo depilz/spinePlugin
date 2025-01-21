@@ -138,8 +138,8 @@ Splits
 .. toctree::
    :maxdepth: 1
 
-    split
-    reassamble
+   split
+   reassemble
 
 
 Effects
