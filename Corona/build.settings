@@ -15,7 +15,7 @@ settings =
 
     plugins =
     {    
-        ['plugin.spine'] = {publisherId = 'com.studycat'},
+        ['plugin.spine'] = {publisherId = 'com.studycat.spine'},
     },
 	iphone =
 	{

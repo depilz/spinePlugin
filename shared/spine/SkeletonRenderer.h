@@ -63,7 +63,7 @@ namespace spine {
         ~SkeletonRenderer();
 
         RenderCommand *render(Skeleton &skeleton, const std::vector<int> &injectionSlotIndices);
-        std::pair<RenderCommand *, RenderCommand *> *render(Skeleton &skeleton, const std::vector<int> &injectionSlotIndices, const std::vector<int> &splitSlotIndices);
+        std::pair<RenderCommand *, RenderCommand *> *render(Skeleton &skeleton, const std::vector<int> &injectionSlotIndices, const std::vector<int> &splitSlotIndices,  Vector<RenderCommand *> commandsInSplit, Vector<RenderCommand *> commandsNotInSplit);
 
     private:
         BlockAllocator _allocator;

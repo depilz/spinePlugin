@@ -9,16 +9,15 @@ Overview:
 .........
 --------
 
-.. image:: split.gif
-    :align: center
-
-
 **Splits** a skeleton into a display group containing the slots specified in the table. This lets 
 you manipulate the given slots separately from the rest of the skeleton, being useful for some 3D effects.
 
 If you try re-splitting a skeleton, it will overwrite the list of slots, but keep the group intact.
 
 To reassemble the skeleton, use the :doc:`reassemble <reassemble>` function.
+
+.. image:: split.gif
+    :align: center
 
 Syntax:
 --------

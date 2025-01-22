@@ -573,5 +573,8 @@
     <ClInclude Include="..\shared\Lua_TrackEntry.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\shared\SplitData.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

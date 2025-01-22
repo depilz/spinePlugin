@@ -323,15 +323,15 @@ RenderCommand *SkeletonRenderer::render(Skeleton &skeleton, const std::vector<in
     return batchCommands(_allocator, _renderCommands);
 }
 
-std::pair<RenderCommand *, RenderCommand *> *SkeletonRenderer::render(Skeleton &skeleton, const std::vector<int> &injectionSlotIndices, const std::vector<int> &splitSlotIndices)
+std::pair<RenderCommand *, RenderCommand *> *SkeletonRenderer::render(Skeleton &skeleton, const std::vector<int> &injectionSlotIndices, const std::vector<int> &splitSlotIndices, Vector<RenderCommand *> commandsInSplit, Vector<RenderCommand *> commandsNotInSplit)
 {
     _allocator.compress();
 
     SkeletonClipping &clipper = _clipping;
-    Vector<RenderCommand *> commandsInSplit;
-    Vector<RenderCommand *> commandsNotInSplit;
+    commandsInSplit.clear();
+    commandsNotInSplit.clear();
 
-    for (unsigned i = 0; i < skeleton.getSlots().size(); ++i)
+        for (unsigned i = 0; i < skeleton.getSlots().size(); ++i)
     {
         Slot &slot = *skeleton.getDrawOrder()[i];
         Attachment *attachment = slot.getAttachment();

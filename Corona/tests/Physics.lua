@@ -18,7 +18,7 @@ o:addEventListener("touch", function(event)
 
     if event.phase == "began" then
         prevX, prevY = event.x, event.y
-        o.stage:setFocus(event.target)
+        -- o.stage:setFocus(event.target)
 
     elseif event.phase == "moved" then
         local dx, dy = event.x - prevX, event.y - prevY
@@ -32,7 +32,8 @@ o:addEventListener("touch", function(event)
     elseif event.phase == "ended" or event.phase == "cancelled" then
         prevX, prevY = nil, nil
         o.stage:setFocus(nil)
-    endend)
+    end
+end)
 
 -- local windIn, windOut
 -- function windIn()
@@ -54,3 +55,37 @@ o:addEventListener("touch", function(event)
 -- end
 
 -- windIn()
+
+
+local rect = display.newRect(display.contentCenterX, display.contentCenterY, 100, 100)
+rect:setFillColor(1, .1)
+rect.strokeWidth = 2
+rect:setStrokeColor(1, 0, 0)
+
+timer.performWithDelay(1, function()
+    local bounds = o.contentBounds
+    rect.x, rect.y = (bounds.xMin + bounds.xMax) * .5, (bounds.yMin + bounds.yMax) * .5
+    rect.width, rect.height = (bounds.xMax - bounds.xMin), (bounds.yMax - bounds.yMin)
+
+end, 0)
+rect:addEventListener("touch", function(event)
+    if not prevX and event.phase ~= "began" then return end
+
+    if event.phase == "began" then
+        prevX, prevY = event.x, event.y
+        -- o.stage:setFocus(event.target)
+
+    elseif event.phase == "moved" then
+        local dx, dy = event.x - prevX, event.y - prevY
+        prevX, prevY = event.x, event.y
+
+        o.x = o.x + dx
+        o.y = o.y + dy
+        -- print(o.y)
+        physics:translate(dx, dy)
+
+    elseif event.phase == "ended" or event.phase == "cancelled" then
+        prevX, prevY = nil, nil
+        o.stage:setFocus(nil)
+    end
+end)

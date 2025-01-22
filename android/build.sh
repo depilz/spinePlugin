@@ -25,7 +25,7 @@ then
     CMD=
 
 else
-	ANDROID_NDK="/Applications/AndroidNDK12479018.app/Contents/ndk"
+	ANDROID_NDK="/Applications/AndroidNDK12479018.app/Contents/NDK"
 	LIBS_SRC_DIR="$HOME/Library/Application Support/Corona/Native/Corona/android/lib/gradle/Corona.aar"
 	CMD=
 

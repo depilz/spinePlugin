@@ -8,6 +8,9 @@ private:
     std::vector<int> slotsIndices;
 
 public:
+    Vector<RenderCommand *> commandsInSplit;
+    Vector<RenderCommand *> commandsNotInSplit;
+
     SplitData(const SplitData &) = delete;
     SplitData &operator=(const SplitData &) = delete;
 

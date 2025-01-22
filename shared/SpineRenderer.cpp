@@ -339,7 +339,7 @@ void renderCommands(lua_State *L, SpineSkeleton *skeletonUserdata, RenderCommand
     LuaTableHolder *newMesh = skeletonUserdata->newMesh;
 
     int i = 1;
-    u_int32_t drawIndex = 1;
+    int drawIndex = 1;
     bool insertMesh = false;
 
     while (command)

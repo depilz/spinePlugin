@@ -549,6 +549,8 @@ static std::vector<int> checkInjections(lua_State *L, SpineSkeleton *skeletonUse
         else {
             it = injections.erase(it);
         }
+
+        lua_pop(L, 1);
     }
 
     return injectionSlotIndexes;
@@ -570,14 +572,16 @@ static void skeletonRender(lua_State *L, SpineSkeleton *skeletonUserdata)
 
     if (skeletonUserdata->splitData.isSplitted())
     {
-        Vector<RenderCommand *> commandsInSplit;
-        Vector<RenderCommand *> commandsNotInSplit;
-
-        auto commands = skeletonRenderer.render(*skeleton, checkInjections(L, skeletonUserdata), skeletonUserdata->splitData.getSlotIndices());
+        auto slotIndices = skeletonUserdata->splitData.getSlotIndices();
+        auto commandsInSplit = skeletonUserdata->splitData.commandsInSplit;
+        auto commandsNotInSplit = skeletonUserdata->splitData.commandsNotInSplit;
+        auto commands = skeletonRenderer.render(*skeleton, checkInjections(L, skeletonUserdata), slotIndices, commandsInSplit, commandsNotInSplit);
         renderCommands(L, skeletonUserdata, commands->first, meshes, 1);
 
         skeletonUserdata->splitData.pushGroup(L);
         renderCommands(L, skeletonUserdata, commands->second, meshes, 2);
+        
+        lua_remove(L, 2);
     }
     else {
         command = skeletonRenderer.render(*skeleton, checkInjections(L, skeletonUserdata));

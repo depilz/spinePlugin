@@ -20,6 +20,9 @@ update the slot it is attached to, it is recommended to use the :doc:`changeInje
 
     When an object is removed, it is automatically ejected from the skeleton.
 
+.. image:: inject.gif
+    :align: center
+
 Syntax:
 --------
 --------

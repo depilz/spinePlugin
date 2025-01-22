@@ -199,6 +199,7 @@
     <ClInclude Include="..\shared\spine\Version.h" />
     <ClInclude Include="..\shared\spine\VertexAttachment.h" />
     <ClInclude Include="..\shared\spine\Vertices.h" />
+    <ClInclude Include="..\shared\SplitData.h" />
     <ClInclude Include="\\Mac\AllFiles\Volumes\Projects\studycats\funbox\plugins\plugin-spine\shared\Texture.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
