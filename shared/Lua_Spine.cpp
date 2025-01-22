@@ -209,7 +209,7 @@ int create(lua_State *L)
     skeletonUserdata->luaSelf->pushTable(L);
 
     lua_pushvalue(L, 1);
-    skeletonUserdata->skeletonDataRef = luaL_ref(L, LUA_REGISTRYINDEX);
+    skeletonUserdata->skeletonDataLuaHolder = new LuaTableHolder(L);
 
     if (hasListener)
     {

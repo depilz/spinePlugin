@@ -4,6 +4,7 @@
 #include <memory>
 #include "DataHolder.h"
 #include "SkeletonData.h"
+#include "LuaTableHolder.h"
 
 using namespace spine;
 
@@ -15,5 +16,5 @@ public:
 
 private:
     lua_State *L_;
-    int atlasRef_;
+    LuaTableHolder atlasLuaHolder;
 };

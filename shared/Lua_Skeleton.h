@@ -27,9 +27,9 @@ struct SpineSkeleton
     LuaTableHolder *groupInsert;
     LuaTableHolder *groupRemoveSelf;
     LuaTableHolder *newMesh;
+    LuaTableHolder *skeletonDataLuaHolder;
     std::vector<InjectedObject> injections;
     SplitData splitData;
-    int skeletonDataRef;
     lua_State *L;
 
     MeshManager meshes;
@@ -40,7 +40,7 @@ struct SpineSkeleton
           meshes(3),
           stateListener(nullptr), luaSelf(nullptr), group__mt(nullptr),
           groupmt__index(nullptr), groupmt__newindex(nullptr),
-          injections(0), skeletonDataRef(LUA_NOREF),
+          injections(0), skeletonDataLuaHolder(nullptr),
           splitData(SplitData()),
           L(L)
     {
@@ -55,6 +55,7 @@ struct SpineSkeleton
             delete skeleton;
 
             luaSelf->releaseTable();
+            skeletonDataLuaHolder->releaseTable();
             meshes.clear();
             injections.clear();
             splitData.clear();
@@ -73,16 +74,12 @@ struct SpineSkeleton
             groupRemoveSelf = nullptr;
             newMesh = nullptr;
 
-            luaL_unref(L, LUA_REGISTRYINDEX, skeletonDataRef);
-            skeletonDataRef = LUA_NOREF;
-
             L = nullptr;
 
             skeleton = nullptr;
             state = nullptr;
             stateData = nullptr;
             skeletonData = nullptr;
-            luaSelf = nullptr;
         }
     }
 };
