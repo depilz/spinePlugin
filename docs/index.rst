@@ -1,13 +1,8 @@
-.. Spine Plugin for Solar2D documentation master file, created by
-   sphinx-quickstart on Tue Dec 31 2024.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 ================================================
 Welcome to the Solar2D's Spine Documentation!
 ================================================
 
-| *(Jump straight to the* :doc:`API reference page <api_reference/index>`)
+| *(Jump straight to the* :doc:`API reference <api_reference/index>`)
 
 Introduction
 ------------

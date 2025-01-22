@@ -2,59 +2,10 @@
 
 A native Spine plugin for Solar2D, enabling seamless integration of Spine 4.2 animations into your Solar2D projects with enhanced performance and features.
 
-### 🎉 Introduction
+The plugin works on Android, iOS, macOS, and Windows platforms, supporting both Spine JSON and binary formats.
 
-I’m excited to announce the Solar2D Spine Plugin!
-After a long time of having this within my goals, the plugin is now available in its early stages. This native plugin allows you to incorporate Spine 4.2 animations directly into your Solar2D applications, enhancing your project’s visual appeal and performance.
+For detailed information on the plugin's API, please refer to the [plugin's documentation](https://spineplugin.readthedocs.io/en/latest/index.html)
 
-The plugin is still in development and not ready to use on production builds. However, I will keep working on this and in the following weeks, I expect the plugin to gain more stability and have all the basic functionalities working.
-
-See the [Roadmap](#-roadmap) section for more details on upcoming features and improvements.
-
-
-🚀 To follow the discussion and updates, go to the [Solar2D Forums](https://forums.solar2d.com/t/new-native-spine-4-2-plugin/356987).
-
-
-### 📚 Usage
-
-Using the Solar2D Spine Plugin is straightforward. Here’s a basic example to help you get started:
-
-```lua
-local spine = require("plugin.spine")
-
-local jsonPath = system.pathForFile("art/raptor.json", system.ResourceDirectory)
-local atlasPath = system.pathForFile("art/raptor.atlas", system.ResourceDirectory)
-
-local atlas = spine.loadAtlas(atlasPath)
-local skeletonData = spine.loadSkeleton(jsonPath, atlas, 0.2)
-local skeleton = spine.create(skeletonData, listener)
-
-skeleton:setAnimation(0, "walk", true)
-
-parent:insert(skeleton)
-```
-
-### 📈 Roadmap
-
-Here’s what’s coming next for the Plugin:
-
-- [X] Properly Update Meshes: Resolve current crashes related to mesh updates.
-- [ ] Platform Support: Extend the plugin to support to :
-    - [X] Mac
-    - [X] Windows
-    - [X] iOS
-    - [ ] Android
-- [X] Make it available for free in Solar2D plugin Marketplace.
-- [X] Interface to Animation Mix Times: Provide controls for blending transitions.
-- [X] Event Listeners: Implement event listeners for animation events.
-- [X] A More Robust Update Cycle: Enhance the update mechanism for better performance and reliability. (Worth using threads?)
-- [X] Physics Controls: Integrate new physics features from Spine 4.2.
-- [X] Correct Memory Management: Optimize memory usage to prevent leaks and crashes.
-- [X] Include a sample project.
-- [ ] Draw the Meshes Using Solar’s Native API: Utilize Solar2D’s native drawing capabilities for improved performance.
-- [ ] Provide documentation.
-- [ ] Implement display object injections into spine.
-- [ ] Add scripts to facilitate building the plugin to the different platforms.
 
 ### 🤝 Contributing
 
