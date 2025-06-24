@@ -32,6 +32,11 @@ public:
 
     size_t size() const
     {
+        return meshDataList.size();
+    }
+
+    size_t count_valids() const
+    {
         size_t count = 0;
         for (const auto &meshData : meshDataList)
         {
@@ -93,15 +98,15 @@ public:
 
     void removeMesh(int index)
     {
-        // if (index >= 0 && index < static_cast<int>(meshDataList.size()))
-        // {
-            meshDataList[index].mesh.releaseTable();
-            meshDataList[index].index = -1;
-            meshDataList[index].numIndices = 0;
-            meshDataList[index].texture = nullptr;
-            meshDataList[index].colors = nullptr;
-            meshDataList[index].used = false;
-        // }
+        meshDataList[index].mesh.releaseTable();
+        meshDataList[index].index = -1;
+        meshDataList[index].numIndices = 0;
+        meshDataList[index].texture = nullptr;
+        meshDataList[index].colors = nullptr;
+        meshDataList[index].used = false;
+
+        // remove the mesh from the list
+        meshDataList.erase(meshDataList.begin() + index);
     }
 
     void clear()

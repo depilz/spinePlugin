@@ -117,13 +117,16 @@ static int skeleton_index(lua_State *L)
     else if (strcmp(key, "tracks") == 0)
     {
         Vector<TrackEntry *> &tracks = skeletonUserdata->state->getTracks();
-
+        
         LuaTrack *entryUserdata = (LuaTrack *)lua_newuserdata(L, sizeof(LuaTrack));
         new (entryUserdata) LuaTrack(L, tracks);
-
+        
         return 1;
     }
-
+    else if (strcmp(key, "numChildren") == 0)
+    {
+        return 0;
+    }
 
     // Fallback to methods
     lua_getmetatable(L, 1);
@@ -589,13 +592,18 @@ static void skeletonRender(lua_State *L, SpineSkeleton *skeletonUserdata)
         renderCommands(L, skeletonUserdata, command, meshes, 1);
     }
 
-
-    for (auto &meshCandidate : meshes)
+    for (int index = meshes.size() - 1; index >= 0; index--)
     {
-        if (!meshCandidate.used && meshCandidate.mesh.isValid())
+        MeshData &meshCandidate = meshes[index];
+
+        if (!meshCandidate.used)
         {
-            engine_removeMesh(L, &meshCandidate.mesh);
-            meshCandidate.mesh.releaseTable();
+            if (meshCandidate.mesh.isValid())
+            {
+                LuaTableHolder &mesh = meshCandidate.mesh;
+                engine_removeMesh(L, &mesh);
+            }
+            meshes.removeMesh(index);
         }
     }
 
@@ -1317,6 +1325,7 @@ void getSpineObjectMt(lua_State *L)
             {"setSkin", setSkin},
 
             {"clearTracks", clearTracks},
+            {"clearTrack", clearTrack},
 
             {"setAttachment", setAttachment},
 

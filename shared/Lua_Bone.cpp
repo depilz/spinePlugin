@@ -32,6 +32,19 @@ static int bone_index(lua_State *L)
         }
         return 1;
     }
+    else if (strcmp(key, "children") == 0)
+    {
+        lua_newtable(L);
+        Vector<Bone *> &children = bone.getChildren();
+        for (int i = 0; i < children.size(); i++)
+        {
+            Bone *child = children[i];
+            LuaBone *boneUserdata = (LuaBone *)lua_newuserdata(L, sizeof(LuaBone));
+            new (boneUserdata) LuaBone(L, child);
+            lua_rawseti(L, -2, i + 1);
+        }
+        return 1;
+    }
     else if (strcmp(key, "x") == 0)
     {
         lua_pushnumber(L, bone.getX());

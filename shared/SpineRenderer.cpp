@@ -369,7 +369,7 @@ void renderCommands(lua_State *L, SpineSkeleton *skeletonUserdata, RenderCommand
 
         if (numIndices >= 3)
         {
-            if (meshData)
+            if (meshData) // commented until we get an engine fix more mesh update
             {
                 LuaTableHolder &mesh = meshData->mesh;
                 engine_updateMesh(L, &mesh, numIndices, indices, positions, uvs);

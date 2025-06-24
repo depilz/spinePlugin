@@ -199,6 +199,22 @@ static int entry_newindex(lua_State *L)
         entry.setTrackEnd(trackEnd);
         return 0;
     }
+    else if (strcmp(key, "alphaAttachmentThreshold") == 0) {
+        float alphaAttachmentThreshold = luaL_checknumber(L, 3);
+        entry.setAlphaAttachmentThreshold(alphaAttachmentThreshold);
+        return 0;
+    }
+    else if (strcmp(key, "mixDrawOrderThreshold") == 0) {
+        float mixDrawOrderThreshold = luaL_checknumber(L, 3);
+        entry.setMixDrawOrderThreshold(mixDrawOrderThreshold);
+        return 0;
+    }
+    else if (strcmp(key, "mixTime") == 0)
+    {
+        float mixTime = luaL_checknumber(L, 3) / 1000;
+        entry.setMixTime(mixTime);
+        return 0;
+    }
     else if (strcmp(key, "animationStart") == 0) {
         float animationStart = luaL_checknumber(L, 3) / 1000;
         entry.setAnimationStart(animationStart);
