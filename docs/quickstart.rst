@@ -10,7 +10,7 @@ the simulator or on a device.
 1. Installation & Requirements
 ------------------------------
 - **Solar2D**: Make sure you have the latest Solar2D build, the plugin is
-  compatible only with `Solar2D-3715` or later.
+  compatible only with `Solar2D-3721` or later.
 - **Spine License**: You need a valid Spine runtime license to use this
   plugin. Confirm you have the necessary permissions to use the runtime.
 - **Spine Plugin**: Include it in your project’s ``build.settings`` or

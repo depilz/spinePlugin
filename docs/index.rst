@@ -91,7 +91,7 @@ Key Features
 
 - **Compatibility**: The plugin is compatible with Solar2D builds for iOS, Android, macOS and windows.
 
-- **Performance**: Opposite to the old Lua Runtime, this plugin uses native code for optimal rendering and animation performance.
+- **Performance**: Unlike the old Lua Runtime, this plugin uses native code for optimal rendering and animation performance.
 
 - **Physics**: The plugin uses spine 4.2, which has the new physics system. You can now create physics constraints in Spine and use them in Solar2D.
 
@@ -144,7 +144,7 @@ Acknowledgments
 ---------------
 ---------------
 
-- Thanks to **Studycat Limited** for supporting me in bringing this project to
+- Thanks to `Studycat Limited <https://studycat.com>`_ for supporting me in bringing this project to
   life while I was working at the company.
 - Big thanks to `Steven Johnson (ggcrunchy) <https://github.com/ggcrunchy>`_
   for his unwavering support and contributions.

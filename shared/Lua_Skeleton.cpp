@@ -30,6 +30,19 @@ static SpineSkeleton *luaL_getSkeletonUserdata(lua_State *L)
     return skeletonUserdata;
 }
 
+static int getArgCount(lua_State *L)
+{
+    int argCount = lua_gettop(L);
+    int nonNilArgCount = 1;
+    for (int i = 2; i <= argCount; i++)
+    {
+        if (!lua_isnil(L, i))
+        {
+            nonNilArgCount++;
+        }
+    }
+    return nonNilArgCount;
+}
 
 static int skeleton_index(lua_State *L)
 {
@@ -890,10 +903,10 @@ static int setFillColor(lua_State *L)
         return 0;
     }
 
-    int argCount = lua_gettop(L);
     double r, g, b, a;
+    int nonNilArgCount = getArgCount(L);
 
-    switch (argCount)
+    switch (nonNilArgCount)
     {
     case 1:
         luaL_argerror(L, 2, "number expected, got nil");
@@ -902,7 +915,7 @@ static int setFillColor(lua_State *L)
         r = luaL_checknumber(L, 2);
         g = r;
         b = r;
-        a = r;
+        a = 1;
         break;
     case 3:
         r = luaL_checknumber(L, 2);
@@ -923,7 +936,6 @@ static int setFillColor(lua_State *L)
         a = luaL_checknumber(L, 5);
         break;
     }
-
 
     skeletonUserdata->skeleton->getColor().set(r, g, b, a);
 

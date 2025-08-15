@@ -275,7 +275,6 @@ void set_fill_color(lua_State *L, uint32_t *colors)
     lua_pushnumber(L, g);
     lua_pushnumber(L, b);
     lua_pushnumber(L, a);
-
     lua_call(L, 5, 0); // Call mesh.setFillColor(mesh, r, g, b, a)
 }
 
