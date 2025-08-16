@@ -11,7 +11,7 @@ struct MeshData
     size_t numIndices;
     Texture *texture;
     spine::BlendMode blendMode;
-    uint32_t *colors; // You might need to copy this if it's an array
+    uint32_t color; // You might need to copy this if it's an array
     bool used;        // Flag to indicate if the mesh was used in the current frame
 };
 
@@ -57,7 +57,7 @@ public:
         }
     }
 
-    MeshData &newMesh(lua_State *L, int index, size_t numIndices, Texture *texture, spine::BlendMode blendMode, uint32_t *colors, bool used)
+    MeshData &newMesh(lua_State *L, int index, size_t numIndices, Texture *texture, spine::BlendMode blendMode, uint32_t color, bool used)
     {
         for (auto &meshData : meshDataList)
         {
@@ -68,14 +68,14 @@ public:
                 meshData.numIndices = numIndices;
                 meshData.texture = texture;
                 meshData.blendMode = blendMode;
-                meshData.colors = colors;
+                meshData.color = color;
                 meshData.used = used;
                 return meshData;
             }
         }
 
         // If no empty slot was found, add a new mesh
-        meshDataList.push_back({LuaTableHolder(L), index, numIndices, texture, blendMode, colors, used});
+        meshDataList.push_back({LuaTableHolder(L), index, numIndices, texture, blendMode, color, used});
 
         return meshDataList.back();
     }
@@ -102,7 +102,7 @@ public:
         meshDataList[index].index = -1;
         meshDataList[index].numIndices = 0;
         meshDataList[index].texture = nullptr;
-        meshDataList[index].colors = nullptr;
+        meshDataList[index].color = 0;
         meshDataList[index].used = false;
 
         // remove the mesh from the list

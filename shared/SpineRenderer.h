@@ -12,5 +12,5 @@ void engine_removeMesh(lua_State *L, LuaTableHolder *meshHolder);
 
 void set_texture(lua_State *L, Texture *texture);
 void set_blendMode(lua_State *L, spine::BlendMode blendMode);
-void set_fill_color(lua_State *L, uint32_t *colors);
+void set_fill_color(lua_State *L, uint32_t color);
 void renderCommands(lua_State *L, SpineSkeleton *skeletonUserdata, RenderCommand *command, MeshManager &meshes, int parentIndex);

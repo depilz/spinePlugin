@@ -260,12 +260,11 @@ void set_blendMode(lua_State *L, BlendMode blendMode)
     lua_setfield(L, -2, "blendMode");
 }
 
-void set_fill_color(lua_State *L, uint32_t *colors)
+void set_fill_color(lua_State *L, uint32_t color)
 {
     lua_getfield(L, -1, "setFillColor");
     lua_pushvalue(L, -2);
 
-    uint32_t color = colors[0];
     float r = ((color >> 16) & 0xff) / 255.0f;
     float g = ((color >> 8) & 0xff) / 255.0f;
     float b = (color & 0xff) / 255.0f;
@@ -349,7 +348,7 @@ void renderCommands(lua_State *L, SpineSkeleton *skeletonUserdata, RenderCommand
         float *uvs = command->uvs;
         Texture *texture = (Texture *)command->texture;
         BlendMode blendMode = command->blendMode;
-        uint32_t *colors = command->colors;
+        uint32_t color = command->colors[0];
 
         bool updateBlendMode = false;
         bool updateColor = false;
@@ -376,7 +375,7 @@ void renderCommands(lua_State *L, SpineSkeleton *skeletonUserdata, RenderCommand
                 insertMesh = insertMesh || meshData->index != drawIndex;
                 updateTexture = meshData->texture != texture;
                 updateBlendMode = meshData->blendMode != blendMode;
-                updateColor = meshData->colors != colors;
+                updateColor = meshData->color != color;
 
                 meshData->used = true;
                 meshData->index = drawIndex;
@@ -386,7 +385,7 @@ void renderCommands(lua_State *L, SpineSkeleton *skeletonUserdata, RenderCommand
                 engine_drawMesh(L, newMesh, numIndices, indices, positions, uvs);
 
                 lua_pushvalue(L, -1);
-                meshData = &meshes.newMesh(L, i, numIndices, texture, blendMode, colors, true);
+                meshData = &meshes.newMesh(L, i, numIndices, texture, blendMode, color, true);
 
                 insertMesh = true;
                 updateBlendMode = true;
@@ -415,8 +414,8 @@ void renderCommands(lua_State *L, SpineSkeleton *skeletonUserdata, RenderCommand
             }
             if (updateColor)
             {
-                meshData->colors = colors;
-                set_fill_color(L, colors);
+                meshData->color = color;
+                set_fill_color(L, color);
             }
         }
         else
