@@ -1,5 +1,6 @@
-#include "Lua_Spine.h"
+﻿#include "Lua_Spine.h"
 #include "Lua_Skeleton.h"
+#include "Lua_Skin.h"
 #include "DataHolder.h"
 #include "SkeletonDataHolder.h"
 #include "SpineTexture.h"
@@ -58,6 +59,39 @@ static void loadGroupReferences(lua_State *L)
     pathForFile = new LuaTableHolder(L);
 
     lua_pop(L, 1);
+}
+
+static SpineSkeleton* getSkeletonFromObject(
+    lua_State* L,
+    int index
+)
+{
+    if (!lua_istable(L, index))
+    {
+        luaL_argerror(
+            L,
+            index,
+            "Spine object expected"
+        );
+
+        return nullptr;
+    }
+
+    lua_pushstring(L, "_skeleton");
+    lua_rawget(L, index);
+
+    SpineSkeleton* skeletonUserdata =
+        static_cast<SpineSkeleton*>(
+            luaL_checkudata(
+                L,
+                -1,
+                "SpineSkeleton"
+            )
+            );
+
+    lua_pop(L, 1);
+
+    return skeletonUserdata;
 }
 
 // spine.loadAtlas(path)
@@ -171,6 +205,41 @@ int loadSkeletonData(lua_State *L)
 
     return 1;
 }
+// spine.findSkinFromSkeletonData(skeData, skinName)
+int findSkinFromSkeletonData(lua_State *L)
+{
+    auto skeletonDataUserdata = DataHolder<SkeletonData>::check(L, 1);
+    if (!skeletonDataUserdata)
+    {
+        luaL_error(L, "Invalid skeletonData");
+        return 0;
+    }
+
+    SkeletonData* skeletonData = skeletonDataUserdata->getObject();
+
+    const char* skinName = luaL_checkstring(L, 2);
+
+    Skin* skin = skeletonData->findSkin(skinName);
+
+    if (!skin)
+    {
+        lua_pushnil(L);
+        return 1;
+    }
+
+    LuaSkin* skinUserdata =
+        (LuaSkin*)lua_newuserdata(L, sizeof(LuaSkin));
+
+    new (skinUserdata) LuaSkin(
+        L,
+        skin
+    );
+
+    luaL_getmetatable(L, "SpineSkin");
+    lua_setmetatable(L, -2);
+
+    return 1;
+}
 
 // spine.create(skeletonData [,listener])
 int create(lua_State *L)
@@ -241,6 +310,23 @@ int create(lua_State *L)
 
     return 1;
 }
+// spine.createSkin(name)
+int createSkin(lua_State* L) 
+{
+    const char* name = luaL_checkstring(L, 1);
+    CoronaLog("Create Skin: %s", name);
+
+    Skin* skin = new Skin(String(name));
+
+    LuaSkin* skinUserdata = (LuaSkin*)lua_newuserdata(L, sizeof(LuaSkin));
+
+    new (skinUserdata) LuaSkin(L, skin);
+
+    getSkinMt(L); 
+    lua_setmetatable(L, -2);
+    
+    return 1;
+}
 
 Solar2dExtension::Solar2dExtension() : DefaultSpineExtension()
 {
@@ -258,9 +344,11 @@ CORONA_EXPORT int luaopen_plugin_spine(lua_State *L) {
     lua_newtable(L);
 
     const luaL_Reg spine_functions[] = {
+        {"findSkinFromSkeletonData", findSkinFromSkeletonData},
         {"loadAtlas", loadAtlas},
         {"loadSkeletonData", loadSkeletonData},
         {"create", create},
+        {"createSkin", createSkin},
         {NULL, NULL}
     };
 

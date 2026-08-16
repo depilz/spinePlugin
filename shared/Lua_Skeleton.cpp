@@ -5,6 +5,7 @@
 #include "Lua_Physics.h"
 #include "Lua_Track.h"
 #include "SpineRenderer.h"
+#include <Lua_Skin.h>
 
 static SpineSkeleton *luaL_getSkeletonUserdata(lua_State *L)
 {
@@ -22,7 +23,7 @@ static SpineSkeleton *luaL_getSkeletonUserdata(lua_State *L)
         luaL_argerror(L, 1, "SpineSkeleton expected, got table");
         return 0;
     }
-
+    
     SpineSkeleton *skeletonUserdata = (SpineSkeleton *)luaL_checkudata(L, -1, "SpineSkeleton");
     
     lua_pop(L, 1);
@@ -201,9 +202,6 @@ static int skeleton_gc(lua_State *L)
     return 0;
 }
 
-
-
-
 // skeleton:getSkins()
 static int getSkins(lua_State *L)
 {
@@ -227,37 +225,90 @@ static int getSkins(lua_State *L)
     return 1;
 }
 
+// skeleton:getSkin(name)
+static int getSkin(lua_State *L)
+{
+
+    SpineSkeleton* skeletonUserdata = luaL_getSkeletonUserdata(L);
+
+    if (!skeletonUserdata || !skeletonUserdata->skeletonData)
+    {
+        lua_pushnil(L);
+        return 1;
+    }
+
+    const char* skinName = luaL_checkstring(L, 2);
+
+    Skin* skin = skeletonUserdata->skeletonData->findSkin(skinName);
+
+    if (!skin)
+    {
+        lua_pushnil(L);
+        return 1;
+    }
+
+    LuaSkin* skinUserdata =
+        (LuaSkin*)lua_newuserdata(L, sizeof(LuaSkin));
+
+    skinUserdata->skin = skin;
+
+    luaL_getmetatable(L, "SpineSkin");
+    lua_setmetatable(L, -2);
+
+    return 1;
+}
+
 // skeleton:setSkin(skinName)
+// or
+// skeleton:setSkin(SpineSkin)
 static int setSkin(lua_State *L)
 {
     if (lua_gettop(L) != 2)
     {
-        luaL_error(L, "Expected 2 arguments: self, skinName");
+        luaL_error(L, "Expected 2 arguments: self, skinName or SpineSkin");
         return 0;
     }
 
     SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
-    if (!skeletonUserdata)
+    if (!skeletonUserdata || !skeletonUserdata->skeleton)
     {
         return 0;
     }
-
-    const char *skinName = luaL_checkstring(L, 2);
 
     Skeleton *skeleton = skeletonUserdata->skeleton;
-    SkeletonData *skeletonData = skeletonUserdata->skeletonData;
 
-    if (!skinName)
+    Skin* skin = NULL;
+
+    if (lua_type(L, 2) == LUA_TSTRING)
     {
-        luaL_argerror(L, 2, "Skin name is required");
-        return 0;
+        const char* skinName = lua_tostring(L, 2);
+        SkeletonData* skeletonData = skeletonUserdata->skeletonData;
+
+        if (!skinName)
+        {
+            luaL_argerror(L, 2, "Skin name is required");
+            return 0;
+        }
+
+        skin = skeletonData->findSkin(skinName);
+
     }
-
-    Skin *skin = skeletonData->findSkin(skinName);
-    if (!skin)
+    else if (luaL_checkudata(L, 2, "SpineSkin"))
     {
-        luaL_error(L, "Skin not found: %s", skinName);
-        return 0;
+        LuaSkin* luaSkin =
+            static_cast<LuaSkin*>(
+                lua_touserdata(L, 2)
+                );
+
+        if (!luaSkin || !luaSkin->skin)
+        {
+            return luaL_error(
+                L,
+                "Invalid LuaSkin"
+            );
+        }
+
+        skin = luaSkin->skin;
     }
 
     skeleton->setSkin(skin);
@@ -265,9 +316,6 @@ static int setSkin(lua_State *L)
 
     return 0;
 }
-
-
-
 
 // skeleton:setToSetupPose()
 static int setToSetupPose(lua_State *L)
@@ -1334,6 +1382,7 @@ void getSpineObjectMt(lua_State *L)
             {"getIKConstraintNames", getIKConstraintNames},
 
             {"getSkins", getSkins},
+            {"getSkin", getSkin},
             {"setSkin", setSkin},
 
             {"clearTracks", clearTracks},
@@ -1348,7 +1397,6 @@ void getSpineObjectMt(lua_State *L)
 
             {"split", split},
             {"reassemble", reassemble},
-
             {NULL, NULL}};
         luaL_register(L, NULL, methods);
     }
