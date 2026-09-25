@@ -1,0 +1,11 @@
+local spine = require("plugin.spine")
+local atlas = spine.loadAtlas("spineboy/spineboy.atlas")
+local data = spine.loadSkeletonData("spineboy/spineboy.json", atlas)
+local img = display.newGroup()          -- native display object control
+display.remove(img)
+print("native object: display.remove twice ->", pcall(display.remove, img), " img.x ->", pcall(function() return img.x end))
+local obj = spine.create(data)
+display.remove(obj)
+print("spine object: display.remove twice ->", pcall(display.remove, obj))
+print("spine object: obj.x after removal ->", pcall(function() return obj.x end))
+print("spine object: obj:removeSelf() again ->", pcall(function() obj:removeSelf() end))

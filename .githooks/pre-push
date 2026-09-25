@@ -1,0 +1,16 @@
+#!/bin/bash
+# Runs before every push once tests/setup.sh has set core.hooksPath: the default test run (tests/run.sh) when this
+# checkout has one, else the release gate alone (tools/release-gate/gate.sh) when it has one, else nothing. A failing
+# run blocks the push. The test run's output dir is removed after a pass and kept, its path printed, after a failure.
+# Deliberately no post-checkout hook: funbox runs `git checkout -f <tag>` in this repo.
+set -uo pipefail
+
+root=$(git rev-parse --show-toplevel) || exit 1
+if [[ -f "$root/tests/run.sh" ]]; then
+  out=$(mktemp -d "${TMPDIR:-/tmp}/spine-prepush.XXXXXX") || exit 1
+  SPINE_TEST_OUT=$out /bin/bash "$root/tests/run.sh" </dev/null && { rm -rf "$out"; exit 0; }
+  echo "pre-push: test run failed; output kept in $out" >&2
+  exit 1
+elif [[ -f "$root/tools/release-gate/gate.sh" ]]; then
+  exec /bin/bash "$root/tools/release-gate/gate.sh" </dev/null
+fi

@@ -1,0 +1,17 @@
+{
+"skeleton": { "hash": "probe", "spine": "4.2.22", "x": -400, "y": -200, "width": 800, "height": 400 },
+"bones": [
+	{ "name": "root" },
+	{ "name": "rot", "parent": "root", "length": 100, "x": -300 },
+	{ "name": "shear", "parent": "root", "length": 100, "x": -100 },
+	{ "name": "scale", "parent": "root", "length": 100, "rotation": 90, "x": 100 },
+	{ "name": "xy", "parent": "root", "x": 300 }
+],
+"physics": [
+	{ "name": "p-rot", "order": 0, "bone": "rot", "rotate": 1, "gravity": 200, "strength": 50 },
+	{ "name": "p-shear", "order": 1, "bone": "shear", "shearX": 1, "gravity": 200, "strength": 50 },
+	{ "name": "p-scale", "order": 2, "bone": "scale", "scaleX": 1, "gravity": 200, "strength": 50 },
+	{ "name": "p-xy", "order": 3, "bone": "xy", "x": 1, "y": 1, "gravity": 200, "strength": 50 }
+],
+"animations": { "idle": {} }
+}

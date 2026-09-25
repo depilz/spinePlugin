@@ -1,0 +1,11 @@
+local spine = require("plugin.spine")
+local atlas = spine.loadAtlas("spineboy/spineboy.atlas")
+local data = spine.loadSkeletonData("spineboy/spineboy.json", atlas)
+local obj = spine.create(data)
+local e = obj:setAnimation(1, "walk", true)
+obj:clearTrack(1)
+local e2 = obj:setAnimation(1, "run", false)
+print("new entry:", e2.animation, e2.loop, "| stale wrapper from the cleared walk entry:", e.animation, e.loop)
+e.timeScale = 0
+print("new entry timeScale after writing through the stale wrapper:", e2.timeScale)
+print("stale wrapper == new wrapper (Lua equality):", e == e2)

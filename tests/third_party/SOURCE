@@ -1,0 +1,12 @@
+Copied unmodified from Solar2D (https://github.com/coronalabs/corona)
+commit 87f5a3d289fb5fd32318db7e02f40f44b171df24
+
+lua-5.1.3/src/*.c          <- external/lua-5.1.3/src/*.c, except lua.c luac.c print.c noparser.c
+lua-5.1.3/src/*.h          <- external/lua-5.1.3/src/*.h, except lobjectivec_exceptions.h
+lua-5.1.3/COPYRIGHT        <- external/lua-5.1.3/COPYRIGHT
+solar2d/LICENSE.md         <- LICENSE.md
+solar2d/Corona/shared/include/Corona/
+                           <- librtt/Corona/{CoronaLua,CoronaMacros,CoronaLog,CoronaGraphics,
+                              CoronaMemory,CoronaLibrary,CoronaPublicTypes}.h
+
+solar2d/ mirrors the Corona Native install layout, so CORONA_NATIVE can point at either.

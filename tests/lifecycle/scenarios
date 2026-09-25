@@ -1,0 +1,49 @@
+# One lifecycle scenario per line: test script, then its arguments. Read by suite.sh and run_all.sh;
+# the test id is the script name without .lua, then the arguments.
+t00_smoke.lua
+t01_parent_removal.lua parent
+t01_parent_removal.lua explicit
+t02_remove_in_listener.lua completed
+t02b_remove_on_ended.lua
+t03_trackentry.lua pool
+t03_trackentry.lua removed
+t03_trackentry.lua tracks
+t03b_trackentry_alias.lua
+t05_wrappers_after_remove.lua slot
+t05_wrappers_after_remove.lua bone
+t05_wrappers_after_remove.lua ik
+t05_wrappers_after_remove.lua fill
+t05_wrappers_after_remove.lua obj
+t05b_physics.lua
+t06_fill_leak.lua
+t06b_effect_after_remove.lua
+t07_event_target.lua
+t08_type_confusion.lua create-with-atlas
+t08_type_confusion.lua load-with-data
+t09_texture_refcount.lua fifo
+t09_texture_refcount.lua lifo
+t09b_texture_single.lua
+t10_gc_order.lua full
+t10_gc_order.lua close
+t12_cycles.lua removeSelf 200
+t12_cycles.lua parent 200
+t13_coroutines.lua require-in-coroutine
+t13_coroutines.lua fill-in-coroutine
+t13_coroutines.lua listener-thread
+t14_injection_reentrancy.lua eject
+t14_injection_reentrancy.lua inject
+t14_injection_reentrancy.lua remove
+t16_double_remove.lua
+t20_load_unload.lua goblins json 5 skins
+t20b_load_unload_gc.lua dragon json 5 skins
+t21_remove_data_attachments.lua
+t22_cross_skeleton_ik.lua
+t23_split_lifetime.lua removeSelf
+t23_split_lifetime.lua removeSplit
+t24_close_kitchen_sink.lua
+t25_setlistener_in_callback.lua
+t25b_setlistener_ended.lua
+t26_missing_texture.lua
+t27_registerskin.lua
+t28_longjmp_sharedptr.lua create-bad-listener
+t28_longjmp_sharedptr.lua load-missing

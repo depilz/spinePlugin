@@ -1,0 +1,11 @@
+-- T11: misc argument handling
+local fx = require("realdata_fixture")
+local data = fx.loadData("spineboy/spineboy.atlas", "spineboy/spineboy.json")
+local s = fx.createPlugin(data)
+s:setAnimation(1, "walk", true)
+print("addEmptyAnimation(1, 200) [docs: delay optional] ->", pcall(s.addEmptyAnimation, s, 1, 200))
+print("addAnimation(1, 'run', true) [no delay] ->", pcall(s.addAnimation, s, 1, "run", true))
+print("setMix unknown ->", pcall(s.setMix, s, "walk", "nope", 100))
+print("setAnimation unknown ->", pcall(s.setAnimation, s, 1, "nope", true))
+print("setListener(table) ->", pcall(s.setListener, s, {spine = function() end}))
+print("updateState() no dt ->", pcall(s.updateState, s))

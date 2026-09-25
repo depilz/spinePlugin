@@ -1,0 +1,30 @@
+# One split scenario per line: test script, then its arguments. Read by suite.sh; the test id is the script name
+# without .lua, then the arguments. p1_empty_probe, p3_find_reassemble_dead, p4_minimize and p5_kinds are diagnostic
+# probes (they print, they do not check) and are run by hand: run.sh <script> [args].
+s0_smoke.lua
+s1_random_split.lua skip-portal
+s2_portal_split.lua
+s3_reassemble_dead.lua
+s4_injection.lua a
+s4_injection.lua b2
+s4_injection.lua c
+s4_injection.lua d
+s4_injection.lua e
+s4_injection.lua f
+s5_lifetime.lua L1
+s5_lifetime.lua L1b
+s5_lifetime.lua L2
+s5_lifetime.lua L3
+s5_lifetime.lua L4
+s5_lifetime.lua L5
+s5_lifetime.lua L6
+s5_lifetime.lua L7
+s5_lifetime.lua L7b
+s5_lifetime.lua L8
+s6_stack_leak.lua drawargs
+s6_stack_leak.lua leak
+s8_production.lua
+s9_partsets.lua
+p2_portal_unsplit.lua
+p6_plain.lua
+p7_data_dropped.lua

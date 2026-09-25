@@ -1,0 +1,11 @@
+local L = require("simlib")
+L.open("s0_smoke")
+local spine = L.loadPlugin()
+local atlas = spine.loadAtlas("spines/spineboy/spineboy.atlas")
+local data = spine.loadSkeletonData("spines/spineboy/spineboy.skel", atlas, 0.5)
+local obj = spine.create(data)
+obj.x, obj.y = display.contentCenterX, display.contentCenterY + 200
+obj:setAnimation(1, "walk", true)
+obj:updateState(16); obj:draw()
+L.log("obj type", type(obj), "numChildren", obj.numChildren, "_skeleton", type(rawget(obj, "_skeleton")))
+timer.performWithDelay(200, function() L.finish(0) end)

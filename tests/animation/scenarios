@@ -1,0 +1,26 @@
+# One animation scenario per line: test script, then its arguments. Read by suite.sh; the test id is the script name
+# without .lua, then the arguments.
+t1_surface.lua
+t2_events.lua payload
+t2_events.lua target
+t3_stale_entry.lua numeric
+t3_stale_entry.lua animation
+t3_stale_entry.lua alias
+t3_stale_entry.lua afterdestroy
+t4_reentrancy.lua set_in_complete
+t4_reentrancy.lua clear_in_complete
+t4_reentrancy.lua setlistener_nil
+t4_reentrancy.lua setlistener_replace
+t4_reentrancy.lua error
+t4_reentrancy.lua error_then_more
+t4_reentrancy.lua dispose_in_complete
+t4_reentrancy.lua dispose_in_event
+t4_reentrancy.lua clearTracks_in_end
+t4_reentrancy.lua nested_update
+t5_addAnimationAt.lua
+t6_delay_phases.lua
+t7_tracks_proxy.lua
+t8_gc_listener.lua
+t9_prototype_fix.lua
+t10_create_args.lua
+t11_misc.lua

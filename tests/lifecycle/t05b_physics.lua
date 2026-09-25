@@ -1,0 +1,10 @@
+local spine = require("plugin.spine")
+local atlas = spine.loadAtlas("cloud-pot/cloud-pot.atlas")
+local data = spine.loadSkeletonData("cloud-pot/cloud-pot.skel", atlas)
+local obj = spine.create(data)
+local physics = obj.physics
+print("physics wrapper", physics)
+obj:removeSelf(); collectgarbage(); collectgarbage()
+print("after removeSelf")
+print(physics.inertia)
+print("survived")

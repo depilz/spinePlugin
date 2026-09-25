@@ -1,0 +1,13 @@
+local spine = require("plugin.spine")
+local atlas = spine.loadAtlas("spineboy/spineboy.atlas")
+local data = spine.loadSkeletonData("spineboy/spineboy.json", atlas)
+local a = spine.create(data)
+local b = spine.create(data)
+local ik = a.ikConstraints[1]; ik.mix = 1
+print("IK", ik ~= nil, "targeting a bone of ANOTHER skeleton is accepted:", pcall(function() ik.target = b.bones[2] end))
+a:setAnimation(1, "walk", true)
+a:updateState(16); a:draw()
+b:removeSelf(); collectgarbage(); collectgarbage()
+print("b removed; drawing a")
+a:updateState(16); a:draw()
+print("survived")

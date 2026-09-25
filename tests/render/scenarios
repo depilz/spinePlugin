@@ -1,0 +1,20 @@
+# One render scenario per line: test script, then its arguments. Read by suite.sh; the test id is the script name
+# without .lua, then the arguments. Frame and object counts are cut from the scripts' defaults to keep the ASan run short.
+t0_smoke.lua
+t1_churn.lua 20
+t2_blend.lua
+t3_emptycmd.lua
+t4_injlistener.lua
+t5_split.lua
+t6_textures.lua
+t7_fill.lua 10000
+t7_fill.lua 10000 uaf
+t8_physics.lua skin-required
+t8_physics.lua no-track
+t9_splitleak.lua
+t10_scale.lua raptor 10
+t11_garbage_probe.lua
+t12_drawargs.lua
+t13_midinject.lua
+t14_effect_uaf.lua
+t15_inject_order.lua

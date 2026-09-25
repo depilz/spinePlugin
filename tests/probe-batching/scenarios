@@ -1,0 +1,16 @@
+# One probe-batching scenario per line: test script, then its arguments. Read by suite.sh; the test id is the script
+# name without .lua, then the arguments. "split" runs the per-slot cases on a split skeleton.
+pb_place.lua
+pb_place.lua split
+pb_noinj.lua
+pb_noinj.lua split
+pb_meshcount.lua
+pb_t15t16.lua
+pb_t16dump.lua
+pb_t16trace.lua
+pb_coin.lua
+pb_coin2.lua
+pb_coin3.lua
+pb_coin4.lua
+pb_coin5.lua
+pb_inventory.lua

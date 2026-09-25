@@ -1,0 +1,7 @@
+settings =
+{
+    plugins =
+    {
+        ['plugin.spine'] = {publisherId = 'com.studycat.spine'},
+    },
+}
