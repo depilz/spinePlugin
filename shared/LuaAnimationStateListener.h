@@ -1,6 +1,6 @@
 #include "CoronaLua.h"
 #include "LuaTableHolder.h"
-#include "spine/spine.h"
+#include "SpineCompat.h"
 
 class LuaAnimationStateListener : public spine::AnimationStateListenerObject
 {
@@ -35,15 +35,15 @@ public:
             lua_rawset(L, -3);
 
             lua_pushstring(L, "int");
-            lua_pushinteger(L, event->getData().getIntValue());
+            lua_pushinteger(L, spc::eventInt(*event));
             lua_rawset(L, -3);
 
             lua_pushstring(L, "float");
-            lua_pushnumber(L, event->getData().getFloatValue());
+            lua_pushnumber(L, spc::eventFloat(*event));
             lua_rawset(L, -3);
 
             lua_pushstring(L, "string");
-            lua_pushstring(L, event->getData().getStringValue().buffer());
+            lua_pushstring(L, spc::eventString(*event).buffer());
             lua_rawset(L, -3);
 
             // Is this an audio event?
@@ -54,11 +54,11 @@ public:
                 lua_rawset(L, -3);
 
                 lua_pushstring(L, "volume");
-                lua_pushnumber(L, event->getData().getVolume());
+                lua_pushnumber(L, spc::eventVolume(*event));
                 lua_rawset(L, -3);
 
                 lua_pushstring(L, "balance");
-                lua_pushnumber(L, event->getData().getBalance());
+                lua_pushnumber(L, spc::eventBalance(*event));
                 lua_rawset(L, -3);
             }
         }
@@ -98,7 +98,7 @@ public:
         }
 
         lua_pushstring(L, "animation");
-        lua_pushstring(L, entry->getAnimation()->getName().buffer());
+        lua_pushstring(L, spc::anim(*entry).getName().buffer());
         lua_rawset(L, -3);
 
         lua_pushstring(L, "trackIndex");

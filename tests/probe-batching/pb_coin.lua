@@ -1,5 +1,5 @@
 -- reproduce the coin M-case placement error with a dump of commands/children/reference
-local C = dofile(arg[0]:match("^(.*)/") .. "/common.lua")
+local C = dofile(arg[0]:match("^(.*)/") .. "/../splitfx/common.lua")
 local mock, fx = C.mock, C.fx
 local obj = C.spine.create(C.data("coin", 0.5))
 obj:setAnimation(1, "animation", true)

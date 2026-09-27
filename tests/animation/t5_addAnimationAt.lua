@@ -1,6 +1,6 @@
 -- T5: addAnimationAt semantics (actual start times vs requested "absolute" times).
 local fx = require("realdata_fixture")
-local C = dofile(arg[0]:match("^(.*)/") .. "/check.lua")
+local C = dofile(arg[0]:match("^(.*)/") .. "/../check.lua")
 local data = fx.loadData("spineboy/spineboy.atlas", "spineboy/spineboy.json")
 local clock, began = 0, {}
 local function mk()

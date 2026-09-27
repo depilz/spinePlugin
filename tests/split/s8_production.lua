@@ -3,7 +3,7 @@
 --     re-split with other slots, injection into a split slot, reassemble at the end; 3 sequences per avatar.
 --  P2 chibi-stickers (10 atlas pages, draw-order animations, 9 skins): split during draw-order animations + skin swaps.
 --  P3 raptor roar/jump (draw-order keys) with a "weapon" injected into a split slot, re-split every 15 frames.
-local C = dofile(arg[0]:match("^(.*)/") .. "/common.lua")
+local C = dofile(arg[0]:match("^(.*)/") .. "/../splitfx/common.lua")
 local mock = C.mock; io.stdout:setvbuf("no")
 local total = { frames = 0, bad = 0, raised = 0 }
 

@@ -12,7 +12,7 @@
 #include <stdarg.h>
 
 lua_State *g_mainL = 0;
-int luaopen_plugin_spine(lua_State *L);
+int HOST_PLUGIN(lua_State *L); /* -DHOST_PLUGIN=<entry>, host.sh HOST_ENTRY */
 
 /* Solar2D API stubs used by the plugin */
 lua_State *CoronaLuaGetCoronaThread(lua_State *L) { return g_mainL ? g_mainL : L; }
@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
     luaL_openlibs(L);
     lua_getglobal(L, "package");
     lua_getfield(L, -1, "preload");
-    lua_pushcfunction(L, luaopen_plugin_spine);
+    lua_pushcfunction(L, HOST_PLUGIN);
     lua_setfield(L, -2, "plugin.spine");
     lua_pop(L, 2);
     lua_newtable(L);

@@ -159,18 +159,15 @@ static int skeleton_index(lua_State *L)
     } else if (strcmp(key, "ikConstraints") == 0)
     {
         Skeleton *skeleton = skeletonUserdata->skeleton;
-        Vector<IkConstraint *> &ikConstraints = skeleton->getIkConstraints();
-        size_t n = ikConstraints.size();
-        lua_createtable(L, static_cast<int>(n), 0);
+        lua_newtable(L);
+        int i = 0;
 
-        for (size_t i = 0; i < n; i++)
-        {
-            IkConstraint *ikConstraint = ikConstraints[i];
+        spc::forEachIk(skeleton, [&](IkConstraint *ikConstraint) {
             LuaIKConstraint *ikConstraintUserdata = (LuaIKConstraint *)lua_newuserdata(L, sizeof(LuaIKConstraint));
             new (ikConstraintUserdata) LuaIKConstraint(L, ikConstraint);
 
-            lua_rawseti(L, -2, static_cast<int>(i + 1));
-        }
+            lua_rawseti(L, -2, ++i);
+        });
 
         return 1;
     } else if (strcmp(key, "physics") == 0)
@@ -357,7 +354,7 @@ static int setSkin(lua_State *L)
 
     if (skeleton->getSkin() == skin) skeleton->updateCache();
     else skeleton->setSkin(skin);
-    if (resetSlots) skeleton->setSlotsToSetupPose();
+    if (resetSlots) spc::setSlotsToSetupPose(skeleton);
     skeletonUserdata->appliedSkinOwner = getLuaSkinOwner(skin);
 
     return 0;
@@ -484,7 +481,7 @@ static int setToSetupPose(lua_State *L)
     {
         return 0;
     }
-    skeletonUserdata->skeleton->setToSetupPose();
+    spc::setToSetupPose(skeletonUserdata->skeleton);
 
     return 0;
 }
@@ -497,7 +494,7 @@ static int setBonesToSetupPose(lua_State *L)
     {
         return 0;
     }
-    skeletonUserdata->skeleton->setBonesToSetupPose();
+    spc::setBonesToSetupPose(skeletonUserdata->skeleton);
 
     return 0;
 }
@@ -510,7 +507,7 @@ static int setSlotsToSetupPose(lua_State *L)
     {
         return 0;
     }
-    skeletonUserdata->skeleton->setSlotsToSetupPose();
+    spc::setSlotsToSetupPose(skeletonUserdata->skeleton);
 
     return 0;
 }
@@ -537,7 +534,7 @@ static int setAnimation(lua_State *L)
         return 1;
     }
     
-    TrackEntry *entry = skeletonUserdata->state->setAnimation(trackIndex, animation, loop);
+    TrackEntry *entry = spc::setAnimation(skeletonUserdata->state, trackIndex, animation, loop);
     if (!entry)
     {
         lua_pushboolean(L, false);
@@ -570,7 +567,7 @@ static int addAnimation(lua_State *L)
         return 1;
     }
     
-    TrackEntry *entry = skeletonUserdata->state->addAnimation(trackIndex, animation, loop, delay);
+    TrackEntry *entry = spc::addAnimation(skeletonUserdata->state, trackIndex, animation, loop, delay);
     if (!entry)
     {
         lua_pushboolean(L, false);
@@ -604,13 +601,13 @@ static int addAnimationAt(lua_State *L)
     }
 
     float delay = startTime;
-    TrackEntry *current = skeletonUserdata->state->getCurrent(trackIndex);
+    TrackEntry *current = spc::current(skeletonUserdata->state, trackIndex);
     if (!current && startTime > 0)
     {
         // Keep the first queued animation delayed even on an empty track.
         // Without this, addAnimation sets it as current immediately.
         skeletonUserdata->state->setEmptyAnimation(trackIndex, 0);
-        current = skeletonUserdata->state->getCurrent(trackIndex);
+        current = spc::current(skeletonUserdata->state, trackIndex);
     }
 
     if (current)
@@ -632,7 +629,7 @@ static int addAnimationAt(lua_State *L)
         delay = 0;
     }
 
-    TrackEntry *entry = skeletonUserdata->state->addAnimation(trackIndex, animation, loop, delay);
+    TrackEntry *entry = spc::addAnimation(skeletonUserdata->state, trackIndex, animation, loop, delay);
     if (!entry)
     {
         lua_pushboolean(L, false);
@@ -759,14 +756,14 @@ static int getCurrentAnimation(lua_State *L)
         luaL_argerror(L, 2, "trackIndex must be >= 1");
     }
 
-    TrackEntry *entry = skeletonUserdata->state->getCurrent(trackIndex);
+    TrackEntry *entry = spc::current(skeletonUserdata->state, trackIndex);
     if (!entry)
     {
         lua_pushnil(L);
         return 1;
     }
 
-    const char *animationName = entry->getAnimation()->getName().buffer();
+    const char *animationName = spc::anim(*entry).getName().buffer();
     lua_pushstring(L, animationName);
 
     return 1;
@@ -782,7 +779,7 @@ static int getTrackEntry(lua_State *L)
     }
 
     int trackIndex = checkTrackIndex(L, 2);
-    TrackEntry *entry = skeletonUserdata->state->getCurrent(trackIndex);
+    TrackEntry *entry = spc::current(skeletonUserdata->state, trackIndex);
     if (!entry)
     {
         lua_pushnil(L);
@@ -865,7 +862,7 @@ static int setMix(lua_State *L)
         return 0;
     }
 
-    skeletonUserdata->stateData->setMix(fromAnimation, toAnimation, mix / 1000);
+    spc::setMix(skeletonUserdata->stateData, fromAnimation, toAnimation, mix / 1000);
     return 0;
 }
 
@@ -950,11 +947,11 @@ static void skeletonRender(lua_State *L, SpineSkeleton *skeletonUserdata)
         auto slotIndices = skeletonUserdata->splitData.getSlotIndices();
         auto commandsInSplit = skeletonUserdata->splitData.commandsInSplit;
         auto commandsNotInSplit = skeletonUserdata->splitData.commandsNotInSplit;
-        auto commands = skeletonRenderer.render(*skeleton, checkInjections(L, skeletonUserdata), slotIndices, commandsInSplit, commandsNotInSplit);
-        renderCommands(L, skeletonUserdata, commands->first, meshes, 1);
+        spc::CommandPair commands = spc::renderSplit(skeletonRenderer, *skeleton, checkInjections(L, skeletonUserdata), slotIndices, commandsInSplit, commandsNotInSplit);
+        renderCommands(L, skeletonUserdata, commands.first, meshes, 1);
 
         skeletonUserdata->splitData.pushGroup(L);
-        renderCommands(L, skeletonUserdata, commands->second, meshes, 2);
+        renderCommands(L, skeletonUserdata, commands.second, meshes, 2);
         
         lua_remove(L, 2);
     }
@@ -1037,7 +1034,7 @@ static int setAttachment(lua_State *L) {
         }
     }
 
-    slot->setAttachment(attachment);
+    spc::pose(*slot).setAttachment(attachment);
 
     return 0;
 }
@@ -1121,7 +1118,7 @@ static int getIKConstraint(lua_State *L)
 
     Skeleton *skeleton = skeletonUserdata->skeleton;
 
-    IkConstraint *ikConstraint = skeleton->findIkConstraint(ikConstraintName);
+    IkConstraint *ikConstraint = spc::findIk(skeleton, ikConstraintName);
 
     if (!ikConstraint)
     {
@@ -1145,16 +1142,13 @@ static int getIKConstraintNames(lua_State *L)
     }
 
     SkeletonData *skeletonData = skeletonUserdata->skeletonData;
-    Vector<IkConstraintData *> &ikConstraints = skeletonData->getIkConstraints();
+    lua_newtable(L);
+    int i = 0;
 
-    size_t n = ikConstraints.size();
-    lua_createtable(L, static_cast<int>(n), 0);
-
-    for (size_t i = 0; i < n; i++)
-    {
-        lua_pushstring(L, ikConstraints[i]->getName().buffer());
-        lua_rawseti(L, -2, static_cast<int>(i + 1));
-    }
+    spc::forEachIkData(skeletonData, [&](ConstraintData *ikConstraint) {
+        lua_pushstring(L, ikConstraint->getName().buffer());
+        lua_rawseti(L, -2, ++i);
+    });
 
     return 1;
 }
@@ -1179,9 +1173,7 @@ static int getBounds(lua_State *L)
 
     // using skeleton->getBounds
     float outX, outY, outWidth, outHeight;
-    Vector<float> outVertexBuffer;
-
-    skeleton->getBounds(outX, outY, outWidth, outHeight, outVertexBuffer);
+    spc::getBounds(skeleton, outX, outY, outWidth, outHeight);
 
     lua_createtable(L, 0, 4);
 
@@ -1215,9 +1207,7 @@ static int getSize(lua_State *L)
 
     // using skeleton->getBounds
     float outX, outY, outWidth, outHeight;
-    Vector<float> outVertexBuffer;
-
-    skeleton->getBounds(outX, outY, outWidth, outHeight, outVertexBuffer);
+    spc::getBounds(skeleton, outX, outY, outWidth, outHeight);
 
     lua_createtable(L, 0, 4);
 
@@ -1298,7 +1288,7 @@ static int getDrawOrder(lua_State *L)
     }
 
     Skeleton *skeleton = skeletonUserdata->skeleton;
-    Vector<Slot *> &drawOrder = skeleton->getDrawOrder();
+    Vector<Slot *> &drawOrder = spc::drawOrder(skeleton);
     size_t n = drawOrder.size();
     lua_createtable(L, static_cast<int>(n), 0);
 

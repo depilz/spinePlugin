@@ -1,5 +1,5 @@
 -- side check: skeleton keeps working after the Lua refs to its atlas + skeleton data are dropped and GC runs
-local C = dofile(arg[0]:match("^(.*)/") .. "/common.lua")
+local C = dofile(arg[0]:match("^(.*)/") .. "/../splitfx/common.lua")
 local function make()
   local atlas = C.spine.loadAtlas("raptor/raptor.atlas")
   local data = C.spine.loadSkeletonData("raptor/raptor.skel", atlas, 0.4)

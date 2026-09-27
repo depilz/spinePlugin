@@ -13,6 +13,6 @@ FL=$(host_flags "$MODE")
 LUAO=$(host_lua "$MODE")
 RTO=$(host_runtime "$MODE")
 rm -rf "$OUT/obj-$MODE"
-host_compile "$MODE" "$OUT/obj-$MODE" "$W/host.c" "$SPINE_REPO"/shared/*.cpp
+host_compile "$MODE" "$OUT/obj-$MODE" "-DHOST_PLUGIN=$HOST_ENTRY" "$W/host.c" "$SPINE_REPO"/shared/*.cpp
 clang++ $FL "$OUT/obj-$MODE"/*.o "$RTO"/*.o "$LUAO"/*.o -o "$OUT/host_$MODE"
 echo "built $OUT/host_$MODE"

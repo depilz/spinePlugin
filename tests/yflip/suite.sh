@@ -10,8 +10,8 @@ source "$W/../lib.sh"
 SPINES="${SPINE_SPINES:-$SPINE_REPO/Corona/spines}"
 TESTS=(matrix probe l1_physics_api l2_lua_visible l3_lua_gravity)
 
-matrix() ( cd "$SPINES" && YFLIP_ALL=1 YFLIP_SPINES="$W/spines" "$SUITE_OUT/bench_asan" checkout "$SUITE_OUT/matrix_detail.txt" )
-probe() ( cd "$SPINES" && YFLIP_PROBE="$W/spines" "$SUITE_OUT/bench_asan" checkout )
+matrix() ( cd "$SPINES" && YFLIP_ALL=1 YFLIP_SPINES="$W/spines/$SPINE_RUNTIME" "$SUITE_OUT/bench_asan" checkout "$SUITE_OUT/matrix_detail.txt" )
+probe() ( cd "$SPINES" && YFLIP_PROBE="$W/spines/$SPINE_RUNTIME" "$SUITE_OUT/bench_asan" checkout )
 
 # rows test: runs the test with its stdout (table and check rows) in $SUITE_OUT/<test>.out; true once it printed a row
 rows() {

@@ -421,7 +421,7 @@
 		92EAEFC92D146BAB005CF5C6 /* Lua_TrackEntry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Lua_TrackEntry.h; sourceTree = "<group>"; };
 		92EAEFCA2D146BAB005CF5C6 /* Lua_TrackEntry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Lua_TrackEntry.cpp; sourceTree = "<group>"; };
 		A4430897164C70D800B9117B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		A49186401641DDB800A39286 /* plugin_spine.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = plugin_spine.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		A49186401641DDB800A39286 /* plugin_spine42.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = plugin_spine42.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		F5815AB71EE5C6690027695F /* CoronaNative.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CoronaNative.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -598,13 +598,13 @@
 				920C34F72CD7C1E100CD52FA /* VertexAttachment.cpp */,
 				920C34F82CD7C1E100CD52FA /* Vertices.h */,
 			);
-			path = spine;
-			sourceTree = "<group>";
+			name = spine;
+			path = "../runtime/spine-4.2/spine";
+			sourceTree = SOURCE_ROOT;
 		};
 		920C35002CD7C1E100CD52FA /* shared */ = {
 			isa = PBXGroup;
 			children = (
-				920C34F92CD7C1E100CD52FA /* spine */,
 				9261E9742CF401300044A3E3 /* DataHolder.h */,
 				9261E9752CF401300044A3E3 /* InjectedObject.h */,
 				92863A742D3F28B100A7CED9 /* SplitData.h */,
@@ -654,6 +654,7 @@
 			isa = PBXGroup;
 			children = (
 				920C35002CD7C1E100CD52FA /* shared */,
+				920C34F92CD7C1E100CD52FA /* spine */,
 				F5815AB61EE5C6540027695F /* CoronaNative */,
 				A482DA8615F9B7E70084DC42 /* Frameworks */,
 				A482DA8515F9B7E70084DC42 /* Products */,
@@ -663,7 +664,7 @@
 		A482DA8515F9B7E70084DC42 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A49186401641DDB800A39286 /* plugin_spine.dylib */,
+				A49186401641DDB800A39286 /* plugin_spine42.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -809,9 +810,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		A49186331641DDB800A39286 /* plugin_spine */ = {
+		A49186331641DDB800A39286 /* plugin_spine42 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A491863D1641DDB800A39286 /* Build configuration list for PBXNativeTarget "plugin_spine" */;
+			buildConfigurationList = A491863D1641DDB800A39286 /* Build configuration list for PBXNativeTarget "plugin_spine42" */;
 			buildPhases = (
 				C22F67901EE9FA0A009D6E9D /* Corona Native */,
 				A49186341641DDB800A39286 /* Sources */,
@@ -824,9 +825,9 @@
 			);
 			dependencies = (
 			);
-			name = plugin_spine;
+			name = plugin_spine42;
 			productName = ads;
-			productReference = A49186401641DDB800A39286 /* plugin_spine.dylib */;
+			productReference = A49186401641DDB800A39286 /* plugin_spine42.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 /* End PBXNativeTarget section */
@@ -850,7 +851,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A49186331641DDB800A39286 /* plugin_spine */,
+				A49186331641DDB800A39286 /* plugin_spine42 */,
 			);
 		};
 /* End PBXProject section */
@@ -1065,6 +1066,7 @@
 					"\"$(CORONA_ROOT)/Corona/shared/include/lua\"",
 					"\"$(CORONA_ROOT)/Corona/ios/include/Corona\"",
 					"\"$(PROJECT_DIR)/../shared/\"",
+					"\"$(PROJECT_DIR)/../runtime/spine-4.2/\"",
 				);
 				INSTALL_PATH = "@rpath";
 				MACOSX_DEPLOYMENT_TARGET = 11.5;
@@ -1084,6 +1086,7 @@
 					"\"$(CORONA_ROOT)/Corona/shared/include/lua\"",
 					"\"$(CORONA_ROOT)/Corona/ios/include/Corona\"",
 					"\"$(PROJECT_DIR)/../shared/\"",
+					"\"$(PROJECT_DIR)/../runtime/spine-4.2/\"",
 				);
 				INSTALL_PATH = "@rpath";
 				MACOSX_DEPLOYMENT_TARGET = 11.5;
@@ -1103,7 +1106,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A491863D1641DDB800A39286 /* Build configuration list for PBXNativeTarget "plugin_spine" */ = {
+		A491863D1641DDB800A39286 /* Build configuration list for PBXNativeTarget "plugin_spine42" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A491863E1641DDB800A39286 /* Debug */,

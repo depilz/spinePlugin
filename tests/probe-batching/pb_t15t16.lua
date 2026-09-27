@@ -1,7 +1,7 @@
 -- ports of render fx/t15_inject_order.lua (36 visible placements, raptor walk) and release tests/t16_hidden_injection_order.lua
 -- (21 hidden-region placements) to the split fixture. t15 is reported twice: with its original SELF-REFERENTIAL oracle (the
 -- tree's own batched command list decides where the object should be) and with the independent per-slot reference.
-local C = dofile(arg[0]:match("^(.*)/") .. "/common.lua")
+local C = dofile(arg[0]:match("^(.*)/") .. "/../splitfx/common.lua")
 local mock, fx = C.mock, C.fx
 -- t15
 local obj = C.spine.create(C.data("raptor", 0.5))

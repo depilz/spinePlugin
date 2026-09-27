@@ -1,7 +1,7 @@
 -- T8: is a spine object (and its listener closure) ever collected if removeSelf() is never called?
 -- (e.g. parent group removed by Composer). luaSelf = registry ref to the SpineSkeleton userdata.
 local fx = require("realdata_fixture")
-local C = dofile(arg[0]:match("^(.*)/") .. "/check.lua")
+local C = dofile(arg[0]:match("^(.*)/") .. "/../check.lua")
 local data = fx.loadData("spineboy/spineboy.atlas", "spineboy/spineboy.json")
 local weak = setmetatable({}, {__mode = "k"})
 do

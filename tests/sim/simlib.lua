@@ -32,9 +32,10 @@ end
 function M.check(name, ok, ...)
   M.log("CHECK", ok and "PASS" or "FAIL", name, ...)
 end
-function M.loadPlugin()
-  local ok, spine = pcall(require, "plugin.spine")
-  M.log("require('plugin.spine')", ok, type(spine), (not ok) and tostring(spine) or "")
+function M.loadPlugin(name)
+  name = name or "plugin.spine42"
+  local ok, spine = pcall(require, name)
+  M.log("require('" .. name .. "')", ok, type(spine), (not ok) and tostring(spine) or "")
   M.log("package.cpath", package.cpath)
   return spine
 end

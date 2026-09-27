@@ -1,5 +1,5 @@
 -- probe: which spineboy slots produce EMPTY render commands (0 indices, attachment visible) during 'portal' (clipping)
-local C = dofile(arg[0]:match("^(.*)/") .. "/common.lua")
+local C = dofile(arg[0]:match("^(.*)/") .. "/../splitfx/common.lua")
 local name, anim = arg[1] or "spineboy", arg[2] or "portal"
 local obj = C.spine.create(C.data(name, 0.5))
 obj:setAnimation(1, anim, false)

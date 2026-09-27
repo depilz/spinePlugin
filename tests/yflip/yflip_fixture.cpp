@@ -43,7 +43,8 @@ static int worldTransformPhysics(lua_State *L) {
 static int boneWorld(lua_State *L) {
     Bone *b = skeletonOf(L)->findBone(luaL_checkstring(L, 2));
     if (!b) return 0;
-    lua_pushnumber(L, b->getWorldX()); lua_pushnumber(L, b->getWorldY());
+    auto &w = spc::applied(*b);
+    lua_pushnumber(L, w.getWorldX()); lua_pushnumber(L, w.getWorldY());
     return 2;
 }
 
@@ -51,7 +52,8 @@ static int boneWorld(lua_State *L) {
 static int boneWorldFull(lua_State *L) {
     Bone *b = skeletonOf(L)->findBone(luaL_checkstring(L, 2));
     if (!b) return 0;
-    lua_pushnumber(L, b->getWorldX()); lua_pushnumber(L, b->getWorldY()); lua_pushnumber(L, b->getWorldRotationX());
+    auto &w = spc::applied(*b);
+    lua_pushnumber(L, w.getWorldX()); lua_pushnumber(L, w.getWorldY()); lua_pushnumber(L, w.getWorldRotationX());
     return 3;
 }
 

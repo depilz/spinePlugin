@@ -52,7 +52,7 @@ static int slot_index(lua_State *L)
     }
     else if (strcmp(key, "attachment") == 0)
     {
-        Attachment *attachment = slot.getAttachment();
+        Attachment *attachment = spc::pose(slot).getAttachment();
         if (!attachment)
         {
             lua_pushnil(L);
@@ -105,7 +105,7 @@ static void setAttachment(lua_State *L, LuaSlot *slotUserdata)
     // Check if it's nil - clear attachment
     if (lua_isnil(L, 3))
     {
-        slotUserdata->slot->setAttachment(nullptr);
+        spc::pose(*slotUserdata->slot).setAttachment(nullptr);
         return;
     }
 
@@ -125,7 +125,7 @@ static void setAttachment(lua_State *L, LuaSlot *slotUserdata)
                 {
                     if (attachmentUserdata->dataOwner != slotUserdata->dataOwner)
                         luaL_argerror(L, 3, "Attachment belongs to different skeleton data");
-                    slotUserdata->slot->setAttachment(attachmentUserdata->attachment);
+                    spc::pose(*slotUserdata->slot).setAttachment(attachmentUserdata->attachment);
                     return;
                 }
             }
@@ -149,7 +149,7 @@ static void setAttachment(lua_State *L, LuaSlot *slotUserdata)
         return;
     }
 
-    slotUserdata->slot->setAttachment(attachment);
+    spc::pose(*slotUserdata->slot).setAttachment(attachment);
 }
 
 // slot:setAttachmentFromSkin(skinName, attachmentName)
@@ -172,7 +172,7 @@ static int setAttachmentFromSkin(lua_State *L)
     int slotIndex = slot.getData().getIndex();
 
     // Find the specified skin
-    Skin *skin = slot.getSkeleton().getData()->findSkin(skinName);
+    Skin *skin = spc::data(slot.getSkeleton()).findSkin(skinName);
     if (!skin)
     {
         fprintf(stderr, "WARNING: Skin not found: %s\n", skinName);
@@ -189,7 +189,7 @@ static int setAttachmentFromSkin(lua_State *L)
         return 1;
     }
 
-    slot.setAttachment(attachment);
+    spc::pose(slot).setAttachment(attachment);
     lua_pushboolean(L, true);
     return 1;
 }
@@ -299,7 +299,7 @@ static int getAttachments(lua_State *L)
     lua_newtable(L);
 
     int i = 1;
-    SkeletonData *skeletonData = slot.getSkeleton().getData();
+    SkeletonData *skeletonData = &spc::data(slot.getSkeleton());
 
     for (int skinIndex = 0; skinIndex < skeletonData->getSkins().size(); ++skinIndex)
     {
@@ -339,7 +339,7 @@ static int getSkinAttachments(lua_State *L)
     // return a table with all the attachments available in the skin
     lua_newtable(L);
 
-    SkeletonData *skeletonData = slot.getSkeleton().getData();
+    SkeletonData *skeletonData = &spc::data(slot.getSkeleton());
     Skin *skin = skinName ? skeletonData->findSkin(skinName) : slot.getSkeleton().getSkin();
     if (!skinName && !skin)
     {
@@ -377,12 +377,12 @@ static int getAttachmentEntries(lua_State *L)
     slotUserdata->checkAlive(L);
     const char *skinName = luaL_optstring(L, 2, nullptr);
     Skeleton &skeleton = slotUserdata->slot->getSkeleton();
-    Skin *skin = skinName ? skeleton.getData()->findSkin(skinName) : skeleton.getSkin();
+    Skin *skin = skinName ? spc::data(skeleton).findSkin(skinName) : skeleton.getSkin();
     if (skinName && !skin) return 0;
 
     lua_newtable(L);
     std::set<std::string> seen;
-    Skin *sources[] = {skin, skinName ? nullptr : skeleton.getData()->getDefaultSkin()};
+    Skin *sources[] = {skin, skinName ? nullptr : spc::data(skeleton).getDefaultSkin()};
     int index = 1;
     int slotIndex = slotUserdata->slot->getData().getIndex();
     for (Skin *source : sources)
@@ -392,11 +392,11 @@ static int getAttachmentEntries(lua_State *L)
         while (entries.hasNext())
         {
             auto &entry = entries.next();
-            if (entry._slotIndex != slotIndex || !seen.insert(entry._name.buffer()).second) continue;
+            if (entry._slotIndex != slotIndex || !seen.insert(spc::entryName(entry).buffer()).second) continue;
             lua_createtable(L, 0, 4);
             lua_pushinteger(L, slotIndex);
             lua_setfield(L, -2, "slotIndex");
-            lua_pushstring(L, entry._name.buffer());
+            lua_pushstring(L, spc::entryName(entry).buffer());
             lua_setfield(L, -2, "name");
             lua_pushstring(L, source->getName().buffer());
             lua_setfield(L, -2, "skinName");

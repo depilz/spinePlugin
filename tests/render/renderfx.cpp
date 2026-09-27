@@ -66,10 +66,9 @@ static int expected(lua_State *L) {
     SkeletonRenderer r;
     if (s->splitData.isSplitted()) {
         Vector<RenderCommand *> a, b;
-        auto p = r.render(*s->skeleton, inj, s->splitData.getSlotIndices(), a, b);
-        pushCommandList(L, p->first);
-        pushCommandList(L, p->second);
-        delete p;
+        auto p = spc::renderSplit(r, *s->skeleton, inj, s->splitData.getSlotIndices(), a, b);
+        pushCommandList(L, p.first);
+        pushCommandList(L, p.second);
         return 2;
     }
     pushCommandList(L, r.render(*s->skeleton, inj));
@@ -80,8 +79,8 @@ static int boneWorld(lua_State *L) {
     SpineSkeleton *s = getSk(L, 1);
     Bone *b = s->skeleton->findBone(luaL_checkstring(L, 2));
     if (!b) return luaL_error(L, "no bone");
-    lua_pushnumber(L, b->getWorldX());
-    lua_pushnumber(L, b->getWorldY());
+    lua_pushnumber(L, spc::applied(*b).getWorldX());
+    lua_pushnumber(L, spc::applied(*b).getWorldY());
     return 2;
 }
 
@@ -92,7 +91,12 @@ static int physicsInfo(lua_State *L) {
     for (size_t i = 0; i < pcs.size(); ++i) {
         lua_createtable(L, 0, 3);
         lua_pushstring(L, pcs[i]->getData().getName().buffer()); lua_setfield(L, -2, "name");
-        lua_pushstring(L, pcs[i]->getBone()->getData().getName().buffer()); lua_setfield(L, -2, "bone");
+#if SPINE_43()
+        Bone &bone = pcs[i]->getBone().getBone();
+#else
+        Bone &bone = *pcs[i]->getBone();
+#endif
+        lua_pushstring(L, bone.getData().getName().buffer()); lua_setfield(L, -2, "bone");
         lua_pushboolean(L, pcs[i]->isActive()); lua_setfield(L, -2, "active");
         lua_rawseti(L, -2, (int)i + 1);
     }

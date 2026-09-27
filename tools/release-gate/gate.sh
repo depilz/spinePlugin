@@ -1,13 +1,14 @@
 #!/bin/bash
 # Release gate over the internal package layout: <plugin-dir>/<platform>/data.tgz.
-# usage: tools/release-gate/gate.sh [--repo DIR] [--plugin-dir DIR] [--version vX.Y.Z] [--runtime X.Y] [--entry NAME]
-#                                   [platform...]
-# Platforms: android iphone mac-sim win32 (default: all four). Defaults come from the repo (the checkout holding this
-# script): the version from shared/Lua_Spine.cpp pluginVersion, the runtime from shared/spine/Version.h, the entry
-# from its luaopen_<name>, the archives from plugin/com.studycat.spine/plugin.spine.
-# Every binary must carry exactly the version literal, the runtime literal and no other Spine runtime's, no 4.3-only
-# symbol on an older runtime, the entry symbol, and its platform's architecture (android: the 4 ABIs, 16 KB LOAD
-# alignment on 64-bit; iphone: arm64 device slice; mac-sim: universal and codesigned; win32: PE32).
+# usage: tools/release-gate/gate.sh [--repo DIR] [--line 4.2|4.3] [--plugin-dir DIR] [--version vX.Y.Z] [--runtime X.Y]
+#                                   [--entry NAME] [platform...]
+# Platforms: android iphone mac-sim win32 (default: all four). Defaults come from the line's runtime (default 4.2) in
+# the repo (the checkout holding this script): runtime/spine-<line>/spine/Version.h gives the version
+# (SPINE_PLUGIN_VERSION), the runtime (SPINE_VERSION_STRING) and the entry plugin_spine<major><minor>; the archives
+# default to plugin/com.studycat.spine/plugin.spine.
+# Every binary must carry exactly the version literal, the runtime literal and no other Spine runtime's, 4.3-only
+# symbols on runtime 4.3 and none on an older runtime, the entry symbol, and its platform's architecture (android: the
+# 4 ABIs, 16 KB LOAD alignment on 64-bit; iphone: arm64 device slice; mac-sim: universal and codesigned; win32: PE32).
 # Prints OK|FAIL per binary and per archive; exit 0 = every archive passed, 1 = a check failed, 2 = usage error.
 set -uo pipefail
 
@@ -87,7 +88,8 @@ check_binary() {
   esac
   [[ "$v" == "$VERSION " ]] || why+=" version"
   [[ "$rt" == "$RUNTIME " ]] || why+=" runtime"
-  if markers_forbidden && (( markers )); then why+=" 4.3-markers"; fi
+  if markers_forbidden; then (( markers == 0 )) || why+=" 4.3-markers"
+  else (( markers )) || why+=" no-4.3-markers"; fi
   (( entry )) || why+=" entry"
   platform_checks "$1" "$2"
   report "$1/${2#"$TMP/$1/"} version=[$v] runtime=[$rt] 4.3-markers=$markers entry=$entry $info"
@@ -131,11 +133,12 @@ check_archive() {
 }
 
 REPO=$(cd "$(dirname "$0")/../.." && pwd)
-PLUGIN_DIR="" VERSION="" RUNTIME="" ENTRY=""
+LINE=4.2 PLUGIN_DIR="" VERSION="" RUNTIME="" ENTRY=""
 while (( $# )); do
   case $1 in
     -h|--help) usage; exit 0 ;;
     --repo) value "$@"; REPO=$2; shift 2 ;;
+    --line) value "$@"; LINE=$2; shift 2 ;;
     --plugin-dir) value "$@"; PLUGIN_DIR=$2; shift 2 ;;
     --version) value "$@"; VERSION=$2; shift 2 ;;
     --runtime) value "$@"; RUNTIME=$2; shift 2 ;;
@@ -147,9 +150,10 @@ done
 for plat in "$@"; do [[ " $PLATFORMS " == *" $plat "* ]] || die "unknown platform '$plat' (one of: $PLATFORMS)"; done
 (( $# )) || set -- $PLATFORMS
 PLUGIN_DIR=${PLUGIN_DIR:-$REPO/plugin/com.studycat.spine/plugin.spine}
-[[ -n "$VERSION" ]] || VERSION=$(tree_value shared/Lua_Spine.cpp 's/.*pluginVersion = "\(v[^"]*\)".*/\1/p' pluginVersion) || exit 2
-[[ -n "$RUNTIME" ]] || RUNTIME=$(tree_value shared/spine/Version.h 's/^#define SPINE_VERSION_STRING "\(.*\)"$/\1/p' SPINE_VERSION_STRING) || exit 2
-[[ -n "$ENTRY" ]] || ENTRY=$(tree_value shared/Lua_Spine.cpp 's/.*CORONA_EXPORT int luaopen_\([A-Za-z0-9_]*\)(.*/\1/p' luaopen_) || exit 2
+VERSION_H=runtime/spine-$LINE/spine/Version.h
+[[ -n "$VERSION" ]] || VERSION=$(tree_value "$VERSION_H" 's/^#define SPINE_PLUGIN_VERSION "\(.*\)"$/\1/p' SPINE_PLUGIN_VERSION) || exit 2
+[[ -n "$RUNTIME" ]] || RUNTIME=$(tree_value "$VERSION_H" 's/^#define SPINE_VERSION_STRING "\(.*\)"$/\1/p' SPINE_VERSION_STRING) || exit 2
+[[ -n "$ENTRY" ]] || ENTRY=plugin_spine$(tree_value "$VERSION_H" 's/^#define SPINE_M[AI][JN]OR_VERSION \([0-9]*\)$/\1/p' SPINE_MAJOR/MINOR_VERSION | tr -d '\n') || exit 2
 
 TMP=$(mktemp -d "${TMPDIR:-/tmp}/release-gate.XXXXXX") || exit 2
 trap 'rm -rf "$TMP"' EXIT

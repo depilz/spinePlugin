@@ -2,6 +2,7 @@
 # SPINE_TEST_OUT, keyed by mode and source content, and reused by every suite.
 #   SPINE_TEST_OUT  required: build products go under $SPINE_TEST_OUT/host
 #   SPINE_REPO      checkout whose shared/ is built (default: the one containing this file)
+#   SPINE_RUNTIME   the runtime line, built from runtime/spine-$SPINE_RUNTIME (tests/run.sh sets it; default 4.2)
 #   LUA51_SRC       Lua 5.1.3 src dir (default: tests/third_party/lua-5.1.3/src)
 #   CORONA_NATIVE   Corona Native root holding Corona/shared/include/Corona (default: tests/third_party/solar2d)
 #   SDKROOT         taken as is; linking needs the Xcode 26.4 SDK
@@ -11,9 +12,22 @@ HOST_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SPINE_REPO="${SPINE_REPO:-$(cd "$HOST_DIR/../.." && pwd)}"
 LUA51_SRC="${LUA51_SRC:-$(cd "$HOST_DIR/../third_party/lua-5.1.3/src" && pwd)}"
 CORONA_NATIVE="${CORONA_NATIVE:-$(cd "$HOST_DIR/../third_party/solar2d" && pwd)}"
+export SPINE_RUNTIME="${SPINE_RUNTIME:-4.2}"
 : "${SPINE_TEST_OUT:?SPINE_TEST_OUT must name the build output directory}"
-HOST_INC=(-I"$LUA51_SRC" -I"$SPINE_REPO/shared" -I"$SPINE_REPO/shared/spine" -I"$CORONA_NATIVE/Corona/shared/include/Corona")
+HOST_RUNTIME="$SPINE_REPO/runtime/spine-$SPINE_RUNTIME"
+[[ -f "$HOST_RUNTIME/spine/Version.h" ]] || { echo "host: no runtime line $SPINE_RUNTIME ($HOST_RUNTIME)" >&2; return 1; }
+HOST_INC=(-I"$LUA51_SRC" -I"$SPINE_REPO/shared" -I"$HOST_RUNTIME" -I"$CORONA_NATIVE/Corona/shared/include/Corona")
 HOST_JOBS=$(sysctl -n hw.ncpu)
+# the plugin's Lua entry on the runtime line (SPINE_PLUGIN_LUAOPEN: luaopen_plugin_spine<major><minor>)
+HOST_ENTRY=luaopen_plugin_spine$(sed -nE 's/^#define SPINE_(MAJOR|MINOR)_VERSION ([0-9]+)$/\2/p' \
+  "$HOST_RUNTIME/spine/Version.h" | tr -d '\n')
+
+# host_line_src file: the line's own variant of a test source (dir/name43.cpp for dir/name.cpp on 4.3) when
+# there is one, else the file itself
+host_line_src() {
+  local variant="${1%.*}${SPINE_RUNTIME//./}.${1##*.}"
+  if [[ -f "$variant" ]]; then echo "$variant"; else echo "$1"; fi
+}
 
 # host_flags mode: compile and link flags of the mode
 host_flags() {
@@ -55,7 +69,7 @@ _host_objs() {
 }
 
 _host_shared_key() {
-  _host_key "$SPINE_REPO"/shared/*.* "$SPINE_REPO"/shared/spine/* "$CORONA_NATIVE"/Corona/shared/include/Corona/*.h
+  _host_key "$SPINE_REPO"/shared/*.* "$HOST_RUNTIME"/spine/* "$CORONA_NATIVE"/Corona/shared/include/Corona/*.h
 }
 
 # host_lua mode: Lua 5.1.3 library objects
@@ -67,9 +81,9 @@ host_lua() {
   _host_objs "$1" lua "$(_host_key "$LUA51_SRC"/*.[ch])" -DLUA_USE_MACOSX "${srcs[@]}"
 }
 
-# host_runtime mode: spine-cpp runtime objects (shared/spine)
+# host_runtime mode: spine-cpp runtime objects of the line (runtime/spine-$SPINE_RUNTIME/spine)
 host_runtime() {
-  _host_objs "$1" runtime "$(_host_shared_key)" "$SPINE_REPO"/shared/spine/*.cpp
+  _host_objs "$1" runtime "$(_host_shared_key)" "$HOST_RUNTIME"/spine/*.cpp
 }
 
 # host_bindings mode: plugin binding objects, shared/*.cpp minus the files that need the Corona runtime

@@ -1,7 +1,7 @@
 -- Test for slot:setAttachmentFromSkin() method
 -- Demonstrates how to set slot attachments from specific skins
 
-local spine = require "plugin.spine"
+local spine = require "plugin.spine42"
 
 -- Clean up any previous display objects
 display.remove(display.getCurrentStage())

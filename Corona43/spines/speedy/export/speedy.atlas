@@ -1,0 +1,60 @@
+speedy.png
+	size: 1024, 256
+	filter: Linear, Linear
+belt-ends
+	bounds: 46, 67, 45, 56
+hair-1
+	bounds: 246, 78, 82, 39
+	rotate: 90
+hair-2
+	bounds: 356, 112, 74, 43
+head
+	bounds: 2, 125, 116, 124
+hood-end1a
+	bounds: 404, 26, 23, 84
+hood-end1b
+	bounds: 341, 31, 28, 79
+hood-end1c
+	bounds: 287, 22, 31, 70
+hood-end1d
+	bounds: 165, 33, 29, 82
+hood-end1e
+	bounds: 432, 62, 35, 78
+hood-end1f
+	bounds: 465, 210, 39, 71
+	rotate: 90
+hood-end2a
+	bounds: 196, 39, 30, 76
+hood-end2b
+	bounds: 469, 69, 38, 71
+hood-end2c
+	bounds: 2, 59, 42, 64
+hood-end2d
+	bounds: 123, 2, 23, 76
+hood-end2e
+	bounds: 93, 4, 28, 74
+hood-end2f
+	bounds: 371, 40, 31, 70
+left-foot
+	bounds: 383, 202, 80, 47
+left-foot-bent01
+	bounds: 199, 162, 87, 43
+left-foot-bent02
+	bounds: 120, 80, 82, 43
+	rotate: 90
+left-foot-side
+	bounds: 291, 207, 90, 42
+left-hand
+	bounds: 287, 94, 52, 53
+right-foot
+	bounds: 288, 149, 66, 56
+right-foot-bent01
+	bounds: 356, 157, 85, 43
+right-foot-bent02
+	bounds: 165, 117, 79, 43
+right-foot-side
+	bounds: 199, 207, 90, 42
+right-hand
+	bounds: 443, 142, 56, 58
+torso
+	bounds: 120, 164, 77, 85

@@ -304,7 +304,7 @@
 		92E2FECD2D0FE7F100457C2F /* Lua_Track.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Lua_Track.h; sourceTree = "<group>"; };
 		92E2FECE2D0FE7F100457C2F /* Lua_Track.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Lua_Track.cpp; sourceTree = "<group>"; };
 		92FC4F522D01523600753BD6 /* Texture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Texture.h; sourceTree = "<group>"; };
-		A4E253B6166D6FB300DCDC2C /* libplugin_spine.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libplugin_spine.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		A4E253B6166D6FB300DCDC2C /* libplugin_spine42.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libplugin_spine42.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F572F81A1EE0705B001BC814 /* CoronaNative.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CoronaNative.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -481,13 +481,13 @@
 				920C36492CD7C8E400CD52FA /* VertexAttachment.cpp */,
 				920C364A2CD7C8E400CD52FA /* Vertices.h */,
 			);
-			path = spine;
-			sourceTree = "<group>";
+			name = spine;
+			path = "../runtime/spine-4.2/spine";
+			sourceTree = SOURCE_ROOT;
 		};
 		920C36522CD7C8E400CD52FA /* shared */ = {
 			isa = PBXGroup;
 			children = (
-				920C364B2CD7C8E400CD52FA /* spine */,
 				9261E9522CF3B8F70044A3E3 /* DataHolder.h */,
 				9261E9532CF3B8F70044A3E3 /* InjectedObject.h */,
 				92863A732D3F289200A7CED9 /* SplitData.h */,
@@ -544,6 +544,7 @@
 			isa = PBXGroup;
 			children = (
 				920C36522CD7C8E400CD52FA /* shared */,
+				920C364B2CD7C8E400CD52FA /* spine */,
 				A447B609165D72A6009EA762 /* Source */,
 				F54A40C01EE083A300AF417D /* CoronaNative */,
 				A484111A15114F700074BD57 /* Products */,
@@ -553,7 +554,7 @@
 		A484111A15114F700074BD57 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A4E253B6166D6FB300DCDC2C /* libplugin_spine.a */,
+				A4E253B6166D6FB300DCDC2C /* libplugin_spine42.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -569,9 +570,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A4E253B5166D6FB300DCDC2C /* plugin_spine */ = {
+		A4E253B5166D6FB300DCDC2C /* plugin_spine42 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A4E253BF166D6FB300DCDC2C /* Build configuration list for PBXNativeTarget "plugin_spine" */;
+			buildConfigurationList = A4E253BF166D6FB300DCDC2C /* Build configuration list for PBXNativeTarget "plugin_spine42" */;
 			buildPhases = (
 				C2E70B581EE9F110006E4570 /* Corona Native */,
 				A4E253B2166D6FB300DCDC2C /* Sources */,
@@ -582,9 +583,9 @@
 			);
 			dependencies = (
 			);
-			name = plugin_spine;
+			name = plugin_spine42;
 			productName = plugin_library;
-			productReference = A4E253B6166D6FB300DCDC2C /* libplugin_spine.a */;
+			productReference = A4E253B6166D6FB300DCDC2C /* libplugin_spine42.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -608,7 +609,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A4E253B5166D6FB300DCDC2C /* plugin_spine */,
+				A4E253B5166D6FB300DCDC2C /* plugin_spine42 */,
 			);
 		};
 /* End PBXProject section */
@@ -812,7 +813,7 @@
 			buildSettings = {
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				DSTROOT = /tmp/plugin_spine.dst;
+				DSTROOT = /tmp/plugin_spine42.dst;
 				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
@@ -822,6 +823,7 @@
 					"\"$(CORONA_ROOT)/Corona/shared/include/lua\"",
 					"\"$(CORONA_ROOT)/Corona/ios/include/Corona\"",
 					"\"$(PROJECT_DIR)/../shared/\"",
+					"\"$(PROJECT_DIR)/../runtime/spine-4.2/\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -839,7 +841,7 @@
 			buildSettings = {
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				DSTROOT = /tmp/plugin_spine.dst;
+				DSTROOT = /tmp/plugin_spine42.dst;
 				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
@@ -849,6 +851,7 @@
 					"\"$(CORONA_ROOT)/Corona/shared/include/lua\"",
 					"\"$(CORONA_ROOT)/Corona/ios/include/Corona\"",
 					"\"$(PROJECT_DIR)/../shared/\"",
+					"\"$(PROJECT_DIR)/../runtime/spine-4.2/\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -873,7 +876,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A4E253BF166D6FB300DCDC2C /* Build configuration list for PBXNativeTarget "plugin_spine" */ = {
+		A4E253BF166D6FB300DCDC2C /* Build configuration list for PBXNativeTarget "plugin_spine42" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A4E253C0166D6FB300DCDC2C /* Debug */,

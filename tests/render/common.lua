@@ -1,10 +1,12 @@
--- Shared by the render tests: the Solar2D mock, the plugin, the renderfx inspection module and the oracle.
--- Tests load it with dofile(<their dir>/common.lua); run.sh passes their absolute path as arg[0].
+-- Shared by the render tests: the Solar2D mock, the plugin, the renderfx inspection module, the oracle and
+-- tests/check.lua's C.expect/C.done. Tests load it with dofile(<their dir>/common.lua); run.sh passes their absolute
+-- path as arg[0].
 local W = arg[0]:match("^(.*)/")
 package.path = W .. "/?.lua;" .. package.path
-local mock = require("mock_solar2d")
-local spine, fx = require("plugin_spine"), require("renderfx")
-local C = { mock = mock, spine = spine, fx = fx, failed = 0 }
+local C = dofile(W .. "/../check.lua")
+C.mock = require("mock_solar2d")
+C.spine, C.fx = require("plugin_spine"), require("renderfx")
+local mock, spine, fx = C.mock, C.spine, C.fx
 local cache = {}
 function C.data(name, scale, atlasName)
   local key = name .. (scale or 1) .. (atlasName or "")
@@ -24,11 +26,4 @@ function C.check(obj, label)
   return errs
 end
 function C.frame(obj, dt) obj:updateState(dt or 16.666); obj:draw() end
--- C.expect(ok, msg): prints and counts a failed check; C.done() raises when any check failed (exit 1)
-function C.expect(ok, msg)
-  if not ok then C.failed = C.failed + 1; print("CHECK FAILED: " .. msg) end
-end
-function C.done()
-  if C.failed > 0 then error(C.failed .. " check(s) failed", 0) end
-end
 return C

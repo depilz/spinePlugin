@@ -1,0 +1,58 @@
+windmill.png
+	size: 1024, 1024
+	filter: Linear, Linear
+	scale: 0.5
+bush1
+	bounds: 810, 416, 56, 38
+bush2
+	bounds: 867, 511, 67, 45
+flower-leaf-back
+	bounds: 977, 394, 16, 11
+flower-leaf-front
+	bounds: 959, 394, 16, 11
+flower-shadow
+	bounds: 888, 401, 23, 9
+flower-stem
+	bounds: 290, 529, 5, 27
+flower1
+	bounds: 988, 510, 22, 19
+flower2
+	bounds: 849, 393, 20, 17
+flower3
+	bounds: 871, 394, 15, 16
+heat
+	bounds: 918, 449, 48, 52
+rooster
+	bounds: 988, 531, 27, 25
+tree1-leaves1
+	bounds: 867, 456, 49, 53
+tree1-leaves2
+	bounds: 760, 421, 48, 50
+tree1-leaves3
+	bounds: 760, 377, 43, 42
+tree1-leaves4
+	bounds: 914, 405, 43, 42
+tree1-trunk
+	bounds: 760, 473, 64, 83
+tree2-leaves1
+	bounds: 936, 503, 50, 53
+tree2-leaves2
+	bounds: 968, 451, 48, 50
+tree2-leaves3
+	bounds: 868, 412, 44, 42
+tree2-leaves4
+	bounds: 968, 407, 43, 42
+tree2-leaves5
+	bounds: 805, 372, 42, 42
+tree2-trunk
+	bounds: 826, 461, 39, 95
+windmill-base
+	bounds: 296, 2, 554, 462
+	rotate: 90
+windmill-blades
+	bounds: 2, 270, 271, 270
+	rotate: 90
+windmill-blades-wood-h
+	bounds: 2, 543, 271, 13
+windmill-blades-wood-v
+	bounds: 275, 286, 13, 270

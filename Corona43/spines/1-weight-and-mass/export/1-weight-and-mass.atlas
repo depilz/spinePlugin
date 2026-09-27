@@ -1,0 +1,31 @@
+1-weight-and-mass.png
+	size: 1024, 1024
+	filter: Linear, Linear
+	scale: 0.5
+beach-ball
+	bounds: 248, 342, 286, 286
+blue-rubber-ball
+	bounds: 641, 450, 103, 103
+cast-shadow-beach
+	bounds: 536, 555, 286, 73
+cast-shadow-blue
+	bounds: 675, 379, 110, 49
+cast-shadow-iron
+	bounds: 675, 379, 110, 49
+cast-shadow-red
+	bounds: 536, 397, 137, 51
+ground-bg
+	bounds: 49, 2, 626, 197
+	rotate: 90
+ground-cover
+	bounds: 746, 430, 171, 59
+red-rubber-ball
+	bounds: 824, 491, 137, 137
+rock
+	bounds: 963, 590, 44, 38
+steel-ball
+	bounds: 536, 450, 103, 103
+stick
+	bounds: 26, 494, 22, 134
+sword
+	bounds: 2, 490, 22, 138

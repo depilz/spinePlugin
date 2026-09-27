@@ -2,7 +2,7 @@
 -- never reach the freed or pooled entry. Stale accesses run in pcall so a raising fix completes the script.
 -- mode = "numeric" | "animation" | "alias" | "afterdestroy" | "listener_entry"
 local fx = require("realdata_fixture")
-local C = dofile(arg[0]:match("^(.*)/") .. "/check.lua")
+local C = dofile(arg[0]:match("^(.*)/") .. "/../check.lua")
 local mode = arg[1]
 local data = fx.loadData("spineboy/spineboy.atlas", "spineboy/spineboy.json")
 local s = fx.createPlugin(data, function(ev)

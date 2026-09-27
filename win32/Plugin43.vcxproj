@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\shared\LuaTableHolder.cpp" />
+    <ClCompile Include="..\shared\Lua_Attachment.cpp" />
+    <ClCompile Include="..\shared\Lua_Bone.cpp" />
+    <ClCompile Include="..\shared\Lua_EffectData.cpp" />
+    <ClCompile Include="..\shared\Lua_Fill.cpp" />
+    <ClCompile Include="..\shared\Lua_FillEffect.cpp" />
+    <ClCompile Include="..\shared\Lua_IKConstraint.cpp" />
+    <ClCompile Include="..\shared\Lua_Physics.cpp" />
+    <ClCompile Include="..\shared\Lua_Skeleton.cpp" />
+    <ClCompile Include="..\shared\Lua_Skin.cpp" />
+    <ClCompile Include="..\shared\Lua_Slot.cpp" />
+    <ClCompile Include="..\shared\Lua_Spine.cpp" />
+    <ClCompile Include="..\shared\Lua_Track.cpp" />
+    <ClCompile Include="..\shared\Lua_TrackEntry.cpp" />
+    <ClCompile Include="..\shared\SkeletonDataHolder.cpp" />
+    <ClCompile Include="..\shared\SpineRenderer.cpp" />
+    <ClCompile Include="..\shared\SpineTexture.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\Animation.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\AnimationState.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\AnimationStateData.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\Atlas.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\AtlasAttachmentLoader.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\Attachment.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\AttachmentLoader.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\AttachmentTimeline.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\Bone.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\BoneData.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\BoneLocal.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\BonePose.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\BoneTimeline.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\BoundingBoxAttachment.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\ClippingAttachment.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\ColorTimeline.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\Constraint.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\ConstraintData.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\ConstraintTimeline.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\ConstraintTimeline1.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\CurveTimeline.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\DeformTimeline.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\DrawOrder.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\DrawOrderFolderTimeline.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\DrawOrderTimeline.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\Event.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\EventData.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\EventTimeline.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\Extension.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\IkConstraint.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\IkConstraintData.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\IkConstraintPose.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\IkConstraintTimeline.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\InheritTimeline.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\Interpolation.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\Json.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\LinkedMesh.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\MathUtil.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\MeshAttachment.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\PathAttachment.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\PathConstraint.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\PathConstraintData.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\PathConstraintMixTimeline.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\PathConstraintPose.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\PathConstraintPositionTimeline.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\PathConstraintSpacingTimeline.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\PhysicsConstraint.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\PhysicsConstraintData.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\PhysicsConstraintPose.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\PhysicsConstraintTimeline.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\PointAttachment.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\RTTI.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\RegionAttachment.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\RotateTimeline.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\ScaleTimeline.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\Sequence.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\SequenceTimeline.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\ShearTimeline.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\Skeleton.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\SkeletonBinary.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\SkeletonBounds.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\SkeletonClipping.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\SkeletonData.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\SkeletonJson.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\SkeletonRenderer.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\Skin.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\Slider.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\SliderData.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\SliderMixTimeline.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\SliderPose.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\SliderTimeline.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\Slot.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\SlotCurveTimeline.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\SlotData.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\SlotPose.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\SlotTimeline.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\SpineObject.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\TextureLoader.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\TextureRegion.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\Timeline.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\TransformConstraint.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\TransformConstraintData.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\TransformConstraintPose.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\TransformConstraintTimeline.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\TranslateTimeline.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\Triangulator.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\Update.cpp" />
+    <ClCompile Include="..\runtime\spine-4.3\spine\VertexAttachment.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\shared\DataHolder.h" />
+    <ClInclude Include="..\shared\InjectedObject.h" />
+    <ClInclude Include="..\shared\LuaAnimationStateListener.h" />
+    <ClInclude Include="..\shared\LuaTableHolder.h" />
+    <ClInclude Include="..\shared\Lua_Attachment.h" />
+    <ClInclude Include="..\shared\Lua_Bone.h" />
+    <ClInclude Include="..\shared\Lua_EffectData.h" />
+    <ClInclude Include="..\shared\Lua_Fill.h" />
+    <ClInclude Include="..\shared\Lua_FillEffect.h" />
+    <ClInclude Include="..\shared\Lua_IKConstraint.h" />
+    <ClInclude Include="..\shared\Lua_Physics.h" />
+    <ClInclude Include="..\shared\Lua_Skeleton.h" />
+    <ClInclude Include="..\shared\Lua_Skin.h" />
+    <ClInclude Include="..\shared\Lua_Slot.h" />
+    <ClInclude Include="..\shared\Lua_Spine.h" />
+    <ClInclude Include="..\shared\Lua_Track.h" />
+    <ClInclude Include="..\shared\Lua_TrackEntry.h" />
+    <ClInclude Include="..\shared\MeshManager.h" />
+    <ClInclude Include="..\shared\SkeletonDataHolder.h" />
+    <ClInclude Include="..\shared\SpineRenderer.h" />
+    <ClInclude Include="..\shared\SpineTexture.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\Animation.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\AnimationState.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\AnimationStateData.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\Array.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\ArrayUtils.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\Atlas.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\AtlasAttachmentLoader.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\Attachment.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\AttachmentLoader.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\AttachmentTimeline.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\AttachmentType.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\BlendMode.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\BlockAllocator.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\Bone.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\BoneData.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\BoneLocal.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\BonePose.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\BoneTimeline.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\BoundingBoxAttachment.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\ClippingAttachment.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\Color.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\ColorTimeline.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\Constraint.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\ConstraintData.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\ConstraintTimeline.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\ConstraintTimeline1.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\CurveTimeline.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\Debug.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\DeformTimeline.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\DrawOrder.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\DrawOrderFolderTimeline.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\DrawOrderTimeline.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\Event.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\EventData.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\EventTimeline.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\Extension.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\HasRendererObject.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\HashMap.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\IkConstraint.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\IkConstraintData.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\IkConstraintPose.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\IkConstraintTimeline.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\Inherit.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\InheritTimeline.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\Interpolation.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\Json.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\LinkedMesh.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\Map.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\MathUtil.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\MeshAttachment.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\PathAttachment.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\PathConstraint.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\PathConstraintData.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\PathConstraintMixTimeline.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\PathConstraintPose.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\PathConstraintPositionTimeline.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\PathConstraintSpacingTimeline.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\Physics.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\PhysicsConstraint.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\PhysicsConstraintData.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\PhysicsConstraintPose.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\PhysicsConstraintTimeline.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\PointAttachment.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\Pool.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\Pose.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\Posed.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\PosedActive.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\PosedData.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\PositionMode.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\Property.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\RTTI.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\RegionAttachment.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\RotateMode.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\RotateTimeline.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\ScaleTimeline.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\Sequence.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\SequenceTimeline.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\ShearTimeline.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\Skeleton.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\SkeletonBinary.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\SkeletonBounds.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\SkeletonClipping.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\SkeletonData.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\SkeletonJson.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\SkeletonRenderer.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\Skin.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\Slider.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\SliderData.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\SliderMixTimeline.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\SliderPose.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\SliderTimeline.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\Slot.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\SlotCurveTimeline.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\SlotData.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\SlotPose.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\SlotTimeline.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\SpacingMode.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\SpineObject.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\SpineString.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\TextureLoader.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\TextureRegion.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\Timeline.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\TransformConstraint.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\TransformConstraintData.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\TransformConstraintPose.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\TransformConstraintTimeline.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\TranslateTimeline.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\Triangulator.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\Update.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\Version.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\VertexAttachment.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\dll.h" />
+    <ClInclude Include="..\runtime\spine-4.3\spine\spine.h" />
+    <ClInclude Include="..\shared\SplitData.h" />
+    <ClInclude Include="..\shared\Texture.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{62027595-9414-42E4-90EA-D8B8CED7FF71}</ProjectGuid>
+    <RootNamespace>Plugin</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v145</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v145</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>12.0.21005.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LocalDebuggerCommand>$(CORONA_PATH)\Corona Simulator.exe</LocalDebuggerCommand>
+    <LocalDebuggerWorkingDirectory>$(CORONA_PATH)</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <TargetName>plugin_library</TargetName>
+    <IntDir>$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <TargetName>plugin_spine43</TargetName>
+    <IntDir>$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(CORONA_ROOT)\Corona\shared\include\Corona;$(CORONA_ROOT)\Corona\shared\include\lua;$(ProjectDir)..\shared\;$(ProjectDir)..\runtime\spine-4.3\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <PreBuildEvent />
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(CORONA_ROOT)\Corona\shared\include\Corona;$(CORONA_ROOT)\Corona\shared\include\lua;$(ProjectDir)..\shared\;$(ProjectDir)..\runtime\spine-4.3\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;PLUGIN_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>$(CORONA_ROOT)\Corona\win\lib\*.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(TargetPath)" "%APPDATA%\Corona Labs\Corona Simulator\Plugins" /Y /I /E
+</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <PreBuildEvent />
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>$(CORONA_ROOT)\Corona\shared\include\Corona;$(CORONA_ROOT)\Corona\shared\include\lua;$(ProjectDir)..\runtime\spine-4.3\;$(ProjectDir)..\shared\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;PLUGIN_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>$(CORONA_ROOT)\Corona\win\lib\*.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(TargetPath)" "%APPDATA%\Corona Labs\Corona Simulator\Plugins" /Y /I /E</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="LuaToCppTask.targets" />
+  </ImportGroup>
+</Project>

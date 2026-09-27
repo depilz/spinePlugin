@@ -1,0 +1,9 @@
+3-timing-and-spacing-pma.png
+	size: 512, 128
+	filter: Linear, Linear
+	pma: true
+	scale: 0.5
+pendulum
+	bounds: 2, 2, 373, 106
+square
+	bounds: 377, 28, 80, 80

@@ -1,6 +1,6 @@
 -- T1: basic animation-control surface: return values, units, 1-based indices, tracks proxy.
 local fx = require("realdata_fixture")
-local C = dofile(arg[0]:match("^(.*)/") .. "/check.lua")
+local C = dofile(arg[0]:match("^(.*)/") .. "/../check.lua")
 local data = fx.loadData("spineboy/spineboy.atlas", "spineboy/spineboy.json")
 local s = fx.createPlugin(data)
 

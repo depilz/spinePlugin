@@ -1,5 +1,5 @@
 -- probe-batching: inventory of example skeletons (skins, animations, slots)
-local C = dofile(arg[0]:match("^(.*)/") .. "/common.lua")
+local C = dofile(arg[0]:match("^(.*)/") .. "/../splitfx/common.lua")
 local names = { "alien","celestial-circus","chibi-stickers","cloud-pot","coin","dragon","goblins","hero","mix-and-match","owl","powerup","raptor","sack","snowglobe","speedy","spineboy","stretchyman","tank","vine","windmill" }
 for _, n in ipairs(names) do
   local ok, d = pcall(C.data, n, 0.5)

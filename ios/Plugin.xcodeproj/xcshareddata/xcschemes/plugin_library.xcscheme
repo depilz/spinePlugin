@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "A4E253B5166D6FB300DCDC2C"
-               BuildableName = "libplugin_spine.a"
-               BlueprintName = "plugin_spine"
+               BuildableName = "libplugin_spine42.a"
+               BlueprintName = "plugin_spine42"
                ReferencedContainer = "container:Plugin.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -51,8 +51,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A4E253B5166D6FB300DCDC2C"
-            BuildableName = "libplugin_spine.a"
-            BlueprintName = "plugin_spine"
+            BuildableName = "libplugin_spine42.a"
+            BlueprintName = "plugin_spine42"
             ReferencedContainer = "container:Plugin.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

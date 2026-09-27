@@ -1,6 +1,6 @@
 -- probe-batching: oracle after every frame with NO injections (plain content; clipping yields empty commands on rule ii / 4.3),
 -- every animation x 120 frames, Corona/spines examples. Split mode with arg[1] = "split" (or env PB_SPLIT=1).
-local C = dofile(arg[0]:match("^(.*)/") .. "/common.lua")
+local C = dofile(arg[0]:match("^(.*)/") .. "/../splitfx/common.lua")
 local mock, fx = C.mock, C.fx
 io.stdout:setvbuf("no")
 local SPLIT = arg[1] == "split" or os.getenv("PB_SPLIT") == "1"

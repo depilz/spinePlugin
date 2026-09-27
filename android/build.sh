@@ -1,4 +1,5 @@
 #!/bin/sh
+# usage: android/build.sh [4.2|4.3]  (the Spine line, default 4.2: libplugin.spine42 or libplugin.spine43)
 
 # This option is used to exit the script as
 # soon as a command returns a non-zero value.
@@ -6,7 +7,8 @@ set -o errexit
 
 path=`dirname $0`
 
-TARGET_NAME=spine
+SPINE_LINE=${1:-4.2}
+TARGET_NAME=spine$(echo "$SPINE_LINE" | tr -d .)
 CONFIG=Release
 DEVICE_TYPE=all
 BUILD_TYPE=clean
@@ -44,6 +46,14 @@ pushd $path > /dev/null
 dir=`pwd`
 path=$dir
 popd > /dev/null
+if [ ! -d "$path/../runtime/spine-$SPINE_LINE/spine" ] || [ ! -f "$path/metadata-$SPINE_LINE.lua" ]
+then
+	echo "ERROR: unknown Spine line '$SPINE_LINE' (no runtime/spine-$SPINE_LINE or android/metadata-$SPINE_LINE.lua)"
+	exit 1
+fi
+# Every output (unpacked Corona libraries, objects, jniLibs, data.tgz) goes under BUILD_DIR, never a tracked path
+BUILD_DIR=${BUILD_DIR:-$path/build/$TARGET_NAME}
+mkdir -p "$BUILD_DIR"
 
 ######################
 # Build .so          #
@@ -63,7 +73,7 @@ fi
 if [ "clean" == "$BUILD_TYPE" ]
 then
 	echo "== Clean build =="
-	rm -rf $path/obj/ $path/libs/ $path/data.tgz
+	rm -rf "$BUILD_DIR/obj" "$BUILD_DIR/libs" "$BUILD_DIR/data.tgz"
 	FLAGS="-B"
 else
 	echo "== Incremental build =="
@@ -77,9 +87,10 @@ then
 	CFLAGS="${CFLAGS} -DRtt_DEBUG -g"
 	FLAGS="$FLAGS NDK_DEBUG=1"
 fi
+FLAGS="$FLAGS NDK_OUT=$BUILD_DIR/obj NDK_LIBS_OUT=$BUILD_DIR/libs CORONA_LIBS=$BUILD_DIR/corona-libs SPINE_LINE=$SPINE_LINE"
 
 # Copy .so files
-LIBS_DST_DIR="$path/corona-libs"
+LIBS_DST_DIR="$BUILD_DIR/corona-libs"
 mkdir -p "$LIBS_DST_DIR"
 
 unzip -u "$LIBS_SRC_DIR" "jni/*/*.so" -d "$LIBS_DST_DIR"
@@ -99,10 +110,10 @@ else
 	$CMD $ANDROID_NDK/ndk-build $FLAGS V=1 MY_CFLAGS="$CFLAGS" APP_OPTIM=$OPTIM_FLAGS
 fi
 
-find "$path/libs" \( -name liblua.so -or -name libcorona.so \)  -delete
-echo "$path/libs"
-rm -rf "$path/jniLibs"
-mv "$path/libs" "$path/jniLibs"
+find "$BUILD_DIR/libs" \( -name liblua.so -or -name libcorona.so \)  -delete
+echo "$BUILD_DIR/libs"
+rm -rf "$BUILD_DIR/jniLibs"
+mv "$BUILD_DIR/libs" "$BUILD_DIR/jniLibs"
 
 popd > /dev/null
 
@@ -111,13 +122,14 @@ popd > /dev/null
 ######################
 
 echo Done.
-echo $path/jniLibs/armeabi-v7a/libplugin.$TARGET_NAME.so
+echo $BUILD_DIR/jniLibs/armeabi-v7a/libplugin.$TARGET_NAME.so
 
 
 echo Packing binaries...
-OUTPUT_DIR=$path/../plugin/com.studycat.spine/plugin.spine/android
+OUTPUT_DIR=$BUILD_DIR
 # Package metadata and ABI-specific libraries under jniLibs only.
 # Do not include a duplicate top-level libplugin.$TARGET_NAME.so to avoid
 # triggering ELF alignment checks for 32-bit copies.
-tar -czvf $OUTPUT_DIR/data.tgz -C $path metadata.lua -C $path jniLibs
+cp "$path/metadata-$SPINE_LINE.lua" "$BUILD_DIR/metadata.lua"
+tar -czvf $OUTPUT_DIR/data.tgz -C $BUILD_DIR metadata.lua jniLibs
 echo $OUTPUT_DIR/data.tgz

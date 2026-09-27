@@ -61,7 +61,7 @@
 		C22C1E4B1E981D9000D74196 /* LaunchScreen.storyboardc in Resources */ = {isa = PBXBuildFile; fileRef = C22C1E4A1E981D9000D74196 /* LaunchScreen.storyboardc */; };
 		E640B2F21BFC00B00031FAE9 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E640B2F11BFC00B00031FAE9 /* AssetsLibrary.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		E640B2F41BFC00BA0031FAE9 /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E640B2F31BFC00BA0031FAE9 /* Photos.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		F51C66D61EE0D3B20040E4BE /* libplugin_spine.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A4E253E2166DE7C800DCDC2C /* libplugin_spine.a */; };
+		F51C66D61EE0D3B20040E4BE /* libplugin_spine42.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A4E253E2166DE7C800DCDC2C /* libplugin_spine42.a */; };
 		F56457D91FA108F500EC8C29 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F56712391F73451B006B502D /* Images.xcassets */; };
 		F5BB41531BC42ACF0033F6FA /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5BB41521BC42ACF0033F6FA /* CoreText.framework */; };
 		F5C9F4811ED39AD100D34A2D /* _CoronaSplashScreen.png in Resources */ = {isa = PBXBuildFile; fileRef = C277D3B51EBB9F8E00966BA1 /* _CoronaSplashScreen.png */; };
@@ -147,7 +147,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F51C66D61EE0D3B20040E4BE /* libplugin_spine.a in Frameworks */,
+				F51C66D61EE0D3B20040E4BE /* libplugin_spine42.a in Frameworks */,
 				E640B2F41BFC00BA0031FAE9 /* Photos.framework in Frameworks */,
 				E640B2F21BFC00B00031FAE9 /* AssetsLibrary.framework in Frameworks */,
 				F5BB41531BC42ACF0033F6FA /* CoreText.framework in Frameworks */,
@@ -300,7 +300,7 @@
 		A4E253DB166DE7C800DCDC2C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A4E253E2166DE7C800DCDC2C /* libplugin_spine.a */,
+				A4E253E2166DE7C800DCDC2C /* libplugin_spine42.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -374,10 +374,10 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		A4E253E2166DE7C800DCDC2C /* libplugin_spine.a */ = {
+		A4E253E2166DE7C800DCDC2C /* libplugin_spine42.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libplugin_spine.a;
+			path = libplugin_spine42.a;
 			remoteRef = A4E253E1166DE7C800DCDC2C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};

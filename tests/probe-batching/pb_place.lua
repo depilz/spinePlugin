@@ -9,7 +9,7 @@
 -- R = mesh children differ from the tree's own batched command list (order/count/vertices/texture/blend/color);
 -- Q = paint only (blend/color/texture differ, e.g. render-6); G = vertex total per group differs from the reference;
 -- F = plugin references a finalized mesh; X = draw raised. A frame can count in several classes.
-local C = dofile(arg[0]:match("^(.*)/") .. "/common.lua")
+local C = dofile(arg[0]:match("^(.*)/") .. "/../splitfx/common.lua")
 local mock, fx = C.mock, C.fx
 io.stdout:setvbuf("no")
 local SPLIT = arg[1] == "split" or os.getenv("PB_SPLIT") == "1"

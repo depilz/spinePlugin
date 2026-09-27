@@ -1,6 +1,7 @@
 # One Simulator scenario per line: script, then its argument. Read by suite.sh; the test id is the script name
 # without .lua, then the argument. s9_error_propagation a is the engine-only control (pcall(rect.removeSelf, {})
 # aborts the Simulator with no plugin involved) and is run by hand.
+# s17_digest spine42 checks its digests against the results of the s17_digest base run before it.
 s0_smoke.lua
 s1_lifecycle.lua
 s1_lifecycle.lua late
@@ -18,3 +19,5 @@ s9_error_propagation.lua b
 s9_error_propagation.lua c
 s16_double_remove.lua same
 s16_double_remove.lua next
+s17_digest.lua base
+s17_digest.lua spine42

@@ -1,6 +1,6 @@
 -- render-2 via clipping in split mode: spineboy 'portal' clips the body completely for ~65 frames.
 -- split(slots) whose first drawn split slot is fully clipped => the split pass starts with an EMPTY command.
-local C = dofile(arg[0]:match("^(.*)/") .. "/common.lua")
+local C = dofile(arg[0]:match("^(.*)/") .. "/../splitfx/common.lua")
 local sets = { { "head" }, { "torso", "head" }, { "portal-bg", "head" } }
 local only = tonumber(arg[1])
 for i, slots in ipairs(sets) do

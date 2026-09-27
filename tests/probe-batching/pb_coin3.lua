@@ -1,5 +1,5 @@
 -- trace: coin, inject coin-side (hidden, first in draw order) + coin-side-round
-local C = dofile(arg[0]:match("^(.*)/") .. "/common.lua")
+local C = dofile(arg[0]:match("^(.*)/") .. "/../splitfx/common.lua")
 local mock, fx = C.mock, C.fx
 local obj = C.spine.create(C.data("coin", 0.5))
 local A, B = display.newRect(0, 0, 1, 1), display.newRect(0, 0, 1, 1)

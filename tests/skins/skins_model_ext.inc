@@ -24,8 +24,8 @@ static void pushAttachmentInfo(lua_State *L, Attachment *a) {
     }
     if (a->getRTTI().isExactly(MeshAttachment::rtti)) {
         auto *m = (MeshAttachment *)a;
-        if (m->getParentMesh()) { pushPtr(L, m->getParentMesh()); lua_setfield(L, -2, "parentPtr");
-            lua_pushstring(L, m->getParentMesh()->getName().buffer()); lua_setfield(L, -2, "parentName"); }
+        if (MeshAttachment *p = skc::parentMesh(*m)) { pushPtr(L, p); lua_setfield(L, -2, "parentPtr");
+            lua_pushstring(L, p->getName().buffer()); lua_setfield(L, -2, "parentName"); }
     }
 }
 // fx.slotInfo(obj, slotName) -> {attachment=info|false, deformSize, boneActive}
@@ -33,11 +33,12 @@ static int slotInfo(lua_State *L) {
     SpineSkeleton *v = objSkel(L, 1);
     Slot *slot = v->skeleton->findSlot(luaL_checkstring(L, 2));
     if (!slot) return luaL_error(L, "no slot");
+    auto &pose = spc::applied(*slot);
     lua_newtable(L);
-    pushAttachmentInfo(L, slot->getAttachment()); lua_setfield(L, -2, "attachment");
-    lua_pushinteger(L, (lua_Integer)slot->getDeform().size()); lua_setfield(L, -2, "deformSize");
+    pushAttachmentInfo(L, pose.getAttachment()); lua_setfield(L, -2, "attachment");
+    lua_pushinteger(L, (lua_Integer)pose.getDeform().size()); lua_setfield(L, -2, "deformSize");
     lua_pushboolean(L, slot->getBone().isActive()); lua_setfield(L, -2, "boneActive");
-    lua_pushinteger(L, slot->getSequenceIndex()); lua_setfield(L, -2, "sequenceIndex");
+    lua_pushinteger(L, pose.getSequenceIndex()); lua_setfield(L, -2, "sequenceIndex");
     return 1;
 }
 // fx.dataSkinEntry(obj, skinName, slotName, placeholder) -> info|false  (skin from SkeletonData, "" = default)
@@ -77,19 +78,12 @@ static int skinName(lua_State *L) {
 static int updateCacheFn(lua_State *L) { objSkel(L, 1)->skeleton->updateCache(); return 0; }
 // fx.activeConstraints(obj) -> { "ik:name"=bool, "transform:name"=bool, "path:..", "physics:.." }
 static int activeConstraints(lua_State *L) {
-    Skeleton *sk = objSkel(L, 1)->skeleton;
     lua_newtable(L);
-    for (size_t i = 0; i < sk->getIkConstraints().size(); i++) { auto *c = sk->getIkConstraints()[i];
-        lua_pushboolean(L, c->isActive()); lua_setfield(L, -2, (std::string("ik:") + c->getData().getName().buffer()).c_str()); }
-    for (size_t i = 0; i < sk->getTransformConstraints().size(); i++) { auto *c = sk->getTransformConstraints()[i];
-        lua_pushboolean(L, c->isActive()); lua_setfield(L, -2, (std::string("transform:") + c->getData().getName().buffer()).c_str()); }
-    for (size_t i = 0; i < sk->getPathConstraints().size(); i++) { auto *c = sk->getPathConstraints()[i];
-        lua_pushboolean(L, c->isActive()); lua_setfield(L, -2, (std::string("path:") + c->getData().getName().buffer()).c_str()); }
-    for (size_t i = 0; i < sk->getPhysicsConstraints().size(); i++) { auto *c = sk->getPhysicsConstraints()[i];
-        lua_pushboolean(L, c->isActive()); lua_setfield(L, -2, (std::string("physics:") + c->getData().getName().buffer()).c_str()); }
+    skc::forEachConstraint(*objSkel(L, 1)->skeleton, [L](const char *kind, const String &name, bool active) {
+        lua_pushboolean(L, active); lua_setfield(L, -2, (std::string(kind) + ":" + name.buffer()).c_str()); });
     return 1;
 }
-static int updateCacheCount(lua_State *L) { lua_pushinteger(L, (lua_Integer)objSkel(L, 1)->skeleton->getUpdateCacheList().size()); return 1; }
+static int updateCacheCount(lua_State *L) { lua_pushinteger(L, (lua_Integer)skc::updateCacheCount(*objSkel(L, 1)->skeleton)); return 1; }
 // fx.cppSkinScenario(obj, which): raw spine-cpp ownership scenarios (no Lua bindings involved)
 static int cppSkinScenario(lua_State *L) {
     SpineSkeleton *v = objSkel(L, 1);
@@ -99,29 +93,28 @@ static int cppSkinScenario(lua_State *L) {
     if (!strcmp(which, "custom-delete-while-set")) {
         // spine-cpp docs pattern: custom skin composed with addSkin (shares), set, then deleted by the user
         Skin *custom = new Skin("custom");
-        custom->addSkin(data->findSkin("goblin"));
-        sk->setSkin(custom); sk->setSlotsToSetupPose();
-        Slot *head = sk->findSlot("head");
-        int rcBefore = head->getAttachment()->getRefCount();
+        spc::addSkin(custom, data->findSkin("goblin"));
+        sk->setSkin(custom); spc::setSlotsToSetupPose(sk);
+        auto &head = spc::applied(*sk->findSlot("head"));
+        int rcBefore = head.getAttachment()->getRefCount();
         sk->setSkin((Skin *)NULL); // documented way to stop using it
         delete custom;
         lua_pushinteger(L, rcBefore);
-        lua_pushinteger(L, head->getAttachment() ? head->getAttachment()->getRefCount() : -1);
+        lua_pushinteger(L, head.getAttachment() ? head.getAttachment()->getRefCount() : -1);
         return 2;
     }
     if (!strcmp(which, "copy-delete-while-displayed")) {
         // copySkin creates new attachments owned (refcounted) by the custom skin; delete skin while slot shows a copy
         Skin *custom = new Skin("copied");
-        custom->copySkin(data->findSkin("goblin"));
-        sk->setSkin(custom); sk->setSlotsToSetupPose();
-        Slot *head = sk->findSlot("head");
-        Attachment *shown = head->getAttachment();
+        spc::copySkin(custom, data->findSkin("goblin"));
+        sk->setSkin(custom); spc::setSlotsToSetupPose(sk);
+        Attachment *shown = spc::applied(*sk->findSlot("head")).getAttachment();
         int rc = shown->getRefCount();
         sk->setSkin((Skin *)NULL); // spine-cpp docs: setSkin(nullptr); slots keep showing the copies
         delete custom;
         // read every slot's attachment name (UAF under ASan if any slot kept a dangling copy)
         int n = 0;
-        for (size_t i = 0; i < sk->getSlots().size(); i++) { Attachment *a = sk->getSlots()[i]->getAttachment(); if (a && a->getName().length()) n++; }
+        for (size_t i = 0; i < sk->getSlots().size(); i++) { Attachment *a = spc::applied(*sk->getSlots()[i]).getAttachment(); if (a && a->getName().length()) n++; }
         lua_pushinteger(L, rc); lua_pushinteger(L, n);
         return 2;
     }

@@ -1,7 +1,7 @@
 -- T9: the T3/T4/T7 scenarios as the reviewed prototype fix passes them (animation-2/1/3): disposed entries report
 -- isValid = false and raise on access, the tracks proxy raises after removal, removal inside a callback is deferred.
 local fx = require("realdata_fixture")
-local C = dofile(arg[0]:match("^(.*)/") .. "/check.lua")
+local C = dofile(arg[0]:match("^(.*)/") .. "/../check.lua")
 local data = fx.loadData("spineboy/spineboy.atlas", "spineboy/spineboy.json")
 
 print("1) stale entry after dispose / pooled reuse")

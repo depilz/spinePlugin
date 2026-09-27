@@ -262,7 +262,7 @@ static int attachment_index(lua_State *L)
     {
         if (attachment->getRTTI().instanceOf(PathAttachment::rtti))
         {
-            lua_pushboolean(L, static_cast<PathAttachment *>(attachment)->isClosed());
+            lua_pushboolean(L, spc::pathClosed(*static_cast<PathAttachment *>(attachment)));
             return 1;
         }
         lua_pushnil(L);
@@ -272,7 +272,7 @@ static int attachment_index(lua_State *L)
     {
         if (attachment->getRTTI().instanceOf(PathAttachment::rtti))
         {
-            lua_pushboolean(L, static_cast<PathAttachment *>(attachment)->isConstantSpeed());
+            lua_pushboolean(L, spc::pathConstantSpeed(*static_cast<PathAttachment *>(attachment)));
             return 1;
         }
         lua_pushnil(L);
@@ -615,7 +615,7 @@ static int attachment_computeWorldVertices(lua_State *L)
     {
         RegionAttachment *regionAttachment = static_cast<RegionAttachment *>(attachment);
         float worldVertices[8];
-        regionAttachment->computeWorldVertices(*slot, worldVertices, 0, 2);
+        spc::regionWorldVertices(*regionAttachment, *slot, worldVertices);
         
         lua_createtable(L, 8, 0);
         for (int i = 0; i < 8; i++)
@@ -637,7 +637,7 @@ static int attachment_computeWorldVertices(lua_State *L)
         Vector<float> worldVertices;
         worldVertices.setSize(worldVerticesLength, 0);
         
-        vertexAttachment->computeWorldVertices(*slot, worldVertices);
+        spc::vertexWorldVertices(*vertexAttachment, *slot, worldVertices);
         
         lua_createtable(L, (int)worldVerticesLength, 0);
         for (size_t i = 0; i < worldVerticesLength; i++)

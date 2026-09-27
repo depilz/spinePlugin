@@ -1,5 +1,5 @@
 -- coin: all pairs of injected slots (optionally one hidden); counts only placement/order errors (P, R), not paint (Q)
-local C = dofile(arg[0]:match("^(.*)/") .. "/common.lua")
+local C = dofile(arg[0]:match("^(.*)/") .. "/../splitfx/common.lua")
 local mock, fx = C.mock, C.fx
 local S = { "coin-side", "coin-side-round", "coin-front-texture", "coin-front-shine", "shine" }
 local bad, total = 0, 0

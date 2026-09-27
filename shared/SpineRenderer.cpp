@@ -336,27 +336,27 @@ static void callInjectionListener(lua_State *L, InjectedObject *injection, spine
     lua_settable(L, -3);
 
     lua_pushstring(L, "x");
-    lua_pushnumber(L, slot->getBone().getWorldX());
+    lua_pushnumber(L, spc::applied(slot->getBone()).getWorldX());
     lua_settable(L, -3);
 
     lua_pushstring(L, "y");
-    lua_pushnumber(L, slot->getBone().getWorldY());
+    lua_pushnumber(L, spc::applied(slot->getBone()).getWorldY());
     lua_settable(L, -3);
 
     lua_pushstring(L, "rotation");
-    lua_pushnumber(L, slot->getBone().getWorldRotationX());
+    lua_pushnumber(L, spc::applied(slot->getBone()).getWorldRotationX());
     lua_settable(L, -3);
 
     lua_pushstring(L, "xScale");
-    lua_pushnumber(L, slot->getBone().getWorldScaleX());
+    lua_pushnumber(L, spc::applied(slot->getBone()).getWorldScaleX());
     lua_settable(L, -3);
 
     lua_pushstring(L, "yScale");
-    lua_pushnumber(L, slot->getBone().getWorldScaleY());
+    lua_pushnumber(L, spc::applied(slot->getBone()).getWorldScaleY());
     lua_settable(L, -3);
 
     lua_pushstring(L, "alpha");
-    lua_pushnumber(L, slot->getColor().a);
+    lua_pushnumber(L, spc::applied(*slot).getColor().a);
     lua_settable(L, -3);
 
     lua_pushstring(L, "isVisible");

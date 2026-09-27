@@ -1,6 +1,6 @@
 -- s9: exposure with realistic "body part" split sets on the avatar skeleton (mix-and-match):
 -- 8 part sets x 6 animations x 4 avatars; split, 30 frames, reassemble, 5 frames; oracle every frame.
-local C = dofile(arg[0]:match("^(.*)/") .. "/common.lua")
+local C = dofile(arg[0]:match("^(.*)/") .. "/../splitfx/common.lua")
 local mock = C.mock; io.stdout:setvbuf("no")
 local parts = {
   ["front arm"] = { "arm-front", "hand-front", "sleeve-front", "sleeve-inner-front" },

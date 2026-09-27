@@ -1,11 +1,13 @@
 #!/bin/bash
 # run.sh: named-only
 # sim: every scenario in ./scenarios in an isolated copy of the Solar2D Simulator ($SOLAR2D_SIM_APP), one Simulator
-# process per scenario, with plugin_spine.dylib built by xcodebuild from a git archive of HEAD (so uncommitted
-# changes are not in it). A scenario passes when it runs to "DONE exit 0" with no unhandled or logged error; its
+# process per scenario, with plugin_spine42.dylib built by xcodebuild from a git archive of HEAD (so uncommitted
+# changes are not in it), next to the shipped 1.5.0 plugin_spine.dylib from the tracked mac-sim archive (the
+# baseline of s17_digest). A scenario passes when it runs to "DONE exit 0" with no unhandled or logged error; its
 # CHECK lines are recorded as "<test> <check>". Nothing is written to the user's Simulator Plugins dir or its
 # preferences domain (the copy's own ...spinetests preferences and crash reports do land under ~/Library), and the
-# suite fails if the user's Plugins/plugin_spine.dylib changes while it runs.
+# suite fails if any plugin_spine* or plugin.spine* entry of the user's Plugins dir ($SPINE_SIM_USER_PLUGINS, default
+# ~/Library/Application Support/Corona/Simulator/Plugins) changes while it runs, a write inside plugin.spine/ included.
 set -euo pipefail
 W="$(cd "$(dirname "$0")" && pwd)"
 source "$W/../lib.sh"
@@ -21,23 +23,32 @@ PLUGINS=$SUITE_OUT/plugins
 PROJECT=$SUITE_OUT/project
 
 USER_HOME=$(dscl . -read "/Users/$(id -un)" NFSHomeDirectory | sed 's/^NFSHomeDirectory: //')
-USER_DYLIB="$USER_HOME/Library/Application Support/Corona/Simulator/Plugins/plugin_spine.dylib"
-user_dylib_mtime() { stat -f %m "$USER_DYLIB" 2>/dev/null || echo absent; }
-USER_DYLIB_MTIME=$(user_dylib_mtime)
-guard_user_dylib() {
-  echo "user plugin_spine.dylib mtime before $USER_DYLIB_MTIME, after $(user_dylib_mtime)"
-  if [[ "$(user_dylib_mtime)" == "$USER_DYLIB_MTIME" ]]; then record PASS "user Plugins/plugin_spine.dylib unchanged"
-  else record FAIL "user Plugins/plugin_spine.dylib unchanged"; fi
+USER_PLUGINS=${SPINE_SIM_USER_PLUGINS:-"$USER_HOME/Library/Application Support/Corona/Simulator/Plugins"}
+# user_plugins_snapshot: "name mtime size newest-mtime-beneath" per spine entry of $USER_PLUGINS; stat/find only
+user_plugins_snapshot() {
+  local e
+  for e in "$USER_PLUGINS"/plugin_spine* "$USER_PLUGINS"/plugin.spine*; do
+    [[ -e "$e" || -L "$e" ]] || continue
+    printf '%s %s %s\n' "${e##*/}" "$(stat -f '%m %z' "$e")" "$(find "$e" -exec stat -f %m {} + | sort -n | tail -1)"
+  done | sort
 }
-trap guard_user_dylib EXIT
+USER_PLUGINS_BEFORE=$(user_plugins_snapshot)
+guard_user_plugins() {
+  local after
+  after=$(user_plugins_snapshot)
+  if [[ "$after" == "$USER_PLUGINS_BEFORE" ]]; then record PASS "user Plugins spine entries unchanged"; return; fi
+  printf 'user Plugins spine entries in %s\nbefore:\n%s\nafter:\n%s\n' "$USER_PLUGINS" "$USER_PLUGINS_BEFORE" "$after"
+  record FAIL "user Plugins spine entries unchanged"
+}
+trap guard_user_plugins EXIT
 
-# build_dylib: $SUITE_OUT/dylib/<HEAD>/plugin_spine.dylib, ad-hoc signed. The mac project's "Copy to Simulator's
+# build_dylib: $SUITE_OUT/dylib/<HEAD>/plugin_spine42.dylib, ad-hoc signed. The mac project's "Copy to Simulator's
 # Plugin Directory" phase is pointed at dylib/copied (and HOME at a fake home) before building.
 build_dylib() {
   local head dir tree pbx
   head=$(git -C "$SPINE_REPO" rev-parse HEAD) || return 1
   dir=$SUITE_OUT/dylib/$head
-  DYLIB=$dir/plugin_spine.dylib
+  DYLIB=$dir/plugin_spine42.dylib
   [[ -f "$DYLIB" ]] && return
   rm -rf "$SUITE_OUT/dylib"
   tree=$dir/tree
@@ -50,11 +61,11 @@ build_dylib() {
     return 1
   fi
   DEVELOPER_DIR=$DEVELOPER_DIR "$DEVELOPER_DIR/usr/bin/xcodebuild" -project "$tree/mac/Plugin.xcodeproj" \
-    -scheme plugin_spine -configuration Release -derivedDataPath "$dir/dd" -destination 'generic/platform=macOS' \
+    -scheme plugin_spine42 -configuration Release -derivedDataPath "$dir/dd" -destination 'generic/platform=macOS' \
     ARCHS="arm64 x86_64" ONLY_ACTIVE_ARCH=NO HOME="$dir/home" CORONA_ROOT="$CORONA_ROOT" build \
     >"$dir/build.log" 2>&1 || { tail -30 "$dir/build.log" >&2; return 1; }
   # the copy phase runs before signing: take the DerivedData product and sign it
-  cp "$dir/dd/Build/Products/Release/plugin_spine.dylib" "$DYLIB.unsigned"
+  cp "$dir/dd/Build/Products/Release/plugin_spine42.dylib" "$DYLIB.unsigned"
   codesign -f -s - "$DYLIB.unsigned" && mv "$DYLIB.unsigned" "$DYLIB"
 }
 
@@ -72,24 +83,28 @@ make_app() {
   echo "$stamp" >"$SUITE_OUT/app/stamp"
 }
 
-# setup_plugins: the -pluginsDirectory, with a catalog whose future lastUpdate keeps PluginSync from downloading
+# setup_plugins: the -pluginsDirectory, with a catalog whose future lastUpdate keeps PluginSync from downloading.
+# The 1.5.0 dylib ships unsigned and is ad-hoc signed here.
 setup_plugins() {
   local build
   build=$(plutil -extract CFBundleVersion raw "$APP/Contents/Info.plist") || return 1
   rm -rf "$PLUGINS"
   mkdir -p "$PLUGINS"
   cp "$DYLIB" "$PLUGINS/"
-  printf '{"Version":3,"CoronaBuild":"%s","com.studycat.spine/plugin.spine":{"lastUpdate":2100000000}}\n' \
-    "$build" >"$PLUGINS/catalog.json"
+  git -C "$SPINE_REPO" show HEAD:plugin/com.studycat.spine/plugin.spine/mac-sim/data.tgz |
+    tar -xzf - -C "$PLUGINS" plugin_spine.dylib || return 1
+  codesign -f -s - "$PLUGINS/plugin_spine.dylib" || return 1
+  printf '{"Version":3,"CoronaBuild":"%s","com.studycat.spine/plugin.spine42":{"lastUpdate":2100000000},%s}\n' \
+    "$build" '"com.studycat.spine/plugin.spine":{"lastUpdate":2100000000}' >"$PLUGINS/catalog.json"
 }
 
-# setup_project: tests/sim as a Solar2D project with the sample skeletons the scenarios load
+# setup_project: tests/sim as a Solar2D project with the sample exports
 setup_project() {
   local s
   rm -rf "$PROJECT"
   mkdir -p "$PROJECT/spines" "$SUITE_OUT/results" "$SIM_HOME"
   cp "$W"/*.lua "$W/build.settings" "$PROJECT/"
-  for s in raptor snowglobe spineboy; do cp -R "$SPINE_SPINES/$s" "$PROJECT/spines/"; done
+  for s in "$SPINE_SPINES"/*/; do cp -R "${s%/}" "$PROJECT/spines/"; done
 }
 
 result_file() { printf '%s/results/%s.txt' "$SUITE_OUT" "$(printf '%s' "$1" | tr '/ ' '__')"; }

@@ -47,87 +47,87 @@ static int bone_index(lua_State *L)
     }
     else if (strcmp(key, "x") == 0)
     {
-        lua_pushnumber(L, bone.getX());
+        lua_pushnumber(L, spc::pose(bone).getX());
         return 1;
     }
     else if (strcmp(key, "y") == 0)
     {
-        lua_pushnumber(L, bone.getY());
+        lua_pushnumber(L, spc::pose(bone).getY());
         return 1;
     }
     else if (strcmp(key, "rotation") == 0)
     {
-        lua_pushnumber(L, bone.getRotation());
+        lua_pushnumber(L, spc::pose(bone).getRotation());
         return 1;
     }
     else if (strcmp(key, "xScale") == 0)
     {
-        lua_pushnumber(L, bone.getScaleX());
+        lua_pushnumber(L, spc::pose(bone).getScaleX());
         return 1;
     }
     else if (strcmp(key, "yScale") == 0)
     {
-        lua_pushnumber(L, bone.getScaleY());
+        lua_pushnumber(L, spc::pose(bone).getScaleY());
         return 1;
     }
     else if (strcmp(key, "shearX") == 0)
     {
-        lua_pushnumber(L, bone.getShearX());
+        lua_pushnumber(L, spc::pose(bone).getShearX());
         return 1;
     }
     else if (strcmp(key, "shearY") == 0)
     {
-        lua_pushnumber(L, bone.getShearY());
+        lua_pushnumber(L, spc::pose(bone).getShearY());
         return 1;
     }
     else if (strcmp(key, "appliedRotation") == 0)
     {
-        lua_pushnumber(L, bone.getAppliedRotation());
+        lua_pushnumber(L, spc::appliedRotation(bone));
         return 1;
     }
     else if (strcmp(key, "worldX") == 0)
     {
-        lua_pushnumber(L, bone.getWorldX());
+        lua_pushnumber(L, spc::applied(bone).getWorldX());
         return 1;
     }
     else if (strcmp(key, "worldY") == 0)
     {
-        lua_pushnumber(L, bone.getWorldY());
+        lua_pushnumber(L, spc::applied(bone).getWorldY());
         return 1;
     }
     else if (strcmp(key, "worldRotation") == 0)
     {
-        lua_pushnumber(L, bone.getWorldRotationX());
+        lua_pushnumber(L, spc::applied(bone).getWorldRotationX());
         return 1;
     }
     else if (strcmp(key, "worldScaleX") == 0)
     {
-        lua_pushnumber(L, bone.getWorldScaleX());
+        lua_pushnumber(L, spc::applied(bone).getWorldScaleX());
         return 1;
     }
     else if (strcmp(key, "worldScaleY") == 0)
     {
-        lua_pushnumber(L, bone.getWorldScaleY());
+        lua_pushnumber(L, spc::applied(bone).getWorldScaleY());
         return 1;
     }
     else if (strcmp(key, "a") == 0)
     {
-        lua_pushnumber(L, bone.getA());
+        lua_pushnumber(L, spc::applied(bone).getA());
         return 1;
     }
     else if (strcmp(key, "b") == 0)
     {
-        lua_pushnumber(L, bone.getB());
+        lua_pushnumber(L, spc::applied(bone).getB());
         return 1;
     }
     else if (strcmp(key, "c") == 0)
     {
-        lua_pushnumber(L, bone.getC());
+        lua_pushnumber(L, spc::applied(bone).getC());
         return 1;
     }
     else if (strcmp(key, "d") == 0)
     {
-        lua_pushnumber(L, bone.getD());
+        lua_pushnumber(L, spc::applied(bone).getD());
         return 1;
     }
 
@@ -160,73 +160,73 @@ static int bone_newindex(lua_State *L)
     if (strcmp(key, "x") == 0)
     {
         float x = luaL_checknumber(L, 3);
-        bone.setX(x);
+        spc::pose(bone).setX(x);
         return 0;
     }
     else if (strcmp(key, "y") == 0)
     {
         float y = luaL_checknumber(L, 3);
-        bone.setY(y);
+        spc::pose(bone).setY(y);
         return 0;
     }
     else if (strcmp(key, "rotation") == 0)
     {
         float rotation = luaL_checknumber(L, 3);
-        bone.setRotation(rotation);
+        spc::pose(bone).setRotation(rotation);
         return 0;
     }
     else if (strcmp(key, "xScale") == 0)
     {
         float xScale = luaL_checknumber(L, 3);
-        bone.setScaleX(xScale);
+        spc::pose(bone).setScaleX(xScale);
         return 0;
     }
     else if (strcmp(key, "yScale") == 0)
     {
         float yScale = luaL_checknumber(L, 3);
-        bone.setScaleY(yScale);
+        spc::pose(bone).setScaleY(yScale);
         return 0;
     }
     else if (strcmp(key, "shearX") == 0)
     {
         float xShear = luaL_checknumber(L, 3);
-        bone.setShearX(xShear);
+        spc::pose(bone).setShearX(xShear);
         return 0;
     }
     else if (strcmp(key, "shearY") == 0)
     {
         float yShear = luaL_checknumber(L, 3);
-        bone.setShearY(yShear);
+        spc::pose(bone).setShearY(yShear);
         return 0;
     }
     else if (strcmp(key, "appliedRotation") == 0)
     {
         float appliedRotation = luaL_checknumber(L, 3);
-        bone.setAppliedRotation(appliedRotation);
+        spc::setAppliedRotation(bone, appliedRotation);
         return 0;
     }
     else if (strcmp(key, "a") == 0)
     {
         float a = luaL_checknumber(L, 3);
-        bone.setA(a);
+        spc::applied(bone).setA(a);
         return 0;
     }
     else if (strcmp(key, "b") == 0)
     {
         float b = luaL_checknumber(L, 3);
-        bone.setB(b);
+        spc::applied(bone).setB(b);
         return 0;
     }
     else if (strcmp(key, "c") == 0)
     {
         float c = luaL_checknumber(L, 3);
-        bone.setC(c);
+        spc::applied(bone).setC(c);
         return 0;
     }
     else if (strcmp(key, "d") == 0)
     {
         float d = luaL_checknumber(L, 3);
-        bone.setD(d);
+        spc::applied(bone).setD(d);
         return 0;
     }
 

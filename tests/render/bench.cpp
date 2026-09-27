@@ -1,7 +1,6 @@
-// Native microbenchmark / probes for the vendored spine-cpp 4.2 SkeletonRenderer (plugin-spine 1.5.0).
-// Scratch only. Links the plugin's vendored runtime objects (shared/spine/*.cpp) unchanged.
-#include <spine/spine.h>
-#include <spine/SkeletonRenderer.h>
+// Native microbenchmark / probes for the line's vendored spine-cpp SkeletonRenderer.
+// Scratch only. Links the line's vendored runtime objects (runtime/spine-4.x/spine/*.cpp) unchanged.
+#include "SpineCompat.h"
 #include <chrono>
 #include <cmath>
 #include <cstdio>
@@ -11,6 +10,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <memory>
 #include <set>
 
 using namespace spine;
@@ -46,9 +46,9 @@ struct Loaded { Atlas *atlas; SkeletonData *data; };
 static Loaded load(const std::string &name) {
     std::string a = name + "/" + name + ".atlas", s = name + "/" + name + ".skel";
     Atlas *atlas = new Atlas(a.c_str(), &g_loader, true);
-    SkeletonBinary bin(atlas);
-    SkeletonData *data = bin.readSkeletonDataFile(s.c_str());
-    if (!data) { std::fprintf(stderr, "load failed %s: %s\n", name.c_str(), bin.getError().buffer()); std::exit(1); }
+    std::unique_ptr<SkeletonBinary> bin(spc::newBinary(atlas));
+    SkeletonData *data = bin->readSkeletonDataFile(s.c_str());
+    if (!data) { std::fprintf(stderr, "load failed %s: %s\n", name.c_str(), bin->getError().buffer()); std::exit(1); }
     return {atlas, data};
 }
 
@@ -67,10 +67,14 @@ static int upstreamBatchCount(RenderCommand *cmd) {
 
 static void benchSkeleton(const std::string &name, int frames) {
     Loaded L = load(name);
-    Skeleton skeleton(L.data);
-    skeleton.setScaleY(-1);
-    AnimationStateData stateData(L.data);
-    AnimationState state(&stateData);
+    std::unique_ptr<Skeleton> ownSkeleton(spc::newSkeleton(L.data));
+    Skeleton &skeleton = *ownSkeleton;
+#if !SPINE_43()
+    skeleton.setScaleY(-1); // 4.3: Bone::yDown is true by default
+#endif
+    std::unique_ptr<AnimationStateData> stateData(spc::newStateData(L.data));
+    std::unique_ptr<AnimationState> ownState(spc::newState(stateData.get()));
+    AnimationState &state = *ownState;
     auto &anims = L.data->getAnimations();
     SkeletonRenderer persistent;
     std::vector<int> noInj;
@@ -83,8 +87,8 @@ static void benchSkeleton(const std::string &name, int frames) {
     int slotsWithAttachment = 0;
     for (size_t ai = 0; ai < anims.size(); ++ai) {
         state.clearTracks();
-        skeleton.setToSetupPose();
-        state.setAnimation(0, anims[ai], true);
+        spc::setToSetupPose(&skeleton);
+        spc::setAnimation(&state, 0, anims[ai], true);
         long smallThis = 0;
         for (int f = 0; f < frames; ++f) {
             float dt = 1.0f / 60.0f;
@@ -111,7 +115,7 @@ static void benchSkeleton(const std::string &name, int frames) {
         }
         if (smallThis > maxSmall) { maxSmall = smallThis; smallAnim = anims[ai]->getName().buffer(); }
     }
-    for (size_t i = 0; i < skeleton.getSlots().size(); ++i) if (skeleton.getSlots()[i]->getAttachment()) slotsWithAttachment++;
+    for (size_t i = 0; i < skeleton.getSlots().size(); ++i) if (spc::applied(*skeleton.getSlots()[i]).getAttachment()) slotsWithAttachment++;
     double F = (double)framesTotal;
     std::printf("%-17s anims=%2zu frames=%5ld | cmds/frame=%6.1f upstreamBatched/frame=%5.1f  <3idx cmds total=%4ld (worst anim '%s': %ld) | verts/frame=%6.0f idx/frame=%6.0f pages=%zu\n",
                 name.c_str(), anims.size(), framesTotal, cmds / F, upstream / F, small, smallAnim.c_str(), maxSmall, verts / F, idxs / F, textures.size());
@@ -124,6 +128,7 @@ static void benchSkeleton(const std::string &name, int frames) {
 static void gravityProbe() {
     Loaded L = load("cloud-pot");
     const char *boneName = "rain-blue";
+    bool lineYDown = Bone::isYDown();
     struct Cfg { const char *label; float scaleY; bool yDown; };
     Cfg cfgs[] = {{"y-up reference (scaleY=+1, yDown=false)", 1, false},
                   {"plugin 1.5.0 (scaleY=-1, yDown=false)", -1, false},
@@ -131,26 +136,44 @@ static void gravityProbe() {
     std::printf("\nGravity probe: cloud-pot bone '%s' (physics constraint rain/rain-blue: x,y, strength 0, gravity 70), setup pose, no animation, 30 frames @60Hz, Physics_Update\n", boneName);
     for (auto &cfg : cfgs) {
         Bone::setYDown(cfg.yDown);
-        Skeleton sk(L.data); sk.setScaleY(cfg.scaleY); sk.setToSetupPose();
+        std::unique_ptr<Skeleton> owned(spc::newSkeleton(L.data));
+        Skeleton &sk = *owned; sk.setScaleY(cfg.scaleY); spc::setToSetupPose(&sk);
         sk.updateWorldTransform(Physics_Reset);
         Bone *b = sk.findBone(boneName);
-        float y0 = b->getWorldY();
+        float y0 = spc::applied(*b).getWorldY();
         for (int f = 0; f < 30; ++f) { sk.update(1 / 60.f); sk.updateWorldTransform(Physics_Update); }
-        float y1 = b->getWorldY();
+        float y1 = spc::applied(*b).getWorldY();
         // world space is y-down when effective scaleY (getScaleY) < 0
         bool worldYDown = sk.getScaleY() < 0;
         float screenDown = worldYDown ? (y1 - y0) : (y0 - y1);
         std::printf("  %-52s worldY %8.2f -> %8.2f  => moved %s on screen by %.2f units\n", cfg.label, y0, y1, screenDown > 0 ? "DOWN" : "UP", std::fabs(screenDown));
     }
-    Bone::setYDown(false);
+    Bone::setYDown(lineYDown);
 }
 
 // ---------- sequence probe (dragon) ----------
+// sequenceRegion: the region a sequence attachment shows on the slot, nullptr without a sequence
+static void *sequenceRegion(Slot &slot, RegionAttachment &a) {
+#if SPINE_43()
+    Sequence &seq = a.getSequence();
+    return seq.getRegions().size() > 1 ? seq.getRegion(seq.resolveIndex(slot.getAppliedPose())) : nullptr;
+#else
+    (void)slot;
+    return a.getSequence() ? a.getRegion() : nullptr;
+#endif
+}
+
 static void sequenceProbe() {
     Loaded L = load("dragon");
-    Skeleton sk(L.data); sk.setScaleY(-1);
-    AnimationStateData sd(L.data); AnimationState st(&sd);
-    st.setAnimation(0, L.data->getAnimations()[0], true);
+    std::unique_ptr<Skeleton> owned(spc::newSkeleton(L.data));
+    Skeleton &sk = *owned;
+#if !SPINE_43()
+    sk.setScaleY(-1);
+#endif
+    std::unique_ptr<AnimationStateData> sd(spc::newStateData(L.data));
+    std::unique_ptr<AnimationState> ownState(spc::newState(sd.get()));
+    AnimationState &st = *ownState;
+    spc::setAnimation(&st, 0, L.data->getAnimations()[0], true);
     SkeletonRenderer r; std::vector<int> none;
     std::map<std::string, std::set<void *>> regions;
     std::set<std::pair<void *, float>> texUv;
@@ -159,9 +182,10 @@ static void sequenceProbe() {
         RenderCommand *c = r.render(sk, none);
         for (; c; c = c->next) texUv.insert({c->texture, c->uvs[0]});
         for (size_t i = 0; i < sk.getSlots().size(); ++i) {
-            Attachment *a = sk.getSlots()[i]->getAttachment();
-            if (a && a->getRTTI().isExactly(RegionAttachment::rtti) && ((RegionAttachment *)a)->getSequence())
-                regions[sk.getSlots()[i]->getData().getName().buffer()].insert(((RegionAttachment *)a)->getRegion());
+            Slot &slot = *sk.getSlots()[i];
+            Attachment *a = spc::applied(slot).getAttachment();
+            void *region = a && a->getRTTI().isExactly(RegionAttachment::rtti) ? sequenceRegion(slot, *(RegionAttachment *)a) : nullptr;
+            if (region) regions[slot.getData().getName().buffer()].insert(region);
         }
     }
     std::printf("\nSequence probe (dragon, anim '%s', 120 frames):\n", L.data->getAnimations()[0]->getName().buffer());

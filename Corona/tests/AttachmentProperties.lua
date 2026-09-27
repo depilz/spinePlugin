@@ -1,7 +1,7 @@
 -- Test: Attachment Properties
 -- Demonstrates all attachment properties and methods
 
-local spine = require("plugin.spine")
+local spine = require("plugin.spine42")
 
 -- Load skeleton
 local skeletonData = spine.loadSkeletonData("spines/spineboy/spineboy-pro.json", "spines/spineboy/spineboy-pma.atlas", 0.3)

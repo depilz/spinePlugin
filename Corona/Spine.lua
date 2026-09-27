@@ -1,4 +1,4 @@
-SpinePlugin = require('plugin.spine')
+SpinePlugin = require('plugin.spine42')
 
 local Spine = {}
 local atlases = {}

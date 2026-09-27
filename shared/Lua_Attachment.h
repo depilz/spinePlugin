@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoronaLua.h"
-#include "spine/spine.h"
+#include "SpineCompat.h"
 #include "DataHolder.h"
 
 using namespace spine;

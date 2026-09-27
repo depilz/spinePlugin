@@ -2,6 +2,10 @@
 # "# run.sh: named-only" in it keeps the suite out of the default run. run.sh exports SPINE_REPO,
 # SPINE_SPINES, SPINE_TEST_OUT, SDKROOT, LUA51_SRC, CORONA_NATIVE, SPINE_RUNTIME, TMPDIR and, per suite,
 # SPINE_SUITE, SUITE_OUT (its build and log dir) and SUITE_RESULTS.
+# run.sh runs a suite once per runtime line: SPINE_RUNTIME names the line (tests/host/host.sh builds against
+# runtime/spine-$SPINE_RUNTIME), SPINE_SPINES is the line's example exports in the flat name/name.* layout and
+# SPINE_TEST_OUT is the line's own. A suite never names a line; a line-specific test source sits next to its
+# base as name43.cpp (host_line_src).
 # A suite records one row per test id with record or run_test and exits 0 once it has run; a non-zero exit
 # or no rows fails it as test _harness. Test ids (no tabs) are what tests/xfail/<runtime>.tsv lists.
 

@@ -1,7 +1,7 @@
 -- render-7 consequence: split -> reassemble (the documented flow) leaves a mesh inside the split group; reassemble()
 -- removes the group, so that mesh is finalized at the end of the frame and every later draw() raises.
 -- Minimal set found by p4_minimize.lua (mix-and-match, full-skins/girl, walk).
-local C = dofile(arg[0]:match("^(.*)/") .. "/common.lua")
+local C = dofile(arg[0]:match("^(.*)/") .. "/../splitfx/common.lua")
 local mock = C.mock
 local scene = display.newGroup()
 local obj = C.spine.create(C.data("mix-and-match", 0.5)); scene:insert(obj)

@@ -1,5 +1,5 @@
 -- baseline without split (mirrors Simulator scenarios plain/plainmm): 120 frames
-local C = dofile(arg[0]:match("^(.*)/") .. "/common.lua")
+local C = dofile(arg[0]:match("^(.*)/") .. "/../splitfx/common.lua")
 for _, case in ipairs({ { "raptor", nil, "walk" }, { "mix-and-match", "full-skins/girl", "walk" } }) do
   local obj = C.spine.create(C.data(case[1], 0.4))
   if case[2] then obj:setSkin(case[2]) end

@@ -1,6 +1,6 @@
 -- T10: spine.create(data, listener, <extra arg>) refs the wrong stack slot (luaL_ref pops the top).
 local fx = require("realdata_fixture")
-local C = dofile(arg[0]:match("^(.*)/") .. "/check.lua")
+local C = dofile(arg[0]:match("^(.*)/") .. "/../check.lua")
 local data = fx.loadData("spineboy/spineboy.atlas", "spineboy/spineboy.json")
 local counts = {}
 for _, extra in ipairs({"none", "nil", "number"}) do

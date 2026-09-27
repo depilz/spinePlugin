@@ -1,5 +1,5 @@
 -- spineboy 'portal' (clipping) WITHOUT split or injections: does draw() survive?
-local C = dofile(arg[0]:match("^(.*)/") .. "/common.lua")
+local C = dofile(arg[0]:match("^(.*)/") .. "/../splitfx/common.lua")
 local NAME, ANIM = arg[1] or "spineboy", arg[2] or "portal"
 local obj = C.spine.create(C.data(NAME, 0.5))
 obj:setAnimation(1, ANIM, false)

@@ -1,5 +1,5 @@
 -- search: split(A) [-> split(B)] -> frames -> reassemble() -> does the next draw raise? (mesh left in the removed split group)
-local C = dofile(arg[0]:match("^(.*)/") .. "/common.lua")
+local C = dofile(arg[0]:match("^(.*)/") .. "/../splitfx/common.lua")
 local name, resplit = arg[1] or "celestial-circus", arg[2] == "resplit"
 local found, N = 0, 300
 for trial = 1, N do

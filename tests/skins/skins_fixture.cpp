@@ -5,6 +5,7 @@
 #include "Lua_Skeleton.h"
 #include "Lua_Slot.h"
 #include "SkeletonDataHolder.h"
+#include "skins_compat.h"
 #include "spine/Extension.h"
 #include "spine/Debug.h"
 #include "spine/DeformTimeline.h"
@@ -18,12 +19,13 @@
 #include <string>
 #include <vector>
 #include <cstdint>
+#include <memory>
 
 void engine_removeMesh(lua_State *, LuaTableHolder *) { std::fprintf(stderr, "engine_removeMesh called in headless fixture\n"); std::abort(); }
 void renderCommands(lua_State *, SpineSkeleton *, RenderCommand *, MeshManager &, int) { std::fprintf(stderr, "renderCommands called in headless fixture\n"); std::abort(); }
 extern "C" lua_State *CoronaLuaGetCoronaThread(lua_State *L) { return L; }
 
-// DebugExtension leaves _usedMemory uninitialized (shared/spine/Debug.h:55-57); clearAllocations() zeroes it.
+// DebugExtension leaves _usedMemory uninitialized (runtime/spine-4.2/spine/Debug.h:55-57); clearAllocations() zeroes it.
 static DebugExtension *g_debugExt = nullptr;
 SpineExtension *spine::getDefaultExtension() {
     g_debugExt = new DebugExtension(new DefaultSpineExtension());
@@ -71,13 +73,15 @@ static int loadData(lua_State *L) {
     Atlas *atlas = (*(std::shared_ptr<DataHolder<Atlas>> *)lua_touserdata(L, atlasIndex))->getObject();
     SkeletonData *data = nullptr;
     if (std::strstr(skelPath, ".json")) {
-        SkeletonJson json(atlas); json.setScale(scale);
-        data = json.readSkeletonDataFile(skelPath);
-        if (!data) return luaL_error(L, "json load failed: %s", json.getError().buffer());
+        std::unique_ptr<SkeletonJson> json(spc::newJson(atlas));
+        json->setScale(scale);
+        data = json->readSkeletonDataFile(skelPath);
+        if (!data) return luaL_error(L, "json load failed: %s", json->getError().buffer());
     } else {
-        SkeletonBinary bin(atlas); bin.setScale(scale);
-        data = bin.readSkeletonDataFile(skelPath);
-        if (!data) return luaL_error(L, "binary load failed: %s", bin.getError().buffer());
+        std::unique_ptr<SkeletonBinary> bin(spc::newBinary(atlas));
+        bin->setScale(scale);
+        data = bin->readSkeletonDataFile(skelPath);
+        if (!data) return luaL_error(L, "binary load failed: %s", bin->getError().buffer());
     }
     ++g_dataCreated;
     // Real SkeletonDataHolder; the custom deleter only counts frees (then runs the real destructor).
@@ -99,10 +103,12 @@ static int create(lua_State *L) {
     new (value) SpineSkeleton(L);
     value->dataOwner = holder;
     value->skeletonData = skeletonData;
-    value->skeleton = new Skeleton(skeletonData);
-    value->skeleton->setScaleY(-1);
-    value->stateData = new AnimationStateData(skeletonData);
-    value->state = new AnimationState(value->stateData);
+    value->skeleton = spc::newSkeleton(skeletonData);
+#if !SPINE_43()
+    value->skeleton->setScaleY(-1); // 4.3: Bone::yDown is true by default
+#endif
+    value->stateData = spc::newStateData(skeletonData);
+    value->state = spc::newState(value->stateData);
     value->luaSelf = new LuaTableHolder();
     getSkeletonMt(L);
     lua_setmetatable(L, -2);
@@ -139,7 +145,7 @@ static int slotAttachments(lua_State *L) {
     lua_newtable(L);
     auto &slots = value->skeleton->getSlots();
     for (size_t i = 0; i < slots.size(); ++i) {
-        Attachment *a = slots[i]->getAttachment();
+        Attachment *a = spc::applied(*slots[i]).getAttachment();
         if (a) lua_pushstring(L, a->getName().buffer()); else lua_pushboolean(L, 0);
         lua_setfield(L, -2, slots[i]->getData().getName().buffer());
     }
@@ -226,8 +232,8 @@ static int timelineAttachments(lua_State *L) {
         auto &tls = anims[i]->getTimelines();
         for (size_t j = 0; j < tls.size(); ++j) {
             Attachment *a = nullptr; const char *kind = nullptr;
-            if (tls[j]->getRTTI().instanceOf(DeformTimeline::rtti)) { a = static_cast<DeformTimeline *>(tls[j])->getAttachment(); kind = "deform"; }
-            else if (tls[j]->getRTTI().instanceOf(SequenceTimeline::rtti)) { a = static_cast<SequenceTimeline *>(tls[j])->getAttachment(); kind = "sequence"; }
+            if (tls[j]->getRTTI().instanceOf(DeformTimeline::rtti)) { a = skc::timelineAttachment(*static_cast<DeformTimeline *>(tls[j])); kind = "deform"; }
+            else if (tls[j]->getRTTI().instanceOf(SequenceTimeline::rtti)) { a = skc::timelineAttachment(*static_cast<SequenceTimeline *>(tls[j])); kind = "sequence"; }
             if (!a) continue;
             lua_newtable(L);
             lua_pushstring(L, anims[i]->getName().buffer()); lua_setfield(L, -2, "anim");

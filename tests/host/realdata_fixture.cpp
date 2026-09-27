@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <cstdio>
+#include <memory>
 
 void engine_removeMesh(lua_State *, LuaTableHolder *) { std::fprintf(stderr, "engine_removeMesh called in headless fixture\n"); std::abort(); }
 void renderCommands(lua_State *, SpineSkeleton *, RenderCommand *, MeshManager &, int) { std::fprintf(stderr, "renderCommands called in headless fixture\n"); std::abort(); }
@@ -40,13 +41,15 @@ static int loadData(lua_State *L) {
     if (atlas->getPages().size() == 0) luaL_error(L, "atlas load failed: %s", atlasPath);
     SkeletonData *data = nullptr;
     if (std::strstr(skelPath, ".json")) {
-        SkeletonJson json(atlas); json.setScale(scale);
-        data = json.readSkeletonDataFile(skelPath);
-        if (!data) luaL_error(L, "json load failed: %s", json.getError().buffer());
+        std::unique_ptr<SkeletonJson> json(spc::newJson(atlas));
+        json->setScale(scale);
+        data = json->readSkeletonDataFile(skelPath);
+        if (!data) luaL_error(L, "json load failed: %s", json->getError().buffer());
     } else {
-        SkeletonBinary bin(atlas); bin.setScale(scale);
-        data = bin.readSkeletonDataFile(skelPath);
-        if (!data) luaL_error(L, "binary load failed: %s", bin.getError().buffer());
+        std::unique_ptr<SkeletonBinary> bin(spc::newBinary(atlas));
+        bin->setScale(scale);
+        data = bin->readSkeletonDataFile(skelPath);
+        if (!data) luaL_error(L, "binary load failed: %s", bin->getError().buffer());
     }
     auto holder = std::make_shared<DataHolder<SkeletonData>>(data);
     DataHolder<SkeletonData>::push(L, holder);
@@ -62,10 +65,12 @@ static int create(lua_State *L) {
     new (value) SpineSkeleton(L);
     value->dataOwner = holder;
     value->skeletonData = skeletonData;
-    value->skeleton = new Skeleton(skeletonData);
-    value->skeleton->setScaleY(-1);
-    value->stateData = new AnimationStateData(skeletonData);
-    value->state = new AnimationState(value->stateData);
+    value->skeleton = spc::newSkeleton(skeletonData);
+#if !SPINE_43()
+    value->skeleton->setScaleY(-1); // 4.3: Bone::yDown is true by default
+#endif
+    value->stateData = spc::newStateData(skeletonData);
+    value->state = spc::newState(value->stateData);
     value->luaSelf = new LuaTableHolder();
     getSkeletonMt(L);
     lua_setmetatable(L, -2);
@@ -97,14 +102,14 @@ static int worldTransform(lua_State *L) {
     return 0;
 }
 
-// fixture.slotAttachments(obj) -> { [slotName] = attachmentName or false } (raw runtime state)
+// fixture.slotAttachments(obj) -> { [slotName] = attachmentName or false }
 static int slotAttachments(lua_State *L) {
     lua_getfield(L, 1, "_skeleton");
     auto *value = (SpineSkeleton *)luaL_checkudata(L, -1, "SpineSkeleton");
     lua_newtable(L);
     auto &slots = value->skeleton->getSlots();
     for (size_t i = 0; i < slots.size(); ++i) {
-        Attachment *a = slots[i]->getAttachment();
+        Attachment *a = spc::pose(*slots[i]).getAttachment();
         if (a) lua_pushstring(L, a->getName().buffer()); else lua_pushboolean(L, 0);
         lua_setfield(L, -2, slots[i]->getData().getName().buffer());
     }

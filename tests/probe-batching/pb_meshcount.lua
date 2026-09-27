@@ -1,7 +1,7 @@
 -- probe-batching: Solar2D mesh counts per skeleton (no injections, unsplit), averaged over every animation x 60 frames.
 -- Also: new meshes created per frame (mesh churn) and group:insert calls per frame, from the mock's counters.
 -- Skeletons: the Corona/spines examples. env PB_FRAMES: frames per animation (default 60).
-local C = dofile(arg[0]:match("^(.*)/") .. "/common.lua")
+local C = dofile(arg[0]:match("^(.*)/") .. "/../splitfx/common.lua")
 local mock, fx = C.mock, C.fx
 io.stdout:setvbuf("no")
 local FR = tonumber(os.getenv("PB_FRAMES") or "60")

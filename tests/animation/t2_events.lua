@@ -3,9 +3,9 @@
 -- t2_events.lua payload|target: checks the per-key payload (animation-4) or event.target (animation-5).
 local fx = require("realdata_fixture")
 local W = arg[0]:match("^(.*)/")
-local C = dofile(W .. "/check.lua")
+local C = dofile(W .. "/../check.lua")
 local mode = arg[1]
-local data = fx.loadData("spineboy/spineboy.atlas", W .. "/spineboy-events.json")
+local data = fx.loadData("spineboy/spineboy.atlas", W .. "/assets/" .. os.getenv("SPINE_RUNTIME") .. "/spineboy-events.json")
 
 local function dump(ev)
   local keys = {}

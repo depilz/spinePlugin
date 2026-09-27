@@ -1,6 +1,7 @@
 /* Lua 5.1.3 host that preloads the modules listed in HOST_PRELOAD, e.g.
    -DHOST_PRELOAD='X(realdata_fixture) X(attachment_fixture)' makes require("realdata_fixture")
-   call luaopen_realdata_fixture. Usage: host script.lua [args...] */
+   call luaopen_realdata_fixture. -DHOST_PLUGIN=<entry> (host.sh's HOST_ENTRY) also preloads the line's plugin
+   entry as require("plugin_spine"). Usage: host script.lua [args...] */
 #include "lua.h"
 #include "lauxlib.h"
 #include "lualib.h"
@@ -13,6 +14,9 @@
 #define X(m) int luaopen_##m(lua_State *L);
 HOST_PRELOAD
 #undef X
+#ifdef HOST_PLUGIN
+int HOST_PLUGIN(lua_State *L);
+#endif
 
 int main(int argc, char **argv) {
     if (argc < 2) { fprintf(stderr, "usage: %s script.lua\n", argv[0]); return 2; }
@@ -23,6 +27,9 @@ int main(int argc, char **argv) {
 #define X(m) lua_pushcfunction(L, luaopen_##m); lua_setfield(L, -2, #m);
     HOST_PRELOAD
 #undef X
+#ifdef HOST_PLUGIN
+    lua_pushcfunction(L, HOST_PLUGIN); lua_setfield(L, -2, "plugin_spine");
+#endif
     lua_pop(L, 2);
     lua_newtable(L);
     for (int i = 0; i < argc; ++i) { lua_pushstring(L, argv[i]); lua_rawseti(L, -2, i - 1); }

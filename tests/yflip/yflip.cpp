@@ -1,21 +1,22 @@
-// Y-flip correctness matrix for the checkout's spine-cpp 4.2 physics and IK (gap-4).
+// Y-flip correctness matrix for the checkout's spine-cpp physics and IK (gap-4), on the runtime line build.sh compiles.
 // Links the checkout's runtime and compares, per frame and per bone, the world state of
 //   A: the plugin's configuration, read from the checkout by build.sh (plugin_config.cpp; 1.5.0 is
 //      skeleton scaleY=-1, Bone::yDown=false, shared/Lua_Spine.cpp:198)
-//   B: skeleton scaleY=+1, Bone::yDown=true    (upstream y-down integrations, 4.3 branch)
+//   B: skeleton scaleY=+1, Bone::yDown=true    (upstream y-down integrations, 4.3 default)
 // with the mirror of the y-up reference
 //   R: skeleton scaleY=+1, Bone::yDown=false
 // mirror(R): worldX, -worldY, a, b, -c, -d. User actions are given in screen space (y down):
 // A/B apply them as is, R applies the mirrored action (y -> -y, degrees -> -degrees).
 // After its table, each mode prints one check row per case, "PASS|FAIL<TAB><test id>": a case passes when A and B
 // both match mirror(R).
-#include <spine/spine.h>
+#include "SpineCompat.h"
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <functional>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -32,6 +33,34 @@ extern const bool kPluginYDown;
 
 enum Cfg { CR = 0, CA = 1, CB = 2 };
 static const char *cfgName[] = {"R", "A", "B"};
+// Line differences of the model reads below (the plugin's spc:: seam covers the rest)
+#if SPINE_43()
+static Bone *physicsBone(PhysicsConstraint &c) { return spc::boneOf(&c.getBone()); }
+static BoneData &physicsBone(PhysicsConstraintData &d) { return d.getBone(); }
+static BoneData &ikTarget(ConstraintData *d) { return static_cast<IkConstraintData *>(d)->getTarget(); }
+template <class F> static void forEachPhysicsData(SkeletonData *d, F f) {
+    Array<ConstraintData *> &c = d->getConstraints();
+    for (size_t i = 0; i < c.size(); ++i)
+        if (c[i]->getRTTI().instanceOf(PhysicsConstraintData::rtti)) f(static_cast<PhysicsConstraintData *>(c[i]));
+}
+#else
+static Bone *physicsBone(PhysicsConstraint &c) { return c.getBone(); }
+static BoneData &physicsBone(PhysicsConstraintData &d) { return *d.getBone(); }
+static BoneData &ikTarget(IkConstraintData *d) { return *d->getTarget(); }
+template <class F> static void forEachPhysicsData(SkeletonData *d, F f) {
+    Vector<PhysicsConstraintData *> &c = d->getPhysicsConstraints();
+    for (size_t i = 0; i < c.size(); ++i) f(c[i]);
+}
+#endif
+// One skeleton with its own animation state, freed on scope exit
+struct Rig {
+    std::unique_ptr<Skeleton> sk;
+    std::unique_ptr<AnimationStateData> sd;
+    std::unique_ptr<AnimationState> st;
+    explicit Rig(SkeletonData *data)
+        : sk(spc::newSkeleton(data)), sd(spc::newStateData(data)), st(spc::newState(sd.get())) {}
+};
+
 static void applyCfg(Skeleton &sk, Cfg c) {
     Bone::setYDown(c == CB || (c == CA && kPluginYDown));
     sk.setScaleX(1);
@@ -47,9 +76,9 @@ static Loaded load(const std::string &name, const std::string &atlasName, const 
     std::string a = atlasName + "/" + atlasName + ".atlas";
     Atlas *atlas = g_atlases[a];
     if (!atlas) atlas = g_atlases[a] = new Atlas(a.c_str(), &g_loader, true);
-    SkeletonJson json(atlas);
-    SkeletonData *data = json.readSkeletonDataFile(jsonPath.c_str());
-    if (!data) { std::fprintf(stderr, "load failed %s: %s\n", jsonPath.c_str(), json.getError().buffer()); std::exit(1); }
+    std::unique_ptr<SkeletonJson> json(spc::newJson(atlas));
+    SkeletonData *data = json->readSkeletonDataFile(jsonPath.c_str());
+    if (!data) { std::fprintf(stderr, "load failed %s: %s\n", jsonPath.c_str(), json->getError().buffer()); std::exit(1); }
     return {atlas, data, name};
 }
 
@@ -61,10 +90,10 @@ static void snap(Skeleton &sk, Run &run) {
     auto &bones = sk.getBones();
     f.reserve(bones.size() * 6);
     for (size_t i = 0; i < bones.size(); ++i) {
-        Bone *b = bones[i];
-        f.push_back(b->getWorldX()); f.push_back(b->getWorldY());
-        f.push_back(b->getA()); f.push_back(b->getB()); f.push_back(b->getC()); f.push_back(b->getD());
-        if (!b->isActive()) f[i * 6] = NAN;  // skin-required bone not in the current skin: never updated, skip
+        auto &b = spc::applied(*bones[i]);
+        f.push_back(b.getWorldX()); f.push_back(b.getWorldY());
+        f.push_back(b.getA()); f.push_back(b.getB()); f.push_back(b.getC()); f.push_back(b.getD());
+        if (!bones[i]->isActive()) f[i * 6] = NAN;  // skin-required bone not in the current skin: never updated, skip
     }
     run.frames.push_back(f);
 }
@@ -79,11 +108,11 @@ struct Scenario {
 
 static Run simulate(SkeletonData *data, Cfg c, const Scenario &sc) {
     Run run;
-    Skeleton sk(data);
+    Rig rig(data);
+    Skeleton &sk = *rig.sk;
+    AnimationState &st = *rig.st;
     applyCfg(sk, c);
-    AnimationStateData sd(data);
-    AnimationState st(&sd);
-    sk.setToSetupPose();
+    spc::setToSetupPose(&sk);
     if (sc.setup) sc.setup(sk, st, c);
     sk.updateWorldTransform(Physics_Reset);
     const float dt = 1.0f / 60.0f;
@@ -158,13 +187,11 @@ static std::string physGroup(PhysicsConstraintData *pd) {
 static std::map<std::string, std::vector<bool>> groupMasks(SkeletonData *data) {
     std::map<std::string, std::vector<bool>> m;
     size_t nb = data->getBones().size();
-    auto &pcs = data->getPhysicsConstraints();
-    for (size_t i = 0; i < pcs.size(); ++i) {
-        std::string g = physGroup(pcs[i]);
-        auto &v = m[g];
+    forEachPhysicsData(data, [&](PhysicsConstraintData *pd) {
+        auto &v = m[physGroup(pd)];
         if (v.empty()) v.assign(nb, false);
-        v[pcs[i]->getBone()->getIndex()] = true;
-    }
+        v[physicsBone(*pd).getIndex()] = true;
+    });
     return m;
 }
 
@@ -209,32 +236,31 @@ static void moveTargets(Skeleton &sk, Cfg c, const std::vector<std::string> &nam
     for (auto &n : names) {
         Bone *t = sk.findBone(n.c_str());
         if (!t) { std::fprintf(stderr, "no bone %s\n", n.c_str()); std::exit(1); }
-        saved.push_back({t, t->getX(), t->getY()});
+        saved.push_back({t, spc::pose(*t).getX(), spc::pose(*t).getY()});
     }
     // compute all new locals from the un-moved world state first
     std::vector<std::pair<float, float>> locals;
     for (auto &s : saved) {
         Bone *t = s.b, *p = t->getParent();
-        float nx = t->getWorldX() + 20, ny = t->getWorldY() + wy(c, 20), lx, ly;
-        if (p) p->worldToLocal(nx, ny, lx, ly);
-        else { lx = t->getX() + 20 / sk.getScaleX(); ly = t->getY() + wy(c, 20) / sk.getScaleY(); }  // root bone
+        float nx = spc::applied(*t).getWorldX() + 20, ny = spc::applied(*t).getWorldY() + wy(c, 20), lx, ly;
+        if (p) spc::applied(*p).worldToLocal(nx, ny, lx, ly);
+        else { lx = spc::pose(*t).getX() + 20 / sk.getScaleX(); ly = spc::pose(*t).getY() + wy(c, 20) / sk.getScaleY(); }  // root bone
         locals.push_back({lx, ly});
     }
-    for (size_t i = 0; i < saved.size(); ++i) { saved[i].b->setX(locals[i].first); saved[i].b->setY(locals[i].second); }
+    for (size_t i = 0; i < saved.size(); ++i) { spc::pose(*saved[i].b).setX(locals[i].first); spc::pose(*saved[i].b).setY(locals[i].second); }
 }
 static void restoreTargets(std::vector<Saved> &saved) {
-    for (auto &s : saved) { s.b->setX(s.x); s.b->setY(s.y); }
+    for (auto &s : saved) { spc::pose(*s.b).setX(s.x); spc::pose(*s.b).setY(s.y); }
     saved.clear();
 }
 static std::vector<std::string> ikTargets(SkeletonData *d) {
     std::vector<std::string> v;
-    auto &iks = d->getIkConstraints();
-    for (size_t i = 0; i < iks.size(); ++i) {
-        std::string n = iks[i]->getTarget()->getName().buffer();
+    spc::forEachIkData(d, [&](auto *ik) {
+        std::string n = ikTarget(ik).getName().buffer();
         bool dup = false;
         for (auto &x : v) dup |= x == n;
         if (!dup) v.push_back(n);
-    }
+    });
     return v;
 }
 static Scenario ikScenario(const std::string &name, const std::vector<std::string> &targets, std::vector<std::pair<int, std::string>> anims, int frames) {
@@ -269,18 +295,18 @@ static void physicsSuite(Loaded &L) {
     {
         Scenario sc; sc.name = "3 idle rotate(root,+30deg)"; sc.frames = 120;
         sc.pre = [](Skeleton &sk, AnimationState &, Cfg c, int f) {
-            if (f == 10) { Bone *r = sk.getRootBone(); sk.physicsRotate(r->getWorldX(), r->getWorldY(), wdeg(c, 30)); }
+            if (f == 10) { auto &r = spc::applied(*sk.getRootBone()); sk.physicsRotate(r.getWorldX(), r.getWorldY(), wdeg(c, 30)); }
         };
         runCase(L, sc, true);
     }
     {
         Scenario sc; sc.name = "4 idle wind=25 (all constraints)";
-        sc.setup = [](Skeleton &sk, AnimationState &, Cfg) { auto &p = sk.getPhysicsConstraints(); for (size_t i = 0; i < p.size(); ++i) p[i]->setWind(25); };
+        sc.setup = [](Skeleton &sk, AnimationState &, Cfg) { auto &p = sk.getPhysicsConstraints(); for (size_t i = 0; i < p.size(); ++i) spc::pose(*p[i]).setWind(25); };
         runCase(L, sc, true);
     }
     {
         Scenario sc; sc.name = "5 idle gravity=50 (all constraints)";
-        sc.setup = [](Skeleton &sk, AnimationState &, Cfg) { auto &p = sk.getPhysicsConstraints(); for (size_t i = 0; i < p.size(); ++i) p[i]->setGravity(50); };
+        sc.setup = [](Skeleton &sk, AnimationState &, Cfg) { auto &p = sk.getPhysicsConstraints(); for (size_t i = 0; i < p.size(); ++i) spc::pose(*p[i]).setGravity(50); };
         runCase(L, sc, true);
     }
     {
@@ -288,7 +314,7 @@ static void physicsSuite(Loaded &L) {
         std::string an = anims.size() ? anims[0]->getName().buffer() : "";
         sc.setup = [an](Skeleton &sk, AnimationState &st, Cfg) {
             if (!an.empty()) st.setAnimation(0, an.c_str(), true);
-            auto &p = sk.getPhysicsConstraints(); for (size_t i = 0; i < p.size(); ++i) { p[i]->setWind(25); p[i]->setGravity(50); }
+            auto &p = sk.getPhysicsConstraints(); for (size_t i = 0; i < p.size(); ++i) { spc::pose(*p[i]).setWind(25); spc::pose(*p[i]).setGravity(50); }
         };
         sc.pre = [](Skeleton &sk, AnimationState &, Cfg c, int f) {
             // (animations that key wind override the forced value while they are keyed)
@@ -303,30 +329,32 @@ static void physicsSuite(Loaded &L) {
 static void directionProbe(Loaded &L, FILE *out) {
     for (int ci = 0; ci < 3; ++ci) {
         Cfg c = (Cfg)ci;
-        Skeleton sk(L.data); applyCfg(sk, c); sk.setToSetupPose();
+        Rig rig(L.data);
+        Skeleton &sk = *rig.sk; applyCfg(sk, c); spc::setToSetupPose(&sk);
         auto &p = sk.getPhysicsConstraints();
-        for (size_t i = 0; i < p.size(); ++i) p[i]->setGravity(50);
+        for (size_t i = 0; i < p.size(); ++i) spc::pose(*p[i]).setGravity(50);
         sk.updateWorldTransform(Physics_Reset);
         // pick first rotate-only constraint bone and first xy constraint bone
         Bone *rotBone = nullptr, *xyBone = nullptr;
         for (size_t i = 0; i < p.size(); ++i) {
             auto &d = p[i]->getData();
-            if (!rotBone && d.getRotate() > 0 && d.getX() == 0 && d.getY() == 0 && p[i]->getBone()->getData().getLength() > 0) rotBone = p[i]->getBone();
-            if (!xyBone && d.getY() > 0 && d.getRotate() == 0) xyBone = p[i]->getBone();
+            Bone *b = physicsBone(*p[i]);
+            if (!rotBone && d.getRotate() > 0 && d.getX() == 0 && d.getY() == 0 && b->getData().getLength() > 0) rotBone = b;
+            if (!xyBone && d.getY() > 0 && d.getRotate() == 0) xyBone = b;
         }
-        float r0 = rotBone ? rotBone->getWorldRotationX() : 0, y0 = xyBone ? xyBone->getWorldY() : 0;
+        float r0 = rotBone ? spc::applied(*rotBone).getWorldRotationX() : 0, y0 = xyBone ? spc::applied(*xyBone).getWorldY() : 0;
         float tipY0 = 0;
-        if (rotBone) { float tx, ty; rotBone->localToWorld(rotBone->getData().getLength(), 0, tx, ty); tipY0 = ty - rotBone->getWorldY(); }
+        if (rotBone) { float tx, ty; spc::applied(*rotBone).localToWorld(rotBone->getData().getLength(), 0, tx, ty); tipY0 = ty - spc::applied(*rotBone).getWorldY(); }
         for (int f = 0; f < 60; ++f) { sk.update(1 / 60.f); sk.updateWorldTransform(Physics_Update); }
         float screenSign = (c == CR) ? -1 : 1;  // world y -> screen-down
         if (rotBone) {
-            float tx, ty; rotBone->localToWorld(rotBone->getData().getLength(), 0, tx, ty);
-            float tipY1 = ty - rotBone->getWorldY();
+            float tx, ty; spc::applied(*rotBone).localToWorld(rotBone->getData().getLength(), 0, tx, ty);
+            float tipY1 = ty - spc::applied(*rotBone).getWorldY();
             std::fprintf(out, "%s %-16s cfg %s gravity=50: rotate bone %-22s tip relative screen-y %8.2f -> %8.2f (%s on screen)\n", g_variant.c_str(), L.name.c_str(), cfgName[c],
                          rotBone->getData().getName().buffer(), tipY0 * screenSign, tipY1 * screenSign, (tipY1 - tipY0) * screenSign > 0 ? "tip swings DOWN" : "tip swings UP");
         }
         if (xyBone) {
-            float y1 = xyBone->getWorldY();
+            float y1 = spc::applied(*xyBone).getWorldY();
             std::fprintf(out, "%s %-16s cfg %s gravity=50: xy bone %-26s screen-dy %8.2f (%s)\n", g_variant.c_str(), L.name.c_str(), cfgName[c],
                          xyBone->getData().getName().buffer(), (y1 - y0) * screenSign, (y1 - y0) * screenSign > 0 ? "falls DOWN" : "rises UP");
         }
@@ -335,21 +363,23 @@ static void directionProbe(Loaded &L, FILE *out) {
     Bone::setYDown(false);
 }
 
-// Minimal probe: 4 horizontal/vertical bones, each with one physics property and gravity 200 (see spines/probe.json).
+// Minimal probe: 4 horizontal/vertical bones, each with one physics property and gravity 200 (see spines/<line>/probe.json).
 // Prints the on-screen result (y down, + degrees = clockwise on screen, like Solar2D).
 static void minimalProbe(const std::string &dir) {
     Loaded L = load("probe", "spineboy", dir + "/probe.json");
     float seen[3][4];  // per configuration: rotate angle, shearX angle, scaleX length, xy screen dy
     for (int ci = 0; ci < 3; ++ci) {
         Cfg c = (Cfg)ci;
-        Skeleton sk(L.data); applyCfg(sk, c); sk.setToSetupPose(); sk.updateWorldTransform(Physics_Reset);
+        Rig rig(L.data);
+        Skeleton &sk = *rig.sk; applyCfg(sk, c); spc::setToSetupPose(&sk); sk.updateWorldTransform(Physics_Reset);
         for (int f = 0; f < 60; ++f) { sk.update(1 / 60.f); sk.updateWorldTransform(Physics_Update); }
         float s = c == CR ? -1 : 1;  // world y -> screen y
-        Bone *rot = sk.findBone("rot"), *sh = sk.findBone("shear"), *sc = sk.findBone("scale"), *xy = sk.findBone("xy");
-        float rotDeg = std::atan2(rot->getC() * s, rot->getA()) * R2D;           // on-screen angle of the bone's x axis
-        float shDeg = std::atan2(sh->getC() * s, sh->getA()) * R2D;
-        float scaleLen = std::hypot(sc->getA(), sc->getC());                      // world scale of the bone's x axis (1 = rest)
-        float xyDy = (xy->getWorldY() - 0) * s;
+        auto &rot = spc::applied(*sk.findBone("rot")), &sh = spc::applied(*sk.findBone("shear"));
+        auto &sc = spc::applied(*sk.findBone("scale")), &xy = spc::applied(*sk.findBone("xy"));
+        float rotDeg = std::atan2(rot.getC() * s, rot.getA()) * R2D;             // on-screen angle of the bone's x axis
+        float shDeg = std::atan2(sh.getC() * s, sh.getA()) * R2D;
+        float scaleLen = std::hypot(sc.getA(), sc.getC());                        // world scale of the bone's x axis (1 = rest)
+        float xyDy = (xy.getWorldY() - 0) * s;
         seen[c][0] = rotDeg; seen[c][1] = shDeg; seen[c][2] = scaleLen; seen[c][3] = xyDy;
         std::printf("probe %s cfg %s (scaleY=%+.0f yDown=%d): rotate-bone angle %+7.2f deg (%s) | shearX-bone x-axis %+7.2f deg (%s) | "
                     "scaleX-bone (pointing up) length x%.4f (%s) | xy-bone screen dy %+8.2f (%s)\n",
@@ -415,7 +445,9 @@ int main(int argc, char **argv) {
             Row row; row.skel = n; row.cas = "0 sanity: all anims x120 (no physics)"; row.A = a; row.B = b;
             g_rows.push_back(row);
             // IK targets for skeletons with IK
-            if (L.data->getIkConstraints().size() && anims.size())
+            bool hasIk = false;
+            spc::forEachIkData(L.data, [&](auto *) { hasIk = true; });
+            if (hasIk && anims.size())
                 runCase(L, ikScenario("ik all targets +20,+20 (anim0)", ikTargets(L.data), {{0, anims[0]->getName().buffer()}}, 60), false);
         }
     }

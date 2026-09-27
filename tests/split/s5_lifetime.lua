@@ -1,7 +1,7 @@
 -- s5: split-group lifetime. Real Solar2D removal timing: removed objects are finalized at mock.endFrame().
 -- Each case prints: errors raised, meshes left on screen outside the skeleton, oracle state. arg[1] selects the case
 -- (L1..L8); no arg = all.
-local C = dofile(arg[0]:match("^(.*)/") .. "/common.lua")
+local C = dofile(arg[0]:match("^(.*)/") .. "/../splitfx/common.lua")
 local mock = C.mock; io.stdout:setvbuf("no")
 local which = arg[1]
 

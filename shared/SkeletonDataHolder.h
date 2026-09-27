@@ -3,7 +3,7 @@
 #include "CoronaLua.h"
 #include <memory>
 #include "DataHolder.h"
-#include "SkeletonData.h"
+#include <spine/SkeletonData.h>
 #include "LuaTableHolder.h"
 
 using namespace spine;

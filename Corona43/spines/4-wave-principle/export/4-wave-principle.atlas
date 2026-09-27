@@ -1,0 +1,20 @@
+4-wave-principle.png
+	size: 512, 256
+	filter: Linear, Linear
+	scale: 0.5
+basket-ball
+	bounds: 2, 25, 103, 103
+basket-lambertian
+	bounds: 348, 80, 103, 103
+chain-1
+	bounds: 453, 31, 54, 152
+chain-2
+	bounds: 107, 2, 37, 126
+chain-3
+	bounds: 146, 16, 37, 112
+chain-4
+	bounds: 250, 30, 37, 98
+chain-end
+	bounds: 185, 68, 63, 60
+platform
+	bounds: 2, 130, 344, 53

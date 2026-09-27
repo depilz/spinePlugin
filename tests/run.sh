@@ -1,14 +1,19 @@
 #!/bin/bash
-# Runs the test suites: tests/run.sh [--list] [suite...]. With no suite it runs every suite not marked
-# named-only (see tests/lib.sh for the suite contract). The run passes iff every failing test is listed in
-# tests/xfail/<runtime>.tsv and no listed test passes (XPASS) or goes unreported (STALE).
-# Environment (all optional): SPINE_REPO, SPINE_SPINES, SPINE_TEST_OUT, SDKROOT, LUA51_SRC, CORONA_NATIVE;
+# Runs the test suites on each runtime line: tests/run.sh [--list] [--line <runtime>] [suite...]. The lines are
+# the runtimes under runtime/spine-<runtime>; --line runs one of them. With no suite it runs every suite not marked
+# named-only (see tests/lib.sh for the suite contract), on every line the suite runs on (ONLY_42). A line passes iff
+# every failing test is listed in tests/xfail/<runtime>.tsv and no listed test passes (XPASS) or goes unreported
+# (STALE); the run passes iff every line does.
+# Environment (all optional): SPINE_REPO, SPINE_TEST_OUT, SDKROOT, LUA51_SRC, CORONA_NATIVE;
 # SOLAR2D_SIM_APP for the sim suite.
 set -euo pipefail
 
 TESTS_DIR="$(cd "$(dirname "$0")" && pwd)"
 SUPPORTED_SDKS="26.4"
 XCODE_SDK_EXAMPLE="/Applications/Xcode_26.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk"
+# Suites that run on the 4.2 line only: sim (4.2 until plugin.spine43 has a Simulator build), gate (checks the
+# tracked archives, not a line) and guard (checks the history of both lines at once).
+ONLY_42="gate guard sim"
 
 die() { echo "run.sh: $*" >&2; exit 2; }
 
@@ -34,10 +39,51 @@ under() { [[ "$1" == "$2" || "$1" == "$2"/* ]]; }
 
 set_env_defaults() {
   export SPINE_REPO="${SPINE_REPO:-$(cd "$TESTS_DIR/.." && pwd)}"
-  export SPINE_SPINES="${SPINE_SPINES:-$SPINE_REPO/Corona/spines}"
   export LUA51_SRC="${LUA51_SRC:-$TESTS_DIR/third_party/lua-5.1.3/src}"
   export CORONA_NATIVE="${CORONA_NATIVE:-$TESTS_DIR/third_party/solar2d}"
-  export SPINE_RUNTIME=$(sed -n 's/^#define SPINE_VERSION_STRING "\(.*\)"$/\1/p' "$SPINE_REPO/shared/spine/Version.h")
+}
+
+# runtime_lines: the SPINE_VERSION_STRING of every runtime/spine-*/spine/Version.h, one per line
+runtime_lines() {
+  local v
+  for v in "$SPINE_REPO"/runtime/spine-*/spine/Version.h; do
+    sed -n 's/^#define SPINE_VERSION_STRING "\(.*\)"$/\1/p' "$v"
+  done
+}
+
+# flat_spines src view: links an export tree in the 4.3 layout (folder/export/name[-pro|-ess].*) into the 4.2 flat
+# layout (view/name/name.*) and prints view. name.skel and name.json are the plain export, else -pro, else -ess
+# (Corona43/Spine.lua's order); name.atlas falls back to the folder's atlas (sack lives in 7-anticipation).
+flat_spines() {
+  local src=$1 view=$2 export folder f name dir ext cand
+  rm -rf "$view"
+  for export in "$src"/*/export; do
+    folder=${export%/export}; folder=${folder##*/}
+    for f in "$export"/*.skel "$export"/*.json; do
+      [[ -e "$f" ]] || continue
+      name=${f##*/}; name=${name%.*}; name=${name%-pro}; name=${name%-ess}
+      dir="$view/$name"
+      [[ -d "$dir" ]] && continue
+      mkdir -p "$dir"
+      ln -s "$export"/* "$dir/"
+      for ext in atlas skel json; do
+        for cand in "$name.$ext" "$name-pro.$ext" "$name-ess.$ext" "$folder.$ext"; do
+          [[ -e "$dir/$cand" ]] || continue
+          [[ "$cand" == "$name.$ext" ]] || ln -s "$cand" "$dir/$name.$ext"
+          break
+        done
+      done
+    done
+  done
+  echo "$view"
+}
+
+# line_spines runtime: the line's example exports in the 4.2 flat layout, the suites' cwd (SPINE_SPINES)
+line_spines() {
+  case "$1" in
+    4.2) echo "$SPINE_REPO/Corona/spines" ;;
+    *) flat_spines "$SPINE_REPO/Corona${1//./}/spines" "$SPINE_TEST_OUT/spines" ;;
+  esac
 }
 
 resolve_sdk() {
@@ -60,6 +106,7 @@ resolve_test_out() {
   under "$out" "$(physical_path "${HOME:?}/Library")" && die "SPINE_TEST_OUT=$SPINE_TEST_OUT is under ~/Library ($out); choose a directory outside it"
   mkdir -p "$out/tmp"
   export SPINE_TEST_OUT=$out TMPDIR=$out/tmp
+  ROOT_OUT=$out
 }
 
 xfail_file() {
@@ -71,7 +118,7 @@ xfail_file() {
 
 # verdict xfail_file ran_suites [results_file]: without results only validates the xfail list
 verdict() {
-  awk -F'\t' -v registered=" $(suites | tr '\n' ' ') " -v ran=" $2 " -v out="$SPINE_TEST_OUT" '
+  awk -F'\t' -v registered=" $(suites | tr '\n' ' ') " -v ran=" $2 " -v out="$SPINE_TEST_OUT" -v line="$SPINE_RUNTIME" '
     function listed(s) { return index(ran, " " s " ") }
     FILENAME == ARGV[1] {
       if ($0 ~ /^#/ || $0 == "" || ($1 == "suite" && $2 == "test")) next
@@ -94,7 +141,7 @@ verdict() {
       if (problem != "") { printf "run.sh: bad xfail list %s\n%s", ARGV[1], problem > "/dev/stderr"; exit 2 }
       if (ARGC < 3) exit 0
       for (id in key) if (listed(suite[id]) && !(id in seen)) { print "STALE", suite[id], test[id], key[id]; failed++ }
-      printf "%d passed, %d xfail, %d failed\n", passed, xfailed, failed
+      printf "%s: %d passed, %d xfail, %d failed\n", line, passed, xfailed, failed
       exit failed > 0
     }' "$1" ${3:+"$3"}
 }
@@ -110,24 +157,49 @@ run_suite() {
     printf '%s\tFAIL\t_harness\n' "$suite" >>"$out/results.tsv"
 }
 
+# run_line runtime suite...: runs the suites that run on the line, with SPINE_RUNTIME, SPINE_SPINES and a
+# SPINE_TEST_OUT of its own, and verdicts them against the line's xfail list
+run_line() {
+  local s results xfail ran=()
+  export SPINE_RUNTIME=$1 SPINE_TEST_OUT=$ROOT_OUT/$1
+  shift
+  mkdir -p "$SPINE_TEST_OUT"
+  SPINE_SPINES=$(line_spines "$SPINE_RUNTIME") || return 1
+  export SPINE_SPINES
+  echo "=== runtime $SPINE_RUNTIME ($SPINE_TEST_OUT)"
+  results="$SPINE_TEST_OUT/results.tsv"
+  : >"$results"
+  for s; do
+    if [[ "$SPINE_RUNTIME" != 4.2 && " $ONLY_42 " == *" $s "* ]]; then echo "== $s: 4.2 only"; continue; fi
+    ran+=("$s")
+    run_suite "$s"
+    cat "$SPINE_TEST_OUT/$s/results.tsv" >>"$results"
+  done
+  xfail=$(xfail_file)
+  verdict "$xfail" "${ran[*]-}" "$results"
+}
+
 main() {
+  local line="" registered lines xfail s rc=0 selected=()
   case "${1:-}" in
     --list) suites; return ;;
-    -h|--help) echo "usage: tests/run.sh [--list] [suite...]"; return ;;
+    -h|--help) echo "usage: tests/run.sh [--list] [--line <runtime>] [suite...]"; return ;;
+    --line) line=${2:-}; shift 2 || die "--line needs a runtime" ;;
   esac
-  local registered s results xfail selected=()
   registered=$(suites)
   for s in "$@"; do grep -qxF -- "$s" <<<"$registered" || die "unknown suite '$s' (tests/run.sh --list names them)"; done
   if (( $# )); then selected=("$@"); else while IFS= read -r s; do selected+=("$s"); done < <(default_suites); fi
   set_env_defaults
+  lines=$(runtime_lines)
+  if [[ -n "$line" ]]; then
+    grep -qxF -- "$line" <<<"$lines" || die "unknown runtime '$line' (runtimes: $(echo $lines))"
+    lines=$line
+  fi
   resolve_sdk
   resolve_test_out
-  xfail=$(xfail_file)
-  verdict "$xfail" ""
-  results="$SPINE_TEST_OUT/results.tsv"
-  : >"$results"
-  for s in ${selected[@]+"${selected[@]}"}; do run_suite "$s"; cat "$SPINE_TEST_OUT/$s/results.tsv" >>"$results"; done
-  verdict "$xfail" "${selected[*]-}" "$results"
+  for line in $lines; do xfail=$(SPINE_RUNTIME=$line xfail_file); SPINE_RUNTIME=$line verdict "$xfail" ""; done
+  for line in $lines; do run_line "$line" ${selected[@]+"${selected[@]}"} || rc=1; done
+  return $rc
 }
 
 main "$@"

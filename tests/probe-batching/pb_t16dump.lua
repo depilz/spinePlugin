@@ -1,5 +1,5 @@
 -- port of release W/tests/t16_dump.lua to the split fixture (portable API: fx.setAttachmentAlpha instead of a.color)
-local C = dofile(arg[0]:match("^(.*)/") .. "/common.lua")
+local C = dofile(arg[0]:match("^(.*)/") .. "/../splitfx/common.lua")
 local mock, fx = C.mock, C.fx
 local obj = C.spine.create(C.data("raptor", 0.5))
 obj:setAnimation(1, "walk", true); C.frame(obj)

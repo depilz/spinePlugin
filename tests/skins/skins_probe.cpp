@@ -4,6 +4,7 @@
 #include "Lua_Slot.h"
 #include "Lua_Skin.h"
 #include "Lua_Attachment.h"
+#include "skins_compat.h"
 #include <cstdio>
 
 static SpineSkeleton *skel(lua_State *L, int idx) {
@@ -51,11 +52,11 @@ static Slot *slotOf(lua_State *L) {
     if (!s) luaL_error(L, "no slot %s", lua_tostring(L, 2));
     return s;
 }
-static int sequenceIndex(lua_State *L) { lua_pushinteger(L, slotOf(L)->getSequenceIndex()); return 1; }
-static int deformSize(lua_State *L) { lua_pushinteger(L, (lua_Integer)slotOf(L)->getDeform().size()); return 1; }
-static int slotAttachmentPtr(lua_State *L) { pushPtr(L, slotOf(L)->getAttachment()); return 1; }
+static int sequenceIndex(lua_State *L) { lua_pushinteger(L, spc::applied(*slotOf(L)).getSequenceIndex()); return 1; }
+static int deformSize(lua_State *L) { lua_pushinteger(L, (lua_Integer)spc::applied(*slotOf(L)).getDeform().size()); return 1; }
+static int slotAttachmentPtr(lua_State *L) { pushPtr(L, spc::applied(*slotOf(L)).getAttachment()); return 1; }
 static int slotAttachmentRef(lua_State *L) {
-    Attachment *a = slotOf(L)->getAttachment();
+    Attachment *a = spc::applied(*slotOf(L)).getAttachment();
     if (!a) { lua_pushnil(L); return 1; }
     lua_pushinteger(L, a->getRefCount()); return 1;
 }
@@ -64,8 +65,8 @@ static int meshInfo(lua_State *L) {
     Attachment *a = att(L, 1);
     int n = 0;
     if (a->getRTTI().instanceOf(MeshAttachment::rtti)) {
-        auto *m = (MeshAttachment *)a;
-        pushPtr(L, m->getParentMesh()); lua_pushinteger(L, m->getParentMesh() ? m->getParentMesh()->getRefCount() : 0);
+        MeshAttachment *p = skc::parentMesh(*(MeshAttachment *)a);
+        pushPtr(L, p); lua_pushinteger(L, p ? p->getRefCount() : 0);
         n += 2;
     } else { lua_pushnil(L); lua_pushnil(L); n += 2; }
     if (a->getRTTI().instanceOf(VertexAttachment::rtti)) {
@@ -74,19 +75,19 @@ static int meshInfo(lua_State *L) {
     } else { lua_pushnil(L); lua_pushnil(L); }
     n += 2;
     bool seq = false;
-    if (a->getRTTI().instanceOf(RegionAttachment::rtti)) seq = ((RegionAttachment *)a)->getSequence() != nullptr;
-    if (a->getRTTI().instanceOf(MeshAttachment::rtti)) seq = ((MeshAttachment *)a)->getSequence() != nullptr;
+    if (a->getRTTI().instanceOf(RegionAttachment::rtti)) seq = skc::hasSequence(*(RegionAttachment *)a);
+    if (a->getRTTI().instanceOf(MeshAttachment::rtti)) seq = skc::hasSequence(*(MeshAttachment *)a);
     lua_pushboolean(L, seq); n++;
     return n;
 }
 static int dataSkinCount(lua_State *L) { lua_pushinteger(L, (lua_Integer)skel(L, 1)->skeletonData->getSkins().size()); return 1; }
 static int slotColor(lua_State *L) {
     Slot *s = slotOf(L);
-    lua_pushnumber(L, s->getColor().r); lua_pushnumber(L, s->getSolarColor().r); return 2;
+    lua_pushnumber(L, spc::applied(*s).getColor().r); lua_pushnumber(L, s->getSolarColor().r); return 2;
 }
 static int drawOrderFirst(lua_State *L) {
     auto *v = skel(L, 1);
-    lua_pushstring(L, v->skeleton->getDrawOrder()[0]->getData().getName().buffer()); return 1;
+    lua_pushstring(L, spc::drawOrder(v->skeleton)[0]->getData().getName().buffer()); return 1;
 }
 // ownerProbe(skinWrapper, ownsMemory) -> calls getLuaSkinOwner(skin, flag) and reports what it returned
 static int ownerProbe(lua_State *L) {

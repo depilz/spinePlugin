@@ -4,11 +4,11 @@
 #include "CoronaMacros.h"
 #include <string>
 #include <cassert>
-#include <spine/spine.h>
+#include "SpineCompat.h"
 #include "LuaTableHolder.h"
 #include "DataHolder.h"
 #include "SkeletonDataHolder.h"
-#include "Extension.h"
+#include <spine/Extension.h>
 
 using namespace spine;
 
@@ -30,12 +30,12 @@ public:
 #ifdef _WIN32
 extern "C"
 {
-    __declspec(dllexport) int luaopen_plugin_spine(lua_State *L);
+    __declspec(dllexport) int SPINE_PLUGIN_LUAOPEN(lua_State *L);
 }
 #else
 extern "C"
 {
-    int luaopen_plugin_spine(lua_State *L);
+    int SPINE_PLUGIN_LUAOPEN(lua_State *L);
 }
 #endif
 

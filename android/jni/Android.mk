@@ -27,9 +27,14 @@ LUA_API_DIR := $(CORONA_ROOT)/Corona/shared/include/lua
 LUA_API_CORONA := $(CORONA_ROOT)/Corona/shared/include/Corona
 
 PLUGIN_DIR := ../..
+# build.sh unpacks Corona.aar's libraries under its build dir and passes CORONA_LIBS
+CORONA_LIBS ?= ../corona-libs
+# build.sh passes the Spine line (runtime/spine-<line>); one module per line
+SPINE_LINE ?= 4.2
+SPINE_RUNTIME := runtime/spine-$(SPINE_LINE)
 
 SRC_DIR := $(PLUGIN_DIR)/shared
-SRC_DIR := $(PLUGIN_DIR)/shared/spine
+SRC_DIR := $(PLUGIN_DIR)/$(SPINE_RUNTIME)/spine
 CEU_DIR := $(PLUGIN_DIR)/../solar2d_native_utils
 CEU_SRC := $(CEU_DIR)/utils
 
@@ -37,13 +42,13 @@ CEU_SRC := $(CEU_DIR)/utils
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := liblua
-LOCAL_SRC_FILES := ../corona-libs/jni/$(TARGET_ARCH_ABI)/liblua.so
+LOCAL_SRC_FILES := $(CORONA_LIBS)/jni/$(TARGET_ARCH_ABI)/liblua.so
 LOCAL_EXPORT_C_INCLUDES := $(LUA_API_DIR)
 include $(PREBUILT_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := libcorona
-LOCAL_SRC_FILES := ../corona-libs/jni/$(TARGET_ARCH_ABI)/libcorona.so
+LOCAL_SRC_FILES := $(CORONA_LIBS)/jni/$(TARGET_ARCH_ABI)/libcorona.so
 LOCAL_EXPORT_C_INCLUDES := $(LUA_API_CORONA)
 include $(PREBUILT_SHARED_LIBRARY)
 
@@ -51,10 +56,10 @@ include $(PREBUILT_SHARED_LIBRARY)
 
 
 include $(CLEAR_VARS)
-LOCAL_MODULE := libplugin.spine
+LOCAL_MODULE := libplugin.spine$(subst .,,$(SPINE_LINE))
 
 SHARED_SRC := $(wildcard $(LOCAL_PATH)/../../shared/*.cpp)
-SPINE_SRC := $(wildcard $(LOCAL_PATH)/../../shared/spine/*.cpp)
+SPINE_SRC := $(wildcard $(LOCAL_PATH)/../../$(SPINE_RUNTIME)/spine/*.cpp)
 
 LOCAL_SRC_FILES := $(SHARED_SRC:$(LOCAL_PATH)/%=%) \
                    $(SPINE_SRC:$(LOCAL_PATH)/%=%)
@@ -62,7 +67,7 @@ LOCAL_SRC_FILES := $(SHARED_SRC:$(LOCAL_PATH)/%=%) \
 # Add include directories
 LOCAL_C_INCLUDES := \
     $(LOCAL_PATH)/../../shared \
-    $(LOCAL_PATH)/../../shared/spine
+    $(LOCAL_PATH)/../../$(SPINE_RUNTIME)
 
 LOCAL_LDLIBS := -llog
 

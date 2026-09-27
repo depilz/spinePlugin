@@ -1,6 +1,6 @@
 -- s1: FINAL skins/attachments API contract (skinsapi). Every row prints what the call did, then PASS/FAIL
--- against the FINAL spec, so on the 1.5.0 bindings most rows FAIL until I7 lands (tests/xfail/4.2.tsv lists them).
--- Assets: goblins.json (skins goblin/goblingirl, linked meshes), hero.json (skin bones), 4.2 exports.
+-- against the FINAL spec, so on the 1.5.0 bindings most rows FAIL until I7 lands (tests/xfail/<runtime>.tsv lists them).
+-- Assets: goblins.json (skins goblin/goblingirl, linked meshes), hero.json (skin bones), the line's exports.
 local fx = require("realdata_fixture")
 local P = require("skins_probe")
 local function gc() for _ = 1, 6 do collectgarbage("collect") end end

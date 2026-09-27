@@ -147,14 +147,14 @@ int loadSkeletonData(lua_State *L)
     SkeletonData *skeletonData = nullptr;
     if (strstr(absPath, ".json"))
     {
-        SkeletonJson *json = new SkeletonJson(atlas);
+        SkeletonJson *json = spc::newJson(atlas);
         json->setScale(scale);
         skeletonData = json->readSkeletonDataFile(absPath);
         delete json;
     }
     else if (strstr(absPath, ".skel"))
     {
-        SkeletonBinary *binary = new SkeletonBinary(atlas);
+        SkeletonBinary *binary = spc::newBinary(atlas);
         binary->setScale(scale);
         skeletonData = binary->readSkeletonDataFile(absPath);
         delete binary;
@@ -194,11 +194,13 @@ int create(lua_State *L)
         listenerRef = luaL_ref(L, LUA_REGISTRYINDEX);
     }
 
-    Skeleton *skeleton = new Skeleton(skeletonData);
-    skeleton->setScaleY(-1);
+    Skeleton *skeleton = spc::newSkeleton(skeletonData);
+#if !SPINE_43()
+    skeleton->setScaleY(-1); // 4.3: Bone::yDown is true by default
+#endif
 
-    AnimationStateData *stateData = new AnimationStateData(skeletonData);
-    AnimationState *state = new AnimationState(stateData);
+    AnimationStateData *stateData = spc::newStateData(skeletonData);
+    AnimationState *state = spc::newState(stateData);
 
     SpineSkeleton *skeletonUserdata = (SpineSkeleton *)lua_newuserdata(L, sizeof(SpineSkeleton));
     new (skeletonUserdata) SpineSkeleton(L);
@@ -252,7 +254,7 @@ SpineExtension *spine::getDefaultExtension()
     return new Solar2dExtension();
 }
 
-CORONA_EXPORT int luaopen_plugin_spine(lua_State *L) {
+CORONA_EXPORT int SPINE_PLUGIN_LUAOPEN(lua_State *L) {
 
     lua_newtable(L);
 
@@ -272,10 +274,7 @@ CORONA_EXPORT int luaopen_plugin_spine(lua_State *L) {
     getSkinMt(L);
     lua_pop(L, 1); // pop the metatable
 
-    const char *pluginVersion = "v1.5.0";
-    const char *spineVersion = "4.2.XX";
-
-    printf("Solar2d Spine plugin %s loaded with Spine %s\n", pluginVersion, spineVersion);
+    printf("Solar2d Spine plugin %s loaded with Spine %s\n", SPINE_PLUGIN_VERSION, SPINE_VERSION_STRING);
 
     return 1;
 }

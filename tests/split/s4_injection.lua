@@ -1,6 +1,6 @@
 -- s4: injections while split. arg[1] selects the case (a, b2, c..f); no arg = a (with b2), c, e, f.
 -- "a" checks cases a/b, "b2" repeats them and checks only the reassembled frames.
-local C = dofile(arg[0]:match("^(.*)/") .. "/common.lua")
+local C = dofile(arg[0]:match("^(.*)/") .. "/../splitfx/common.lua")
 local mock = C.mock; io.stdout:setvbuf("no")
 local which = arg[1]
 

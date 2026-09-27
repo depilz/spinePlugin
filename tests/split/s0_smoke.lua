@@ -1,4 +1,4 @@
-local C = dofile(arg[0]:match("^(.*)/") .. "/common.lua")
+local C = dofile(arg[0]:match("^(.*)/") .. "/../splitfx/common.lua")
 for _, name in ipairs({ "raptor", "spineboy", "tank", "mix-and-match", "celestial-circus" }) do
   local obj = C.spine.create(C.data(name, 0.5))
   local anims = obj:getAnimations()

@@ -62,31 +62,31 @@ static int physics_index(lua_State *L)
 
     if (strcmp(key, "wind") == 0)
     {
-        lua_pushnumber(L, PhysicsConstraints[0]->getWind());
+        lua_pushnumber(L, spc::pose(*PhysicsConstraints[0]).getWind());
         return 1;
     } else if (strcmp(key, "inertia") == 0)
     {
-        lua_pushnumber(L, PhysicsConstraints[0]->getInertia());
+        lua_pushnumber(L, spc::pose(*PhysicsConstraints[0]).getInertia());
         return 1;
     } else if (strcmp(key, "strength") == 0)
     {
-        lua_pushnumber(L, PhysicsConstraints[0]->getStrength());
+        lua_pushnumber(L, spc::pose(*PhysicsConstraints[0]).getStrength());
         return 1;
     } else if (strcmp(key, "damping") == 0)
     {
-        lua_pushnumber(L, PhysicsConstraints[0]->getDamping());
+        lua_pushnumber(L, spc::pose(*PhysicsConstraints[0]).getDamping());
         return 1;
     } else if (strcmp(key, "massInverse") == 0)
     {
-        lua_pushnumber(L, PhysicsConstraints[0]->getMassInverse());
+        lua_pushnumber(L, spc::pose(*PhysicsConstraints[0]).getMassInverse());
         return 1;
     } else if (strcmp(key, "gravity") == 0)
     {
-        lua_pushnumber(L, PhysicsConstraints[0]->getGravity());
+        lua_pushnumber(L, spc::pose(*PhysicsConstraints[0]).getGravity());
         return 1;
     } else if (strcmp(key, "mix") == 0)
     {
-        lua_pushnumber(L, PhysicsConstraints[0]->getMix());
+        lua_pushnumber(L, spc::pose(*PhysicsConstraints[0]).getMix());
         return 1;
     } else if (strcmp(key, "xVelocity") == 0)
     {
@@ -133,7 +133,7 @@ static int physics_newindex(lua_State *L)
         float wind = luaL_checknumber(L, 3);
         for (int i = 0; i < PhysicsConstraints.size(); i++)
         {
-            PhysicsConstraints[i]->setWind(wind);
+            spc::pose(*PhysicsConstraints[i]).setWind(wind);
         }
         return 0;
     } else if(strcmp(key, "inertia") == 0)
@@ -141,7 +141,7 @@ static int physics_newindex(lua_State *L)
         float inertia = luaL_checknumber(L, 3);
         for (int i = 0; i < PhysicsConstraints.size(); i++)
         {
-            PhysicsConstraints[i]->setInertia(inertia);
+            spc::pose(*PhysicsConstraints[i]).setInertia(inertia);
         }
         return 0;
     } else if(strcmp(key, "strength") == 0)
@@ -149,7 +149,7 @@ static int physics_newindex(lua_State *L)
         float strength = luaL_checknumber(L, 3);
         for (int i = 0; i < PhysicsConstraints.size(); i++)
         {
-            PhysicsConstraints[i]->setStrength(strength);
+            spc::pose(*PhysicsConstraints[i]).setStrength(strength);
         }
         return 0;
     } else if(strcmp(key, "damping") == 0)
@@ -157,7 +157,7 @@ static int physics_newindex(lua_State *L)
         float damping = luaL_checknumber(L, 3);
         for (int i = 0; i < PhysicsConstraints.size(); i++)
         {
-            PhysicsConstraints[i]->setDamping(damping);
+            spc::pose(*PhysicsConstraints[i]).setDamping(damping);
         }
         return 0;
     } else if(strcmp(key, "massInverse") == 0)
@@ -165,7 +165,7 @@ static int physics_newindex(lua_State *L)
         float massInverse = luaL_checknumber(L, 3);
         for (int i = 0; i < PhysicsConstraints.size(); i++)
         {
-            PhysicsConstraints[i]->setMassInverse(massInverse);
+            spc::pose(*PhysicsConstraints[i]).setMassInverse(massInverse);
         }
         return 0;
     } else if(strcmp(key, "gravity") == 0)
@@ -173,7 +173,7 @@ static int physics_newindex(lua_State *L)
         float gravity = luaL_checknumber(L, 3);
         for (int i = 0; i < PhysicsConstraints.size(); i++)
         {
-            PhysicsConstraints[i]->setGravity(gravity);
+            spc::pose(*PhysicsConstraints[i]).setGravity(gravity);
         }
         return 0;
     } else if(strcmp(key, "mix") == 0)
@@ -181,7 +181,7 @@ static int physics_newindex(lua_State *L)
         float mix = luaL_checknumber(L, 3);
         for (int i = 0; i < PhysicsConstraints.size(); i++)
         {
-            PhysicsConstraints[i]->setMix(mix);
+            spc::pose(*PhysicsConstraints[i]).setMix(mix);
         }
         return 0;
     } else if(strcmp(key, "xVelocity") == 0)

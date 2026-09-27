@@ -1,7 +1,7 @@
 -- s1: random slot sets (as Corona/tests/Splits.lua), oracle after every frame.
 -- phases per run: split(A) 20 frames -> split(B) 20 frames -> reassemble 20 frames -> split(C) 20 frames -> reassemble 5 frames
 -- Real Solar2D removal timing (removed objects are finalized at the end of the frame).
-local C = dofile(arg[0]:match("^(.*)/") .. "/common.lua")
+local C = dofile(arg[0]:match("^(.*)/") .. "/../splitfx/common.lua")
 local mock = C.mock; io.stdout:setvbuf("no")
 local RUNS = tonumber(os.getenv("RUNS") or "30")
 local SKIP = arg[1] == "skip-portal"  -- as-is builds crash (render-2) on spineboy/portal when split

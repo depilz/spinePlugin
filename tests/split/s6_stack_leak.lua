@@ -1,6 +1,6 @@
 -- s6: render-13 (draw with extra arguments in split mode) and render-11 (native heap growth per split draw).
 -- arg[1] selects the case (drawargs, leak); no arg = both. The leak case needs the counting operator new (splitfx.cpp).
-local C = dofile(arg[0]:match("^(.*)/") .. "/common.lua")
+local C = dofile(arg[0]:match("^(.*)/") .. "/../splitfx/common.lua")
 local mock = C.mock
 local which = arg[1]
 local scene = display.newGroup()

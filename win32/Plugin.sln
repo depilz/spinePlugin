@@ -5,6 +5,8 @@ VisualStudioVersion = 18.0.30001.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Plugin", "Plugin.vcxproj", "{79F0CACC-457B-4A25-BC54-81277688C361}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Plugin43", "Plugin43.vcxproj", "{62027595-9414-42E4-90EA-D8B8CED7FF71}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -15,6 +17,10 @@ Global
 		{79F0CACC-457B-4A25-BC54-81277688C361}.Debug|Win32.Build.0 = Release|Win32
 		{79F0CACC-457B-4A25-BC54-81277688C361}.Release|Win32.ActiveCfg = Release|Win32
 		{79F0CACC-457B-4A25-BC54-81277688C361}.Release|Win32.Build.0 = Release|Win32
+		{62027595-9414-42E4-90EA-D8B8CED7FF71}.Debug|Win32.ActiveCfg = Release|Win32
+		{62027595-9414-42E4-90EA-D8B8CED7FF71}.Debug|Win32.Build.0 = Release|Win32
+		{62027595-9414-42E4-90EA-D8B8CED7FF71}.Release|Win32.ActiveCfg = Release|Win32
+		{62027595-9414-42E4-90EA-D8B8CED7FF71}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

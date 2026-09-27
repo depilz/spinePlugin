@@ -1,5 +1,5 @@
 -- trace group:insert calls around the hidden-injection frame (raptor-horn-back), to explain release-14
-local C = dofile(arg[0]:match("^(.*)/") .. "/common.lua")
+local C = dofile(arg[0]:match("^(.*)/") .. "/../splitfx/common.lua")
 local mock, fx = C.mock, C.fx
 local obj = C.spine.create(C.data("raptor", 0.5))
 local marker = display.newRect(0, 0, 1, 1)

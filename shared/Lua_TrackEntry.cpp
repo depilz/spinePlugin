@@ -47,7 +47,7 @@ static int entry_index(lua_State *L)
     }
     else if (strcmp(key, "animation") == 0)
     {
-        const char *animationName = entry.getAnimation()->getName().buffer();
+        const char *animationName = spc::anim(entry).getName().buffer();
         lua_pushstring(L, animationName);
 
         return 1;

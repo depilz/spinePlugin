@@ -236,7 +236,7 @@ static int addSkin(lua_State *L)
         return 1;
     }
 
-    if (otherSkin != skinUserdata->skin) skinUserdata->skin->addSkin(otherSkin);
+    if (otherSkin != skinUserdata->skin) spc::addSkin(skinUserdata->skin, otherSkin);
     lua_pushboolean(L, true);
     return 1;
 }
@@ -261,7 +261,7 @@ static int copySkin(lua_State *L)
         return 1;
     }
 
-    if (otherSkin != skinUserdata->skin) skinUserdata->skin->copySkin(otherSkin);
+    if (otherSkin != skinUserdata->skin) spc::copySkin(skinUserdata->skin, otherSkin);
     lua_pushboolean(L, true);
     return 1;
 }
@@ -330,7 +330,7 @@ static int setAttachment(lua_State *L)
     if (attachment)
     {
         // Copy the attachment instead of just referencing it
-        Attachment *copiedAttachment = attachment->copy();
+        Attachment *copiedAttachment = spc::copy(attachment);
         skinUserdata->skin->setAttachment(slotIndex, name, copiedAttachment);
         
         // If source skin provided, copy its bones and constraints
@@ -526,7 +526,7 @@ static int getAttachments(lua_State *L)
         lua_settable(L, -3);
         
         lua_pushstring(L, "name");
-        lua_pushstring(L, entry._name.buffer());
+        lua_pushstring(L, spc::entryName(entry).buffer());
         lua_settable(L, -3);
         
         lua_pushstring(L, "attachment");

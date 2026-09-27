@@ -1,0 +1,68 @@
+# Counterpart map for runtime_guard.sh: which file under the other line's runtime/spine-<line>/ carries a change to a
+# file that exists under one line only (9 only on 4.2, 52 only on 4.3). A file on both lines is its own counterpart
+# and is not listed. One pair per row, "-" for none; a file with several counterparts has several rows. A change to a
+# file whose only counterpart is "-" always needs the Runtime-other: trailer. The guard suite checks that every
+# one-sided file is listed and every listed file exists.
+# Member renames inside a file on both lines (MeshAttachment parentMesh -> sourceMesh) need no row.
+4.2	4.3
+# 4.2 only
+spine/ContainerUtil.h	spine/ArrayUtils.h
+spine/Log.cpp	-
+spine/Log.h	-
+spine/MixBlend.h	spine/Timeline.h
+spine/MixDirection.h	spine/Timeline.h
+spine/Updatable.cpp	spine/Update.cpp
+spine/Updatable.h	spine/Update.h
+spine/Vector.h	spine/Array.h
+spine/Vertices.h	spine/SkeletonJson.cpp
+# 4.3 only: the pose split (Bone -> BoneLocal/BonePose, Slot -> SlotPose, <Constraint> -> <Constraint>Pose)
+spine/Bone.cpp	spine/BoneLocal.cpp
+spine/Bone.h	spine/BoneLocal.h
+spine/Bone.cpp	spine/BonePose.cpp
+spine/Bone.h	spine/BonePose.h
+spine/Slot.cpp	spine/SlotPose.cpp
+spine/Slot.h	spine/SlotPose.h
+spine/IkConstraint.cpp	spine/IkConstraintPose.cpp
+spine/IkConstraint.h	spine/IkConstraintPose.h
+spine/PathConstraint.cpp	spine/PathConstraintPose.cpp
+spine/PathConstraint.h	spine/PathConstraintPose.h
+spine/PhysicsConstraint.cpp	spine/PhysicsConstraintPose.cpp
+spine/PhysicsConstraint.h	spine/PhysicsConstraintPose.h
+spine/TransformConstraint.cpp	spine/TransformConstraintPose.cpp
+spine/TransformConstraint.h	spine/TransformConstraintPose.h
+# 4.3 only: moved out of a 4.2 file (Interpolation from MathUtil, TextureRegion's body from its header)
+spine/MathUtil.cpp	spine/Interpolation.cpp
+spine/MathUtil.h	spine/Interpolation.h
+spine/TextureRegion.h	spine/TextureRegion.cpp
+# 4.3 only: new in 4.3, no 4.2 counterpart
+-	spine/BoneTimeline.cpp
+-	spine/BoneTimeline.h
+-	spine/Constraint.cpp
+-	spine/Constraint.h
+-	spine/ConstraintTimeline.cpp
+-	spine/ConstraintTimeline.h
+-	spine/ConstraintTimeline1.cpp
+-	spine/ConstraintTimeline1.h
+-	spine/DrawOrder.cpp
+-	spine/DrawOrder.h
+-	spine/DrawOrderFolderTimeline.cpp
+-	spine/DrawOrderFolderTimeline.h
+-	spine/Map.h
+-	spine/Pose.h
+-	spine/Posed.h
+-	spine/PosedActive.h
+-	spine/PosedData.h
+-	spine/Slider.cpp
+-	spine/Slider.h
+-	spine/SliderData.cpp
+-	spine/SliderData.h
+-	spine/SliderMixTimeline.cpp
+-	spine/SliderMixTimeline.h
+-	spine/SliderPose.cpp
+-	spine/SliderPose.h
+-	spine/SliderTimeline.cpp
+-	spine/SliderTimeline.h
+-	spine/SlotCurveTimeline.cpp
+-	spine/SlotCurveTimeline.h
+-	spine/SlotTimeline.cpp
+-	spine/SlotTimeline.h
