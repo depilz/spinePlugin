@@ -18,3 +18,9 @@ t12_drawargs.lua
 t13_midinject.lua
 t14_effect_uaf.lua
 t15_inject_order.lua
+t16_physics_timescale.lua default
+t16_physics_timescale.lua reject
+t16_physics_timescale.lua freeze
+t17_constraint_active.lua ik
+t17_constraint_active.lua physics
+t17_constraint_active.lua ik-timeline

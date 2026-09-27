@@ -69,9 +69,6 @@ static void benchSkeleton(const std::string &name, int frames) {
     Loaded L = load(name);
     std::unique_ptr<Skeleton> ownSkeleton(spc::newSkeleton(L.data));
     Skeleton &skeleton = *ownSkeleton;
-#if !SPINE_43()
-    skeleton.setScaleY(-1); // 4.3: Bone::yDown is true by default
-#endif
     std::unique_ptr<AnimationStateData> stateData(spc::newStateData(L.data));
     std::unique_ptr<AnimationState> ownState(spc::newState(stateData.get()));
     AnimationState &state = *ownState;
@@ -167,9 +164,6 @@ static void sequenceProbe() {
     Loaded L = load("dragon");
     std::unique_ptr<Skeleton> owned(spc::newSkeleton(L.data));
     Skeleton &sk = *owned;
-#if !SPINE_43()
-    sk.setScaleY(-1);
-#endif
     std::unique_ptr<AnimationStateData> sd(spc::newStateData(L.data));
     std::unique_ptr<AnimationState> ownState(spc::newState(sd.get()));
     AnimationState &st = *ownState;
@@ -193,6 +187,7 @@ static void sequenceProbe() {
 }
 
 int main(int argc, char **argv) {
+    Bone::setYDown(true); // the plugin's configuration (SPINE_PLUGIN_LUAOPEN in shared/Lua_Spine.cpp)
     int frames = argc > 1 ? std::atoi(argv[1]) : 300;
     const char *names[] = {"spineboy", "raptor", "goblins", "mix-and-match", "hero", "alien", "coin", "tank", "powerup",
                            "celestial-circus", "cloud-pot", "sack", "snowglobe", "dragon", "chibi-stickers", "owl", "stretchyman", "vine", "windmill", "speedy"};

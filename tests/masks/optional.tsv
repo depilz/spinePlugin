@@ -1,0 +1,5 @@
+# Test ids of tests/masks that exist only when SPINE_MASKS_PRIVATE_DIR is set (private inputs, see suite.sh), so
+# they are optional: absent from a run without the variable. Columns: runtime line, then the expected-ids manifest
+# row (suite, test, "optional"). suite.sh runs exactly the rows of its line.
+4.2	masks	private masked	optional
+4.3	masks	private tritest43	optional

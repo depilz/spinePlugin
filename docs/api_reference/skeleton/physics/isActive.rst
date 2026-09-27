@@ -2,22 +2,33 @@
 physics.isActive
 ===================================
 
-| **Type:** ``boolean``
-| **See also:** :doc:`index`
+| **Type:** ``boolean`` (read-only)
+| **See also:** :doc:`index`, :doc:`mix`
 
 Overview:
 .........
 
-Indicates whether physics is currently **active** on the constraints. By default,
-this is set to **true**, but can be toggled on and off as needed.
+Indicates whether the skeleton's first physics constraint is currently **active**. Spine decides this itself:
+a constraint is inactive when it is skin-required and the current skin does not include it, or when its bone
+is inactive. The value changes when the skin changes.
+
+.. note::
+
+   On the 4.3 line (``plugin.spine43``), earlier builds always read ``true`` here, because of a spine-cpp 4.3
+   runtime issue that the plugin now patches: ``Skeleton::updateCache`` set a different active flag than the one
+   ``isActive()`` reads. ``isActive`` now reads ``false`` for an inactive constraint on both lines, and the
+   constraint's animation timelines no longer change it while it is inactive.
+
+``isActive`` is read-only. Writing it raises the error
+``Physics constraint isActive is read-only; set mix = 0 to stop it``. To stop physics, set
+:doc:`mix` to ``0``; set it back to a value above ``0`` to restart it.
 
 Example:
 --------
 
 .. code-block:: lua
 
-   -- Disable physics
-   hero.physics.isActive = false
+   print("Physics active:", hero.physics.isActive)
 
-   -- Re-enable physics
-   hero.physics.isActive = true
+   hero.physics.mix = 0  -- Stop physics
+   hero.physics.mix = 1  -- Restart it

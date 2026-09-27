@@ -202,9 +202,7 @@ static int physics_newindex(lua_State *L)
         return 0;
     } else if(strcmp(key, "isActive") == 0)
     {
-        bool active = lua_toboolean(L, 3);
-        PhysicsConstraints[0]->setActive(active);
-        return 0;
+        return luaL_error(L, "Physics constraint isActive is read-only; set mix = 0 to stop it");
     }
 
     // fallback to methods

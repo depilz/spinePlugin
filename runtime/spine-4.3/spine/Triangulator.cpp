@@ -29,6 +29,15 @@
 
 #include <spine/Triangulator.h>
 
+// Match the editor's (Java) rounding: fused multiply-add can flip positiveArea()/winding() for nearly collinear
+// clipping-polygon vertices and produce triangles outside the polygon.
+#if defined(__clang__)
+#pragma clang fp contract(off)
+#endif
+#if defined(_MSC_VER)
+#pragma fp_contract(off)
+#endif
+
 #include <spine/MathUtil.h>
 
 using namespace spine;

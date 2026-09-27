@@ -13,6 +13,11 @@ Setting `timeScale` to `2` doubles the speed, while `0.5` halves it, etc.
 
 If you want to adjust the speed of a single trackEntry or animation, see :doc:`trackEntry/timeScale`.
 
+.. note::
+
+   ``timeScale`` does not scale Spine physics constraints: they keep running at real time. To slow down,
+   speed up or pause physics, see :doc:`physicsTimeScale`.
+
 Example:
 --------
 

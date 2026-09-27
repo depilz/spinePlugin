@@ -104,7 +104,7 @@ static int physicsInfo(lua_State *L) {
     return 2;
 }
 
-// fx.makePhysicsSkinRequired(obj, index1) : marks physics constraint data as skin-required (no skin has it) and updates cache
+// fx.makePhysicsSkinRequired(obj, index1) : marks physics constraint data as skin-required (no skin has it) and updates cache.
 static int makePhysicsSkinRequired(lua_State *L) {
     SpineSkeleton *s = getSk(L, 1);
     int i = (int)luaL_checkinteger(L, 2) - 1;
@@ -113,6 +113,29 @@ static int makePhysicsSkinRequired(lua_State *L) {
     s->skeleton->updateCache();
     lua_pushboolean(L, pcs[i]->isActive());
     return 1;
+}
+
+template <class T> static ConstraintData *markSkinRequired(T *c) {
+    if (!c) return NULL;
+    c->getData().setSkinRequired(true);
+    return &c->getData();
+}
+
+// fx.skinRequire(obj, "ik"|"physics", name[, skinName]) : marks the named constraint's data skin-required, adds it to
+// skinName's constraints when given, and updates the cache.
+static int skinRequire(lua_State *L) {
+    Skeleton &sk = *getSk(L, 1)->skeleton;
+    String name(luaL_checkstring(L, 3));
+    PhysicsConstraint *pc = NULL;
+    auto &pcs = sk.getPhysicsConstraints();
+    for (size_t i = 0; i < pcs.size(); ++i)
+        if (pcs[i]->getData().getName() == name) pc = pcs[i];
+    ConstraintData *data = strcmp(luaL_checkstring(L, 2), "ik") == 0 ? markSkinRequired(spc::findIk(&sk, name))
+                                                                       : markSkinRequired(pc);
+    if (!data) return luaL_error(L, "no constraint");
+    if (lua_isstring(L, 4)) spc::data(sk).findSkin(lua_tostring(L, 4))->getConstraints().add(data);
+    sk.updateCache();
+    return 0;
 }
 
 static int bufLen(lua_State *L) { lua_pushinteger(L, (lua_Integer)lua_objlen(L, 1)); return 1; }
@@ -127,7 +150,8 @@ static int meshCount(lua_State *L) {
 extern "C" int luaopen_renderfx(lua_State *L) {
     lua_newtable(L);
     const luaL_Reg fns[] = {{"expected", expected}, {"boneWorld", boneWorld}, {"physicsInfo", physicsInfo},
-                            {"makePhysicsSkinRequired", makePhysicsSkinRequired}, {"bufLen", bufLen},
+                            {"makePhysicsSkinRequired", makePhysicsSkinRequired}, {"skinRequire", skinRequire},
+                            {"bufLen", bufLen},
                             {"meshCount", meshCount}, {"newStats", newStats}, {NULL, NULL}};
     luaL_register(L, NULL, fns);
     return 1;

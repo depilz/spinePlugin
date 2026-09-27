@@ -7,6 +7,7 @@
 #include "Lua_Skin.h"
 #include "Lua_TrackEntry.h"
 #include "SpineRenderer.h"
+#include <cmath>
 
 static SpineSkeleton *luaL_getSkeletonUserdata(lua_State *L)
 {
@@ -121,6 +122,11 @@ static int skeleton_index(lua_State *L)
     else if (strcmp(key, "timeScale") == 0)
     {
         lua_pushnumber(L, skeletonUserdata->state->getTimeScale());
+        return 1;
+    }
+    else if (strcmp(key, "physicsTimeScale") == 0)
+    {
+        lua_pushnumber(L, skeletonUserdata->physicsTimeScale);
         return 1;
     }
     else if (strcmp(key, "slots") == 0)
@@ -241,6 +247,15 @@ static int skeleton_newindex(lua_State *L)
     {
         float timeScale = luaL_checknumber(L, 3);
         skeletonUserdata->state->setTimeScale(timeScale);
+        return 0;
+    }
+
+    if (strcmp(key, "physicsTimeScale") == 0)
+    {
+        float physicsTimeScale = luaL_checknumber(L, 3); // checked as float: a finite double can overflow it
+        if (!std::isfinite(physicsTimeScale) || physicsTimeScale < 0)
+            return luaL_error(L, "physicsTimeScale must be a finite number >= 0");
+        skeletonUserdata->physicsTimeScale = physicsTimeScale;
         return 0;
     }
 
@@ -881,15 +896,14 @@ static int updateState(lua_State *L)
     float deltaTime = luaL_checknumber(L, 2);
     deltaTime /= 1000;
 
-    // check if any tracks are playing
-    if (skeletonUserdata->state->getTracks().size() == 0)
+    // Animation work only when a track exists, but always advance the skeleton clock: it is what
+    // Physics_Update steps on, so a skeleton with physics and no animation never simulated (render-5).
+    if (skeletonUserdata->state->getTracks().size() > 0)
     {
-        return 0;
+        skeletonUserdata->state->update(deltaTime);
+        skeletonUserdata->state->apply(*skeletonUserdata->skeleton);
     }
-
-    skeletonUserdata->state->update(deltaTime);
-    skeletonUserdata->state->apply(*skeletonUserdata->skeleton);
-    skeletonUserdata->skeleton->update(deltaTime);
+    skeletonUserdata->skeleton->update(deltaTime * skeletonUserdata->physicsTimeScale);
 
     return 0;
 }
@@ -988,14 +1002,9 @@ static int skeletonDraw(lua_State *L)
         return 0;
     }
 
-    if (skeletonUserdata->skeleton->getPhysicsConstraints().size() > 0 && skeletonUserdata->skeleton->getPhysicsConstraints()[0]->isActive())
-    {
-        skeletonUserdata->skeleton->updateWorldTransform(Physics_Update);
-    } 
-    else
-    {
-        skeletonUserdata->skeleton->updateWorldTransform(Physics_None);
-    }
+    // updateWorldTransform already skips inactive constraints; gating on constraint #1 froze all physics
+    // whenever that one was skin-required and inactive (render-4).
+    skeletonUserdata->skeleton->updateWorldTransform(Physics_Update);
 
     skeletonRender(L, skeletonUserdata);
 

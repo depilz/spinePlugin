@@ -1,0 +1,36 @@
+# Upstream record of runtime/spine-4.3/spine: vendored Esoteric spine-cpp, flattened (include/spine + src/spine -> spine/).
+# Refresh with the tool below from base to the new upstream commit, then update base, imported and history here.
+# Local changes and history are appended to, never dropped.
+
+repo: https://github.com/EsotericSoftware/spine-runtimes
+branch: 4.3
+layout: spine-cpp/{include,src}/spine (refresh-tool option --cpp spine-cpp)
+base: 560d2ff26e6c1a92dd774810da25d97e271c1a7f  [cpp] Fix SliderData leaking its FromProperty (2026-07-09)
+base-evidence: probe-verified (git hash-object of the 201 runtime files vs flat-mapped upstream blobs of every commit touching spine-cpp sources: best match 182/201 tied between 560d2ff26 and d6e239975, which differ only in PhysicsConstraint.cpp, a local-change file; the tie resolves to 560d2ff26 because d6e239975 applies forward and not in reverse; the 19 differing files are exactly the local changes below)
+refresh-tool: tools/runtime-refresh/refresh.sh --cpp spine-cpp <upstream-clone> <base> <new> runtime/spine-4.3/spine
+
+imported:
+- d6e239975 [cpp][godot] Fix Y-down physics constraint forces (2026-07-16), PhysicsConstraint.cpp, applied on top of base 560d2ff26 with the local changes kept
+- 37b4d7cdd [cpp] Fix Y-down IK inheritance (2026-07-16), IkConstraint.cpp, applied on top of base 560d2ff26 (no local changes in this file)
+
+local-changes:
+- AnimationState.cpp, AnimationState.h: _keepHold, attachmentLocked skips (30ccd93, imported in merge 58dc216)
+- Slot.cpp, Slot.h: getSkeleton, solarColor, attachmentLocked (30ccd93)
+- Constraint.cpp, Constraint.h, Skeleton.cpp: _order / getOrder (30ccd93)
+- BonePose.cpp, BonePose.h: getBone (30ccd93)
+- PhysicsConstraint.cpp, PhysicsConstraint.h: velocity accessors, Physics_None case (30ccd93)
+- Slider.cpp, Slider.h: hasBone / clearBone (30ccd93)
+- SkeletonRenderer.cpp, SkeletonRenderer.h: plugin renderer changes (30ccd93)
+- Attachment.cpp, MeshAttachment.cpp, Slot.cpp, SlotPose.cpp: attachment refcount, 4.3 re-expression of a27bde4 (a6f1abb)
+- Version.h: SPINE_PLUGIN_VERSION (c624405)
+- SkeletonRenderer.cpp: buildCommands skips an inactive bone's slot including a clipping attachment (D-A), and ends a clip on a bounding box / point / path end slot (D-B) (hand-port of masks-runtime-4.2.patch)
+- Triangulator.cpp: FP contraction off (clang + MSVC pragmas)
+- FP-contraction pragmas: Windows (MSVC) bit-exactness is assumed, not measured (no Windows comparator run)
+- Constraint.h: Constraint derives from PosedActive and ConstraintGeneric no longer does, so the active flag Skeleton::updateCache writes is the one isActive() reads, for all five constraint types; removes the shadowing, uninitialized Constraint::_active (F43, upstream bug at 7ce5d0daa; drop when upstream fixes it)
+
+history:
+- 2026-09-27: base recorded as 560d2ff26
+- 2026-09-27: imported d6e239975 (PhysicsConstraint.cpp, 1 line); base unchanged
+- 2026-09-27: imported 37b4d7cdd (IkConstraint.cpp, 13 lines); base unchanged
+- 2026-09-27: hand-ported D-A/D-B into SkeletonRenderer.cpp and added the Triangulator.cpp FP-contraction pragmas (clang + MSVC); C1/C3 already upstream in 4.3; Windows bit-exactness assumed
+- 2026-09-27: patched Constraint.h so constraint activation reaches isActive() (F43); base unchanged

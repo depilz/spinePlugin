@@ -37,6 +37,7 @@ struct SpineSkeleton
     SplitData splitData;
     lua_State *L;
     Lua_EffectData *effectData; // created on demand when an effect is set
+    float physicsTimeScale = 1; // scales only the dt given to skeleton->update, i.e. Spine physics constraint time
 
     MeshManager meshes;
 

@@ -1,0 +1,55 @@
+# Upstream record of runtime/spine-4.2/spine: vendored Esoteric spine-cpp, flattened (include/spine + src/spine -> spine/).
+# Refresh with the tool below from base to the new upstream commit, then update base, imported and history here.
+# Local changes and history are appended to, never dropped.
+
+repo: https://github.com/EsotericSoftware/spine-runtimes
+branch: 4.2
+layout: spine-cpp/spine-cpp/{include,src}/spine
+base: e7dc1435fa4a0083ab431f1b28e083c14a1f5c68  [ts] Release 4.2.120 (2026-08-30)
+base-evidence: refreshed from eb6a973f9 with the refresh tool (157 files merged, 2 conflicts hand-resolved in SkeletonRenderer.cpp/.h keeping the local changes); after the refresh 140/158 runtime files are byte-identical to the e7dc1435f blobs, the other 18 are the local changes below plus Json.cpp
+refresh-tool: tools/runtime-refresh/refresh.sh <upstream-clone> <base> <new> runtime/spine-4.2/spine
+
+imported:
+- eb6a973f9..e7dc1435f (4.2.120), every commit touching spine-cpp/spine-cpp:
+- 28fb83d1d [cpp] Fix passing argument by reference (2024-11-05)
+- 9207cd2a4 [cpp][glfw] Fix reading bounding box attachments in SkeletonBinary, closes #2668, add binary Spineboy to example (2024-11-05)
+- 90f6bfe49 [cpp] Port of commit 9d49999: Changed SequenceTimeline to match AttachmentTimeline behavior. (2024-11-15)
+- a2859f68e [cpp] Closes #2672, JSON inherit timeline parsing didn't advance key map properly. (2024-12-06)
+- 9bd964514 [cpp] Port of commit 8d058fb: Improved AnimationState behavior when paused. See #2705 (2024-12-09)
+- 140335636 [c] Port of commit 8d058fb: Improved AnimationState behavior when paused. See #2705 (2024-12-09)
+- eca4b9e4c [c][cpp] Apply skeleton.scaleX/scaleY to wind and gravity. See #2729. (2025-02-10)
+- c9de3b877 [cpp] Fix JSON parsing of transform constraint timelines, path constraint mix timeline constant. Closes #2736 (2025-02-11)
+- 43b9f6cab [cpp] Fix null dereference in PhysicsConstraintResetTimeline. Closes #2694 (2025-02-11)
+- 294399886 [cpp] fix bound computation ignores clipping (#2800) (2025-04-08)
+- f037c05b7 Fix memory leak of Vector::setSize (#2781) (2025-04-08)
+- 72381a534 [cpp] Fix block allocator compression, closes #2792 (2025-04-08)
+- 23233222f [c][cpp] Port of commit f1e0f0f (#2807) (2025-04-09)
+- 7fd1e5340 Fix the inconsistent behavior between Spine vector's setSize and std::vector's resize, which causes the Spine vector to allocate additional space upfront. (#2830) (2025-05-05)
+- b57acb040 Fix spine::Vector copy assignment. (#2828) (2025-05-05)
+- ec3231f86 [cpp] Port of #2837 (2025-05-07)
+- 97d49b37b License header update (2025-05-26)
+- 365354055 [cpp] fix wrong RGB2 creation using json (#2885) (2025-10-01)
+- 6f88168dc [cpp] Fixes and closes #2886. (2025-11-13)
+- 7d92f9e31 [cpp] Resolves issue #2974, fixes negative mixScaleX and mixScaleY issues. (2026-04-13)
+
+local-changes:
+- SkeletonRenderer.cpp, SkeletonRenderer.h: injections, splits, Slot color blend, renamed include guard (b9fdd19, 7a632b3, 1a98d61, 652aebc)
+- Slot.cpp, Slot.h: solar color, attachmentLocked, attachment refcount (fdac450, 1a98d61, a27bde4)
+- MeshAttachment.cpp, VertexAttachment.cpp: attachment refcount (a27bde4)
+- SkeletonBinary.cpp, SkeletonJson.cpp: setter calls instead of direct field writes (a27bde4)
+- AnimationState.cpp: isAttachmentLocked() skips (fdac450)
+- Extension.cpp: memory-leak rewrite (3a773fc)
+- Skeleton.h, SkeletonBinary.h, SkeletonBounds.h, SkeletonClipping.h, SkeletonData.h, SkeletonJson.h: include guards renamed Spine_X_h -> SpineX_h (652aebc)
+- Version.h: SPINE_PLUGIN_VERSION (c624405)
+- SkeletonClipping.cpp: clipStart ignores clips with fewer than 3 vertices (C1), missing continue in clip() (C3), FP contraction off (clang + MSVC pragmas) (masks-runtime-4.2.patch)
+- SkeletonRenderer.cpp: both render() overloads skip an inactive bone's slot including a clipping attachment (D-A), and end a clip on a bounding box / point / path end slot (D-B) (masks-runtime-4.2.patch)
+- Triangulator.cpp: FP contraction off (clang + MSVC pragmas) (masks-runtime-4.2.patch)
+- FP-contraction pragmas: Windows (MSVC) bit-exactness is assumed, not measured (no Windows comparator run)
+
+other-differences:
+- Json.cpp: one extra blank line after line 120 since 784fd6d; whitespace only, not a local change
+
+history:
+- 2026-09-27: base recorded as eb6a973f9
+- 2026-09-27: refreshed eb6a973f9 -> e7dc1435f (4.2.120) with tools/runtime-refresh/refresh.sh; every local change re-verified
+- 2026-09-27: applied masks-runtime-4.2.patch (C1, C3, D-A, D-B, clang pragmas) plus the MSVC pragmas; Windows bit-exactness assumed

@@ -17,9 +17,6 @@ static int createPlugin(lua_State *L) {
         listenerRef = luaL_ref(L, LUA_REGISTRYINDEX);
     }
     Skeleton *skeleton = spc::newSkeleton(skeletonData);
-#if !SPINE_43()
-    skeleton->setScaleY(-1); // 4.3: Bone::yDown is true by default
-#endif
     AnimationStateData *stateData = spc::newStateData(skeletonData);
     AnimationState *state = spc::newState(stateData);
     SpineSkeleton *skeletonUserdata = (SpineSkeleton *)lua_newuserdata(L, sizeof(SpineSkeleton));

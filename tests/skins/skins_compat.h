@@ -16,8 +16,7 @@ inline bool hasSequence(MeshAttachment &m) { return m.getSequence().hasPathSuffi
 inline Attachment *timelineAttachment(DeformTimeline &t) { return &t.getAttachment(); }
 inline Attachment *timelineAttachment(SequenceTimeline &t) { return &t.getAttachment(); }
 inline size_t updateCacheCount(Skeleton &s) { return s.getUpdateCache().size(); }
-// f(kind, name, active) per constraint. Constraint::_active (set by updateCache) is protected, so active means
-// updateCache sorted it in; PosedActive::isActive() is not cleared by updateCache on 4.3.
+// f(kind, name, active) per constraint; active means updateCache sorted it in.
 template <class F> void forEachConstraint(Skeleton &s, F f) {
     Array<Constraint *> &cs = s.getConstraints();
     Array<Update *> &cache = s.getUpdateCache();

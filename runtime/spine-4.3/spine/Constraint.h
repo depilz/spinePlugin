@@ -39,7 +39,7 @@
 namespace spine {
 	class Skeleton;
 
-	class SP_API Constraint : public Update {
+	class SP_API Constraint : public Update, public PosedActive {
 		friend class Skeleton;
 
 	public:
@@ -64,14 +64,13 @@ namespace spine {
 
 		virtual void setupPose() = 0;
 
-		bool _active;
 		int _order;
 	};
 
 	template<class T, class D, class P>
-	class ConstraintGeneric : public PosedGeneric<D, P, P>, public PosedActive, public Constraint {
+	class ConstraintGeneric : public PosedGeneric<D, P, P>, public Constraint {
 	public:
-		ConstraintGeneric(D &data) : PosedGeneric<D, P, P>(data), PosedActive(), Constraint() {
+		ConstraintGeneric(D &data) : PosedGeneric<D, P, P>(data), Constraint() {
 		}
 
 		virtual ~ConstraintGeneric() {

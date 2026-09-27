@@ -1,16 +1,16 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated July 28, 2023. Replaces all prior versions.
+ * Last updated April 5, 2025. Replaces all prior versions.
  *
- * Copyright (c) 2013-2023, Esoteric Software LLC
+ * Copyright (c) 2013-2025, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
  * conditions of Section 2 of the Spine Editor License Agreement:
  * http://esotericsoftware.com/spine-editor-license
  *
- * Otherwise, it is permitted to integrate the Spine Runtimes into software or
- * otherwise create derivative works of the Spine Runtimes (collectively,
+ * Otherwise, it is permitted to integrate the Spine Runtimes into software
+ * or otherwise create derivative works of the Spine Runtimes (collectively,
  * "Products"), provided that each user of the Products must obtain their own
  * Spine Editor license and redistribution of the Products in any form must
  * include this license and copyright notice.
@@ -23,11 +23,21 @@
  * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES,
  * BUSINESS INTERRUPTION, OR LOSS OF USE, DATA, OR PROFITS) HOWEVER CAUSED AND
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THE
- * SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
 #include <spine/SkeletonClipping.h>
+
+// Keep the side tests of clip() consistent and the math identical to the editor (spine-libgdx, Java has no FMA):
+// with multiply-add contraction (clang default on arm64) a vertex lying on a clip edge can be classified inside
+// by one test and outside by the other, which drops or adds whole pieces of the clipped attachment.
+#if defined(__clang__)
+#pragma clang fp contract(off)
+#endif
+#if defined(_MSC_VER)
+#pragma fp_contract(off)
+#endif
 
 #include <spine/ClippingAttachment.h>
 #include <spine/Slot.h>
@@ -45,10 +55,11 @@ size_t SkeletonClipping::clipStart(Slot &slot, ClippingAttachment *clip) {
 	if (_clipAttachment != NULL) {
 		return 0;
 	}
+	int n = (int) clip->getWorldVerticesLength();
+	if (n < 6) return 0; // as spine-libgdx: ignore clipping attachments with fewer than 3 vertices
 
 	_clipAttachment = clip;
 
-	int n = (int) clip->getWorldVerticesLength();
 	_clippingPolygon.setSize(n, 0);
 	clip->computeWorldVertices(slot, 0, n, _clippingPolygon, 0, 2);
 	makeClockwise(_clippingPolygon);
@@ -320,6 +331,7 @@ bool SkeletonClipping::clip(float x1, float y1, float x2, float y2, float x3, fl
 				} else {
 					output->add(inputX2);
 					output->add(inputY2);
+					continue;
 				}
 			} else if (s2) {// v1 outside, v2 inside
 				float ix = inputX2 - inputX, iy = inputY2 - inputY, t = s1 / (ix * ey - iy * ex);

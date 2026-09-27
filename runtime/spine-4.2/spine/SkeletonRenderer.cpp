@@ -1,16 +1,16 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated July 28, 2023. Replaces all prior versions.
+ * Last updated April 5, 2025. Replaces all prior versions.
  *
- * Copyright (c) 2013-2023, Esoteric Software LLC
+ * Copyright (c) 2013-2025, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
  * conditions of Section 2 of the Spine Editor License Agreement:
  * http://esotericsoftware.com/spine-editor-license
  *
- * Otherwise, it is permitted to integrate the Spine Runtimes into software or
- * otherwise create derivative works of the Spine Runtimes (collectively,
+ * Otherwise, it is permitted to integrate the Spine Runtimes into software
+ * or otherwise create derivative works of the Spine Runtimes (collectively,
  * "Products"), provided that each user of the Products must obtain their own
  * Spine Editor license and redistribution of the Products in any form must
  * include this license and copyright notice.
@@ -23,8 +23,8 @@
  * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES,
  * BUSINESS INTERRUPTION, OR LOSS OF USE, DATA, OR PROFITS) HOWEVER CAUSED AND
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THE
- * SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
 #include <spine/SkeletonRenderer.h>
@@ -165,15 +165,15 @@ RenderCommand *SkeletonRenderer::render(Skeleton &skeleton, const std::vector<in
     {
         Slot &slot = *skeleton.getDrawOrder()[i];
         Attachment *attachment = slot.getAttachment();
-        if (!attachment)
+        // Inactive bone: skip the slot, including a clipping attachment (as spine-libgdx/spine-ts, i.e. the editor).
+        if (!attachment || !slot.getBone().isActive())
         {
             clipper.clipEnd(slot);
             continue;
         }
 
-        // Early out if the slot color is 0 or the bone is not active,
-        // unless it's a clipping attachment.
-        if ((slot.getColor().a == 0 || !slot.getBone().isActive()) &&
+        // Early out if the slot color is 0, unless it's a clipping attachment (#2635).
+        if (slot.getColor().a == 0 &&
             !attachment->getRTTI().isExactly(ClippingAttachment::rtti))
         {
             clipper.clipEnd(slot);
@@ -249,6 +249,8 @@ RenderCommand *SkeletonRenderer::render(Skeleton &skeleton, const std::vector<in
         }
         else
         {
+            // Bounding box, point or path attachment: still ends a clip whose end slot is this slot.
+            clipper.clipEnd(slot);
             continue;
         }
 
@@ -339,15 +341,15 @@ std::pair<RenderCommand *, RenderCommand *> *SkeletonRenderer::render(Skeleton &
     {
         Slot &slot = *skeleton.getDrawOrder()[i];
         Attachment *attachment = slot.getAttachment();
-        if (!attachment)
+        // Inactive bone: skip the slot, including a clipping attachment (as spine-libgdx/spine-ts, i.e. the editor).
+        if (!attachment || !slot.getBone().isActive())
         {
             clipper.clipEnd(slot);
             continue;
         }
 
-        // Early out if the slot color is 0 or the bone is not active,
-        // unless it's a clipping attachment.
-        if ((slot.getColor().a == 0 || !slot.getBone().isActive()) &&
+        // Early out if the slot color is 0, unless it's a clipping attachment (#2635).
+        if (slot.getColor().a == 0 &&
             !attachment->getRTTI().isExactly(ClippingAttachment::rtti))
         {
             clipper.clipEnd(slot);
@@ -429,6 +431,8 @@ std::pair<RenderCommand *, RenderCommand *> *SkeletonRenderer::render(Skeleton &
         }
         else
         {
+            // Bounding box, point or path attachment: still ends a clip whose end slot is this slot.
+            clipper.clipEnd(slot);
             continue;
         }
 

@@ -156,13 +156,14 @@ void SkeletonRenderer::buildCommands(
 	for (unsigned i = 0; i < drawOrder.size(); ++i) {
 		Slot &slot = *drawOrder[i];
 		Attachment *attachment = slot.getAppliedPose().getAttachment();
-		if (!attachment) {
+		// Inactive bone: skip the slot, including a clipping attachment (as spine-libgdx/spine-ts, i.e. the editor).
+		if (!attachment || !slot.getBone().isActive()) {
 			clipper.clipEnd(slot);
 			continue;
 		}
 
-		// Early out if the slot color is 0 or the bone is not active
-		if ((slot.getAppliedPose().getColor().a == 0 || !slot.getBone().isActive()) && !attachment->getRTTI().isExactly(ClippingAttachment::rtti)) {
+		// Early out if the slot color is 0, unless it's a clipping attachment (#2635).
+		if (slot.getAppliedPose().getColor().a == 0 && !attachment->getRTTI().isExactly(ClippingAttachment::rtti)) {
 			clipper.clipEnd(slot);
 			continue;
 		}
@@ -230,8 +231,11 @@ void SkeletonRenderer::buildCommands(
 			ClippingAttachment *clip = (ClippingAttachment *) slot.getAppliedPose().getAttachment();
 			clipper.clipStart(skeleton, slot, clip);
 			continue;
-		} else
+		} else {
+			// Bounding box, point or path attachment: still ends a clip whose end slot is this slot.
+			clipper.clipEnd(slot);
 			continue;
+		}
 
 		Color &solarColor = slot.getSolarColor();
 		uint8_t r = static_cast<uint8_t>(

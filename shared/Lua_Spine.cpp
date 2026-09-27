@@ -195,9 +195,6 @@ int create(lua_State *L)
     }
 
     Skeleton *skeleton = spc::newSkeleton(skeletonData);
-#if !SPINE_43()
-    skeleton->setScaleY(-1); // 4.3: Bone::yDown is true by default
-#endif
 
     AnimationStateData *stateData = spc::newStateData(skeletonData);
     AnimationState *state = spc::newState(stateData);
@@ -255,6 +252,8 @@ SpineExtension *spine::getDefaultExtension()
 }
 
 CORONA_EXPORT int SPINE_PLUGIN_LUAOPEN(lua_State *L) {
+
+    Bone::setYDown(true); // Solar2D is y-down; the 4.3 runtime's default already is
 
     lua_newtable(L);
 

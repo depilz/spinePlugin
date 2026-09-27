@@ -106,9 +106,7 @@ static int ikConstraint_newindex(lua_State *L)
     }
     else if (strcmp(key, "isActive") == 0)
     {
-        bool isActive = lua_toboolean(L, 3);
-        ikConstraintUserdata->ikConstraint->setActive(isActive);
-        return 0;
+        return luaL_error(L, "IK constraint isActive is read-only; set mix = 0 to stop it");
     }
     else if (strcmp(key, "mix") == 0)
     {

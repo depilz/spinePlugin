@@ -47,3 +47,5 @@ t26_missing_texture.lua
 t27_registerskin.lua
 t28_longjmp_sharedptr.lua create-bad-listener
 t28_longjmp_sharedptr.lua load-missing
+t29_isactive_readonly.lua ik
+t29_isactive_readonly.lua physics

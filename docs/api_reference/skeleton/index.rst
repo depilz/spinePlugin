@@ -31,6 +31,7 @@ Properties
 
    isActive
    timeScale
+   physicsTimeScale
    slots
    bones
    ikConstraints

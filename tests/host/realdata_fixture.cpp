@@ -66,9 +66,6 @@ static int create(lua_State *L) {
     value->dataOwner = holder;
     value->skeletonData = skeletonData;
     value->skeleton = spc::newSkeleton(skeletonData);
-#if !SPINE_43()
-    value->skeleton->setScaleY(-1); // 4.3: Bone::yDown is true by default
-#endif
     value->stateData = spc::newStateData(skeletonData);
     value->state = spc::newState(value->stateData);
     value->luaSelf = new LuaTableHolder();
@@ -136,6 +133,7 @@ static int textureStats(lua_State *L) {
 }
 
 extern "C" int luaopen_realdata_fixture(lua_State *L) {
+    Bone::setYDown(true); // the plugin's configuration (SPINE_PLUGIN_LUAOPEN in shared/Lua_Spine.cpp)
     lua_newtable(L);
     const luaL_Reg fns[] = {
         {"loadData", loadData}, {"create", create}, {"dispose", dispose},

@@ -20,6 +20,7 @@ if part ~= "no-track" then
   local A, aA, n = run("normal")
   local B, aB = run("first-inactive")
   local E, aE = run("all-inactive")
+  C.expect(aB == n - 1 and aE == 0, "the skin-required fixture deactivates the constraints it targets")
   local function maxdiff(p, q) local m = 0; for i = 1, #p do m = math.max(m, math.abs(p[i][1] - q[i][1]), math.abs(p[i][2] - q[i][2])) end; return m end
   print(("(a) sack: %d physics constraints. active: normal=%d, first-inactive=%d, all-inactive=%d"):format(n, aA, aB, aE))
   print(("    bone2d (not under constraint #1 'belly'): max |normal - allInactive| = %.2f, max |firstInactive - allInactive| = %.4f, max |normal - firstInactive| = %.2f")
