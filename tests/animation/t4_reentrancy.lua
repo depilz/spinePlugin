@@ -1,5 +1,5 @@
 -- T4: listener re-entrancy + errors inside listeners. dispose_* modes: removing the skeleton inside a callback
--- (animation-1); the suite checks that the error mode's listener error reaches the output (animation-6).
+-- (animation-1); the suite checks that the error mode's listener error reaches CoronaLuaDoCall (animation-6).
 -- mode = set_in_complete | clear_in_complete | setlistener_nil | setlistener_replace | error | error_then_more |
 --        dispose_in_complete | dispose_in_event | clearTracks_in_end | nested_update
 local fx = require("realdata_fixture")

@@ -7,7 +7,8 @@
 # SPINE_TEST_OUT is the line's own. A suite never names a line; a line-specific test source sits next to its
 # base as name43.cpp (host_line_src).
 # A suite records one row per test id with record or run_test and exits 0 once it has run; a non-zero exit
-# or no rows fails it as test _harness. Test ids (no tabs) are what tests/xfail/<runtime>.tsv lists.
+# or no rows fails it as test _harness. Test ids (no tabs) are what tests/xfail/<runtime>.tsv lists, and every id a
+# suite records on a line is listed in tests/manifest/<runtime>.tsv.
 
 export ASAN_OPTIONS="${ASAN_OPTIONS:-detect_leaks=0:abort_on_error=0}"
 

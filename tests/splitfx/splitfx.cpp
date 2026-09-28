@@ -32,6 +32,7 @@ static int newStats(lua_State *L) { lua_pushinteger(L, g_liveNew); lua_pushinteg
 
 // ---- Corona C API stubs ----
 extern "C" lua_State *CoronaLuaGetCoronaThread(lua_State *L) { return L; }
+extern "C" int CoronaLuaDoCall(lua_State *L, int narg, int nresults) { int s = lua_pcall(L, narg, nresults, 0); if (s && !lua_isnil(L, -1)) { fprintf(stderr, "CoronaLuaDoCall: %s\n", lua_isstring(L, -1) ? lua_tostring(L, -1) : "(error object is not a string)"); lua_pop(L, 1); } return s; }
 extern "C" int CoronaMemoryCreateInterface(lua_State *L, const CoronaMemoryInterfaceInfo *) { lua_newtable(L); return 1; }
 extern "C" void CoronaLuaWarning(lua_State *, const char *fmt, ...) {
     va_list ap; va_start(ap, fmt); std::fprintf(stdout, "WARNING: "); std::vfprintf(stdout, fmt, ap); std::fprintf(stdout, "\n"); va_end(ap);

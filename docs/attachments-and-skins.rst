@@ -115,7 +115,9 @@ an attachment already displayed by a slot.
 
 Applied custom skins, displayed attachments, Lua attachment wrappers, and linked
 mesh dependencies retain their native resources. Retained skin/attachment wrappers
-remain usable after a skeleton is removed; slot access then raises an error.
+remain usable after a skeleton is removed. Wrappers that belong to the skeleton
+(slots, bones, IK and physics constraints, track entries, fills and effects) raise
+``<Type> belongs to a removed skeleton`` instead; see :doc:`lifecycle`.
 
 Lua arrays and track indexes are one-based. For compatibility, numeric slot indexes
 in skin methods and entry records are **zero-based**. Prefer slot names in skin

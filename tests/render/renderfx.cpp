@@ -24,6 +24,7 @@ void operator delete[](void *p, size_t) noexcept { countedDelete(p); }
 static int newStats(lua_State *L) { lua_pushinteger(L, g_liveNew); lua_pushinteger(L, g_liveNewBytes); lua_pushinteger(L, g_totalNew); return 3; }
 
 extern "C" lua_State *CoronaLuaGetCoronaThread(lua_State *L) { return L; }
+extern "C" int CoronaLuaDoCall(lua_State *L, int narg, int nresults) { int s = lua_pcall(L, narg, nresults, 0); if (s && !lua_isnil(L, -1)) { fprintf(stderr, "CoronaLuaDoCall: %s\n", lua_isstring(L, -1) ? lua_tostring(L, -1) : "(error object is not a string)"); lua_pop(L, 1); } return s; }
 extern "C" int CoronaMemoryCreateInterface(lua_State *L, const CoronaMemoryInterfaceInfo *) {
     lua_newtable(L); // stand-in for the memory proxy (only stored as __memory on the buffer metatable)
     return 1;

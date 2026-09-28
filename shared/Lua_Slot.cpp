@@ -46,7 +46,7 @@ static int slot_index(lua_State *L)
     else if (strcmp(key, "bone") == 0)
     {
         LuaBone *boneUserdata = (LuaBone *)lua_newuserdata(L, sizeof(LuaBone));
-        new (boneUserdata) LuaBone(L, &slot.getBone());
+        new (boneUserdata) LuaBone(L, &slot.getBone(), slotUserdata->alive);
 
         return 1;
     }

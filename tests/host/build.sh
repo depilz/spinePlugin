@@ -10,6 +10,7 @@ mkdir -p "$GEN"
 # attachment_fixture.cpp defines the same Corona stubs as realdata_fixture.cpp; link a copy without them.
 sed -e 's/^void engine_removeMesh.*$//' -e 's/^void renderCommands.*$//' \
     -e 's/^extern "C" lua_State \*CoronaLuaGetCoronaThread.*$//' \
+    -e 's/^extern "C" int CoronaLuaDoCall.*$//' \
     -e 's/^SpineExtension \*spine::getDefaultExtension.*$//' \
     "$(host_line_src "$SPINE_REPO/tests/attachment_fixture.cpp")" > "$GEN/attachment_fixture_nostubs.cpp"
 BIN="$SPINE_TEST_OUT/host/${MODE}_lua"

@@ -11,6 +11,7 @@ print("meshes created", S.meshesCreated, "children of obj", #S.children(obj), "t
 for i = 1, 100 do obj:updateState(16); obj:draw() end
 print("events", #events, events[1], events[2])
 obj:removeSelf()
+S.frame()
 print("after removeSelf: finalized", S.finalized, "metatable is group mt?", getmetatable(obj) ~= nil)
 obj = nil; data = nil; atlas = nil
 S.gcfull()

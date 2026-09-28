@@ -23,6 +23,7 @@ public:
     void callback(spine::AnimationState *state, spine::EventType type, spine::TrackEntry *entry, spine::Event *event) override
     {
         lua_State *L = mainState_;
+        int top = lua_gettop(L);
 
         lua_rawgeti(L, LUA_REGISTRYINDEX, listenerRef_);
         lua_createtable(L, 0, 6);
@@ -109,12 +110,10 @@ public:
         luaSelf_->pushTable(L);
         lua_rawset(L, -3);
 
-        if (lua_pcall(L, 1, 0, 0) != 0)
-        {
-            // Error occurred during callback execution
-            // const char *err = lua_tostring(L, -1);
-            lua_pop(L, 1);
-        }
+        // Solar2D reports the error (traceback, unhandledError) without raising: a longjmp here would cross drain().
+        // Only locals are used afterwards: the listener may have replaced this object (setListener).
+        CoronaLuaDoCall(L, 1, 0);
+        lua_settop(L, top);
     }
 
 private:

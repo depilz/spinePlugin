@@ -12,6 +12,7 @@ t03b_trackentry_alias.lua
 t05_wrappers_after_remove.lua slot
 t05_wrappers_after_remove.lua bone
 t05_wrappers_after_remove.lua ik
+t05_wrappers_after_remove.lua physics
 t05_wrappers_after_remove.lua fill
 t05_wrappers_after_remove.lua obj
 t05b_physics.lua
@@ -49,3 +50,27 @@ t28_longjmp_sharedptr.lua create-bad-listener
 t28_longjmp_sharedptr.lua load-missing
 t29_isactive_readonly.lua ik
 t29_isactive_readonly.lua physics
+t29_isactive_readonly.lua ik removed
+t29_isactive_readonly.lua physics removed
+t28_longjmp_sharedptr.lua inject-missing-slot
+t29_frame_emulation.lua
+t30_draw_raise.lua
+t31_dispose_hook.lua window
+t31_dispose_hook.lua user-finalize
+t31_dispose_hook.lua rearm
+t31_dispose_hook.lua no-runtime
+t31_dispose_hook.lua reassemble
+t31_dispose_hook.lua reassemble-remove
+t32_stale_animation.lua live
+t32_stale_animation.lua cached
+t32_stale_animation.lua method
+t33_removed_listeners.lua window
+t33_removed_listeners.lua finalize
+g1_create_args.lua
+g3_events_after_remove.lua ended
+g3_events_after_remove.lua interrupted
+g4_setanim_remove_in_began.lua
+g6_orphan_timing.lua read
+g6_orphan_timing.lua write
+g6_orphan_timing.lua timescale
+g6_orphan_timing.lua listener_then_draw

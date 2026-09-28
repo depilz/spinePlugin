@@ -1,0 +1,11 @@
+# The intended changes of plugin.spine43's Lua surface against a27bde4's, one row per changed key: + a key
+# a27bde4 lacks, - a key it has. tests/api/suite.sh expects the line's surface to be a27bde4's with exactly these
+# changes: an unlisted change fails its owner's test and so does a listed row the line does not show. An owner is
+# added or removed by listing every one of its keys. Changing the surface updates this file in the same commit.
+line	owner	kind	key	change
+4.3	Atlas	field	__gc	+
+4.3	DataHolder	field	__gc	-
+4.3	SkeletonData	field	__gc	+
+4.3	SpineObject	get	physicsTimeScale	+
+4.3	SpineObject	set	physicsTimeScale	+
+4.3	SpineTrackEntry	get	isValid	+

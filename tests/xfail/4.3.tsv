@@ -1,28 +1,9 @@
 suite	test	key	kind	note
-lifecycle	t02_remove_in_listener completed	lifecycle-2	defect	ASan heap-use-after-free: removeSelf inside the animation listener
-lifecycle	t02b_remove_on_ended	lifecycle-2	defect	ASan heap-use-after-free: removeSelf on 'ended' during clearTrack
-lifecycle	t03_trackentry pool	lifecycle-5	defect	UBSan reference binding to null pointer (TrackEntry::getAnimation), then SEGV: stale pooled TrackEntry
-lifecycle	t03_trackentry removed	lifecycle-5	defect	ASan heap-use-after-free: TrackEntry read after removeSelf
-lifecycle	t03_trackentry tracks	lifecycle-4	defect	ASan heap-use-after-free: obj.tracks read after removeSelf
-lifecycle	t05_wrappers_after_remove bone	lifecycle-4	defect	ASan heap-use-after-free: bone wrapper after removeSelf
-lifecycle	t05_wrappers_after_remove ik	lifecycle-4	defect	ASan heap-use-after-free: IK wrapper after removeSelf
-lifecycle	t05_wrappers_after_remove fill	lifecycle-4	defect	ASan heap-use-after-free: fill wrapper after removeSelf
-lifecycle	t05b_physics	lifecycle-4	defect	ASan heap-use-after-free: physics wrapper after removeSelf
-lifecycle	t06b_effect_after_remove	lifecycle-4	defect	ASan heap-use-after-free: fill effect wrapper after removeSelf
-lifecycle	t08_type_confusion create-with-atlas	lifecycle-9	defect	UBSan invalid load in BoneLocal::set: spine.create(atlas) type confusion
-lifecycle	t13_coroutines require-in-coroutine	lifecycle-11	defect	ASan heap-use-after-free: texture loader keeps a dead coroutine lua_State
-lifecycle	t13_coroutines fill-in-coroutine	lifecycle-6	defect	ASan heap-use-after-free at lua_close: SpineFill keeps a dead coroutine lua_State
-lifecycle	t14_injection_reentrancy eject	lifecycle-3	defect	ASan container-overflow: eject from an injection listener during draw
-lifecycle	t14_injection_reentrancy inject	lifecycle-3	defect	ASan heap-use-after-free: inject from an injection listener during draw
-lifecycle	t14_injection_reentrancy remove	lifecycle-3	defect	ASan heap-use-after-free: removeSelf from an injection listener during draw
 lifecycle	t21_remove_data_attachments	v43-1	defect	ASan heap-use-after-free in DeformTimeline::apply: the 4.3 timeline reads the data-skin attachment Lua removed (safe on 4.2); I7's read-only authored skins remove this path and I7 deletes this row
-lifecycle	t22_cross_skeleton_ik	lifecycle-10	defect	ASan heap-use-after-free: IK target bone of a removed skeleton
 render	t2_blend	render-6	defect	blend mode lost when a reused mesh changes texture
 render	t3_emptycmd	render-2	defect	empty first command pops the parent group: draw fails after attachment.color = {a=0} on the injected slot
 render	t4_injlistener	render-8	defect	injection listener called twice per frame (isVisible false, then true)
 render	t5_split	render-7	defect	meshes left in the wrong group after re-split/reassemble
-render	t6_textures	render-9	defect	texture shared by two atlases never released
-render	t7_fill 10000	render-10	defect	obj.fill leaks ~85 B per access (registry self-reference)
 render	t7_fill 10000 uaf	render-10	defect	ASan heap-use-after-free: fill proxy written after removeSelf
 render	t12_drawargs	render-13	defect	draw(event) after a re-split inserts into a non-group parent
 render	t14_effect_uaf	render-10	defect	ASan heap-use-after-free: fill.effect proxy written after removeSelf
@@ -43,16 +24,10 @@ probe-batching	pb_t16trace	render-2	defect	hidden injected slot on 4.3: the empt
 animation	t1_surface	animation-15	defect	isActive stays true after clearTrack(1) while getTrackEntry(1) is nil
 animation	t2_events payload	animation-4	defect	footstep events report EventData defaults (int 1, float 0.5, data-default), not key 0's per-key values
 animation	t2_events target	animation-5	defect	event.target is the raw SpineSkeleton userdata, not the spine object; checked through fixture createPlugin, a copy of Lua_Spine.cpp create(): a fix must be mirrored there
-animation	t3_stale_entry numeric	animation-2	defect	stale TrackEntry reads return pooled data and writes are accepted after mix-out
-animation	t3_stale_entry animation	animation-2	defect	UBSan member call on null pointer at Lua_TrackEntry.cpp:50, then SEGV: stale entry.animation
-animation	t3_stale_entry alias	animation-2	defect	stale walk wrapper aliases the pooled entry now used by jump; walk.timeScale = 0 froze jump
-animation	t3_stale_entry afterdestroy	animation-2	defect	ASan heap-use-after-free: entry.trackTime after its skeleton was destroyed (fx.dispose runs ~SpineSkeleton directly)
 animation	t4_reentrancy dispose_in_complete	animation-1	defect	ASan heap-use-after-free in EventQueue::drain: skeleton destroyed inside 'completed'; fx.dispose runs ~SpineSkeleton directly, so a deferred-destroy fix must route it through the new path
 animation	t4_reentrancy dispose_in_event	animation-1	defect	ASan heap-use-after-free in EventQueue::drain: skeleton destroyed inside a custom event; fx.dispose runs ~SpineSkeleton directly, so a deferred-destroy fix must route it through the new path
-animation	t4_reentrancy error reported	animation-6	defect	error('boom in listener') never reaches the output: the listener pcall pops it silently
 animation	t5_addAnimationAt	animation-10	defect	addAnimationAt jump@1000 after run@1200 clamps to delay 0 and starts jump at 1870ms, after run completes
 animation	t6_delay_phases	animation-15	defect	isActive stays true once the queued empty animation ended and no animation is current
-animation	t7_tracks_proxy	animation-3	defect	ASan heap-use-after-free in track_len: #tracks after the skeleton was destroyed
 animation	t8_gc_listener	animation-5	defect	50/50 listener closures and SpineSkeleton userdata stay alive without removeSelf (luaSelf registry ref); checked through fixture createPlugin, a copy of Lua_Spine.cpp create(): a fix must be mirrored there
 animation	t9_prototype_fix	animation-2	defect	the reviewed fix's contract for animation-1/2/3: no entry.isValid, then SEGV on stale entry.animation; later sections also need animation-1 and animation-3
 animation	t10_create_args	animation-18	defect	create(data, fn, nil|42) refs the wrong stack slot and the listener gets 0 calls; checked through fixture createPlugin, a copy of Lua_Spine.cpp create(): a fix must be mirrored there
@@ -135,4 +110,5 @@ skins	s1_api_contract L1	skins-impl-3	defect	region geometry setters have no eff
 skins	s1_api_contract M1	I7	pending-api	final skins API: clear() empties entries, bones, constraints and returns the skin
 skins	s1_api_contract M2	I7	pending-api	final skins API: clear()+refill of the APPLIED skin + setSkin(same) = fresh build
 skins	s1_api_contract M3	I7	pending-api	final skins API: findSkin('goblin'):clear() raises
-api	surface SpineObject	I4	pending-api	physicsTimeScale added (I6, D95); I4's expected-diff mechanism replaces this row
+sim	s3_emptycmd raptor	gap-3-4	defect	empty first render command: "Argument(1) is not a GroupObject", then SIGABRT even inside pcall
+sim	s3_emptycmd second	gap-3-4	defect	empty first render command with a second injection: SIGABRT even inside pcall

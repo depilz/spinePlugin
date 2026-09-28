@@ -26,10 +26,10 @@ static int createPlugin(lua_State *L) {
     skeletonUserdata->stateData = stateData;
     skeletonUserdata->skeletonData = skeletonData;
     skeletonUserdata->dataOwner = holder;
-    skeletonUserdata->luaSelf = new LuaTableHolder(L);
-    skeletonUserdata->luaSelf->pushTable(L);
+    skeletonUserdata->luaSelf = LuaTableHolder(L);
+    skeletonUserdata->luaSelf.pushTable(L);
     if (hasListener) {
-        LuaAnimationStateListener *stateListener = new LuaAnimationStateListener(L, skeletonUserdata->luaSelf, listenerRef);
+        LuaAnimationStateListener *stateListener = new LuaAnimationStateListener(L, &skeletonUserdata->luaSelf, listenerRef);
         skeletonUserdata->stateListener = stateListener;
         state->setListener(stateListener);
     }

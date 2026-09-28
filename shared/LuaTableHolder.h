@@ -17,6 +17,7 @@ public:
 
     void pushTable(lua_State *L);
     bool isValid() const;
+    bool hasMetatable() const;
     void initialize(lua_State *L);
     void releaseTable();
 

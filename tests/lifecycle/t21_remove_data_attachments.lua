@@ -22,6 +22,6 @@ headWrapper = nil; S.gcfull()
 print("goblin skin now lacks head:", goblin:getAttachment("head", "head"))
 a:setSkin("goblin"); a:setSlotsToSetupPose()
 for f = 1, 5 do a:updateState(33); a:draw() end
-a:removeSelf(); b:removeSelf(); goblin = nil; data = nil; atlas = nil
+a:removeSelf(); b:removeSelf(); S.frame(); goblin = nil; data = nil; atlas = nil
 S.gcfull()
 print("released textures:", S.texturesReleased, "of", S.texturesCreated)

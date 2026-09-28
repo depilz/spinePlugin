@@ -30,7 +30,39 @@ static SpineSkeleton *luaL_getSkeletonUserdata(lua_State *L)
     
     lua_pop(L, 1);
 
+    // Solar2D strips a finalized display object's metatable and the next frame disposes the skeleton: only a
+    // cached method can still reach it
+    if (!lua_getmetatable(L, 1) || !skeletonUserdata->skeleton)
+    {
+        luaL_error(L, "Skeleton belongs to a removed skeleton");
+    }
+    lua_pop(L, 1);
+
     return skeletonUserdata;
+}
+
+// The keys a removed object still answers: Solar2D's EventDispatcher, which dispatches its "finalize", and the
+// helpers its add/removeEventListener call through self (platform/resources/init.lua EventDispatcher and
+// DisplayObject; _setHasListener is a display-object proxy key).
+static bool isEventDispatcherKey(const char *key)
+{
+    static const char *const keys[] = {"addEventListener", "removeEventListener", "hasEventListener",
+                                       "dispatchEvent", "respondsToEvent", "getOrCreateTable",
+                                       "didRemoveListener", "_setHasListener"};
+    for (const char *k : keys)
+    {
+        if (strcmp(key, k) == 0) return true;
+    }
+    return false;
+}
+
+// Pushes the display group's value for key (argument 2) of the object (argument 1).
+static void groupIndex(lua_State *L, SpineSkeleton *skeletonUserdata)
+{
+    skeletonUserdata->groupmt__index->pushTable(L);
+    lua_pushvalue(L, 1);
+    lua_pushvalue(L, 2);
+    lua_call(L, 2, 1);
 }
 
 void SpineSkeleton::onEffectUpdated(const char *key, lua_State *L_in, int valueIndex)
@@ -113,6 +145,13 @@ static int skeleton_index(lua_State *L)
     lua_rawget(L, 1);
 
     SpineSkeleton *skeletonUserdata = (SpineSkeleton *)luaL_checkudata(L, -1, "SpineSkeleton");
+    if (!skeletonUserdata->skeleton || skeletonUserdata->disposeRequested)
+    {
+        // removed: only the EventDispatcher keys resolve (so `if obj.removeSelf then` skips it), numChildren is nil
+        if (!isEventDispatcherKey(key)) return 0;
+        groupIndex(L, skeletonUserdata);
+        return 1;
+    }
 
     if (strcmp(key, "isActive") == 0)
     {
@@ -156,7 +195,7 @@ static int skeleton_index(lua_State *L)
         for (size_t i = 0; i < n; i++)
         {
             LuaBone *boneUserdata = (LuaBone *)lua_newuserdata(L, sizeof(LuaBone));
-            new (boneUserdata) LuaBone(L, bones[i]);
+            new (boneUserdata) LuaBone(L, bones[i], skeletonUserdata->alive);
 
             lua_rawseti(L, -2, static_cast<int>(i + 1));
         }
@@ -170,7 +209,7 @@ static int skeleton_index(lua_State *L)
 
         spc::forEachIk(skeleton, [&](IkConstraint *ikConstraint) {
             LuaIKConstraint *ikConstraintUserdata = (LuaIKConstraint *)lua_newuserdata(L, sizeof(LuaIKConstraint));
-            new (ikConstraintUserdata) LuaIKConstraint(L, ikConstraint);
+            new (ikConstraintUserdata) LuaIKConstraint(L, ikConstraint, skeletonUserdata->skeleton, skeletonUserdata->alive);
 
             lua_rawseti(L, -2, ++i);
         });
@@ -187,7 +226,7 @@ static int skeleton_index(lua_State *L)
         }
 
         LuaPhysics *physicsUserdata = (LuaPhysics *)lua_newuserdata(L, sizeof(LuaPhysics));
-        new (physicsUserdata) LuaPhysics(L, PhysicsConstraints);
+        new (physicsUserdata) LuaPhysics(L, PhysicsConstraints, skeletonUserdata->alive);
 
         return 1;
     }
@@ -196,14 +235,14 @@ static int skeleton_index(lua_State *L)
         Vector<TrackEntry *> &tracks = skeletonUserdata->state->getTracks();
         
         LuaTrack *entryUserdata = (LuaTrack *)lua_newuserdata(L, sizeof(LuaTrack));
-        new (entryUserdata) LuaTrack(L, tracks);
+        new (entryUserdata) LuaTrack(L, tracks, skeletonUserdata->alive);
         
         return 1;
     }
     else if (strcmp(key, "fill") == 0)
     {
         LuaFill *fillUserdata = (LuaFill *)lua_newuserdata(L, sizeof(LuaFill));
-        new (fillUserdata) LuaFill(L, skeletonUserdata);
+        new (fillUserdata) LuaFill(L, skeletonUserdata, skeletonUserdata->alive);
         return 1;
     }
     else if (strcmp(key, "numChildren") == 0)
@@ -234,6 +273,16 @@ static int skeleton_index(lua_State *L)
     return 0;
 }
 
+static int groupNewindex(lua_State *L, SpineSkeleton *skeletonUserdata)
+{
+    skeletonUserdata->groupmt__newindex->pushTable(L);
+    lua_pushvalue(L, 1);
+    lua_pushvalue(L, 2);
+    lua_pushvalue(L, 3);
+    lua_call(L, 3, 0);
+    return 0;
+}
+
 static int skeleton_newindex(lua_State *L)
 {
     lua_pushstring(L, "_skeleton");
@@ -242,6 +291,11 @@ static int skeleton_newindex(lua_State *L)
     SpineSkeleton *skeletonUserdata = (SpineSkeleton *)luaL_checkudata(L, -1, "SpineSkeleton");
 
     const char *key = luaL_checkstring(L, 2);
+
+    if (!skeletonUserdata->skeleton || skeletonUserdata->disposeRequested)
+    {
+        return groupNewindex(L, skeletonUserdata); // removed: the display group takes every key
+    }
 
     if (strcmp(key, "timeScale") == 0)
     {
@@ -272,11 +326,113 @@ static int skeleton_gc(lua_State *L)
 {
     SpineSkeleton *skeletonUserdata = (SpineSkeleton *)luaL_checkudata(L, 1, "SpineSkeleton");
 
-    if (skeletonUserdata->skeleton)
+    skeletonUserdata->~SpineSkeleton(); // dispose() is idempotent; __gc runs once per userdata
+
+    return 0;
+}
+
+// The SpineSkeleton userdata at index, or NULL.
+static SpineSkeleton *toSkeletonUserdata(lua_State *L, int index)
+{
+    void *p = lua_touserdata(L, index);
+    if (!p || !lua_getmetatable(L, index)) return NULL;
+    luaL_getmetatable(L, "SpineSkeleton");
+    bool isSkeleton = lua_rawequal(L, -1, -2) != 0;
+    lua_pop(L, 2);
+    return isSkeleton ? (SpineSkeleton *)p : NULL;
+}
+
+// Next-frame dispose queue: registry { [SpineSkeleton userdata] = display object }, drained by one Runtime hook.
+static int disposeQueueRef = LUA_NOREF;
+static int disposeHookRef = LUA_NOREF;
+
+void resetDisposeQueue()
+{
+    disposeQueueRef = LUA_NOREF;
+    disposeHookRef = LUA_NOREF;
+}
+
+static void runtimeHookCall(lua_State *L, const char *method, int nresults)
+{
+    lua_getglobal(L, "Runtime");
+    lua_getfield(L, -1, method);
+    lua_insert(L, -2);
+    lua_pushstring(L, "enterFrame");
+    lua_rawgeti(L, LUA_REGISTRYINDEX, disposeHookRef);
+    lua_call(L, 3, nresults);
+}
+
+// Runtime "enterFrame" hook: frees the skeletons finalized since it was armed. It only disposes, never updates,
+// applies, draws or dispatches events (L16).
+static int disposeFinalized(lua_State *L)
+{
+    runtimeHookCall(L, "removeEventListener", 0);
+
+    lua_rawgeti(L, LUA_REGISTRYINDEX, disposeQueueRef);
+    luaL_unref(L, LUA_REGISTRYINDEX, disposeQueueRef);
+    disposeQueueRef = LUA_NOREF;
+    if (!lua_istable(L, -1)) return 0;
+    int queue = lua_gettop(L);
+
+    lua_pushnil(L);
+    while (lua_next(L, queue) != 0)
     {
-        skeletonUserdata->~SpineSkeleton();
+        int object = lua_gettop(L);
+        SpineSkeleton *skeletonUserdata = toSkeletonUserdata(L, object - 1);
+        // Solar2D's RestoreTable strips the metatable after a real finalize: one still set was user-dispatched
+        if (skeletonUserdata && !lua_getmetatable(L, object))
+        {
+            skeletonUserdata->requestDispose();
+        }
+        lua_settop(L, object - 1);
+    }
+    return 0;
+}
+
+// Arms the hook unless Runtime already holds it (an app may have cleared every Runtime listener). Run by lua_cpcall.
+static int armDisposeHook(lua_State *L)
+{
+    if (disposeHookRef == LUA_NOREF)
+    {
+        lua_pushcfunction(L, disposeFinalized);
+        disposeHookRef = luaL_ref(L, LUA_REGISTRYINDEX);
+    }
+    runtimeHookCall(L, "hasEventListener", 1);
+    if (!lua_toboolean(L, -1)) runtimeHookCall(L, "addEventListener", 0);
+    return 0;
+}
+
+// Solar2D "finalize" listener, registered by create(): the display object was removed, directly or with its
+// parent. User finalize listeners that follow still reach the object and its wrappers, which raise once RestoreTable
+// strips the metatable. The skeleton is queued and freed by the next-frame hook.
+int spine_onFinalize(lua_State *L)
+{
+    if (!lua_istable(L, 1)) return 0;
+    lua_getfield(L, 1, "target");
+    if (!lua_istable(L, -1)) return 0;
+    int target = lua_gettop(L);
+
+    lua_pushstring(L, "_skeleton");
+    lua_rawget(L, target);
+    SpineSkeleton *skeletonUserdata = toSkeletonUserdata(L, -1);
+    if (!skeletonUserdata || !skeletonUserdata->skeleton) return 0;
+
+    // never raise here: without a Runtime to run the hook, free the skeleton now
+    if (lua_cpcall(L, armDisposeHook, NULL) != 0)
+    {
+        skeletonUserdata->requestDispose();
+        return 0;
     }
 
+    if (disposeQueueRef == LUA_NOREF)
+    {
+        lua_newtable(L);
+        disposeQueueRef = luaL_ref(L, LUA_REGISTRYINDEX);
+    }
+    lua_rawgeti(L, LUA_REGISTRYINDEX, disposeQueueRef);
+    lua_pushvalue(L, -2);
+    lua_pushvalue(L, target);
+    lua_rawset(L, -3);
     return 0;
 }
 
@@ -549,15 +705,18 @@ static int setAnimation(lua_State *L)
         return 1;
     }
     
+    SkeletonCallGuard guard(skeletonUserdata);
     TrackEntry *entry = spc::setAnimation(skeletonUserdata->state, trackIndex, animation, loop);
     if (!entry)
     {
         lua_pushboolean(L, false);
         return 1;
     }
+    if (skeletonUserdata->disposeRequested) return 0; // a listener removed the object: no entry to hand out
+    guard.release(); // no callback runs below, and the wrapper's allocation can raise
 
     LuaTrackEntry *entryUserdata = (LuaTrackEntry *)lua_newuserdata(L, sizeof(LuaTrackEntry));
-    new (entryUserdata) LuaTrackEntry(L, entry);
+    new (entryUserdata) LuaTrackEntry(L, entry, skeletonUserdata->alive);
 
     return 1;
 }
@@ -582,15 +741,18 @@ static int addAnimation(lua_State *L)
         return 1;
     }
     
+    SkeletonCallGuard guard(skeletonUserdata);
     TrackEntry *entry = spc::addAnimation(skeletonUserdata->state, trackIndex, animation, loop, delay);
     if (!entry)
     {
         lua_pushboolean(L, false);
         return 1;
     }
+    if (skeletonUserdata->disposeRequested) return 0; // a listener removed the object: no entry to hand out
+    guard.release(); // no callback runs below, and the wrapper's allocation can raise
 
     LuaTrackEntry *entryUserdata = (LuaTrackEntry *)lua_newuserdata(L, sizeof(LuaTrackEntry));
-    new (entryUserdata) LuaTrackEntry(L, entry);
+    new (entryUserdata) LuaTrackEntry(L, entry, skeletonUserdata->alive);
 
     return 1;
 }
@@ -615,6 +777,7 @@ static int addAnimationAt(lua_State *L)
         return 1;
     }
 
+    SkeletonCallGuard guard(skeletonUserdata);
     float delay = startTime;
     TrackEntry *current = spc::current(skeletonUserdata->state, trackIndex);
     if (!current && startTime > 0)
@@ -650,9 +813,11 @@ static int addAnimationAt(lua_State *L)
         lua_pushboolean(L, false);
         return 1;
     }
+    if (skeletonUserdata->disposeRequested) return 0; // a listener removed the object: no entry to hand out
+    guard.release(); // no callback runs below, and the wrapper's allocation can raise
 
     LuaTrackEntry *entryUserdata = (LuaTrackEntry *)lua_newuserdata(L, sizeof(LuaTrackEntry));
-    new (entryUserdata) LuaTrackEntry(L, entry);
+    new (entryUserdata) LuaTrackEntry(L, entry, skeletonUserdata->alive);
 
     return 1;
 }
@@ -668,6 +833,7 @@ static int setEmptyAnimation(lua_State *L)
     int trackIndex = checkTrackIndex(L, 2);
     float mixDuration = luaL_checknumber(L, 3) / 1000;
 
+    SkeletonCallGuard guard(skeletonUserdata);
     skeletonUserdata->state->setEmptyAnimation(trackIndex, mixDuration);
     return 0;
 }
@@ -684,6 +850,7 @@ static int addEmptyAnimation(lua_State *L)
     float mixDuration = luaL_checknumber(L, 3) / 1000;
     float delay = luaL_checknumber(L, 4) / 1000;
 
+    SkeletonCallGuard guard(skeletonUserdata);
     skeletonUserdata->state->addEmptyAnimation(trackIndex, mixDuration, delay);
     return 0;
 }
@@ -698,6 +865,7 @@ static int setEmptyAnimations(lua_State *L)
     }
 
     float mixDuration = luaL_checknumber(L, 2) / 1000;
+    SkeletonCallGuard guard(skeletonUserdata);
     skeletonUserdata->state->setEmptyAnimations(mixDuration);
     return 0;
 }
@@ -732,7 +900,7 @@ static int setListener(lua_State *L)
         skeletonUserdata->stateListener = nullptr;
     }
 
-    LuaAnimationStateListener *stateListener = new LuaAnimationStateListener(L, skeletonUserdata->luaSelf, listenerRef);
+    LuaAnimationStateListener *stateListener = new LuaAnimationStateListener(L, &skeletonUserdata->luaSelf, listenerRef);
     skeletonUserdata->stateListener = stateListener;
     skeletonUserdata->state->setListener(stateListener);
     return 0;
@@ -802,7 +970,7 @@ static int getTrackEntry(lua_State *L)
     }
 
     LuaTrackEntry *entryUserdata = (LuaTrackEntry *)lua_newuserdata(L, sizeof(LuaTrackEntry));
-    new (entryUserdata) LuaTrackEntry(L, entry);
+    new (entryUserdata) LuaTrackEntry(L, entry, skeletonUserdata->alive);
 
     return 1;
 }
@@ -895,13 +1063,16 @@ static int updateState(lua_State *L)
     }
     float deltaTime = luaL_checknumber(L, 2);
     deltaTime /= 1000;
+    SkeletonCallGuard guard(skeletonUserdata);
 
     // Animation work only when a track exists, but always advance the skeleton clock: it is what
     // Physics_Update steps on, so a skeleton with physics and no animation never simulated (render-5).
     if (skeletonUserdata->state->getTracks().size() > 0)
     {
         skeletonUserdata->state->update(deltaTime);
+        if (skeletonUserdata->disposeRequested) return 0;
         skeletonUserdata->state->apply(*skeletonUserdata->skeleton);
+        if (skeletonUserdata->disposeRequested) return 0;
     }
     skeletonUserdata->skeleton->update(deltaTime * skeletonUserdata->physicsTimeScale);
 
@@ -963,9 +1134,11 @@ static void skeletonRender(lua_State *L, SpineSkeleton *skeletonUserdata)
         auto commandsNotInSplit = skeletonUserdata->splitData.commandsNotInSplit;
         spc::CommandPair commands = spc::renderSplit(skeletonRenderer, *skeleton, checkInjections(L, skeletonUserdata), slotIndices, commandsInSplit, commandsNotInSplit);
         renderCommands(L, skeletonUserdata, commands.first, meshes, 1);
+        if (skeletonUserdata->disposeRequested) return;
 
         skeletonUserdata->splitData.pushGroup(L);
         renderCommands(L, skeletonUserdata, commands.second, meshes, 2);
+        if (skeletonUserdata->disposeRequested) return;
         
         lua_remove(L, 2);
     }
@@ -973,6 +1146,7 @@ static void skeletonRender(lua_State *L, SpineSkeleton *skeletonUserdata)
         command = skeletonRenderer.render(*skeleton, checkInjections(L, skeletonUserdata));
 
         renderCommands(L, skeletonUserdata, command, meshes, 1);
+        if (skeletonUserdata->disposeRequested) return;
     }
 
     for (int index = static_cast<int>(meshes.size()) - 1; index >= 0; index--)
@@ -993,6 +1167,14 @@ static void skeletonRender(lua_State *L, SpineSkeleton *skeletonUserdata)
     lua_pop(L, -1);
 }
 
+// skeletonRender as a Lua C function over draw's own arguments (the skeleton as upvalue), so draw can run it through
+// its guard: the injection listeners it calls may raise.
+static int skeletonRenderCall(lua_State *L)
+{
+    skeletonRender(L, (SpineSkeleton *)lua_touserdata(L, lua_upvalueindex(1)));
+    return 0;
+}
+
 // skeleton:draw()
 static int skeletonDraw(lua_State *L)
 {
@@ -1002,11 +1184,16 @@ static int skeletonDraw(lua_State *L)
         return 0;
     }
 
+    SkeletonCallGuard guard(skeletonUserdata);
     // updateWorldTransform already skips inactive constraints; gating on constraint #1 froze all physics
     // whenever that one was skin-required and inactive (render-4).
     skeletonUserdata->skeleton->updateWorldTransform(Physics_Update);
 
-    skeletonRender(L, skeletonUserdata);
+    int nargs = lua_gettop(L);
+    lua_pushlightuserdata(L, skeletonUserdata);
+    lua_pushcclosure(L, skeletonRenderCall, 1);
+    lua_insert(L, 1);
+    guard.call(L, nargs, 0);
 
     return 0;
 }
@@ -1136,7 +1323,7 @@ static int getIKConstraint(lua_State *L)
     }
 
     LuaIKConstraint *ikConstraintUserdata = (LuaIKConstraint *)lua_newuserdata(L, sizeof(LuaIKConstraint));
-    new (ikConstraintUserdata) LuaIKConstraint(L, ikConstraint);
+    new (ikConstraintUserdata) LuaIKConstraint(L, ikConstraint, skeletonUserdata->skeleton, skeletonUserdata->alive);
 
     return 1;
 }
@@ -1325,6 +1512,15 @@ static int injectObject(lua_State *L)
         return 0;
     }
 
+    // Validate before ejecting, inserting or taking the LuaTableHolder: luaL_error longjmps over its destructor.
+    const char *slotName = luaL_checkstring(L, 3);
+    Slot *slot = skeletonUserdata->skeleton->findSlot(slotName);
+    if (!slot)
+    {
+        luaL_error(L, "Slot not found: %s", slotName);
+        return 0;
+    }
+
     // if object has been already injected, then eject first
     auto &injections = skeletonUserdata->injections;
     for (auto it = injections.begin(); it != injections.end();)
@@ -1348,14 +1544,6 @@ static int injectObject(lua_State *L)
     lua_call(L, 2, 0);
 
     LuaTableHolder object(L, 2);
-
-    const char *slotName = luaL_checkstring(L, 3);
-    Slot *slot = skeletonUserdata->skeleton->findSlot(slotName);
-    if (!slot)
-    {
-        luaL_error(L, "Slot not found: %s", slotName);
-        return 0;
-    }
 
     int slotIndex = slot->getData().getIndex();
 
@@ -1460,6 +1648,7 @@ static int clearTracks(lua_State *L)
         return 0;
     }
 
+    SkeletonCallGuard guard(skeletonUserdata);
     skeletonUserdata->state->clearTracks();
 
     return 0;
@@ -1475,6 +1664,7 @@ static int clearTrack(lua_State *L)
     }
     int trackIndex = checkTrackIndex(L, 2);
 
+    SkeletonCallGuard guard(skeletonUserdata);
     skeletonUserdata->state->clearTrack(trackIndex);
 
     return 0;
@@ -1558,13 +1748,18 @@ static int reassemble(lua_State *L)
     {
         LuaTableHolder group = splitData.releaseGroup();
 
-        // re-draw so all meshes are in the right place
-        skeletonRender(L, skeletonUserdata);
-        
-        // remove group
+        // re-draw so all meshes are in the right place (through the guard, like draw: injection listeners may raise)
+        SkeletonCallGuard guard(skeletonUserdata);
+        int nargs = lua_gettop(L);
+        lua_pushlightuserdata(L, skeletonUserdata);
+        lua_pushcclosure(L, skeletonRenderCall, 1);
+        lua_insert(L, 1);
+        guard.call(L, nargs, 0);
+
+        // remove group (the guard keeps the skeleton alive: a dispose requested meanwhile runs when it ends)
         skeletonUserdata->groupRemoveSelf->pushTable(L);
         group.pushTable(L);
-        lua_call(L, 1, 0);
+        guard.call(L, 1, 0);
     }
 
     return 0;
@@ -1573,43 +1768,21 @@ static int reassemble(lua_State *L)
 
 
 
-// skeleton:removeSelf()
+// skeleton:removeSelf(): removes the display group like any display object; Solar2D finalizes it at the end of
+// the frame (spine_onFinalize) and the next frame frees the skeleton.
 static int removeSelf(lua_State *L)
 {
-    if (!lua_istable(L, 1))
+    SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
+    if (!skeletonUserdata || skeletonUserdata->disposeRequested)
     {
-        luaL_error(L, "SpineSkeleton expected. If this is a function call, you might have used '.' instead of ':'");
         return 0;
     }
 
-    lua_pushstring(L, "_skeleton");
-    lua_rawget(L, 1);
-    
-    if (lua_isnil(L, -1))
-    {
-        luaL_error(L, "Skeleton already removed");
-        return 0;
-     }
-
-    lua_pushvalue(L, -1);
-
-    SpineSkeleton *skeletonUserdata = (SpineSkeleton *)luaL_checkudata(L, -1, "SpineSkeleton");
-
-    lua_pushnil(L);
-    lua_setmetatable(L, -2);
-
-    lua_pushstring(L, "_skeleton");
-    lua_pushnil(L);
-    lua_rawset(L, 1);
+    skeletonUserdata->markRemoved();
 
     skeletonUserdata->groupRemoveSelf->pushTable(L);
     lua_pushvalue(L, 1);
     lua_call(L, 1, 0);
-
-    skeletonUserdata->group__mt->pushTable(L);
-    lua_setmetatable(L, 1);
-
-    skeletonUserdata->~SpineSkeleton();
 
     return 0;
 }

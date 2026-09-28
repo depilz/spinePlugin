@@ -570,7 +570,7 @@
     <ClInclude Include="..\shared\Lua_Bone.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="\\Mac\AllFiles\Volumes\Projects\studycats\funbox\plugins\plugin-spine\shared\Texture.h">
+    <ClInclude Include="..\shared\Texture.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\shared\Lua_Physics.h">

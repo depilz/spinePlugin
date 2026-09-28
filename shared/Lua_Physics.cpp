@@ -9,6 +9,7 @@ static int translate(lua_State *L)
     {
         return 0;
     }
+    physicsUserdata->checkAlive(L);
 
     float x = luaL_checknumber(L, 2);
     float y = luaL_checknumber(L, 3);
@@ -33,6 +34,7 @@ static int rotate(lua_State *L)
     {
         return 0;
     }
+    physicsUserdata->checkAlive(L);
 
     float x = luaL_checknumber(L, 2);
     float y = luaL_checknumber(L, 3);
@@ -56,6 +58,7 @@ static int physics_index(lua_State *L)
     {
         return 0;
     }
+    physicsUserdata->checkAlive(L);
 
     const char *key = luaL_checkstring(L, 2);
     Vector<PhysicsConstraint *> &PhysicsConstraints = physicsUserdata->constraints;
@@ -122,6 +125,7 @@ static int physics_newindex(lua_State *L)
     {
         return 0;
     }
+    physicsUserdata->checkAlive(L);
 
     const char *key = luaL_checkstring(L, 2);
 

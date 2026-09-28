@@ -8,7 +8,7 @@ private:
     LuaTableHolder listener;
 
 public:
-    bool updated;
+    bool updated = false;
     bool active = true;
 
     InjectedObject(const InjectedObject &) = delete;
@@ -34,7 +34,8 @@ public:
     InjectedObject(InjectedObject &&other) noexcept
         : slotIndex(std::move(other.slotIndex)),
           object(std::move(other.object)),
-          listener(std::move(other.listener))
+          listener(std::move(other.listener)),
+          updated(other.updated), active(other.active)
     {
     }
 
@@ -45,6 +46,8 @@ public:
             slotIndex = std::move(other.slotIndex);
             object = std::move(other.object);
             listener = std::move(other.listener);
+            updated = other.updated;
+            active = other.active;
         }
         return *this;
     }

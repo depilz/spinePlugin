@@ -24,6 +24,7 @@
 void engine_removeMesh(lua_State *, LuaTableHolder *) { std::fprintf(stderr, "engine_removeMesh called in headless fixture\n"); std::abort(); }
 void renderCommands(lua_State *, SpineSkeleton *, RenderCommand *, MeshManager &, int) { std::fprintf(stderr, "renderCommands called in headless fixture\n"); std::abort(); }
 extern "C" lua_State *CoronaLuaGetCoronaThread(lua_State *L) { return L; }
+extern "C" int CoronaLuaDoCall(lua_State *L, int narg, int nresults) { int s = lua_pcall(L, narg, nresults, 0); if (s && !lua_isnil(L, -1)) { fprintf(stderr, "CoronaLuaDoCall: %s\n", lua_isstring(L, -1) ? lua_tostring(L, -1) : "(error object is not a string)"); lua_pop(L, 1); } return s; }
 
 // DebugExtension leaves _usedMemory uninitialized (runtime/spine-4.2/spine/Debug.h:55-57); clearAllocations() zeroes it.
 static DebugExtension *g_debugExt = nullptr;
@@ -43,7 +44,7 @@ static StubTextureLoader g_loader;
 static int g_dataCreated = 0, g_dataFreed = 0;
 
 static std::shared_ptr<DataHolder<SkeletonData>> *checkData(lua_State *L, int idx) {
-    return (std::shared_ptr<DataHolder<SkeletonData>> *)luaL_checkudata(L, idx, "DataHolder");
+    return (std::shared_ptr<DataHolder<SkeletonData>> *)luaL_checkudata(L, idx, "SkeletonData");
 }
 
 // fixture.loadAtlas(path) -> DataHolder<Atlas> userdata (like spine.loadAtlas, stub textures)
@@ -67,7 +68,7 @@ static int loadData(lua_State *L) {
         lua_call(L, 1, 1);
         atlasIndex = lua_gettop(L);
     } else {
-        luaL_checkudata(L, 1, "DataHolder");
+        luaL_checkudata(L, 1, "Atlas");
         atlasIndex = 1;
     }
     Atlas *atlas = (*(std::shared_ptr<DataHolder<Atlas>> *)lua_touserdata(L, atlasIndex))->getObject();
@@ -104,12 +105,8 @@ static int create(lua_State *L) {
     value->dataOwner = holder;
     value->skeletonData = skeletonData;
     value->skeleton = spc::newSkeleton(skeletonData);
-#if !SPINE_43()
-    value->skeleton->setScaleY(-1); // 4.3: Bone::yDown is true by default
-#endif
     value->stateData = spc::newStateData(skeletonData);
     value->state = spc::newState(value->stateData);
-    value->luaSelf = new LuaTableHolder();
     getSkeletonMt(L);
     lua_setmetatable(L, -2);
     lua_setfield(L, -2, "_skeleton");
@@ -246,6 +243,7 @@ static int timelineAttachments(lua_State *L) {
 }
 
 extern "C" int luaopen_realdata_fixture(lua_State *L) {
+    Bone::setYDown(true); // the plugin's configuration (SPINE_PLUGIN_LUAOPEN in shared/Lua_Spine.cpp)
     lua_newtable(L);
     const luaL_Reg fns[] = {
         {"loadAtlas", loadAtlas}, {"loadData", loadData}, {"dataStats", dataStats},

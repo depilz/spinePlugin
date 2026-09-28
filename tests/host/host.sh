@@ -3,6 +3,8 @@
 #   SPINE_TEST_OUT  required: build products go under $SPINE_TEST_OUT/host
 #   SPINE_REPO      checkout whose shared/ is built (default: the one containing this file)
 #   SPINE_RUNTIME   the runtime line, built from runtime/spine-$SPINE_RUNTIME (tests/run.sh sets it; default 4.2)
+#   SPINE_SPINES    the line's example exports, the tests' cwd (tests/run.sh sets it; default line_spines of the
+#                   line, checked once per line by spines_check; see spines.sh)
 #   LUA51_SRC       Lua 5.1.3 src dir (default: tests/third_party/lua-5.1.3/src)
 #   CORONA_NATIVE   Corona Native root holding Corona/shared/include/Corona (default: tests/third_party/solar2d)
 #   SDKROOT         taken as is; linking needs the Xcode 26.4 SDK
@@ -16,6 +18,10 @@ export SPINE_RUNTIME="${SPINE_RUNTIME:-4.2}"
 : "${SPINE_TEST_OUT:?SPINE_TEST_OUT must name the build output directory}"
 HOST_RUNTIME="$SPINE_REPO/runtime/spine-$SPINE_RUNTIME"
 [[ -f "$HOST_RUNTIME/spine/Version.h" ]] || { echo "host: no runtime line $SPINE_RUNTIME ($HOST_RUNTIME)" >&2; return 1; }
+source "$HOST_DIR/spines.sh"
+[[ -n "${SPINE_SPINES:-}" ]] || SPINE_SPINES=$(line_spines "$SPINE_RUNTIME") || return 1
+export SPINE_SPINES
+spines_check || return 1
 HOST_INC=(-I"$LUA51_SRC" -I"$SPINE_REPO/shared" -I"$HOST_RUNTIME" -I"$CORONA_NATIVE/Corona/shared/include/Corona")
 HOST_JOBS=$(sysctl -n hw.ncpu)
 # the plugin's Lua entry on the runtime line (SPINE_PLUGIN_LUAOPEN: luaopen_plugin_spine<major><minor>)

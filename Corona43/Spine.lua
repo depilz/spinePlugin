@@ -89,7 +89,9 @@ function Spine.create(parent, skeletonData, x, y, listener)
     parent:insert(skeleton)
 
     skeletons[#skeletons + 1] = skeleton
-    skeleton:draw()
+    if skeleton.removeSelf then
+        skeleton:draw()
+    end
 
     return skeleton
 end
@@ -112,9 +114,11 @@ Runtime:addEventListener("enterFrame", function()
     time = time + dt
 
     for i, skeleton in ipairs(skeletons) do
-        if skeleton.isActive and skeleton.parent then
+        if skeleton.removeSelf and skeleton.parent then
             skeleton:updateState(dt)
-            skeleton:draw()
+            if skeleton.removeSelf then
+                skeleton:draw()
+            end
         end
     end
 end)

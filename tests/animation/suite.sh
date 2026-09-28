@@ -10,11 +10,12 @@ while read -r script args; do
   run_test "${script%.lua}${args:+ $args}" "$W/run.sh" "$W/$script" $args
 done <"$W/scenarios"
 
-# reports_error command...: prints the command's output; true when it carries t4's error("boom in listener")
+# reports_error command...: prints the command's output; true when t4's error("boom in listener") reached the
+# stubbed CoronaLuaDoCall and the setAnimation that raised it still returned normally
 reports_error() {
   local out
   out=$("$@" 2>&1) || true
   printf '%s\n' "$out"
-  grep -q 'boom in listener' <<<"$out"
+  grep -q '^CoronaLuaDoCall: .*boom in listener' <<<"$out" && grep -q 'pcall ok =.true' <<<"$out"
 }
 run_test "t4_reentrancy error reported" reports_error "$W/run.sh" "$W/t4_reentrancy.lua" error

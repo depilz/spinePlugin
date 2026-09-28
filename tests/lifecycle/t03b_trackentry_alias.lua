@@ -1,11 +1,14 @@
 local spine = require("plugin.spine")
+local S = __stub
 local atlas = spine.loadAtlas("spineboy/spineboy.atlas")
 local data = spine.loadSkeletonData("spineboy/spineboy.json", atlas)
 local obj = spine.create(data)
 local e = obj:setAnimation(1, "walk", true)
 obj:clearTrack(1)
 local e2 = obj:setAnimation(1, "run", false)
-print("new entry:", e2.animation, e2.loop, "| stale wrapper from the cleared walk entry:", e.animation, e.loop)
-e.timeScale = 0
+print("new entry:", e2.animation, e2.loop, "| stale wrapper from the cleared walk entry isValid:", e.isValid)
+assert(e.isValid == false and e2.isValid == true, "the stale wrapper aliases the pooled entry now used by run")
+S.raises("Track entry is no longer valid", function() e.timeScale = 0 end)
 print("new entry timeScale after writing through the stale wrapper:", e2.timeScale)
+assert(e2.timeScale == 1, "a write through the stale wrapper reached the new entry")
 print("stale wrapper == new wrapper (Lua equality):", e == e2)

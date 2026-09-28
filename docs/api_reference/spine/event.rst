@@ -19,13 +19,22 @@ Properties:
     ``string`` – The name of the event. Either "spine" for all Spine events, or the name of your custom event.
 
 - **event.target**:
-    ``skeleton`` – The :doc:`index` object.
+    ``skeleton`` – The :doc:`../skeleton/index` display object returned by :doc:`create`, so
+    ``event.target == skeleton``. The plugin releases this reference when the skeleton is freed
+    (see :doc:`../../lifecycle`).
 
 - **event.animation**:
     ``string`` – The name of the animation.
 
 - **event.trackIndex**:
     ``number`` – The 1-based track index.
+
+
+Errors in the listener:
+-----------------------
+
+If the listener raises an error, Solar2D reports it like any other listener error (see
+:doc:`../../lifecycle`). The plugin call that dispatched the event does not raise.
 
 
 Spine event properties

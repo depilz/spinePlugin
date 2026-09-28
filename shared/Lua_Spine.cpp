@@ -71,18 +71,6 @@ int loadAtlas(lua_State *L)
     int length;
     const char *data;
 
-    /* Get directory from atlas path. */
-    const char *lastForwardSlash = strrchr(shortPath, '/');
-    const char *lastBackwardSlash = strrchr(shortPath, '\\');
-    const char *lastSlash = lastForwardSlash > lastBackwardSlash ? lastForwardSlash : lastBackwardSlash;
-    if (lastSlash == shortPath)
-        lastSlash++; /* Never drop starting slash. */
-    dirLength = (int)(lastSlash ? lastSlash - shortPath : 0);
-    dir = SpineExtension::calloc<char>(dirLength + 1, __FILE__, __LINE__);
-    memcpy(dir, shortPath, dirLength);
-    dir[dirLength] = '\0';
-
-
     pathForFile->pushTable(L);
     lua_pushvalue(L, 1);
     lua_call(L, 1, 1);
@@ -104,13 +92,33 @@ int loadAtlas(lua_State *L)
         return 0;
     }
 
-    Atlas *atlas = new Atlas(data, length, dir, textureLoader, true);
-    auto atlasUserdata = std::make_shared<DataHolder<Atlas>>(atlas);
+    /* Get directory from atlas path. Allocated only here: nothing between this and its free raises. */
+    const char *lastForwardSlash = strrchr(shortPath, '/');
+    const char *lastBackwardSlash = strrchr(shortPath, '\\');
+    const char *lastSlash = lastForwardSlash > lastBackwardSlash ? lastForwardSlash : lastBackwardSlash;
+    if (lastSlash == shortPath)
+        lastSlash++; /* Never drop starting slash. */
+    dirLength = (int)(lastSlash ? lastSlash - shortPath : 0);
+    dir = SpineExtension::calloc<char>(dirLength + 1, __FILE__, __LINE__);
+    memcpy(dir, shortPath, dirLength);
+    dir[dirLength] = '\0';
 
-    DataHolder<Atlas>::push(L, atlasUserdata);
+    Atlas *atlas = new Atlas(data, length, dir, textureLoader, true);
 
     SpineExtension::free(data, __FILE__, __LINE__);
     SpineExtension::free(dir, __FILE__, __LINE__);
+
+    if (!textureLoader->failure().empty())
+    {
+        delete atlas; // unloads the pages that did load
+        lua_pushfstring(L, "Failed to load texture: %s", textureLoader->failure().c_str());
+        textureLoader->clearFailure();
+        return lua_error(L);
+    }
+
+    auto atlasUserdata = std::make_shared<DataHolder<Atlas>>(atlas);
+
+    DataHolder<Atlas>::push(L, atlasUserdata);
 
     return 1;
 }
@@ -135,14 +143,15 @@ int loadSkeletonData(lua_State *L)
         return 0;
     }
 
-    auto atlasUserdata = DataHolder<Atlas>::check(L, 2);
-    if (!atlasUserdata)
+    // No shared_ptr local: luaL_error below longjmps over C++ destructors. The userdata at 2 keeps the holder alive.
+    DataHolder<Atlas> *atlasHolder = DataHolder<Atlas>::check(L, 2).get();
+    if (!atlasHolder)
     {
         luaL_error(L, "Invalid atlas");
         return 0;
     }
 
-    Atlas *atlas = atlasUserdata->getObject();
+    Atlas *atlas = atlasHolder->getObject();
 
     SkeletonData *skeletonData = nullptr;
     if (strstr(absPath, ".json"))
@@ -177,6 +186,11 @@ int loadSkeletonData(lua_State *L)
 int create(lua_State *L)
 {
     bool hasListener = lua_gettop(L) > 1 && !lua_isnil(L, 2);
+    // Validate before taking the shared_ptr below: luaL_error longjmps over C++ destructors.
+    if (hasListener)
+    {
+        luaL_checktype(L, 2, LUA_TFUNCTION);
+    }
 
     auto skeletonDataUserdata = DataHolder<SkeletonData>::check(L, 1);
     if (!skeletonDataUserdata)
@@ -187,10 +201,10 @@ int create(lua_State *L)
 
     SkeletonData *skeletonData = skeletonDataUserdata->getObject();
 
-    int listenerRef;
+    int listenerRef = LUA_NOREF;
     if (hasListener)
     {
-        luaL_checktype(L, 2, LUA_TFUNCTION);
+        lua_pushvalue(L, 2); // luaL_ref pops the top, which is not the listener when extra args follow
         listenerRef = luaL_ref(L, LUA_REGISTRYINDEX);
     }
 
@@ -206,15 +220,6 @@ int create(lua_State *L)
     skeletonUserdata->stateData = stateData;
     skeletonUserdata->skeletonData = skeletonData;
     skeletonUserdata->dataOwner = skeletonDataUserdata;
-    skeletonUserdata->luaSelf = new LuaTableHolder(L);
-    skeletonUserdata->luaSelf->pushTable(L);
-
-    if (hasListener)
-    {
-        LuaAnimationStateListener *stateListener = new LuaAnimationStateListener(L, skeletonUserdata->luaSelf, listenerRef);
-        skeletonUserdata->stateListener = stateListener;
-        state->setListener(stateListener);
-    }
 
     getSkeletonMt(L);
     lua_setmetatable(L, -2);
@@ -225,6 +230,21 @@ int create(lua_State *L)
     lua_pushstring(L, "_skeleton");
     lua_pushvalue(L, -3);
     lua_rawset(L, -3);
+
+    // The userdata lives only through group._skeleton; the display object is event.target until dispose.
+    skeletonUserdata->luaSelf = LuaTableHolder(L, -1);
+    if (hasListener)
+    {
+        LuaAnimationStateListener *stateListener = new LuaAnimationStateListener(L, &skeletonUserdata->luaSelf, listenerRef);
+        skeletonUserdata->stateListener = stateListener;
+        state->setListener(stateListener);
+    }
+
+    lua_getfield(L, -1, "addEventListener");
+    lua_pushvalue(L, -2);
+    lua_pushstring(L, "finalize");
+    lua_pushcfunction(L, spine_onFinalize);
+    lua_call(L, 3, 0);
 
     skeletonUserdata->group__mt = group__mt;
     skeletonUserdata->groupmt__index = group__index;
@@ -268,6 +288,7 @@ CORONA_EXPORT int SPINE_PLUGIN_LUAOPEN(lua_State *L) {
 
     textureLoader = new SpineTextureLoader(L);
     loadGroupReferences(L);
+    resetDisposeQueue();
 
     // Initialize metatables
     getSkinMt(L);

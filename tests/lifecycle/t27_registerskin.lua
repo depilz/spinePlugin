@@ -7,8 +7,8 @@ local sk = a:createSkin("outfit"); sk:addSkin("skin-base"); sk:addSkin("nose/sho
 a:setSkin(sk); a:registerSkin(sk)
 sk = nil; S.gcfull()
 local b = spine.create(data); b:setSkin("outfit"); b:setSlotsToSetupPose(); b:draw()
-a:removeSelf(); S.gcfull()
+a:removeSelf(); S.frame(); S.gcfull()
 b:setAnimation(1, "walk", true); b:updateState(16); b:draw()
-b:removeSelf(); a, b, data, atlas = nil, nil, nil, nil
+b:removeSelf(); S.frame(); a, b, data, atlas = nil, nil, nil, nil
 S.gcfull()
 print("registered skin lifecycle ok; textures released", S.texturesReleased, "of", S.texturesCreated)

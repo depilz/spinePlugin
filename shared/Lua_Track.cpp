@@ -4,11 +4,7 @@
 static int track_index(lua_State *L)
 {
     LuaTrack *trackUserdata = (LuaTrack *)luaL_checkudata(L, 1, "SpineTrack");
-
-    if (!trackUserdata->L)
-    {
-        return 0;
-    }
+    trackUserdata->checkAlive(L);
 
     if (!lua_isnumber(L, 2))
     {
@@ -22,7 +18,7 @@ static int track_index(lua_State *L)
         if (track)
         {
             LuaTrackEntry *entryUserdata = (LuaTrackEntry *)lua_newuserdata(L, sizeof(LuaTrackEntry));
-            new (entryUserdata) LuaTrackEntry(L, track);
+            new (entryUserdata) LuaTrackEntry(L, track, trackUserdata->alive);
 
             return 1;
         }
@@ -39,6 +35,7 @@ static int track_newindex(lua_State *L)
 static int track_len(lua_State *L)
 {
     LuaTrack *trackUserdata = (LuaTrack *)luaL_checkudata(L, 1, "SpineTrack");
+    trackUserdata->checkAlive(L);
 
     lua_pushinteger(L, trackUserdata->tracks.size());
 

@@ -27,6 +27,7 @@ Properties
    delay
    reverse
    isComplete
+   isValid
    trackTime
    trackEnd
 

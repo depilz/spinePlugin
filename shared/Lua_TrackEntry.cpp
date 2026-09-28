@@ -4,10 +4,7 @@
 static int entry_setMixDuration(lua_State *L)
 {
     LuaTrackEntry *entryUserdata = (LuaTrackEntry *)luaL_checkudata(L, 1, "SpineTrackEntry");
-    if (!entryUserdata->entry)
-    {
-        return 0;
-    }
+    entryUserdata->checkAlive(L);
 
     TrackEntry &entry = *entryUserdata->entry;
     float mixDuration = luaL_checknumber(L, 2) / 1000;
@@ -28,14 +25,15 @@ static int entry_setMixDuration(lua_State *L)
 static int entry_index(lua_State *L)
 {
     LuaTrackEntry *entryUserdata = (LuaTrackEntry *)luaL_checkudata(L, 1, "SpineTrackEntry");
-
-    if (!entryUserdata->entry)
-    {
-        return 0;
-    }
-
-
     const char *key = luaL_checkstring(L, 2);
+
+    // readable on any entry: false once the entry finished, was pooled or its skeleton was removed
+    if (strcmp(key, "isValid") == 0)
+    {
+        lua_pushboolean(L, entryUserdata->isValid());
+        return 1;
+    }
+    entryUserdata->checkAlive(L);
 
     TrackEntry &entry = *entryUserdata->entry;
 
@@ -158,7 +156,7 @@ static int entry_index(lua_State *L)
         }
 
         LuaTrackEntry *nextUserdata = (LuaTrackEntry *)lua_newuserdata(L, sizeof(LuaTrackEntry));
-        new (nextUserdata) LuaTrackEntry(L, nextEntry);
+        new (nextUserdata) LuaTrackEntry(L, nextEntry, entryUserdata->alive);
         return 1;
     }
     else if (strcmp(key, "mixingFrom") == 0)
@@ -171,7 +169,7 @@ static int entry_index(lua_State *L)
         }
 
         LuaTrackEntry *mixingFromUserdata = (LuaTrackEntry *)lua_newuserdata(L, sizeof(LuaTrackEntry));
-        new (mixingFromUserdata) LuaTrackEntry(L, mixingFrom);
+        new (mixingFromUserdata) LuaTrackEntry(L, mixingFrom, entryUserdata->alive);
         return 1;
     }
     else if (strcmp(key, "mixingTo") == 0)
@@ -184,7 +182,7 @@ static int entry_index(lua_State *L)
         }
 
         LuaTrackEntry *mixingToUserdata = (LuaTrackEntry *)lua_newuserdata(L, sizeof(LuaTrackEntry));
-        new (mixingToUserdata) LuaTrackEntry(L, mixingTo);
+        new (mixingToUserdata) LuaTrackEntry(L, mixingTo, entryUserdata->alive);
         return 1;
     }
 
@@ -203,11 +201,7 @@ static int entry_index(lua_State *L)
 static int entry_newindex(lua_State *L)
 {
     LuaTrackEntry *entryUserdata = (LuaTrackEntry *)luaL_checkudata(L, 1, "SpineTrackEntry");
-
-    if (!entryUserdata->entry)
-    {
-        return 0;
-    }
+    entryUserdata->checkAlive(L);
 
     const char *key = luaL_checkstring(L, 2);
 

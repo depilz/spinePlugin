@@ -11,11 +11,11 @@ scene:insert(splitGroup)
 obj:draw()
 print("split group children after draw:", #S.children(splitGroup))
 if mode == "removeSelf" then
-  obj:removeSelf()
+  obj:removeSelf(); S.frame()
   print("after obj:removeSelf(): split group removed?", S.isRemoved(splitGroup), "children:", S.children(splitGroup) and #S.children(splitGroup))
 elseif mode == "removeSplit" then
   -- user removes the split group, then keeps drawing the skeleton
-  splitGroup:removeSelf()
+  splitGroup:removeSelf(); S.frame()
   print("split group removed by user; drawing again...")
   print(pcall(function() obj:updateState(16); obj:draw() end))
 end

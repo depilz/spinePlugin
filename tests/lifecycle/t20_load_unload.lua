@@ -23,7 +23,7 @@ local function once(withSkins)
     for f = 1, 5 do obj:updateState(33); obj:draw() end
     -- remove every attachment of the applied custom skin while slots still show them
     for _, a in ipairs(custom:getAttachments()) do end
-    obj:removeSelf()
+    obj:removeSelf(); S.frame()
   end
 end
 for i = 1, 3 do once(true) end

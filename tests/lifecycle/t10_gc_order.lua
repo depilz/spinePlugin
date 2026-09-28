@@ -21,6 +21,7 @@ for i = 1, 30 do obj:updateState(16); obj:draw() end
 print("still animating/drawing OK; att.name", att.name)
 if mode == "close" then print("leaving everything alive for lua_close"); return end
 obj:removeSelf(); obj = nil
+S.frame()
 S.gcfull()
 print("after removeSelf+GC: slot ->", pcall(function() return slot.attachment end))
 print("att.name", att.name, "skin", skin:getName(), "dataSkin", dataSkin:getName(), "#atts", #atts, atts[1].name)

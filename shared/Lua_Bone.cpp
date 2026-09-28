@@ -3,11 +3,7 @@
 static int bone_index(lua_State *L)
 {
     LuaBone *boneUserdata = (LuaBone *)luaL_checkudata(L, 1, "SpineBone");
-
-    if (!boneUserdata->bone)
-    {
-        return 0;
-    }
+    boneUserdata->checkAlive(L);
 
     const char *key = luaL_checkstring(L, 2);
 
@@ -23,8 +19,8 @@ static int bone_index(lua_State *L)
         Bone *parent = bone.getParent();
         if (parent)
         {
-            LuaBone *boneUserdata = (LuaBone *)lua_newuserdata(L, sizeof(LuaBone));
-            new (boneUserdata) LuaBone(L, parent);
+            LuaBone *parentUserdata = (LuaBone *)lua_newuserdata(L, sizeof(LuaBone));
+            new (parentUserdata) LuaBone(L, parent, boneUserdata->alive);
         }
         else
         {
@@ -39,8 +35,8 @@ static int bone_index(lua_State *L)
         for (int i = 0; i < children.size(); i++)
         {
             Bone *child = children[i];
-            LuaBone *boneUserdata = (LuaBone *)lua_newuserdata(L, sizeof(LuaBone));
-            new (boneUserdata) LuaBone(L, child);
+            LuaBone *childUserdata = (LuaBone *)lua_newuserdata(L, sizeof(LuaBone));
+            new (childUserdata) LuaBone(L, child, boneUserdata->alive);
             lua_rawseti(L, -2, i + 1);
         }
         return 1;
@@ -147,11 +143,7 @@ static int bone_index(lua_State *L)
 static int bone_newindex(lua_State *L)
 {
     LuaBone *boneUserdata = (LuaBone *)luaL_checkudata(L, 1, "SpineBone");
-
-    if (!boneUserdata->bone)
-    {
-        return 0;
-    }
+    boneUserdata->checkAlive(L);
 
     const char *key = luaL_checkstring(L, 2);
 

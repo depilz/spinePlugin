@@ -1,8 +1,0 @@
-settings =
-{
-    plugins =
-    {
-        ['plugin.spine42'] = {publisherId = 'com.studycat.spine'},
-        ['plugin.spine'] = {publisherId = 'com.studycat.spine'},
-    },
-}

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoronaLua.h"
+#include "SkeletonLife.h"
 #include "SpineCompat.h"
 #include "DataHolder.h"
 
@@ -14,11 +15,11 @@ struct LuaSlot
     Slot *slot;
 
     std::shared_ptr<DataHolder<SkeletonData>> dataOwner;
-    std::shared_ptr<bool> alive;
+    std::shared_ptr<SkeletonLife> alive;
 
     LuaSlot(lua_State *L, Slot *slot,
             std::shared_ptr<DataHolder<SkeletonData>> dataOwner = nullptr,
-            std::shared_ptr<bool> alive = nullptr)
+            std::shared_ptr<SkeletonLife> alive = nullptr)
         : L(L), slot(slot), dataOwner(dataOwner), alive(alive)
     {
         getSlotMt(L);

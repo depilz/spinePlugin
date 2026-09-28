@@ -9,7 +9,7 @@ static LuaTableHolder *newTexture;
 // and the Atlas IS NOT deleted along the skeleton, but by the garbage collector in Lua
 // once there are no more references to it
 
-SpineTextureLoader::SpineTextureLoader(lua_State *L) : L(L)
+SpineTextureLoader::SpineTextureLoader(lua_State *L) : L(CoronaLuaGetCoronaThread(L)) // never keep a coroutine
 {
     lua_getglobal(L, "graphics");
     lua_getfield(L, -1, "newTexture");
@@ -26,7 +26,7 @@ void SpineTextureLoader::load(spine::AtlasPage &page, const spine::String &path)
     if (it != textures.end())
     {
         it->second.refCount++;
-        page.texture = &it->second.texture;
+        page.texture = it->second.texture;
     }
     else
     {
@@ -39,11 +39,11 @@ void SpineTextureLoader::load(spine::AtlasPage &page, const spine::String &path)
         lua_pushstring(L, shortPath.c_str());
         lua_setfield(L, -2, "filename");
 
-        lua_call(L, 1, 1);
-
-        if (lua_isnil(L, -1))
+        // Record the failure and leave page.texture null: a raise here would longjmp out of new Atlas and leak it.
+        if (lua_pcall(L, 1, 1, 0) != 0 || lua_isnil(L, -1))
         {
-            luaL_error(L, "Failed to load texture: %s", shortPath.c_str());
+            lua_pop(L, 1);
+            if (failedPath.empty()) failedPath = shortPath;
             return;
         }
 
@@ -67,7 +67,7 @@ void SpineTextureLoader::load(spine::AtlasPage &page, const spine::String &path)
         textureData->textureTable = textureTable;
         lua_pop(L, 1);
 
-        TextureRef textRef = {*textureData, 1};
+        TextureRef textRef = {textureData, 1};
         textures[shortPath] = textRef;
         textureToPath[textureData] = shortPath;
 
@@ -86,7 +86,7 @@ void SpineTextureLoader::unload(void *texture)
             textRef->second.refCount--;
             if (textRef->second.refCount == 0)
             {
-                LuaTableHolder *textureHolder = textRef->second.texture.texture;
+                LuaTableHolder *textureHolder = textRef->second.texture->texture;
                 textureHolder->pushTable(L);
                 lua_getfield(L, -1, "releaseSelf");
                 lua_pushvalue(L, -2);
@@ -94,14 +94,15 @@ void SpineTextureLoader::unload(void *texture)
                 lua_pop(L, 1);
 
                 textureHolder->releaseTable();
-                LuaTableHolder *textureTableHolder = textRef->second.texture.textureTable;
+                LuaTableHolder *textureTableHolder = textRef->second.texture->textureTable;
                 textureTableHolder->releaseTable();
 
-                delete textRef->second.texture.texture;
-                delete textRef->second.texture.textureTable;
+                delete textRef->second.texture->texture;
+                delete textRef->second.texture->textureTable;
+                delete textRef->second.texture;
                 textures.erase(textRef);
+                textureToPath.erase(it);
             }
         }
-        textureToPath.erase(it);
     }
 }

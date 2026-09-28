@@ -80,6 +80,15 @@ bool LuaTableHolder::isValid() const
     return (L_ != nullptr) && (ref_ != LUA_NOREF) && (ref_ != LUA_REFNIL);
 }
 
+bool LuaTableHolder::hasMetatable() const
+{
+    if (!isValid()) return false;
+    lua_rawgeti(L_, LUA_REGISTRYINDEX, ref_);
+    bool has = lua_getmetatable(L_, -1) != 0;
+    lua_pop(L_, has ? 2 : 1);
+    return has;
+}
+
 void LuaTableHolder::initialize(lua_State *L)
 {
     if (!isValid())

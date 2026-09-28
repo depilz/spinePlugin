@@ -1,11 +1,15 @@
--- Scenario helper. suite.sh writes scenario.txt into the project: the script, its argument and the results file.
--- Results lines are TAB-separated; suite.sh reads "DONE exit", "UNHANDLED_ERROR", "ERROR" and "CHECK" lines.
+-- Scenario helper. suite.sh writes scenario.txt into the project: the script, its argument and the results file,
+-- and build.settings, whose plugin.spine<line> entry is the plugin loadPlugin loads by default.
+-- Results lines are TAB-separated; suite.sh reads "DONE exit", "UNHANDLED_ERROR", "ERROR", "CHECK" and "EXPECT" lines.
 local M = {}
 do
   local f = assert(io.open(system.pathForFile("scenario.txt", system.ResourceDirectory)))
   M.script, M.arg, M.out = f:read("*l", "*l", "*l")
   f:close()
   M.dir = M.out:match("^(.*)/")
+  f = assert(io.open(system.pathForFile("build.settings", system.ResourceDirectory)))
+  M.plugin = f:read("*a"):match("%['(plugin%.spine%d+)'%]")
+  f:close()
 end
 function M.open(name)
   M.name = name
@@ -32,9 +36,14 @@ end
 function M.check(name, ok, ...)
   M.log("CHECK", ok and "PASS" or "FAIL", name, ...)
 end
+-- expect(name...): declares checks up front; suite.sh records one that never reports (a crash first) as a FAIL
+function M.expect(...)
+  for i = 1, select("#", ...) do M.log("EXPECT", (select(i, ...))) end
+end
 function M.loadPlugin(name)
-  name = name or "plugin.spine42"
+  name = name or M.plugin
   local ok, spine = pcall(require, name)
+  io.stdout:flush() -- the load banner reaches suite.sh's stdout capture even if the scenario then crashes
   M.log("require('" .. name .. "')", ok, type(spine), (not ok) and tostring(spine) or "")
   M.log("package.cpath", package.cpath)
   return spine

@@ -472,21 +472,23 @@ void renderCommands(lua_State *L, SpineSkeleton *skeletonUserdata, RenderCommand
 
         if (command->injectionSlotIndex >= 0)
         {
-            for (auto &injection : skeletonUserdata->injections)
+            // index loops: an injection listener may inject or eject, reallocating or shrinking the vector
+            auto &injections = skeletonUserdata->injections;
+            for (size_t k = 0; k < injections.size(); ++k)
             {
-                if (injection.getSlotIndex() == command->injectionSlotIndex)
+                if (injections[k].getSlotIndex() == command->injectionSlotIndex)
                 {
                     drawIndex++;
                     skeletonUserdata->groupInsert->pushTable(L);
                     lua_pushvalue(L, parentIndex);
                     lua_pushnumber(L, drawIndex);
-                    injection.pushObject(L);
+                    injections[k].pushObject(L);
                     lua_call(L, 3, 0);
 
-                    callInjectionListener(L, &injection, skeleton, true);
-
-                    injection.active = true;
-                    injection.updated = true;
+                    injections[k].active = true;
+                    injections[k].updated = true;
+                    callInjectionListener(L, &injections[k], skeleton, true);
+                    if (skeletonUserdata->disposeRequested) return;
                 }
             }
         }
@@ -494,12 +496,14 @@ void renderCommands(lua_State *L, SpineSkeleton *skeletonUserdata, RenderCommand
         lua_pop(L, 1);
 
         // finish updating injections
-        for (auto &injection : skeletonUserdata->injections)
+        auto &injections = skeletonUserdata->injections;
+        for (size_t k = 0; k < injections.size(); ++k)
         {
-            if (!injection.updated && injection.active)
+            if (!injections[k].updated && injections[k].active)
             {
-                injection.active = false;
-                callInjectionListener(L, &injection, skeleton, false);
+                injections[k].active = false;
+                callInjectionListener(L, &injections[k], skeleton, false);
+                if (skeletonUserdata->disposeRequested) return;
             }
         }
 

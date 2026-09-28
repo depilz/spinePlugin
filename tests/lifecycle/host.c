@@ -16,6 +16,7 @@ int HOST_PLUGIN(lua_State *L); /* -DHOST_PLUGIN=<entry>, host.sh HOST_ENTRY */
 
 /* Solar2D API stubs used by the plugin */
 lua_State *CoronaLuaGetCoronaThread(lua_State *L) { return g_mainL ? g_mainL : L; }
+int CoronaLuaDoCall(lua_State *L, int narg, int nresults) { int s = lua_pcall(L, narg, nresults, 0); if (s && !lua_isnil(L, -1)) { fprintf(stderr, "CoronaLuaDoCall: %s\n", lua_isstring(L, -1) ? lua_tostring(L, -1) : "(error object is not a string)"); lua_pop(L, 1); } return s; }
 void CoronaLuaWarning(lua_State *L, const char *fmt, ...) { (void)L; va_list ap; va_start(ap, fmt); fprintf(stderr, "WARNING: "); vfprintf(stderr, fmt, ap); fprintf(stderr, "\n"); va_end(ap); }
 int CoronaMemoryCreateInterface(lua_State *L, const void *info) { (void)info; lua_newtable(L); return 1; }
 

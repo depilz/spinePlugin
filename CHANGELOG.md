@@ -16,6 +16,34 @@
 - **Added `skeleton.physicsTimeScale`.** It scales the time step of the skeleton's Spine physics constraints: `1` by
   default, `0` pauses physics without a catch-up burst when it resumes. `timeScale` still does not affect physics.
   Writing a negative or non-finite value raises `physicsTimeScale must be a finite number >= 0`.
+- **Removed skeletons are freed on the next frame, and objects you kept raise instead of reading freed memory.**
+  `removeSelf()`, `display.remove()` and removing a parent group or a composer scene all take the same path: the
+  skeleton stops updating, drawing and dispatching animation events at once, and a one-shot `Runtime` `enterFrame`
+  listener frees its native memory on the next frame, so memory measured in the same frame still includes it. Bones,
+  slots, constraints, fills, effects and track entries you kept keep working in the handler that removed the skeleton
+  and in its `finalize` listeners; after that frame's finalize they raise `<Type> belongs to a removed skeleton`, and a
+  skeleton method you stored raises `Skeleton belongs to a removed skeleton`. See the "Removing skeletons" page.
+- **A removed skeleton only answers its event-dispatcher keys.** After `removeSelf()`, `addEventListener`,
+  `removeEventListener`, `hasEventListener`, `dispatchEvent` and `respondsToEvent`, and the `getOrCreateTable`,
+  `didRemoveListener` and `_setHasListener` helpers Solar2D's listener calls use, keep working until the end of that
+  frame's finalize, inside `finalize` listeners too. Every other public key reads `nil`, including `removeSelf` and
+  `numChildren`, so `if skeleton.removeSelf then` tells a removed skeleton from a live one. See the "Removing
+  skeletons" page.
+- **Breaking: `event.target` in animation events is the skeleton display object.** `event.target == skeleton` now
+  holds; it used to be an internal userdata.
+- **Added `entry.isValid`.** A track entry that has finished or was returned to the pool now raises
+  `Track entry is no longer valid (finished or disposed); check entry.isValid` instead of reading pooled data or
+  aliasing another entry.
+- **Animation listener errors are reported.** An error in the listener passed to `spine.create()` used to vanish; it
+  now reaches the console and the `unhandledError` event like any other Solar2D listener error, and the call that
+  triggered it carries on.
+- **Injection listeners may inject, eject or remove the skeleton during `draw`** without corrupting memory.
+- **An IK target bone from another skeleton is rejected** with `target bone must belong to the same skeleton`.
+- **`spine.loadAtlas()` raises `Failed to load texture: <path>` when a page texture cannot be loaded**, and keeps
+  nothing in memory. `spine.create()` given an atlas instead of skeleton data raises an argument error instead of
+  misreading it, and bad arguments to `spine.loadSkeletonData()` and `skeleton:inject()` no longer leak.
+- **Leak fixes.** A texture shared by two atlases is released, reading `obj.fill` no longer leaks, and requiring the
+  plugin or using a fill inside a coroutine no longer keeps the dead coroutine's state.
 
 ### plugin.spine42 (4.2 line)
 
@@ -40,6 +68,8 @@
 - **Physics no longer stops when the first physics constraint is inactive.** `draw` used to turn off every physics
   constraint of the skeleton when the first one was inactive (for example a constraint that belongs to a skin that is
   not set). Now only the inactive constraints are skipped.
+- **Split rendering no longer leaks on every draw.** The split renderer allocated a command pair per draw and never
+  freed it; it now returns the pair by value, as the 4.3 line already did.
 
 ### plugin.spine43 (4.3 line)
 

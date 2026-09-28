@@ -15,6 +15,7 @@ if mode == "parent" then
 else
   obj:removeSelf(); parent:removeSelf()
 end
+S.frame()
 print("mode", mode)
 print("obj metatable after removal:", getmetatable(obj))
 print("obj.removeSelf after removal:", rawget(obj, "removeSelf"), "(obj is plain table:", getmetatable(obj) == nil, ")")

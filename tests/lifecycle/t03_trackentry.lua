@@ -1,26 +1,33 @@
 local spine = require("plugin.spine")
+local S = __stub
 local mode = arg[1] or "pool"
 local atlas = spine.loadAtlas("spineboy/spineboy.atlas")
 local data = spine.loadSkeletonData("spineboy/spineboy.json", atlas)
 local obj = spine.create(data)
 local e = obj:setAnimation(1, "walk", true)
-print("entry.animation", e.animation, "loop", e.loop)
+print("entry.animation", e.animation, "loop", e.loop, "isValid", e.isValid)
+assert(e.isValid == true, "a current entry is valid")
 if mode == "pool" then
   obj:clearTrack(1)              -- entry is ended+disposed and returned to AnimationState's pool
-  print("after clearTrack: stale entry.animation =", e.animation)
+  print("after clearTrack: stale entry.isValid =", e.isValid)
+  assert(e.isValid == false, "a cleared entry is no longer valid")
+  S.raises("Track entry is no longer valid", function() return e.animation end)
   local e2 = obj:setAnimation(1, "run", false)  -- pool hands the same TrackEntry object back
-  print("new entry.animation", e2.animation, "; stale wrapper now reports", e.animation, "loop", e.loop)
-  e.timeScale = 0                 -- stale wrapper silently mutates the NEW animation
-  print("new entry timeScale after writing through the stale wrapper:", e2.timeScale)
+  assert(e2.isValid == true and e.isValid == false, "the pooled entry's new wrapper is valid, the stale one is not")
+  S.raises("Track entry is no longer valid", function() e.timeScale = 0 end)
+  print("new entry.animation", e2.animation, "timeScale", e2.timeScale)
+  assert(e2.timeScale == 1, "a write through the stale wrapper reached the new entry")
 elseif mode == "removed" then
   local tracks = obj.tracks
-  obj:removeSelf()
-  print("after removeSelf: reading stale TrackEntry")
-  print(e.animation)
+  obj:removeSelf(); S.frame()
+  print("after removeSelf: reading stale TrackEntry, isValid =", e.isValid)
+  assert(e.isValid == false, "an entry of a removed skeleton is not valid")
+  S.raises("Track entry belongs to a removed skeleton", function() return e.animation end)
 elseif mode == "tracks" then
   local tracks = obj.tracks
-  obj:removeSelf()
+  obj:removeSelf(); S.frame()
   collectgarbage()
-  print("after removeSelf: #tracks", #tracks)
-  print(tracks[1])
+  print("after removeSelf: #tracks, tracks[1]")
+  S.raises("Track entry belongs to a removed skeleton", function() return #tracks end)
+  S.raises("Track entry belongs to a removed skeleton", function() return tracks[1] end)
 end

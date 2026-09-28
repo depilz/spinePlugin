@@ -1,7 +1,9 @@
 #pragma once
 
 #include "CoronaLua.h"
+#include "SkeletonLife.h"
 #include "SpineCompat.h"
+#include <memory>
 
 using namespace spine;
 
@@ -11,12 +13,19 @@ struct LuaBone
 {
     lua_State *L;
     Bone *bone;
+    std::shared_ptr<SkeletonLife> alive;
 
-    LuaBone(lua_State *L, Bone *bone)
-        : L(L), bone(bone)
+    LuaBone(lua_State *L, Bone *bone, std::shared_ptr<SkeletonLife> alive)
+        : L(L), bone(bone), alive(alive)
     {
         getBoneMt(L);
         lua_setmetatable(L, -2);
+    }
+
+    void checkAlive(lua_State *state) const
+    {
+        if (!bone || (alive && !*alive))
+            luaL_error(state, "Bone belongs to a removed skeleton");
     }
 
     ~LuaBone()

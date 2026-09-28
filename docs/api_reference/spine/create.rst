@@ -18,6 +18,9 @@ Gotchas:
 
 Creating multiple skeletons with the same `skeletonData` is efficient, reuse them whenever possible.
 
+The skeleton is freed on the frame after it is removed, not at once. See :doc:`../../lifecycle`
+for what still works during that window.
+
 Syntax:
 -------
 
@@ -30,13 +33,14 @@ Syntax:
 
 - ``listener`` *(optional)*:
     ``function`` – A Lua callback function that handles animation events. See :doc:`event` for more details.
+    Any other non-``nil`` value raises an error.
 
 
 
 Return Value:
 --------------
 
-- ``skeleton`` – A :doc:`../skeleton/index` userdata representing the new Spine skeleton instance.
+- ``skeleton`` – A :doc:`../skeleton/index` display object representing the new Spine skeleton instance.
 
 Example:
 --------

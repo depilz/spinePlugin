@@ -14,6 +14,7 @@ local function cycle()
   if mode == "removeSelf" then obj:removeSelf(); parent:removeSelf()
   elseif mode == "parent" then parent:removeSelf()           -- composer-style indirect removal
   end
+  S.frame()
 end
 for i = 1, 50 do cycle() end
 S.gcfull()

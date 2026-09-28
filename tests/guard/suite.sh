@@ -64,6 +64,12 @@ lone: runtime/spine-4.2/spine/Log.h, counterpart unchanged: none"
   (( rc == 1 )) && [[ "$(sed 's/^FLAG [0-9a-f]* //' <<<"$actual" | sort)" == "$expected" ]]
 }
 
+# range_check: the guard over RANGE; the id stays "range" whatever SPINE_GUARD_RANGE is, the range goes to the log
+range_check() {
+  echo "range: $RANGE"
+  "$GUARD" --repo "$SPINE_REPO" "$RANGE"
+}
+
 run_test "counterparts.tsv lists every one-sided runtime file" check_map
 run_test "selftest flags exactly the unmatched files" selftest
-run_test "range $RANGE" "$GUARD" --repo "$SPINE_REPO" "$RANGE"
+run_test "range" range_check

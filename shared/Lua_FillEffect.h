@@ -1,6 +1,8 @@
 #pragma once
 
 #include "CoronaLua.h"
+#include "SkeletonLife.h"
+#include <memory>
 
 // Forward decls
 struct SpineSkeleton;
@@ -15,9 +17,15 @@ void getFillEffectMt(lua_State *L);
 struct LuaFillEffect {
     lua_State *L;
     SpineSkeleton *owner; // access to effectData and skeleton
+    std::shared_ptr<SkeletonLife> alive; // owner is valid only while *alive
 
-    LuaFillEffect(lua_State *L, SpineSkeleton *owner) : L(L), owner(owner) {
+    LuaFillEffect(lua_State *L, SpineSkeleton *owner, std::shared_ptr<SkeletonLife> alive) : L(L), owner(owner), alive(alive) {
         getFillEffectMt(L);
         lua_setmetatable(L, -2);
+    }
+
+    void checkAlive(lua_State *state) const {
+        if (!owner || !alive || !*alive)
+            luaL_error(state, "Effect belongs to a removed skeleton");
     }
 };

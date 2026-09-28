@@ -4,11 +4,7 @@
 static int ikConstraint_index(lua_State *L)
 {
     LuaIKConstraint *ikConstraintUserdata = (LuaIKConstraint *)luaL_checkudata(L, 1, "SpineIKConstraint");
-
-    if (!ikConstraintUserdata->ikConstraint)
-    {
-        return 0;
-    }
+    ikConstraintUserdata->checkAlive(L);
 
     const char *key = luaL_checkstring(L, 2);
     
@@ -26,7 +22,7 @@ static int ikConstraint_index(lua_State *L)
         for (size_t i = 0; i < bones.size(); i++)
         {
             LuaBone *boneUserdata = (LuaBone *)lua_newuserdata(L, sizeof(LuaBone));
-            new (boneUserdata) LuaBone(L, spc::boneOf(bones[i]));
+            new (boneUserdata) LuaBone(L, spc::boneOf(bones[i]), ikConstraintUserdata->alive);
 
             lua_rawseti(L, -2, static_cast<int>(i + 1));
         }
@@ -74,7 +70,7 @@ static int ikConstraint_index(lua_State *L)
         if (target)
         {
             LuaBone *boneUserdata = (LuaBone *)lua_newuserdata(L, sizeof(LuaBone));
-            new (boneUserdata) LuaBone(L, target);
+            new (boneUserdata) LuaBone(L, target, ikConstraintUserdata->alive);
         }
         else
         {
@@ -90,18 +86,18 @@ static int ikConstraint_index(lua_State *L)
 static int ikConstraint_newindex(lua_State *L)
 {
     LuaIKConstraint *ikConstraintUserdata = (LuaIKConstraint *)luaL_checkudata(L, 1, "SpineIKConstraint");
-
-    if (!ikConstraintUserdata->ikConstraint)
-    {
-        return 0;
-    }
+    ikConstraintUserdata->checkAlive(L);
 
     const char *key = luaL_checkstring(L, 2);
 
     if (strcmp(key, "target") == 0)
     {
         LuaBone *boneUserdata = (LuaBone *)luaL_checkudata(L, 3, "SpineBone");
+        boneUserdata->checkAlive(L);
+        if (boneUserdata->alive != ikConstraintUserdata->alive)
+            return luaL_error(L, "target bone must belong to the same skeleton");
         spc::setIkTarget(*ikConstraintUserdata->ikConstraint, boneUserdata->bone);
+        ikConstraintUserdata->skeleton->updateCache();
         return 0;
     }
     else if (strcmp(key, "isActive") == 0)

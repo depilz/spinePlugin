@@ -45,6 +45,7 @@ local-changes:
 - SkeletonRenderer.cpp: both render() overloads skip an inactive bone's slot including a clipping attachment (D-A), and end a clip on a bounding box / point / path end slot (D-B) (masks-runtime-4.2.patch)
 - Triangulator.cpp: FP contraction off (clang + MSVC pragmas) (masks-runtime-4.2.patch)
 - FP-contraction pragmas: Windows (MSVC) bit-exactness is assumed, not measured (no Windows comparator run)
+- SkeletonRenderer.cpp, SkeletonRenderer.h: the split render() overload returns the command pair by value instead of a heap-allocated std::pair (render-11)
 
 other-differences:
 - Json.cpp: one extra blank line after line 120 since 784fd6d; whitespace only, not a local change
@@ -53,3 +54,4 @@ history:
 - 2026-09-27: base recorded as eb6a973f9
 - 2026-09-27: refreshed eb6a973f9 -> e7dc1435f (4.2.120) with tools/runtime-refresh/refresh.sh; every local change re-verified
 - 2026-09-27: applied masks-runtime-4.2.patch (C1, C3, D-A, D-B, clang pragmas) plus the MSVC pragmas; Windows bit-exactness assumed
+- 2026-09-28: split render() returns the command pair by value (render-11); 4.3 already does

@@ -20,6 +20,10 @@ namespace spine { template <typename T> using Vector = Array<T>; } // 4.3 rename
 namespace spc {
 using namespace spine;
 typedef std::pair<RenderCommand *, RenderCommand *> CommandPair;
+inline CommandPair renderSplit(SkeletonRenderer &r, Skeleton &s, const std::vector<int> &injections,
+                               const std::vector<int> &split, Vector<RenderCommand *> &in, Vector<RenderCommand *> &out) {
+    return r.render(s, injections, split, in, out);
+}
 
 #if SPINE_43()
 // 4.3 splits bones/slots/constraints into setup data, an unconstrained pose and an applied pose.
@@ -82,10 +86,6 @@ inline Array<Slot *> &drawOrder(Skeleton *s) { return s->getDrawOrder().getAppli
 inline Bone *boneOf(BonePose *p) { return &p->getBone(); }
 inline Bone *ikTarget(IkConstraint &c) { return &c.getTarget(); }
 inline void setIkTarget(IkConstraint &c, Bone *b) { c.setTarget(*b); }
-inline CommandPair renderSplit(SkeletonRenderer &r, Skeleton &s, const std::vector<int> &injections,
-                               const std::vector<int> &split, Array<RenderCommand *> &in, Array<RenderCommand *> &out) {
-    return r.render(s, injections, split, in, out);
-}
 #else
 // 4.2: the object is its own pose.
 inline Bone &pose(Bone &b) { return b; }
@@ -142,10 +142,5 @@ inline Vector<Slot *> &drawOrder(Skeleton *s) { return s->getDrawOrder(); }
 inline Bone *boneOf(Bone *b) { return b; }
 inline Bone *ikTarget(IkConstraint &c) { return c.getTarget(); }
 inline void setIkTarget(IkConstraint &c, Bone *b) { c.setTarget(b); }
-// The 4.2 renderer hands out a heap pair per split render, never freed (as in 1.5.0).
-inline CommandPair renderSplit(SkeletonRenderer &r, Skeleton &s, const std::vector<int> &injections,
-                               const std::vector<int> &split, Vector<RenderCommand *> &in, Vector<RenderCommand *> &out) {
-    return *r.render(s, injections, split, in, out);
-}
 #endif
 } // namespace spc

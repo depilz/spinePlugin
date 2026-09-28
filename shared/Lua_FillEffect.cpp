@@ -7,9 +7,10 @@
 static int effect_index(lua_State *L)
 {
      LuaFillEffect *ud = (LuaFillEffect *)luaL_checkudata(L, 1, "SpineEffectData");
+     ud->checkAlive(L);
      const char *key = luaL_checkstring(L, 2);
 
-     if (!ud || !ud->owner || !ud->owner->effectData)
+     if (!ud->owner->effectData)
      {
          return 0;
      }
@@ -44,12 +45,8 @@ static int effect_index(lua_State *L)
 static int effect_newindex(lua_State *L)
 {
     LuaFillEffect *ud = (LuaFillEffect *)luaL_checkudata(L, 1, "SpineEffectData");
+    ud->checkAlive(L);
     const char *key = luaL_checkstring(L, 2);
-
-    if (!ud || !ud->owner)
-    {
-        return 0;
-    }
 
      if (!ud->owner->effectData)
      {

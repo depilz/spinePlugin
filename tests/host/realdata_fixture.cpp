@@ -13,6 +13,7 @@
 void engine_removeMesh(lua_State *, LuaTableHolder *) { std::fprintf(stderr, "engine_removeMesh called in headless fixture\n"); std::abort(); }
 void renderCommands(lua_State *, SpineSkeleton *, RenderCommand *, MeshManager &, int) { std::fprintf(stderr, "renderCommands called in headless fixture\n"); std::abort(); }
 extern "C" lua_State *CoronaLuaGetCoronaThread(lua_State *L) { return L; }
+extern "C" int CoronaLuaDoCall(lua_State *L, int narg, int nresults) { int s = lua_pcall(L, narg, nresults, 0); if (s && !lua_isnil(L, -1)) { fprintf(stderr, "CoronaLuaDoCall: %s\n", lua_isstring(L, -1) ? lua_tostring(L, -1) : "(error object is not a string)"); lua_pop(L, 1); } return s; }
 SpineExtension *spine::getDefaultExtension() { return new DefaultSpineExtension(); }
 
 struct StubTextureLoader : public TextureLoader {
@@ -28,7 +29,7 @@ struct RealData {
     SkeletonData *data;
 };
 static std::shared_ptr<DataHolder<SkeletonData>> *checkData(lua_State *L, int idx) {
-    return (std::shared_ptr<DataHolder<SkeletonData>> *)luaL_checkudata(L, idx, "DataHolder");
+    return (std::shared_ptr<DataHolder<SkeletonData>> *)luaL_checkudata(L, idx, "SkeletonData");
 }
 
 // fixture.loadData(atlasPath, skelOrJsonPath [, scale]) -> DataHolder<SkeletonData> userdata
@@ -68,7 +69,6 @@ static int create(lua_State *L) {
     value->skeleton = spc::newSkeleton(skeletonData);
     value->stateData = spc::newStateData(skeletonData);
     value->state = spc::newState(value->stateData);
-    value->luaSelf = new LuaTableHolder();
     getSkeletonMt(L);
     lua_setmetatable(L, -2);
     lua_setfield(L, -2, "_skeleton");

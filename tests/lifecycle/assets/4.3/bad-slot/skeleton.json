@@ -1,0 +1,5 @@
+{
+"skeleton": { "spine": "4.3.75-beta" },
+"bones": [ { "name": "root" } ],
+"slots": [ { "name": "slot", "bone": "no-such-bone" } ]
+}

@@ -1,7 +1,9 @@
 #pragma once
 
 #include "CoronaLua.h"
+#include "SkeletonLife.h"
 #include "SpineCompat.h"
+#include <memory>
 
 using namespace spine;
 
@@ -12,28 +14,19 @@ struct SpineSkeleton;
 
 struct LuaFill
 {
-    lua_State *L;
     SpineSkeleton *owner = nullptr; // provides access to skeleton and effectData
-    int selfRef = LUA_NOREF;        // registry reference to this userdata
+    std::shared_ptr<SkeletonLife> alive;    // owner is valid only while *alive
 
-    LuaFill(lua_State *L, SpineSkeleton *owner) : L(L), owner(owner)
+    LuaFill(lua_State *L, SpineSkeleton *owner, std::shared_ptr<SkeletonLife> alive) : owner(owner), alive(alive)
     {
         getFillMt(L);
         lua_setmetatable(L, -2);
-        // Keep a registry reference so we can re-push the same userdata later
-        lua_pushvalue(L, -1);
-        selfRef = luaL_ref(L, LUA_REGISTRYINDEX);
     }
 
-    ~LuaFill()
+    void checkAlive(lua_State *state) const
     {
-        if (L && selfRef != LUA_NOREF)
-        {
-            luaL_unref(L, LUA_REGISTRYINDEX, selfRef);
-            selfRef = LUA_NOREF;
-        }
-        L = nullptr;
-        owner = nullptr;
+        if (!owner || !alive || !*alive)
+            luaL_error(state, "Fill belongs to a removed skeleton");
     }
 };
 

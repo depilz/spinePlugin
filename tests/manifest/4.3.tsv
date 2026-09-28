@@ -1,0 +1,528 @@
+# Every test id the 4.3 line records, one row per (suite, test). tests/run.sh fails the line when a suite it runs
+# records an id not listed here (UNLISTED) or does not record a listed id (MISSING), unless that row's third column is
+# "optional" (an id that may be absent, e.g. one that needs an unset environment variable). A suite that does not run
+# on the line (ONLY_42 in tests/run.sh) has no rows. Adding or removing a test id updates this file in the same commit.
+suite	test
+animation	t1_surface
+animation	t2_events payload
+animation	t2_events target
+animation	t3_stale_entry numeric
+animation	t3_stale_entry animation
+animation	t3_stale_entry alias
+animation	t3_stale_entry afterdestroy
+animation	t4_reentrancy set_in_complete
+animation	t4_reentrancy clear_in_complete
+animation	t4_reentrancy setlistener_nil
+animation	t4_reentrancy setlistener_replace
+animation	t4_reentrancy error
+animation	t4_reentrancy error_then_more
+animation	t4_reentrancy dispose_in_complete
+animation	t4_reentrancy dispose_in_event
+animation	t4_reentrancy clearTracks_in_end
+animation	t4_reentrancy nested_update
+animation	t5_addAnimationAt
+animation	t6_delay_phases
+animation	t7_tracks_proxy
+animation	t8_gc_listener
+animation	t9_prototype_fix
+animation	t10_create_args
+animation	t11_misc
+animation	t4_reentrancy error reported
+api	extracted a27bde4
+api	extracted line
+api	expected-diff
+api	surface Atlas
+api	surface DataHolder
+api	surface SkeletonData
+api	surface SpineAttachment
+api	surface SpineBone
+api	surface SpineEffectData
+api	surface SpineFill
+api	surface SpineIKConstraint
+api	surface SpineObject
+api	surface SpinePhysics
+api	surface SpineSkeleton
+api	surface SpineSkin
+api	surface SpineSlot
+api	surface SpineTrack
+api	surface SpineTrackEntry
+api	surface module
+attachments	run_attachments.py
+attachments	attachments.lua
+lifecycle	t00_smoke
+lifecycle	t01_parent_removal parent
+lifecycle	t01_parent_removal explicit
+lifecycle	t02_remove_in_listener completed
+lifecycle	t02b_remove_on_ended
+lifecycle	t03_trackentry pool
+lifecycle	t03_trackentry removed
+lifecycle	t03_trackentry tracks
+lifecycle	t03b_trackentry_alias
+lifecycle	t05_wrappers_after_remove slot
+lifecycle	t05_wrappers_after_remove bone
+lifecycle	t05_wrappers_after_remove ik
+lifecycle	t05_wrappers_after_remove physics
+lifecycle	t05_wrappers_after_remove fill
+lifecycle	t05_wrappers_after_remove obj
+lifecycle	t05b_physics
+lifecycle	t06_fill_leak
+lifecycle	t06b_effect_after_remove
+lifecycle	t07_event_target
+lifecycle	t08_type_confusion create-with-atlas
+lifecycle	t08_type_confusion load-with-data
+lifecycle	t09_texture_refcount fifo
+lifecycle	t09_texture_refcount lifo
+lifecycle	t09b_texture_single
+lifecycle	t10_gc_order full
+lifecycle	t10_gc_order close
+lifecycle	t12_cycles removeSelf 200
+lifecycle	t12_cycles parent 200
+lifecycle	t13_coroutines require-in-coroutine
+lifecycle	t13_coroutines fill-in-coroutine
+lifecycle	t13_coroutines listener-thread
+lifecycle	t14_injection_reentrancy eject
+lifecycle	t14_injection_reentrancy inject
+lifecycle	t14_injection_reentrancy remove
+lifecycle	t16_double_remove
+lifecycle	t20_load_unload goblins json 5 skins
+lifecycle	t20b_load_unload_gc dragon json 5 skins
+lifecycle	t21_remove_data_attachments
+lifecycle	t22_cross_skeleton_ik
+lifecycle	t23_split_lifetime removeSelf
+lifecycle	t23_split_lifetime removeSplit
+lifecycle	t24_close_kitchen_sink
+lifecycle	t25_setlistener_in_callback
+lifecycle	t25b_setlistener_ended
+lifecycle	t26_missing_texture
+lifecycle	t27_registerskin
+lifecycle	t28_longjmp_sharedptr create-bad-listener
+lifecycle	t28_longjmp_sharedptr load-missing
+lifecycle	t29_isactive_readonly ik
+lifecycle	t29_isactive_readonly physics
+lifecycle	t29_isactive_readonly ik removed
+lifecycle	t29_isactive_readonly physics removed
+lifecycle	t28_longjmp_sharedptr inject-missing-slot
+lifecycle	t29_frame_emulation
+lifecycle	t30_draw_raise
+lifecycle	t31_dispose_hook window
+lifecycle	t31_dispose_hook user-finalize
+lifecycle	t31_dispose_hook rearm
+lifecycle	t31_dispose_hook no-runtime
+lifecycle	t31_dispose_hook reassemble
+lifecycle	t31_dispose_hook reassemble-remove
+lifecycle	t32_stale_animation live
+lifecycle	t32_stale_animation cached
+lifecycle	t32_stale_animation method
+lifecycle	t33_removed_listeners window
+lifecycle	t33_removed_listeners finalize
+lifecycle	g1_create_args
+lifecycle	g3_events_after_remove ended
+lifecycle	g3_events_after_remove interrupted
+lifecycle	g4_setanim_remove_in_began
+lifecycle	g6_orphan_timing read
+lifecycle	g6_orphan_timing write
+lifecycle	g6_orphan_timing timescale
+lifecycle	g6_orphan_timing listener_then_draw
+masks	example 1-weight-and-mass-balls
+masks	example 1-weight-and-mass-drop
+masks	example 2-the-12-principles
+masks	example 3-timing-and-spacing
+masks	example 4-wave-principle
+masks	example 5-squash-and-stretch
+masks	example 6-arcs
+masks	example 8-follow-through-pro-ball
+masks	example 8-follow-through-pro-pendulum
+masks	example alien
+masks	example celestial-circus
+masks	example chibi-stickers
+masks	example cloud-pot
+masks	example coin
+masks	example diamond
+masks	example dragon
+masks	example food-app-cooking
+masks	example food-app-delivery
+masks	example food-app-ready
+masks	example food-app-search
+masks	example goblins
+masks	example hero
+masks	example mix-and-match
+masks	example owl
+masks	example powerup
+masks	example raptor
+masks	example sack
+masks	example snowglobe
+masks	example speedy
+masks	example spineboy
+masks	example stretchyman
+masks	example tank
+masks	example vine
+masks	example windmill
+masks	spineboy head-bb
+masks	spineboy-da
+masks	private tritest43	optional
+probe-batching	pb_place
+probe-batching	pb_place split
+probe-batching	pb_noinj
+probe-batching	pb_noinj split
+probe-batching	pb_meshcount
+probe-batching	pb_t15t16
+probe-batching	pb_t16dump
+probe-batching	pb_t16trace
+probe-batching	pb_coin
+probe-batching	pb_coin2
+probe-batching	pb_coin3
+probe-batching	pb_coin4
+probe-batching	pb_coin5
+probe-batching	pb_inventory
+render	t0_smoke
+render	t1_churn 20
+render	t2_blend
+render	t3_emptycmd
+render	t4_injlistener
+render	t5_split
+render	t6_textures
+render	t7_fill 10000
+render	t7_fill 10000 uaf
+render	t8_physics skin-required
+render	t8_physics no-track
+render	t9_splitleak
+render	t10_scale raptor 10
+render	t11_garbage_probe
+render	t12_drawargs
+render	t13_midinject
+render	t14_effect_uaf
+render	t15_inject_order
+render	t16_physics_timescale default
+render	t16_physics_timescale reject
+render	t16_physics_timescale freeze
+render	t17_constraint_active ik
+render	t17_constraint_active physics
+render	t17_constraint_active ik-timeline
+render	h1_stale_world
+render	bench 5
+skins	s1_api_contract
+skins	s1_api_contract A1
+skins	s1_api_contract A2
+skins	s1_api_contract A3
+skins	s1_api_contract A4
+skins	s1_api_contract A5
+skins	s1_api_contract A6
+skins	s1_api_contract A7
+skins	s1_api_contract A8
+skins	s1_api_contract A9
+skins	s1_api_contract B1
+skins	s1_api_contract B2
+skins	s1_api_contract B3
+skins	s1_api_contract B4
+skins	s1_api_contract C1
+skins	s1_api_contract C2
+skins	s1_api_contract C3
+skins	s1_api_contract C4
+skins	s1_api_contract C5
+skins	s1_api_contract C6
+skins	s1_api_contract C7
+skins	s1_api_contract C8
+skins	s1_api_contract C9
+skins	s1_api_contract C10
+skins	s1_api_contract C11
+skins	s1_api_contract C12
+skins	s1_api_contract C13
+skins	s1_api_contract C14
+skins	s1_api_contract C15
+skins	s1_api_contract C16
+skins	s1_api_contract C17
+skins	s1_api_contract C18
+skins	s1_api_contract D1
+skins	s1_api_contract D2
+skins	s1_api_contract D3
+skins	s1_api_contract E1
+skins	s1_api_contract E2
+skins	s1_api_contract E3
+skins	s1_api_contract E4
+skins	s1_api_contract F1
+skins	s1_api_contract F2
+skins	s1_api_contract F3
+skins	s1_api_contract F4
+skins	s1_api_contract F5
+skins	s1_api_contract G1
+skins	s1_api_contract G2
+skins	s1_api_contract G3
+skins	s1_api_contract G4
+skins	s1_api_contract G5
+skins	s1_api_contract G6
+skins	s1_api_contract G7
+skins	s1_api_contract G8
+skins	s1_api_contract H1
+skins	s1_api_contract H2
+skins	s1_api_contract H3
+skins	s1_api_contract H4
+skins	s1_api_contract H5
+skins	s1_api_contract I1
+skins	s1_api_contract I2
+skins	s1_api_contract I3
+skins	s1_api_contract J1
+skins	s1_api_contract J2
+skins	s1_api_contract J3
+skins	s1_api_contract J4
+skins	s1_api_contract J5
+skins	s1_api_contract J6
+skins	s1_api_contract K1
+skins	s1_api_contract K2
+skins	s1_api_contract K3
+skins	s1_api_contract L1
+skins	s1_api_contract M1
+skins	s1_api_contract M2
+skins	s1_api_contract M3
+split	s0_smoke
+split	s1_random_split skip-portal
+split	s2_portal_split
+split	s3_reassemble_dead
+split	s4_injection a
+split	s4_injection b2
+split	s4_injection c
+split	s4_injection d
+split	s4_injection e
+split	s4_injection f
+split	s5_lifetime L1
+split	s5_lifetime L1b
+split	s5_lifetime L2
+split	s5_lifetime L3
+split	s5_lifetime L4
+split	s5_lifetime L5
+split	s5_lifetime L6
+split	s5_lifetime L7
+split	s5_lifetime L7b
+split	s5_lifetime L8
+split	s6_stack_leak drawargs
+split	s6_stack_leak leak
+split	s8_production
+split	s9_partsets
+split	p2_portal_unsplit
+split	p6_plain
+split	p7_data_dropped
+yflip	matrix
+yflip	matrix celestial-circus 1 anim:eyeblink
+yflip	matrix celestial-circus 1 anim:eyeblink-long
+yflip	matrix celestial-circus 1 anim:stars
+yflip	matrix celestial-circus 1 anim:swing
+yflip	matrix celestial-circus 1 anim:wind-idle
+yflip	matrix celestial-circus 1 anim:wing-flap
+yflip	matrix celestial-circus 1 anim:wings-and-feet
+yflip	matrix celestial-circus 2 idle translate(60,0),(0,60)
+yflip	matrix celestial-circus 3 idle rotate(root,+30deg)
+yflip	matrix celestial-circus 4 idle wind=25 (all constraints)
+yflip	matrix celestial-circus 5 idle gravity=50 (all constraints)
+yflip	matrix celestial-circus 5b anim0 + wind25 + gravity50 + translate
+yflip	matrix cloud-pot 1 anim:playing-in-the-rain
+yflip	matrix cloud-pot 1 anim:pot-moving-followed-by-rain
+yflip	matrix cloud-pot 1 anim:rain
+yflip	matrix cloud-pot 2 idle translate(60,0),(0,60)
+yflip	matrix cloud-pot 3 idle rotate(root,+30deg)
+yflip	matrix cloud-pot 4 idle wind=25 (all constraints)
+yflip	matrix cloud-pot 5 idle gravity=50 (all constraints)
+yflip	matrix cloud-pot 5b anim0 + wind25 + gravity50 + translate
+yflip	matrix sack 1 anim:cape-follow-example
+yflip	matrix sack 1 anim:fall-in
+yflip	matrix sack 1 anim:hello
+yflip	matrix sack 1 anim:walk
+yflip	matrix sack 2 idle translate(60,0),(0,60)
+yflip	matrix sack 3 idle rotate(root,+30deg)
+yflip	matrix sack 4 idle wind=25 (all constraints)
+yflip	matrix sack 5 idle gravity=50 (all constraints)
+yflip	matrix sack 5b anim0 + wind25 + gravity50 + translate
+yflip	matrix snowglobe 1 anim:eyeblink
+yflip	matrix snowglobe 1 anim:idle
+yflip	matrix snowglobe 1 anim:shake
+yflip	matrix snowglobe 2 idle translate(60,0),(0,60)
+yflip	matrix snowglobe 3 idle rotate(root,+30deg)
+yflip	matrix snowglobe 4 idle wind=25 (all constraints)
+yflip	matrix snowglobe 5 idle gravity=50 (all constraints)
+yflip	matrix snowglobe 5b anim0 + wind25 + gravity50 + translate
+yflip	matrix spineboy ik crosshair +20,+20 (run+aim)
+yflip	matrix spineboy ik all targets +20,+20 (setup)
+yflip	matrix spineboy ik all targets +20,+20 (run+aim)
+yflip	matrix raptor ik leg targets +20,+20 (setup)
+yflip	matrix raptor ik leg targets +20,+20 (walk)
+yflip	matrix raptor ik all targets +20,+20 (walk)
+yflip	matrix spineboy-ikOT ik 1-bone inherit crosshair (run+aim)
+yflip	matrix spineboy-ikOT ik 1-bone inherit all targets (setup)
+yflip	matrix spineboy-ikNRR ik 1-bone inherit crosshair (run+aim)
+yflip	matrix spineboy-ikNRR ik 1-bone inherit all targets (setup)
+yflip	matrix alien 0 sanity: all anims x120 (no physics)
+yflip	matrix chibi-stickers 0 sanity: all anims x120 (no physics)
+yflip	matrix chibi-stickers ik all targets +20,+20 (anim0)
+yflip	matrix coin 0 sanity: all anims x120 (no physics)
+yflip	matrix dragon 0 sanity: all anims x120 (no physics)
+yflip	matrix goblins 0 sanity: all anims x120 (no physics)
+yflip	matrix hero 0 sanity: all anims x120 (no physics)
+yflip	matrix hero ik all targets +20,+20 (anim0)
+yflip	matrix mix-and-match 0 sanity: all anims x120 (no physics)
+yflip	matrix mix-and-match ik all targets +20,+20 (anim0)
+yflip	matrix owl 0 sanity: all anims x120 (no physics)
+yflip	matrix powerup 0 sanity: all anims x120 (no physics)
+yflip	matrix raptor 0 sanity: all anims x120 (no physics)
+yflip	matrix raptor ik all targets +20,+20 (anim0)
+yflip	matrix speedy 0 sanity: all anims x120 (no physics)
+yflip	matrix spineboy 0 sanity: all anims x120 (no physics)
+yflip	matrix spineboy ik all targets +20,+20 (anim0)
+yflip	matrix stretchyman 0 sanity: all anims x120 (no physics)
+yflip	matrix stretchyman ik all targets +20,+20 (anim0)
+yflip	matrix tank 0 sanity: all anims x120 (no physics)
+yflip	matrix tank ik all targets +20,+20 (anim0)
+yflip	matrix vine 0 sanity: all anims x120 (no physics)
+yflip	matrix windmill 0 sanity: all anims x120 (no physics)
+yflip	probe
+yflip	probe rotate
+yflip	probe shearX
+yflip	probe scaleX
+yflip	probe xy
+yflip	l1_physics_api
+yflip	l1_physics_api sack physics:translate(0,60)
+yflip	l1_physics_api sack physics:translate(60,0)
+yflip	l1_physics_api sack physics:rotate(root,30)
+yflip	l1_physics_api celestial-circus physics:translate(0,60)
+yflip	l1_physics_api celestial-circus physics:translate(60,0)
+yflip	l1_physics_api celestial-circus physics:rotate(root,30)
+yflip	l1_physics_api snowglobe physics:translate(0,60)
+yflip	l1_physics_api snowglobe physics:translate(60,0)
+yflip	l1_physics_api snowglobe physics:rotate(root,30)
+yflip	l1_physics_api cloud-pot physics:translate(0,60)
+yflip	l1_physics_api cloud-pot physics:translate(60,0)
+yflip	l1_physics_api cloud-pot physics:rotate(root,30)
+yflip	l2_lua_visible
+yflip	l2_lua_visible spineboy run
+yflip	l2_lua_visible spineboy aim
+yflip	l2_lua_visible raptor walk
+yflip	l2_lua_visible mix-and-match walk
+yflip	l2_lua_visible sack walk
+yflip	l2_lua_visible celestial-circus swing
+yflip	l2_lua_visible snowglobe shake
+yflip	l2_lua_visible stretchyman sneaky
+yflip	l2_lua_visible tank drive
+yflip	l3_lua_gravity
+yflip	l3_lua_gravity A
+yflip	l3_lua_gravity B
+# sim s17_digest runs on the 4.2 line only: its base is the shipped 1.5.0 plugin.spine, a 4.2 build
+sim	s0_smoke
+sim	s0_smoke identity
+sim	s0_smoke cpath
+sim	s1_lifecycle
+sim	s1_lifecycle identity
+sim	s1_lifecycle cpath
+sim	s1_lifecycle leak
+sim	s1_lifecycle late
+sim	s1_lifecycle late identity
+sim	s1_lifecycle late cpath
+sim	s1_lifecycle late leak
+sim	s1f_finalize_workaround
+sim	s1f_finalize_workaround identity
+sim	s1f_finalize_workaround cpath
+sim	s1f_finalize_workaround window
+sim	s1f_finalize_workaround freed
+sim	s2_event_target
+sim	s2_event_target identity
+sim	s2_event_target cpath
+sim	s2_event_target target
+sim	s3_emptycmd raptor
+sim	s3_emptycmd raptor identity
+sim	s3_emptycmd raptor cpath
+sim	s3_emptycmd spineboy
+sim	s3_emptycmd spineboy identity
+sim	s3_emptycmd spineboy cpath
+sim	s3_emptycmd second
+sim	s3_emptycmd second identity
+sim	s3_emptycmd second cpath
+sim	s4_blend
+sim	s4_blend identity
+sim	s4_blend cpath
+sim	s5_pma
+sim	s5_pma identity
+sim	s5_pma cpath
+sim	s6_perf
+sim	s6_perf identity
+sim	s6_perf cpath
+sim	s7_remove_in_listener
+sim	s7_remove_in_listener identity
+sim	s7_remove_in_listener cpath
+sim	s7_remove_in_listener freed
+sim	s7_remove_in_listener events after removal
+sim	s7b_single_object
+sim	s7b_single_object identity
+sim	s7b_single_object cpath
+sim	s7b_single_object freed
+sim	s7b_single_object events after removal
+sim	s9_error_propagation b
+sim	s9_error_propagation b identity
+sim	s9_error_propagation b cpath
+sim	s9_error_propagation c
+sim	s9_error_propagation c identity
+sim	s9_error_propagation c cpath
+sim	s16_double_remove same
+sim	s16_double_remove same identity
+sim	s16_double_remove same cpath
+sim	s16_double_remove next
+sim	s16_double_remove next identity
+sim	s16_double_remove next cpath
+sim	s18_loop_stops
+sim	s18_loop_stops identity
+sim	s18_loop_stops cpath
+sim	s18_loop_stops pose
+sim	s18_loop_stops events
+sim	s19_removed_skeleton removed
+sim	s19_removed_skeleton removed identity
+sim	s19_removed_skeleton removed cpath
+sim	s19_removed_skeleton removed live findAnimation
+sim	s19_removed_skeleton removed window
+sim	s19_removed_skeleton removed numChildren
+sim	s19_removed_skeleton removed findAnimation cached
+sim	s19_removed_skeleton removed findAnimation method
+sim	s19_removed_skeleton late
+sim	s19_removed_skeleton late identity
+sim	s19_removed_skeleton late cpath
+sim	s19_removed_skeleton late window
+sim	s19_removed_skeleton late finalize removeEventListener
+sim	s19_removed_skeleton late a setAnimation
+sim	s19_removed_skeleton late a setAnimation cached
+sim	s19_removed_skeleton late a updateState
+sim	s19_removed_skeleton late a updateState cached
+sim	s19_removed_skeleton late a draw
+sim	s19_removed_skeleton late a draw cached
+sim	s19_removed_skeleton late a findAnimation
+sim	s19_removed_skeleton late a findAnimation cached
+sim	s19_removed_skeleton late a toFront
+sim	s19_removed_skeleton late a insert
+sim	s19_removed_skeleton late a numChildren
+sim	s19_removed_skeleton late a [1]
+sim	s19_removed_skeleton late a x read
+sim	s19_removed_skeleton late a parent read
+sim	s19_removed_skeleton late a x alpha write
+sim	s19_removed_skeleton late a addEventListener
+sim	s19_removed_skeleton late a dispatchEvent
+sim	s19_removed_skeleton late a removeEventListener
+sim	s19_removed_skeleton late a bone
+sim	s19_removed_skeleton late a removeSelf
+sim	s19_removed_skeleton late a removeSelf cached
+sim	s19_removed_skeleton late a display.remove
+sim	s19_removed_skeleton late b setAnimation
+sim	s19_removed_skeleton late b setAnimation cached
+sim	s19_removed_skeleton late b updateState
+sim	s19_removed_skeleton late b updateState cached
+sim	s19_removed_skeleton late b draw
+sim	s19_removed_skeleton late b draw cached
+sim	s19_removed_skeleton late b findAnimation
+sim	s19_removed_skeleton late b findAnimation cached
+sim	s19_removed_skeleton late b toFront
+sim	s19_removed_skeleton late b insert
+sim	s19_removed_skeleton late b numChildren
+sim	s19_removed_skeleton late b [1]
+sim	s19_removed_skeleton late b x read
+sim	s19_removed_skeleton late b parent read
+sim	s19_removed_skeleton late b x alpha write
+sim	s19_removed_skeleton late b addEventListener
+sim	s19_removed_skeleton late b dispatchEvent
+sim	s19_removed_skeleton late b removeEventListener
+sim	s19_removed_skeleton late b bone
+sim	s19_removed_skeleton late b removeSelf
+sim	s19_removed_skeleton late b removeSelf cached
+sim	s19_removed_skeleton late b display.remove
+sim	user Plugins spine entries unchanged

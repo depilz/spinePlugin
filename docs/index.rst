@@ -102,6 +102,7 @@ Below is a quick look at the main sections of this documentation:
 
     quickstart
     attachments-and-skins
+    lifecycle
 
 .. toctree::
    :maxdepth: 2

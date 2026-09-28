@@ -6,13 +6,9 @@
 static int fill_index(lua_State *L)
 {
     LuaFill *fillUserdata = (LuaFill *)luaL_checkudata(L, 1, "SpineFill");
+    fillUserdata->checkAlive(L);
 
     const char *key = luaL_checkstring(L, 2);
-
-    if (!fillUserdata || !fillUserdata->owner || !fillUserdata->owner->skeleton)
-    {
-        return 0;
-    }
 
     Skeleton &skeleton = *fillUserdata->owner->skeleton;
 
@@ -45,7 +41,7 @@ static int fill_index(lua_State *L)
         }
 
         LuaFillEffect *ud = (LuaFillEffect *)lua_newuserdata(L, sizeof(LuaFillEffect));
-        new (ud) LuaFillEffect(L, fillUserdata->owner);
+        new (ud) LuaFillEffect(L, fillUserdata->owner, fillUserdata->alive);
         return 1;
     }
 
@@ -64,11 +60,7 @@ static int fill_index(lua_State *L)
 static int fill_newindex(lua_State *L)
 {
     LuaFill *fillUserdata = (LuaFill *)luaL_checkudata(L, 1, "SpineFill");
-
-    if (!fillUserdata->owner || !fillUserdata->owner->skeleton)
-    {
-        return 0;
-    }
+    fillUserdata->checkAlive(L);
 
     Skeleton &skeleton = *fillUserdata->owner->skeleton;
 

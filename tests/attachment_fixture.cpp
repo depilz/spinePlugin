@@ -10,6 +10,7 @@ void engine_removeMesh(lua_State *, LuaTableHolder *) { std::abort(); }
 void renderCommands(lua_State *, SpineSkeleton *, RenderCommand *, MeshManager &, int) { std::abort(); }
 
 extern "C" lua_State *CoronaLuaGetCoronaThread(lua_State *L) { return L; }
+extern "C" int CoronaLuaDoCall(lua_State *L, int narg, int nresults) { int s = lua_pcall(L, narg, nresults, 0); if (s && !lua_isnil(L, -1)) { fprintf(stderr, "CoronaLuaDoCall: %s\n", lua_isstring(L, -1) ? lua_tostring(L, -1) : "(error object is not a string)"); lua_pop(L, 1); } return s; }
 SpineExtension *spine::getDefaultExtension() { return new DefaultSpineExtension(); }
 
 static int createFixture(lua_State *L) {
@@ -51,7 +52,6 @@ static int createFixture(lua_State *L) {
     value->skeleton = new Skeleton(value->skeletonData);
     value->stateData = new AnimationStateData(value->skeletonData);
     value->state = new AnimationState(value->stateData);
-    value->luaSelf = new LuaTableHolder();
     getSkeletonMt(L);
     lua_setmetatable(L, -2);
     lua_setfield(L, -2, "_skeleton");

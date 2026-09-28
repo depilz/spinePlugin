@@ -1,10 +1,11 @@
 -- S17: render digests of the sample exports (every example's first animation, skins, injections, split), logged
 -- every 5th frame as "DIGEST <case> <label> <digest>". Argument base loads plugin.spine (the shipped 1.5.0 dylib);
--- spine42 loads plugin.spine42 and checks each case's digests against the base run's results file.
+-- spine42 loads the line's plugin (plugin.spine42: the scenario runs on the 4.2 line only) and checks each case's
+-- digests against the base run's results file, or against s17_moved.lua for a case an accepted runtime change moved.
 local L = require("simlib")
 L.watchdogMs = 240000
 L.open("s17_digest " .. L.arg)
-local spine = L.loadPlugin(L.arg == "base" and "plugin.spine" or "plugin.spine42")
+local spine = L.loadPlugin(L.arg == "base" and "plugin.spine" or nil)
 local gidx = getmetatable(display.newGroup()).__index
 local EXAMPLES = { "alien","celestial-circus","chibi-stickers","cloud-pot","coin","dragon","goblins","hero","mix-and-match",
   "owl","powerup","raptor","sack","snowglobe","speedy","spineboy","stretchyman","tank","vine","windmill" }
@@ -134,19 +135,20 @@ local function readBase()
   return base
 end
 
-local function firstDifference(a, b)
+local function firstDifference(a, b, source)
   for i = 1, math.max(#a, #b) do
-    if a[i] ~= b[i] then return ("#%d base %s spine42 %s"):format(i, tostring(a[i]), tostring(b[i])) end
+    if a[i] ~= b[i] then return ("#%d %s %s spine42 %s"):format(i, source, tostring(a[i]), tostring(b[i])) end
   end
 end
 
 if L.arg ~= "base" then
-  local base = readBase()
+  local base, moved = readBase(), require("s17_moved")
   L.check("baseline", base ~= nil, "results of s17_digest base")
   for _, case in ipairs(CASES) do
     local label = case[1]
     local diff = "no base digests"
-    if base and base[label] then diff = firstDifference(base[label], mine[label]) end
+    if moved[label] then diff = firstDifference(moved[label], mine[label], "s17_moved")
+    elseif base and base[label] then diff = firstDifference(base[label], mine[label], "base") end
     L.check(label, diff == nil, diff or (#mine[label] .. " digests equal"))
   end
 end

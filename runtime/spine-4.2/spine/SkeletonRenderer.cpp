@@ -329,7 +329,7 @@ RenderCommand *SkeletonRenderer::render(Skeleton &skeleton, const std::vector<in
     return batchCommands(_allocator, _renderCommands);
 }
 
-std::pair<RenderCommand *, RenderCommand *> *SkeletonRenderer::render(Skeleton &skeleton, const std::vector<int> &injectionSlotIndices, const std::vector<int> &splitSlotIndices, Vector<RenderCommand *> commandsInSplit, Vector<RenderCommand *> commandsNotInSplit)
+std::pair<RenderCommand *, RenderCommand *> SkeletonRenderer::render(Skeleton &skeleton, const std::vector<int> &injectionSlotIndices, const std::vector<int> &splitSlotIndices, Vector<RenderCommand *> commandsInSplit, Vector<RenderCommand *> commandsNotInSplit)
 {
     _allocator.compress();
 
@@ -520,5 +520,5 @@ std::pair<RenderCommand *, RenderCommand *> *SkeletonRenderer::render(Skeleton &
     RenderCommand *commandsInSplitBatched = batchCommands(_allocator, commandsInSplit);
     RenderCommand *commandsNotInSplitBatched = batchCommands(_allocator, commandsNotInSplit);
 
-    return new std::pair<RenderCommand *, RenderCommand *>(commandsNotInSplitBatched, commandsInSplitBatched);
+    return std::make_pair(commandsNotInSplitBatched, commandsInSplitBatched);
 }
