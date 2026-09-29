@@ -37,13 +37,12 @@ inline float appliedRotation(Bone &b) { return b.getAppliedPose().getRotation();
 inline void setAppliedRotation(Bone &b, float v) { b.getAppliedPose().setRotation(v); }
 inline SkeletonData &data(Skeleton &s) { return s.getData(); }
 inline Animation &anim(TrackEntry &e) { return e.getAnimation(); }
-// Event values as 1.5.0 reports them: the EventData's (4.3: its setup pose), not the keyed ones.
-inline Event &eventSetup(Event &e) { return const_cast<EventData &>(e.getData()).getSetupPose(); }
-inline int eventInt(Event &e) { return eventSetup(e).getInt(); }
-inline float eventFloat(Event &e) { return eventSetup(e).getFloat(); }
-inline const String &eventString(Event &e) { return eventSetup(e).getString(); }
-inline float eventVolume(Event &e) { return eventSetup(e).getVolume(); }
-inline float eventBalance(Event &e) { return eventSetup(e).getBalance(); }
+// The fired Event's per-key values (the reader fills a key's missing value from its EventData).
+inline int eventInt(Event &e) { return e.getInt(); }
+inline float eventFloat(Event &e) { return e.getFloat(); }
+inline const String &eventString(Event &e) { return e.getString(); }
+inline float eventVolume(Event &e) { return e.getVolume(); }
+inline float eventBalance(Event &e) { return e.getBalance(); }
 inline bool pathClosed(PathAttachment &p) { return p.getClosed(); }
 inline bool pathConstantSpeed(PathAttachment &p) { return p.getConstantSpeed(); }
 inline void regionWorldVertices(RegionAttachment &r, Slot &slot, float *out) {
@@ -69,6 +68,10 @@ inline TrackEntry *addAnimation(AnimationState *st, int t, Animation *a, bool lo
     return &st->addAnimation(t, *a, loop, delay);
 }
 inline TrackEntry *current(AnimationState *st, int t) { return st->getTrack(t); }
+inline TrackEntry *setEmptyAnimation(AnimationState *st, int t, float mix) { return &st->setEmptyAnimation(t, mix); }
+inline TrackEntry *addEmptyAnimation(AnimationState *st, int t, float mix, float delay) {
+    return &st->addEmptyAnimation(t, mix, delay);
+}
 inline void setMix(AnimationStateData *d, Animation *from, Animation *to, float dur) { d->setMix(*from, *to, dur); }
 inline IkConstraint *findIk(Skeleton *s, const String &name) { return s->findConstraint<IkConstraint>(name); }
 template <class F> void forEachIk(Skeleton *s, F f) {
@@ -98,11 +101,13 @@ inline float appliedRotation(Bone &b) { return b.getAppliedRotation(); }
 inline void setAppliedRotation(Bone &b, float v) { b.setAppliedRotation(v); }
 inline SkeletonData &data(Skeleton &s) { return *s.getData(); }
 inline Animation &anim(TrackEntry &e) { return *e.getAnimation(); }
-inline int eventInt(Event &e) { return e.getData().getIntValue(); }
-inline float eventFloat(Event &e) { return e.getData().getFloatValue(); }
-inline const String &eventString(Event &e) { return e.getData().getStringValue(); }
-inline float eventVolume(Event &e) { return e.getData().getVolume(); }
-inline float eventBalance(Event &e) { return e.getData().getBalance(); }
+// The fired Event's per-key values. The JSON reader fills a key's missing int/float/string from its EventData, but a
+// missing volume/balance with 1/0 (4.3: the EventData's).
+inline int eventInt(Event &e) { return e.getIntValue(); }
+inline float eventFloat(Event &e) { return e.getFloatValue(); }
+inline const String &eventString(Event &e) { return e.getStringValue(); }
+inline float eventVolume(Event &e) { return e.getVolume(); }
+inline float eventBalance(Event &e) { return e.getBalance(); }
 inline bool pathClosed(PathAttachment &p) { return p.isClosed(); }
 inline bool pathConstantSpeed(PathAttachment &p) { return p.isConstantSpeed(); }
 inline void regionWorldVertices(RegionAttachment &r, Slot &slot, float *out) { r.computeWorldVertices(slot, out, 0, 2); }
@@ -124,6 +129,10 @@ inline TrackEntry *addAnimation(AnimationState *st, int t, Animation *a, bool lo
     return st->addAnimation(t, a, loop, delay);
 }
 inline TrackEntry *current(AnimationState *st, int t) { return st->getCurrent(t); }
+inline TrackEntry *setEmptyAnimation(AnimationState *st, int t, float mix) { return st->setEmptyAnimation(t, mix); }
+inline TrackEntry *addEmptyAnimation(AnimationState *st, int t, float mix, float delay) {
+    return st->addEmptyAnimation(t, mix, delay);
+}
 inline void setMix(AnimationStateData *d, Animation *from, Animation *to, float dur) { d->setMix(from, to, dur); }
 inline IkConstraint *findIk(Skeleton *s, const String &name) { return s->findIkConstraint(name); }
 template <class F> void forEachIk(Skeleton *s, F f) {

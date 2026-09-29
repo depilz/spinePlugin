@@ -20,6 +20,11 @@ Syntax:
 - ``mixDuration`` *(required)*:
     ``number (ms)`` – Mix duration in milliseconds.
 
+Return value:
+-------------
+
+None. Use :doc:`setEmptyAnimation` on each track to get the track entries.
+
 Example:
 --------
 

@@ -40,10 +40,15 @@ void SpineTextureLoader::load(spine::AtlasPage &page, const spine::String &path)
         lua_setfield(L, -2, "filename");
 
         // Record the failure and leave page.texture null: a raise here would longjmp out of new Atlas and leak it.
-        if (lua_pcall(L, 1, 1, 0) != 0 || lua_isnil(L, -1))
+        int status = lua_pcall(L, 1, 1, 0);
+        if (status != 0 || lua_isnil(L, -1))
         {
+            if (failedPath.empty())
+            {
+                failedPath = shortPath;
+                if (status != 0 && lua_isstring(L, -1)) failedPath.append(": ").append(lua_tostring(L, -1));
+            }
             lua_pop(L, 1);
-            if (failedPath.empty()) failedPath = shortPath;
             return;
         }
 

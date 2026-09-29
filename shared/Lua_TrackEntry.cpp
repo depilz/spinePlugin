@@ -155,8 +155,7 @@ static int entry_index(lua_State *L)
             return 1;
         }
 
-        LuaTrackEntry *nextUserdata = (LuaTrackEntry *)lua_newuserdata(L, sizeof(LuaTrackEntry));
-        new (nextUserdata) LuaTrackEntry(L, nextEntry, entryUserdata->alive);
+        pushTrackEntry(L, nextEntry, entryUserdata->alive);
         return 1;
     }
     else if (strcmp(key, "mixingFrom") == 0)
@@ -168,8 +167,12 @@ static int entry_index(lua_State *L)
             return 1;
         }
 
-        LuaTrackEntry *mixingFromUserdata = (LuaTrackEntry *)lua_newuserdata(L, sizeof(LuaTrackEntry));
-        new (mixingFromUserdata) LuaTrackEntry(L, mixingFrom, entryUserdata->alive);
+        pushTrackEntry(L, mixingFrom, entryUserdata->alive);
+        return 1;
+    }
+    else if (strcmp(key, "onComplete") == 0)
+    {
+        lua_rawgeti(L, LUA_REGISTRYINDEX, trackEntryOnComplete(&entry)); // LUA_NOREF reads nil
         return 1;
     }
     else if (strcmp(key, "mixingTo") == 0)
@@ -181,8 +184,7 @@ static int entry_index(lua_State *L)
             return 1;
         }
 
-        LuaTrackEntry *mixingToUserdata = (LuaTrackEntry *)lua_newuserdata(L, sizeof(LuaTrackEntry));
-        new (mixingToUserdata) LuaTrackEntry(L, mixingTo, entryUserdata->alive);
+        pushTrackEntry(L, mixingTo, entryUserdata->alive);
         return 1;
     }
 
@@ -197,6 +199,10 @@ static int entry_index(lua_State *L)
 
     return 0;
 }
+
+// The keys entry_index reads that entry_newindex does not write.
+static const char *const readOnlyKeys[] = {"index", "animation", "trackComplete", "isComplete", "animationTime",
+                                           "next", "mixingFrom", "mixingTo", "isValid", NULL};
 
 static int entry_newindex(lua_State *L)
 {
@@ -305,17 +311,32 @@ static int entry_newindex(lua_State *L)
         entry.setAnimationLast(animationLast);
         return 0;
     }
-
-    // fallback to methods
-    lua_getmetatable(L, 1);
-    lua_pushvalue(L, 2);
-    lua_rawget(L, -2);
-    if (!lua_isnil(L, -1))
+    else if (strcmp(key, "onComplete") == 0)
     {
-        return 1;
+        if (!lua_isnil(L, 3)) luaL_checktype(L, 3, LUA_TFUNCTION);
+        lua_settop(L, 3);
+        int ref = lua_isnil(L, 3) ? LUA_NOREF : luaL_ref(L, LUA_REGISTRYINDEX);
+        // a valid entry always has its token: the wrapper's constructor installed it
+        ((TrackEntryToken *)entry.getRendererObject())->setOnComplete(L, ref);
+        return 0;
     }
 
-    return 0;
+    for (const char *const *readOnly = readOnlyKeys; *readOnly; readOnly++)
+    {
+        if (strcmp(key, *readOnly) == 0)
+            return luaL_error(L, "SpineTrackEntry: property '%s' is read-only", key);
+    }
+    return luaL_error(L, "SpineTrackEntry: unknown property '%s'", key);
+}
+
+// Wrappers are equal iff they wrap the same entry: the same token, whose valid flag they share (the raw pointer is
+// reused by the pool). Lua calls __eq only for two SpineTrackEntry userdata; it never raises, stale wrappers included.
+static int entry_eq(lua_State *L)
+{
+    LuaTrackEntry *a = (LuaTrackEntry *)lua_touserdata(L, 1);
+    LuaTrackEntry *b = (LuaTrackEntry *)lua_touserdata(L, 2);
+    lua_pushboolean(L, a->valid == b->valid);
+    return 1;
 }
 
 static int entry_gc(lua_State *L)
@@ -339,6 +360,9 @@ void getEntryMt(lua_State *L)
 
         lua_pushcfunction(L, entry_gc);
         lua_setfield(L, -2, "__gc");
+
+        lua_pushcfunction(L, entry_eq);
+        lua_setfield(L, -2, "__eq");
 
         lua_pushcfunction(L, entry_setMixDuration);
         lua_setfield(L, -2, "setMixDuration");

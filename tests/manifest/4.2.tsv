@@ -24,10 +24,46 @@ animation	t5_addAnimationAt
 animation	t6_delay_phases
 animation	t7_tracks_proxy
 animation	t8_gc_listener
-animation	t9_prototype_fix
 animation	t10_create_args
 animation	t11_misc
+animation	t12_c34 gravity
+animation	t12_c34 queued
+animation	t12_c34 paused
+animation	t12_c34 dragon
+animation	t13_empty_returns returns
+animation	t13_empty_returns dispose
+animation	t14_listener_life nil_in_callback
+animation	t14_listener_life replace_in_callback
+animation	t14_listener_life nil_then_fn_in_callback
+animation	t14_listener_life remove_in_callback
+animation	t14_listener_life release
+animation	t15_on_complete order
+animation	t15_on_complete release
+animation	t15_on_complete recycled
+animation	t15_on_complete stale
+animation	t15_on_complete type
+animation	t15_on_complete error
+animation	t15_on_complete remove_in_callback
+animation	t15_on_complete clear_in_callback
 animation	t4_reentrancy error reported
+animation	t15_on_complete error reported
+animation	t16_group_dispatch order
+animation	t16_group_dispatch group_only
+animation	t16_group_dispatch remove_in_listener
+animation	t16_group_dispatch remove_in_group
+animation	t16_group_dispatch error
+animation	t16_group_dispatch create_only
+animation	t16_group_dispatch remove_in_listener_split
+animation	t16_group_dispatch remove_in_group_split
+animation	t16_group_dispatch error reported
+animation	t17_lipsync normal
+animation	t17_lipsync early
+animation	t17_lipsync edge
+animation	t18_entry_keys unknown
+animation	t18_entry_keys readonly
+animation	t18_entry_keys stale
+animation	t18_entry_keys eq
+animation	t18_entry_keys recycled
 api	extracted a27bde4
 api	extracted line
 api	expected-diff
@@ -142,6 +178,9 @@ lifecycle	t31_dispose_hook reassemble-remove
 lifecycle	t31_dispose_hook split-busy
 lifecycle	t31_dispose_hook split-coroutine
 lifecycle	t31_dispose_hook split-coroutine-no-runtime
+lifecycle	t31_dispose_hook all-refs-busy
+lifecycle	t31_dispose_hook all-refs-no-runtime
+lifecycle	t31_dispose_hook all-refs-hook
 lifecycle	t32_stale_animation live
 lifecycle	t32_stale_animation cached
 lifecycle	t32_stale_animation method
@@ -149,6 +188,18 @@ lifecycle	t33_removed_listeners window
 lifecycle	t33_removed_listeners finalize
 lifecycle	t34_remove_in_update control
 lifecycle	t34_remove_in_update removed
+lifecycle	t34_stub_dispatch order
+lifecycle	t34_stub_dispatch clone
+lifecycle	t34_stub_dispatch missing
+lifecycle	t34_stub_dispatch return
+lifecycle	t34_stub_dispatch has
+lifecycle	t34_stub_dispatch remove
+lifecycle	t34_stub_dispatch finalize
+lifecycle	t34_stub_dispatch forms
+lifecycle	t35_load_errors json
+lifecycle	t35_load_errors skel
+lifecycle	t35_load_errors atlas
+lifecycle	t36_version
 lifecycle	g1_create_args
 lifecycle	g3_events_after_remove ended
 lifecycle	g3_events_after_remove interrupted
@@ -219,6 +270,7 @@ render	t16_physics_timescale freeze
 render	t17_constraint_active ik
 render	t17_constraint_active physics
 render	t17_constraint_active ik-timeline
+render	t18_create_pose
 render	h1_stale_world
 render	bench 5
 skins	s1_api_contract
@@ -587,3 +639,48 @@ sim	s17_digest spine42 skins mix-and-match
 sim	s17_digest spine42 injections raptor
 sim	s17_digest spine42 split raptor
 sim	user Plugins spine entries unchanged
+sim	s20_group_dispatch order
+sim	s20_group_dispatch order identity
+sim	s20_group_dispatch order cpath
+sim	s20_group_dispatch order order
+sim	s20_group_dispatch order table
+sim	s20_group_dispatch order target
+sim	s20_group_dispatch remove_create
+sim	s20_group_dispatch remove_create identity
+sim	s20_group_dispatch remove_create cpath
+sim	s20_group_dispatch remove_create skip group
+sim	s20_group_dispatch remove_create no later events
+sim	s20_group_dispatch remove_group
+sim	s20_group_dispatch remove_group identity
+sim	s20_group_dispatch remove_group cpath
+sim	s20_group_dispatch remove_group rest of dispatch
+sim	s20_group_dispatch remove_group no later events
+sim	s20_group_dispatch error
+sim	s20_group_dispatch error identity
+sim	s20_group_dispatch error cpath
+sim	s20_group_dispatch error unhandledError
+sim	s20_group_dispatch error drain continues
+sim	s20_group_dispatch remove_create_split
+sim	s20_group_dispatch remove_create_split identity
+sim	s20_group_dispatch remove_create_split cpath
+sim	s20_group_dispatch remove_create_split in group
+sim	s20_group_dispatch remove_create_split meshes left
+sim	s20_group_dispatch remove_create_split group kept
+sim	s20_group_dispatch remove_create_split no later events
+sim	s20_group_dispatch remove_create_split control continues
+sim	s20_group_dispatch remove_group_split
+sim	s20_group_dispatch remove_group_split identity
+sim	s20_group_dispatch remove_group_split cpath
+sim	s20_group_dispatch remove_group_split in group
+sim	s20_group_dispatch remove_group_split meshes left
+sim	s20_group_dispatch remove_group_split group kept
+sim	s20_group_dispatch remove_group_split no later events
+sim	s20_group_dispatch remove_group_split control continues
+sim	s20_group_dispatch remove_lua_split
+sim	s20_group_dispatch remove_lua_split identity
+sim	s20_group_dispatch remove_lua_split cpath
+sim	s20_group_dispatch remove_lua_split in group
+sim	s20_group_dispatch remove_lua_split meshes left
+sim	s20_group_dispatch remove_lua_split group kept
+sim	s20_group_dispatch remove_lua_split no later events
+sim	s20_group_dispatch remove_lua_split control continues

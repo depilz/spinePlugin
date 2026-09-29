@@ -33,7 +33,7 @@ static int createInMode(lua_State *L) {
     return 1;
 }
 
-// fixture.worldTransformPhysics(obj): skeleton:updateWorldTransform(Physics_Update), what draw() does
+// fixture.worldTransformPhysics(obj): skeleton:updateWorldTransform(Physics_Update), what updateState() does (draw() only poses: Physics_Pose)
 static int worldTransformPhysics(lua_State *L) {
     skeletonOf(L)->updateWorldTransform(Physics_Update);
     return 0;

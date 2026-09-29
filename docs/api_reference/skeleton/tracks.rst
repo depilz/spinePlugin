@@ -3,12 +3,20 @@ skeleton.tracks
 ===================================
 
 | **Type:** ``table`` (read-only)
-| **See also:** :doc:`index`, :doc:`trackEntry/index`
+| **See also:** :doc:`index`, :doc:`trackEntry/index`, :doc:`getTrackEntry`
 
 Overview:
 ---------
 
-An array of :doc:`trackEntry/index` objects, each representing an active animation track on the skeleton.
+A plain Lua table with one element per animation track: ``tracks[i]`` is the current :doc:`trackEntry/index` of
+track ``i``, or ``false`` when that track has no current entry.
+
+Each read of ``skeleton.tracks`` builds a new table, a snapshot of the tracks at that moment. It covers the tracks
+from ``1`` to the highest track used, so ``#skeleton.tracks`` is reliable and ``ipairs`` visits every track. A track
+cleared with :doc:`clearTrack` reads ``false`` and keeps its place; after :doc:`clearTracks` the table is empty.
+
+Changing the table does not change the skeleton. The entries in it are the same objects :doc:`getTrackEntry`
+returns: writing to them changes the animation.
 
 
 Syntax:
@@ -18,14 +26,16 @@ Syntax:
 
    -- Accessing a specific animation track
    local track = skeleton.tracks[1]
-   
+
    -- Iterating through all animation tracks
    for i, track in ipairs(skeleton.tracks) do
-       print("Track " .. i .. " animation:", track.animation)
+       if track then
+           print("Track " .. i .. " animation:", track.animation)
+       end
    end
 
 - ``tracks`` *(read-only)*:
-    ``table`` – An array of :doc:`trackEntry/index` objects representing each active animation track.
+    ``table`` – ``tracks[i]`` is a :doc:`trackEntry/index`, or ``false`` for an empty track.
 
 Example:
 --------
@@ -36,19 +46,20 @@ Example:
    local atlas = spine.loadAtlas("assets/characters/hero.atlas")
    local skeletonData = spine.loadSkeletonData("assets/characters/hero.skel", atlas)
    local hero = spine.create(skeletonData)
-   
+
    -- Set an initial animation on track 1 (tracks are 1-based in Lua)
    hero:setAnimation(1, "idle", true)
-   
-   -- Add a walking animation to play after idle
-   hero:addAnimation(1, "walk", true, 500) -- delay in milliseconds
-   
-   -- Iterate through all active tracks and print their animations
+
+   -- Only track 3 besides track 1: track 2 reads false
+   hero:setAnimation(3, "blink", false)
+
+   -- Iterate through all tracks and print their animations
    for i, track in ipairs(hero.tracks) do
-       print("Track " .. i .. " is playing:", track.animation)
+       print("Track " .. i .. " is playing:", track and track.animation)
    end
-   
+
    -- Adjust the time scale of the first track
-   if hero.tracks[1] then
-       hero.tracks[1].timeScale = 1.5  -- 150% speed
+   local tracks = hero.tracks
+   if tracks[1] then
+       tracks[1].timeScale = 1.5  -- 150% speed
    end

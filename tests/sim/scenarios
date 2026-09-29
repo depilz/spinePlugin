@@ -25,3 +25,10 @@ s19_removed_skeleton.lua removed
 s19_removed_skeleton.lua late
 4.2: s17_digest.lua base
 4.2: s17_digest.lua spine42
+s20_group_dispatch.lua order
+s20_group_dispatch.lua remove_create
+s20_group_dispatch.lua remove_group
+s20_group_dispatch.lua error
+s20_group_dispatch.lua remove_create_split
+s20_group_dispatch.lua remove_group_split
+s20_group_dispatch.lua remove_lua_split

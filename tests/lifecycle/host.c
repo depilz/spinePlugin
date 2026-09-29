@@ -2,6 +2,7 @@
    loadSkeletonData, SpineTexture.cpp, SkeletonDataHolder.cpp, SpineRenderer.cpp) with a Lua-level Solar2D
    display/graphics/system stub (solar2d_stub.lua).
    Usage: host stub.lua test.lua [args...]
+   Build: -DHOST_NATIVE=<fn> adds a suite's native helpers: fn(L) registers them into the __native table on top.
    Env: NO_CLOSE=1 skips lua_close (to compare). */
 #include "lua.h"
 #include "lauxlib.h"
@@ -13,6 +14,9 @@
 
 lua_State *g_mainL = 0;
 int HOST_PLUGIN(lua_State *L); /* -DHOST_PLUGIN=<entry>, host.sh HOST_ENTRY */
+#ifdef HOST_NATIVE
+int HOST_NATIVE(lua_State *L);
+#endif
 
 /* Solar2D API stubs used by the plugin */
 lua_State *CoronaLuaGetCoronaThread(lua_State *L) { return g_mainL ? g_mainL : L; }
@@ -41,6 +45,9 @@ int main(int argc, char **argv) {
     lua_newtable(L);
     lua_pushcfunction(L, heap); lua_setfield(L, -2, "heap");
     lua_pushcfunction(L, isMain); lua_setfield(L, -2, "isMain");
+#ifdef HOST_NATIVE
+    HOST_NATIVE(L);
+#endif
     lua_setglobal(L, "__native");
     lua_newtable(L);
     for (int i = 0; i < argc; ++i) { lua_pushstring(L, argv[i]); lua_rawseti(L, -2, i - 2); }

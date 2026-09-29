@@ -123,6 +123,26 @@ int loadAtlas(lua_State *L)
     return 1;
 }
 
+// Reads with a heap reader and deletes it. On failure pushes the error message, with the reader's reason when it
+// recorded one, while the reader is still alive: the caller raises after it is gone.
+template <typename Reader>
+static SkeletonData *readSkeletonData(lua_State *L, Reader *reader, float scale, const char *absPath)
+{
+    reader->setScale(scale);
+    SkeletonData *skeletonData = reader->readSkeletonDataFile(absPath);
+    if (!skeletonData)
+    {
+        lua_pushfstring(L, "Failed to load skeleton data: %s", absPath);
+        if (!reader->getError().isEmpty())
+        {
+            lua_pushfstring(L, ": %s", reader->getError().buffer());
+            lua_concat(L, 2);
+        }
+    }
+    delete reader;
+    return skeletonData;
+}
+
 // spine.loadSkeletonData(path, atlas[, scale])
 int loadSkeletonData(lua_State *L)
 {
@@ -153,27 +173,16 @@ int loadSkeletonData(lua_State *L)
 
     Atlas *atlas = atlasHolder->getObject();
 
-    SkeletonData *skeletonData = nullptr;
+    SkeletonData *skeletonData;
     if (strstr(absPath, ".json"))
-    {
-        SkeletonJson *json = spc::newJson(atlas);
-        json->setScale(scale);
-        skeletonData = json->readSkeletonDataFile(absPath);
-        delete json;
-    }
+        skeletonData = readSkeletonData(L, spc::newJson(atlas), scale, absPath);
     else if (strstr(absPath, ".skel"))
-    {
-        SkeletonBinary *binary = spc::newBinary(atlas);
-        binary->setScale(scale);
-        skeletonData = binary->readSkeletonDataFile(absPath);
-        delete binary;
-    }
+        skeletonData = readSkeletonData(L, spc::newBinary(atlas), scale, absPath);
+    else
+        return luaL_error(L, "Failed to load skeleton data: %s", absPath);
 
     if (!skeletonData)
-    {
-        luaL_error(L, "Failed to load skeleton data: %s", absPath);
-        return 0;
-    }
+        return lua_error(L); // the message readSkeletonData pushed
 
     auto skeletonDataUserdata = std::make_shared<SkeletonDataHolder>(skeletonData, L, 2);
 
@@ -220,6 +229,8 @@ int create(lua_State *L)
     skeletonUserdata->stateData = stateData;
     skeletonUserdata->skeletonData = skeletonData;
     skeletonUserdata->dataOwner = skeletonDataUserdata;
+    // Pose, never Update/Reset: those consume the physics reset at time 0 and kick the first real frame.
+    skeleton->updateWorldTransform(Physics_Pose);
 
     getSkeletonMt(L);
     lua_setmetatable(L, -2);
@@ -233,12 +244,11 @@ int create(lua_State *L)
 
     // The userdata lives only through group._skeleton; the display object is event.target until dispose.
     skeletonUserdata->luaSelf = LuaTableHolder(L, -1);
-    if (hasListener)
-    {
-        LuaAnimationStateListener *stateListener = new LuaAnimationStateListener(L, &skeletonUserdata->luaSelf, listenerRef);
-        skeletonUserdata->stateListener = stateListener;
-        state->setListener(stateListener);
-    }
+    // The state listener lives until dispose(); setListener only swaps its function.
+    skeletonUserdata->stateListener = new LuaAnimationStateListener(L, &skeletonUserdata->luaSelf, skeletonUserdata->alive,
+                                                                    &skeletonUserdata->disposeRequested);
+    skeletonUserdata->stateListener->setFunction(listenerRef);
+    state->setListener(skeletonUserdata->stateListener);
 
     lua_getfield(L, -1, "addEventListener");
     lua_pushvalue(L, -2);
@@ -285,6 +295,10 @@ CORONA_EXPORT int SPINE_PLUGIN_LUAOPEN(lua_State *L) {
     };
 
     luaL_register(L, NULL, spine_functions);
+    lua_pushstring(L, &SPINE_PLUGIN_VERSION[1]); // "v2.0.0" -> "2.0.0"
+    lua_setfield(L, -2, "version");
+    lua_pushstring(L, SPINE_VERSION_STRING);
+    lua_setfield(L, -2, "runtimeVersion");
 
     textureLoader = new SpineTextureLoader(L);
     loadGroupReferences(L);

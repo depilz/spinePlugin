@@ -3,6 +3,7 @@
 Usage: python3 tests/api/surface.py <bindings dir> <preprocessed file>...
 Prints one sorted row per key, tab-separated owner, kind, key:
   module     function  <key>   luaL_Reg entries outside any metatable (the table luaopen returns)
+  module     field     <key>   lua_setfield(L, -2, ...) in a luaopen_* body outside any metatable
   <registry> field     <key>   keys set on the luaL_newmetatable(L, "<registry>") table: lua_setfield(L, -2, ...),
                                 lua_pushstring + lua_push* + lua_settable, luaL_Reg entries
   <registry> get|set   <key>   strcmp(key, "<key>") literals in the C function set as its __index / __newindex
@@ -21,6 +22,7 @@ SETTABLE = re.compile(r'lua_pushstring\(\s*L\s*,\s*"([^"]+)"\s*\)\s*;\s*(?:' + P
                       r'\s*lua_settable\(\s*L\s*,\s*-3\s*\)')
 PUSHED_FIELD = re.compile(PUSH_FN + r'\s*lua_setfield\(\s*L\s*,\s*-2\s*,\s*"([^"]+)"')
 REG_ENTRY = re.compile(r'\{\s*"([^"]+)"\s*,\s*\w+\s*\}')
+LUAOPEN = re.compile(r'\bluaopen_\w+\s*\(\s*lua_State\s*\*\s*\w+\s*\)\s*\{')
 REG_ARRAY = re.compile(r'luaL_Reg\s+\w+\s*\[\s*\]\s*=\s*\{')
 STRCMP = re.compile(r'strcmp\(\s*key\s*,\s*"([^"]+)"\s*\)')
 LITERAL = re.compile(r'"(?:\\.|[^"\\\n])*"|\'(?:\\.|[^\'\\\n])*\'')
@@ -94,6 +96,10 @@ def surface(text):
         if not any(a <= m.start() < b for a, b in spans):
             array = text[m.end() - 1:block_end(code, m.end() - 1)]
             rows.update(("module", "function", k) for k in REG_ENTRY.findall(array))
+    for m in LUAOPEN.finditer(text):
+        start = m.end() - 1
+        rows.update(("module", "field", f.group(1)) for f in SETFIELD.finditer(text, start, block_end(code, start))
+                    if not any(a <= f.start() < b for a, b in spans))
     return rows
 
 

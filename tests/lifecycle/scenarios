@@ -64,6 +64,9 @@ t31_dispose_hook.lua reassemble-remove
 t31_dispose_hook.lua split-busy
 t31_dispose_hook.lua split-coroutine
 t31_dispose_hook.lua split-coroutine-no-runtime
+t31_dispose_hook.lua all-refs-busy
+t31_dispose_hook.lua all-refs-no-runtime
+t31_dispose_hook.lua all-refs-hook
 t32_stale_animation.lua live
 t32_stale_animation.lua cached
 t32_stale_animation.lua method
@@ -71,6 +74,18 @@ t33_removed_listeners.lua window
 t33_removed_listeners.lua finalize
 t34_remove_in_update.lua control
 t34_remove_in_update.lua removed
+t34_stub_dispatch.lua order
+t34_stub_dispatch.lua clone
+t34_stub_dispatch.lua missing
+t34_stub_dispatch.lua return
+t34_stub_dispatch.lua has
+t34_stub_dispatch.lua remove
+t34_stub_dispatch.lua finalize
+t34_stub_dispatch.lua forms
+t35_load_errors.lua json
+t35_load_errors.lua skel
+t35_load_errors.lua atlas
+t36_version.lua
 g1_create_args.lua
 g3_events_after_remove.lua ended
 g3_events_after_remove.lua interrupted

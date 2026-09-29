@@ -9,9 +9,10 @@ Overview:
 .........
 
 Returns a table with the bounding box of the skeleton. The bounding box is the smallest 
-rectangle that contains all the bones of the skeleton.
+rectangle that contains the skeleton's region and mesh attachments.
 
-These bounds are relative to the skeleton's origin point., if you want them to be in content coordinates
+These bounds are relative to the skeleton's origin point, with y growing downwards. They are current right after
+:doc:`../spine/create` and after every :doc:`updateState`. If you want them to be in content coordinates
 you can use the `skeleton.contentBounds <https://docs.coronalabs.com/api/type/DisplayObject/contentBounds.html>`_ 
 instead.
 

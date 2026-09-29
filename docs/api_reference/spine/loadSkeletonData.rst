@@ -20,6 +20,10 @@ alive or has references to it.
 The scale, if provided, will affect all skeletons created with this skeleton data. Alternatively you
 can scale the skeleton instance directly.
 
+If the file is missing, ``loadSkeletonData`` raises ``File not found: <path>``. If Spine cannot read it, it raises
+``Failed to load skeleton data: <absolute path>: <reason>``, where the reason is the Spine runtime's message (for
+example a version mismatch). The ``: <reason>`` part is left out when the runtime gives none.
+
 Syntax:
 -------
 

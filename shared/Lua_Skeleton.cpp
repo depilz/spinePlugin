@@ -7,6 +7,7 @@
 #include "Lua_Skin.h"
 #include "Lua_TrackEntry.h"
 #include "SpineRenderer.h"
+#include <cfloat>
 #include <cmath>
 
 static SpineSkeleton *luaL_getSkeletonUserdata(lua_State *L)
@@ -52,6 +53,17 @@ static bool isEventDispatcherKey(const char *key)
     for (const char *k : keys)
     {
         if (strcmp(key, k) == 0) return true;
+    }
+    return false;
+}
+
+// True when any track has a current entry: a cleared or finished track leaves a NULL slot behind (animation-15).
+static bool hasCurrentEntry(AnimationState *state)
+{
+    Vector<TrackEntry *> &tracks = state->getTracks();
+    for (size_t i = 0; i < tracks.size(); i++)
+    {
+        if (tracks[i]) return true;
     }
     return false;
 }
@@ -155,7 +167,7 @@ static int skeleton_index(lua_State *L)
 
     if (strcmp(key, "isActive") == 0)
     {
-        lua_pushboolean(L, skeletonUserdata->state->getTracks().size() > 0);
+        lua_pushboolean(L, hasCurrentEntry(skeletonUserdata->state));
         return 1;
     } 
     else if (strcmp(key, "timeScale") == 0)
@@ -232,11 +244,7 @@ static int skeleton_index(lua_State *L)
     }
     else if (strcmp(key, "tracks") == 0)
     {
-        Vector<TrackEntry *> &tracks = skeletonUserdata->state->getTracks();
-        
-        LuaTrack *entryUserdata = (LuaTrack *)lua_newuserdata(L, sizeof(LuaTrack));
-        new (entryUserdata) LuaTrack(L, tracks, skeletonUserdata->alive);
-        
+        pushTracks(L, skeletonUserdata->state->getTracks(), skeletonUserdata->alive);
         return 1;
     }
     else if (strcmp(key, "fill") == 0)
@@ -715,8 +723,7 @@ static int setAnimation(lua_State *L)
     if (skeletonUserdata->disposeRequested) return 0; // a listener removed the object: no entry to hand out
     guard.release(); // no callback runs below, and the wrapper's allocation can raise
 
-    LuaTrackEntry *entryUserdata = (LuaTrackEntry *)lua_newuserdata(L, sizeof(LuaTrackEntry));
-    new (entryUserdata) LuaTrackEntry(L, entry, skeletonUserdata->alive);
+    pushTrackEntry(L, entry, skeletonUserdata->alive);
 
     return 1;
 }
@@ -751,8 +758,7 @@ static int addAnimation(lua_State *L)
     if (skeletonUserdata->disposeRequested) return 0; // a listener removed the object: no entry to hand out
     guard.release(); // no callback runs below, and the wrapper's allocation can raise
 
-    LuaTrackEntry *entryUserdata = (LuaTrackEntry *)lua_newuserdata(L, sizeof(LuaTrackEntry));
-    new (entryUserdata) LuaTrackEntry(L, entry, skeletonUserdata->alive);
+    pushTrackEntry(L, entry, skeletonUserdata->alive);
 
     return 1;
 }
@@ -801,6 +807,12 @@ static int addAnimationAt(lua_State *L)
             tailStartTime += tail->getDelay();
         }
         delay = startTime - tailStartTime;
+        // spine-cpp turns a delay <= 0 into "after the previous entry completes, minus mix". The smallest
+        // positive delay starts the entry on the update right after the tail entry starts instead.
+        if (delay <= 0)
+        {
+            delay = FLT_MIN;
+        }
     }
     if (delay < 0)
     {
@@ -816,8 +828,7 @@ static int addAnimationAt(lua_State *L)
     if (skeletonUserdata->disposeRequested) return 0; // a listener removed the object: no entry to hand out
     guard.release(); // no callback runs below, and the wrapper's allocation can raise
 
-    LuaTrackEntry *entryUserdata = (LuaTrackEntry *)lua_newuserdata(L, sizeof(LuaTrackEntry));
-    new (entryUserdata) LuaTrackEntry(L, entry, skeletonUserdata->alive);
+    pushTrackEntry(L, entry, skeletonUserdata->alive);
 
     return 1;
 }
@@ -834,8 +845,12 @@ static int setEmptyAnimation(lua_State *L)
     float mixDuration = luaL_checknumber(L, 3) / 1000;
 
     SkeletonCallGuard guard(skeletonUserdata);
-    skeletonUserdata->state->setEmptyAnimation(trackIndex, mixDuration);
-    return 0;
+    TrackEntry *entry = spc::setEmptyAnimation(skeletonUserdata->state, trackIndex, mixDuration);
+    if (skeletonUserdata->disposeRequested) return 0; // a listener removed the object: no entry to hand out
+    guard.release(); // no callback runs below, and the wrapper's allocation can raise
+
+    pushTrackEntry(L, entry, skeletonUserdata->alive);
+    return 1;
 }
 
 // skeleton:addEmptyAnimation(trackIndex, mixDuration, delay)
@@ -851,8 +866,12 @@ static int addEmptyAnimation(lua_State *L)
     float delay = luaL_checknumber(L, 4) / 1000;
 
     SkeletonCallGuard guard(skeletonUserdata);
-    skeletonUserdata->state->addEmptyAnimation(trackIndex, mixDuration, delay);
-    return 0;
+    TrackEntry *entry = spc::addEmptyAnimation(skeletonUserdata->state, trackIndex, mixDuration, delay);
+    if (skeletonUserdata->disposeRequested) return 0; // a listener removed the object: no entry to hand out
+    guard.release(); // no callback runs below, and the wrapper's allocation can raise
+
+    pushTrackEntry(L, entry, skeletonUserdata->alive);
+    return 1;
 }
 
 // skeleton:setEmptyAnimations(mixDuration)
@@ -879,30 +898,16 @@ static int setListener(lua_State *L)
         return 0;
     }
 
-    if (lua_isnil(L, 2))
+    // The listener object stays for the skeleton's life (a running callback and the rest of the drain use it): only its
+    // function changes.
+    int listenerRef = LUA_NOREF;
+    if (!lua_isnil(L, 2))
     {
-        skeletonUserdata->state->setListener((AnimationStateListenerObject *)NULL);
-        if (skeletonUserdata->stateListener)
-        {
-            delete skeletonUserdata->stateListener;
-            skeletonUserdata->stateListener = nullptr;
-        }
-        return 0;
+        luaL_checktype(L, 2, LUA_TFUNCTION);
+        lua_pushvalue(L, 2);
+        listenerRef = luaL_ref(L, LUA_REGISTRYINDEX);
     }
-
-    luaL_checktype(L, 2, LUA_TFUNCTION);
-    lua_pushvalue(L, 2);
-    int listenerRef = luaL_ref(L, LUA_REGISTRYINDEX);
-
-    if (skeletonUserdata->stateListener)
-    {
-        delete skeletonUserdata->stateListener;
-        skeletonUserdata->stateListener = nullptr;
-    }
-
-    LuaAnimationStateListener *stateListener = new LuaAnimationStateListener(L, &skeletonUserdata->luaSelf, listenerRef);
-    skeletonUserdata->stateListener = stateListener;
-    skeletonUserdata->state->setListener(stateListener);
+    skeletonUserdata->stateListener->setFunction(listenerRef);
     return 0;
 }
 
@@ -969,8 +974,7 @@ static int getTrackEntry(lua_State *L)
         return 1;
     }
 
-    LuaTrackEntry *entryUserdata = (LuaTrackEntry *)lua_newuserdata(L, sizeof(LuaTrackEntry));
-    new (entryUserdata) LuaTrackEntry(L, entry, skeletonUserdata->alive);
+    pushTrackEntry(L, entry, skeletonUserdata->alive);
 
     return 1;
 }
@@ -1065,8 +1069,8 @@ static int updateState(lua_State *L)
     deltaTime /= 1000;
     SkeletonCallGuard guard(skeletonUserdata);
 
-    // Animation work only when a track exists, but always advance the skeleton clock: it is what
-    // Physics_Update steps on, so a skeleton with physics and no animation never simulated (render-5).
+    // Animation work only when a track exists, but always advance the skeleton clock and step physics,
+    // so a skeleton with physics and no animation still simulates (render-5).
     if (skeletonUserdata->state->getTracks().size() > 0)
     {
         skeletonUserdata->state->update(deltaTime);
@@ -1075,6 +1079,7 @@ static int updateState(lua_State *L)
         if (skeletonUserdata->disposeRequested) return 0;
     }
     skeletonUserdata->skeleton->update(deltaTime * skeletonUserdata->physicsTimeScale);
+    skeletonUserdata->skeleton->updateWorldTransform(Physics_Update);
 
     return 0;
 }
@@ -1244,9 +1249,9 @@ static int skeletonDraw(lua_State *L)
     }
 
     SkeletonCallGuard guard(skeletonUserdata);
-    // updateWorldTransform already skips inactive constraints; gating on constraint #1 froze all physics
-    // whenever that one was skin-required and inactive (render-4).
-    skeletonUserdata->skeleton->updateWorldTransform(Physics_Update);
+    // Physics steps only in updateState; Pose draws Lua bone edits made since then without stepping it.
+    // Unconditional: gating on constraint #1 froze all physics whenever it was skin-required (render-4).
+    skeletonUserdata->skeleton->updateWorldTransform(Physics_Pose);
 
     int nargs = lua_gettop(L);
     lua_pushlightuserdata(L, skeletonUserdata);
@@ -1423,9 +1428,6 @@ static int getBounds(lua_State *L)
     }
 
     auto skeleton = skeletonUserdata->skeleton; 
-    SkeletonBounds bounds;
-    bounds.update(*skeleton, true);
-
     // using skeleton->getBounds
     float outX, outY, outWidth, outHeight;
     spc::getBounds(skeleton, outX, outY, outWidth, outHeight);
@@ -1457,9 +1459,6 @@ static int getSize(lua_State *L)
     }
 
     auto skeleton = skeletonUserdata->skeleton;
-    SkeletonBounds bounds;
-    bounds.update(*skeleton, true);
-
     // using skeleton->getBounds
     float outX, outY, outWidth, outHeight;
     spc::getBounds(skeleton, outX, outY, outWidth, outHeight);
@@ -1469,7 +1468,7 @@ static int getSize(lua_State *L)
     lua_pushnumber(L, outX);
     lua_setfield(L, -2, "offsetX");
 
-    lua_pushnumber(L, -outY);
+    lua_pushnumber(L, outY);
     lua_setfield(L, -2, "offsetY");
 
     lua_pushnumber(L, outWidth);

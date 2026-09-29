@@ -21,6 +21,40 @@ t5_addAnimationAt.lua
 t6_delay_phases.lua
 t7_tracks_proxy.lua
 t8_gc_listener.lua
-t9_prototype_fix.lua
 t10_create_args.lua
 t11_misc.lua
+t12_c34.lua gravity
+t12_c34.lua queued
+t12_c34.lua paused
+t12_c34.lua dragon
+t13_empty_returns.lua returns
+t13_empty_returns.lua dispose
+t14_listener_life.lua nil_in_callback
+t14_listener_life.lua replace_in_callback
+t14_listener_life.lua nil_then_fn_in_callback
+t14_listener_life.lua remove_in_callback
+t14_listener_life.lua release
+t15_on_complete.lua order
+t15_on_complete.lua release
+t15_on_complete.lua recycled
+t15_on_complete.lua stale
+t15_on_complete.lua type
+t15_on_complete.lua error
+t15_on_complete.lua remove_in_callback
+t15_on_complete.lua clear_in_callback
+t16_group_dispatch.lua order
+t16_group_dispatch.lua group_only
+t16_group_dispatch.lua remove_in_listener
+t16_group_dispatch.lua remove_in_group
+t16_group_dispatch.lua error
+t16_group_dispatch.lua create_only
+t16_group_dispatch.lua remove_in_listener_split
+t16_group_dispatch.lua remove_in_group_split
+t17_lipsync.lua normal
+t17_lipsync.lua early
+t17_lipsync.lua edge
+t18_entry_keys.lua unknown
+t18_entry_keys.lua readonly
+t18_entry_keys.lua stale
+t18_entry_keys.lua eq
+t18_entry_keys.lua recycled

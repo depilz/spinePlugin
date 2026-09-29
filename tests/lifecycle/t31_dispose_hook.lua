@@ -1,6 +1,7 @@
 -- The next-frame dispose hook: a finalized skeleton raises from RestoreTable on and is freed by the next frame's
 -- Runtime "enterFrame" hook, which skips a user-dispatched finalize, re-arms after an app cleared its Runtime
--- listeners and, with no Runtime at all, is replaced by an immediate dispose inside finalize.
+-- listeners and, with no Runtime at all, is replaced by an immediate dispose inside finalize. The all-refs modes check
+-- that each dispose path releases the create() listener, the group "spine" listener and onComplete together.
 local spine = require("plugin.spine")
 local S = __stub
 local mode = arg[1]
@@ -17,6 +18,21 @@ local function newTracked(name)
   return obj
 end
 local function disposed(name) S.gcfull(); return weak[name] == nil end
+-- a spine object whose create() listener, group "spine" listener and onComplete closure are held only through it
+local function newAllRefs()
+  local obj = newTracked("create")
+  local groupListener, onComplete = function() end, function() end
+  weak.group, weak.onComplete = groupListener, onComplete
+  obj:addEventListener("spine", groupListener)
+  obj:setAnimation(1, "run", true).onComplete = onComplete
+  obj:updateState(16); obj:draw()
+  return obj
+end
+local function allReleased()
+  S.gcfull()
+  print("still referenced: create", weak.create, "group", weak.group, "onComplete", weak.onComplete)
+  return weak.create == nil and weak.group == nil and weak.onComplete == nil
+end
 
 if mode == "window" then
   local parent = display.newGroup()
@@ -135,6 +151,48 @@ elseif mode == "split-busy" then
   assert(#S.children(splitGroup) == 0, "the skeleton's meshes stayed in the caller's split group")
   assert(splitGroup.parent == layer, "the caller's split group was moved or removed")
   assert(disposed("obj"), "draw's call guard did not free the skeleton")
+elseif mode == "all-refs-busy" then
+  -- with no Runtime, removed and finalized during draw (busy): the outermost guard's dispose releases all three refs
+  local obj = newAllRefs()
+  local splitGroup = obj:split({ "head", "eye", "mouth" })
+  display.newGroup():insert(splitGroup)
+  local armed, fired, heldInDraw = false, false, false
+  obj:inject(display.newGroup(), "torso", function()
+    if armed and not fired then
+      fired = true
+      obj:removeSelf(); S.endFrame()
+      heldInDraw = not disposed("create")
+    end
+  end)
+  obj:updateState(16); obj:draw()
+  armed = true
+  local runtime = Runtime
+  Runtime = nil
+  local ok, err = pcall(obj.draw, obj)
+  Runtime = runtime
+  print("draw with a removing injection listener ->", ok, err, "listener fired", fired, "held in draw", heldInDraw)
+  assert(ok and fired, "draw did not survive a finalize from its injection listener")
+  assert(heldInDraw, "finalize freed the skeleton inside draw")
+  assert(#S.children(splitGroup) == 0, "the skeleton's meshes stayed in the caller's split group")
+  obj = nil
+  assert(allReleased(), "draw's call guard did not release every Lua ref")
+elseif mode == "all-refs-no-runtime" then
+  -- with no Runtime, finalize outside any call (busy == 0) disposes at once and releases all three refs
+  local obj = newAllRefs()
+  local runtime = Runtime
+  Runtime = nil
+  obj:removeSelf(); obj = nil
+  S.endFrame()
+  Runtime = runtime
+  assert(allReleased(), "finalize without Runtime did not release every Lua ref")
+elseif mode == "all-refs-hook" then
+  -- with a Runtime, the next-frame hook's dispose releases all three refs
+  local obj = newAllRefs()
+  obj:removeSelf(); obj = nil
+  S.endFrame()
+  assert(not disposed("create"), "the skeleton was freed before the next frame")
+  S.frame()
+  assert(allReleased(), "the next-frame hook did not release every Lua ref")
 elseif mode == "split-coroutine" or mode == "split-coroutine-no-runtime" then
   -- created in a coroutine that is collected before its parent is removed: the dispose that takes the meshes out of
   -- the caller's split group (the next-frame hook, or finalize with no Runtime) must not run Lua on the dead thread

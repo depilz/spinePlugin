@@ -1,12 +1,12 @@
 -- T6: addAnimation delay semantics vs docs; mixDuration vs setMixDuration(mix, delay);
 --     'ended' vs 'completed' for a non-looping animation (Solar2D sprite users expect 'ended').
-local fx = require("realdata_fixture")
+local spine = require("plugin.spine")
 local C = dofile(arg[0]:match("^(.*)/") .. "/../check.lua")
-local data = fx.loadData("spineboy/spineboy.atlas", "spineboy/spineboy.json")
+local data = spine.loadSkeletonData("spineboy/spineboy.json", spine.loadAtlas("spineboy/spineboy.atlas"))
 local clock = 0
 local function mk(filter)
   clock = 0
-  return fx.createPlugin(data, function(ev)
+  return spine.create(data, function(ev)
     if ev.name == "spine" and (not filter or filter[ev.phase]) then print(("    %-11s %-6s at t=%4dms"):format(ev.phase, ev.animation, clock)) end
   end)
 end

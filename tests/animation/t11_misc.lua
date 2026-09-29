@@ -1,7 +1,7 @@
 -- T11: misc argument handling
-local fx = require("realdata_fixture")
-local data = fx.loadData("spineboy/spineboy.atlas", "spineboy/spineboy.json")
-local s = fx.createPlugin(data)
+local spine = require("plugin.spine")
+local data = spine.loadSkeletonData("spineboy/spineboy.json", spine.loadAtlas("spineboy/spineboy.atlas"))
+local s = spine.create(data)
 s:setAnimation(1, "walk", true)
 print("addEmptyAnimation(1, 200) [docs: delay optional] ->", pcall(s.addEmptyAnimation, s, 1, 200))
 print("addAnimation(1, 'run', true) [no delay] ->", pcall(s.addAnimation, s, 1, "run", true))

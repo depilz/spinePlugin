@@ -11,6 +11,8 @@ io.stdout:setvbuf("no")
 --    setmetatable(t, nil)  (librtt/Display/Rtt_DisplayObject.cpp:291-313, librtt/Rtt_LuaProxy.cpp:724-751)
 --  * property access through the display metatable on a table with no _proxy raises in the
 --    Simulator (LuaProxy::GetProxy -> luaL_checkudata, Rtt_LuaProxy.cpp:314-339).
+--  * display objects dispatch through Solar2D's EventDispatcher (platform/resources/init.lua:74-160 and :162-273,
+--    DisplayObject :461-478): function listeners, then table listeners, each over a clone of its list.
 local S = { groupsCreated = 0, meshesCreated = 0, finalized = 0, texturesCreated = 0, texturesReleased = 0,
             liveTextures = {}, meshUpdates = 0, log = false }
 _G.__stub = S
@@ -47,7 +49,7 @@ end
 local stage
 
 local function newDisplayObject(kind)
-  local t = { _proxy = newproxy(false), __props = {}, __listeners = {}, __kind = kind }
+  local t = { _proxy = newproxy(false), __props = {}, __kind = kind }
   setmetatable(t, DOMT)
   return t
 end
@@ -62,18 +64,13 @@ local function detach(child)
 end
 
 local function finalizeSelf(t)
-  local ls = rawget(t, "__listeners").finalize
-  if ls then
-    for _, l in ipairs(ls) do
-      local ev = { name = "finalize", target = t }
-      if type(l) == "function" then l(ev) else l.finalize(l, ev) end
-    end
-  end
+  -- DisplayObject::FinalizeSelf -> DispatchEventWithTarget: one event, dispatched through the object's dispatchEvent
+  if methods.respondsToEvent(t, "finalize") then t:dispatchEvent({ name = "finalize", target = t }) end
   S.finalized = S.finalized + 1
   rawset(t, "_proxy", nil)
   rawset(t, "_class", nil)
   -- hierarchy is native in Solar2D: drop the stub's Lua-side links so they don't pin anything
-  rawset(t, "__parent", nil); rawset(t, "__children", nil); rawset(t, "__props", nil); rawset(t, "__listeners", nil)
+  rawset(t, "__parent", nil); rawset(t, "__children", nil); rawset(t, "__props", nil)
   setmetatable(t, nil)
 end
 
@@ -109,35 +106,96 @@ function methods.remove(self, child)
   if type(child) == "number" then child = rawget(self, "__children")[child] end
   if child then orphan(child) end
 end
--- Solar2D's display-object add/removeEventListener reach their helpers through self (platform/resources/init.lua
--- EventDispatcher:addEventListener/removeEventListener, DisplayObject:addEventListener/removeEventListener), so an
--- object that hides the helpers raises there.
-function methods.getOrCreateTable(self, name)
-  local ls = rawget(self, "__listeners")
-  ls[name] = ls[name] or {}
-  return ls[name]
+-- Solar2D's EventDispatcher (platform/resources/init.lua); the listener lists are raw fields of the object, read with
+-- rawget/rawset where init.lua reads them through __index.
+-- Its add/removeEventListener reach their helpers through self (EventDispatcher:addEventListener/removeEventListener,
+-- DisplayObject:addEventListener/removeEventListener), so an object that hides the helpers raises there.
+local LISTENER_INDEX = { ["table"] = "_tableListeners", ["function"] = "_functionListeners" }
+local DISPATCH_ORDER = { "_functionListeners", "_tableListeners" }
+
+local function cloneArray(array)
+  local clone = {}
+  for k, v in ipairs(array) do clone[k] = v end
+  return clone
+end
+
+function methods.getOrCreateTable(self, name, listenerType)
+  local index = LISTENER_INDEX[listenerType]
+  local t = nil
+  if index then
+    local byName = rawget(self, index) or {}
+    rawset(self, index, byName)
+    byName[name] = byName[name] or {}
+    t = byName[name]
+  end
+  if t == nil then error("addEventListener: listener cannot be nil: " .. tostring(index)) end
+  return t
 end
 function methods.didRemoveListener(self, name) end
 function methods._setHasListener(self, name, value) end
 function methods.respondsToEvent(self, name)
-  local ls = rawget(self, "__listeners")[name]
-  return ls ~= nil and #ls > 0
+  local t = rawget(self, "_functionListeners")
+  local result = t and t[name]
+  if not result then
+    t = rawget(self, "_tableListeners")
+    result = t and t[name]
+  end
+  return result
+end
+local function listenersOfType(self, l)
+  local index = LISTENER_INDEX[type(l)]
+  return index and rawget(self, index)
+end
+function methods.hasEventListener(self, name, l)
+  if not l and self[name] then l = self end
+  local byName = listenersOfType(self, l)
+  for _, x in ipairs(byName and byName[name] or {}) do if rawequal(l, x) then return true end end
+  return false
 end
 function methods.addEventListener(self, name, l)
+  if not l and self[name] then l = self end
   local noListeners = not self:respondsToEvent(name)
   table.insert(self:getOrCreateTable(name, type(l)), l)
   if noListeners then self:_setHasListener(name, true) end
   return true
 end
 function methods.removeEventListener(self, name, l)
-  local ls = rawget(self, "__listeners")[name]
-  if ls then for i = #ls, 1, -1 do if ls[i] == l then table.remove(ls, i); self:didRemoveListener(name) end end end
-  if not self:respondsToEvent(name) then self:_setHasListener(name, false) end
-end
-function methods.dispatchEvent(self, event)
-  for _, l in ipairs(rawget(self, "__listeners")[event.name] or {}) do
-    if type(l) == "function" then l(event) else l[event.name](l, event) end
+  if not l and self[name] then l = self end
+  local wasRemoved = false
+  local byName = listenersOfType(self, l)
+  local ls = byName and byName[name] or {}
+  for i = 1, #ls do
+    if rawequal(l, ls[i]) then
+      table.remove(ls, i)
+      wasRemoved = true
+      if #ls == 0 then byName[name] = nil end
+      self:didRemoveListener(name)
+      break
+    end
   end
+  if not self:respondsToEvent(name) then self:_setHasListener(name, false) end
+  return wasRemoved or nil
+end
+-- dispatchEvent never sets event.target and has no pcall; a listener removed by an earlier one is skipped
+function methods.dispatchEvent(self, event)
+  local result = false
+  local name = event.name
+  for _, index in ipairs(DISPATCH_ORDER) do
+    local byName = rawget(self, index)
+    for _, l in ipairs(cloneArray(byName and byName[name] or {})) do
+      if self:hasEventListener(name, l) then
+        local handled
+        if type(l) == "function" then
+          handled = l(event)
+        else
+          local method = l[name]
+          if type(method) == "function" then handled = method(l, event) end
+        end
+        result = handled or result
+      end
+    end
+  end
+  return result
 end
 function methods.setFillColor(self, r, g, b, a) rawget(self, "__props").fillColor = { r, g, b, a } end
 function methods.toFront(self) end
@@ -211,43 +269,13 @@ function S.raises(text, fn, ...)
   return err
 end
 
--- Runtime: Solar2D's EventDispatcher (platform/resources/init.lua) keeps function and table listeners per event
--- name in _functionListeners/_tableListeners, registers a listener once and dispatches over a copy.
+-- Runtime: Solar2D's Runtime is an EventDispatcher (platform/resources/init.lua:337-380), so it takes the same
+-- listener methods as a display object; its overrides only toggle hardware listeners. add appends even a duplicate,
+-- remove drops the first match.
 Runtime = {}
-local LISTENER_FIELDS = { "_functionListeners", "_tableListeners" }
-local function listenerList(self, name, l)
-  local field = type(l) == "table" and "_tableListeners" or "_functionListeners"
-  local byName = rawget(self, field) or {}
-  rawset(self, field, byName)
-  byName[name] = byName[name] or {}
-  return byName[name]
-end
-function Runtime:hasEventListener(name, l)
-  for _, field in ipairs(LISTENER_FIELDS) do
-    local byName = rawget(self, field)
-    for _, x in ipairs(byName and byName[name] or {}) do if l == nil or rawequal(x, l) then return true end end
-  end
-  return false
-end
-function Runtime:addEventListener(name, l)
-  if self:hasEventListener(name, l) then return false end
-  local ls = listenerList(self, name, l)
-  ls[#ls + 1] = l
-  return true
-end
-function Runtime:removeEventListener(name, l)
-  local ls = listenerList(self, name, l)
-  for i = #ls, 1, -1 do if rawequal(ls[i], l) then table.remove(ls, i) end end
-end
-function Runtime:dispatchEvent(event)
-  for _, field in ipairs(LISTENER_FIELDS) do
-    local byName = rawget(self, field)
-    local copy = {}
-    for i, l in ipairs(byName and byName[event.name] or {}) do copy[i] = l end
-    for _, l in ipairs(copy) do
-      if type(l) == "function" then l(event) else l[event.name](l, event) end
-    end
-  end
+for _, k in ipairs({ "getOrCreateTable", "didRemoveListener", "_setHasListener", "respondsToEvent", "hasEventListener",
+                     "addEventListener", "removeEventListener", "dispatchEvent" }) do
+  Runtime[k] = methods[k]
 end
 
 -- frame boundary: the current frame ends (orphans finalized), the next begins with "enterFrame"
@@ -260,8 +288,18 @@ function S.endFrame()
     makeUnreachable(t)
   end
 end
+-- the engine dispatches "enterFrame" under a protected call (librtt/Rtt_Event.cpp:65-80, LuaContext::DoCall): a
+-- listener error ends that dispatch and is reported, not raised; S.frame() returns the pcall's results and
+-- S.frameErrors counts the reports. The report fails the scenario (tests/lifecycle/run.sh) unless the scenario set
+-- S.expectFrameErrors = true before it, which reports as "S.frame: enterFrame (expected): " instead.
+S.frameErrors = 0
 function S.frame()
   S.endFrame()
   frameCount = frameCount + 1
-  Runtime:dispatchEvent({ name = "enterFrame", frame = frameCount, time = system.getTimer() })
+  local ok, result = pcall(Runtime.dispatchEvent, Runtime, { name = "enterFrame", frame = frameCount, time = system.getTimer() })
+  if not ok then
+    S.frameErrors = S.frameErrors + 1
+    io.stderr:write(S.expectFrameErrors and "S.frame: enterFrame (expected): " or "S.frame: enterFrame: ", tostring(result), "\n")
+  end
+  return ok, result
 end

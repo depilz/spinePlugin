@@ -14,7 +14,11 @@ The dispose window
    the skeleton stops updating, drawing and dispatching animation events through
    indexing at once.
    An animation listener that removes its own skeleton ends the current event
-   drain. Indexing the object now only resolves the event-dispatcher keys
+   drain: the listeners after it do not get that event (see
+   :doc:`api_reference/spine/event`), and no further events are dispatched. A
+   ``removeSelf()`` inside a ``"spine"`` listener added with
+   ``addEventListener`` does not stop the rest of that one ``dispatchEvent``.
+   Indexing the object now only resolves the event-dispatcher keys
    (``addEventListener``, ``removeEventListener``, ``hasEventListener``,
    ``dispatchEvent``, ``respondsToEvent``) and the helpers Solar2D's
    ``addEventListener`` and ``removeEventListener`` call on the object
@@ -92,12 +96,14 @@ On a removed skeleton the entry raises ``Track entry belongs to a removed skelet
 Listener errors
 ---------------
 
-An error raised by the animation listener passed to :doc:`api_reference/spine/create`
-no longer disappears. The plugin runs the listener through Solar2D's
-``CoronaLuaDoCall``, so Solar2D reports the error the way it reports any other
-listener error (a traceback in the console, and the ``unhandledError`` runtime
-event). The call that triggered the listener (``updateState``, ``setAnimation``,
-...) does not raise and carries on.
+An error raised by an animation listener (the one passed to
+:doc:`api_reference/spine/create`, an entry's
+:doc:`api_reference/skeleton/trackEntry/onComplete`, or a ``"spine"`` listener
+added with ``addEventListener``) no longer disappears. The plugin runs each of
+them through Solar2D's ``CoronaLuaDoCall``, so Solar2D reports the error the way
+it reports any other listener error (a traceback in the console, and the
+``unhandledError`` runtime event). The call that triggered the listener
+(``updateState``, ``setAnimation``, ...) does not raise and carries on.
 
 Errors raised by an injection listener (see :doc:`api_reference/skeleton/inject`)
 still propagate out of :doc:`api_reference/skeleton/draw`.
@@ -151,3 +157,23 @@ Apps written against earlier plugin versions should check these changes:
   memory measurements taken in the same frame still include the skeleton.
 - ``spine.loadAtlas()`` raises ``Failed to load texture: <path>`` when a page
   texture cannot be loaded, and keeps nothing in memory.
+- Every animation event has ``event.name == "spine"``. A custom event has
+  ``event.phase == "event"`` and its name in ``event.event``; it used to arrive
+  with its name in ``event.name`` and no ``phase``. Its ``int``, ``float``,
+  ``string``, ``volume`` and ``balance`` are the key's own values, and
+  ``event.time`` is the key's time in milliseconds (see
+  :doc:`api_reference/spine/event`).
+- ``skeleton:addEventListener("spine", listener)`` now receives the animation
+  events, after the listener passed to ``spine.create()``.
+- ``skeleton.tracks`` is a new plain table on each read, with ``false`` for an
+  empty track (see :doc:`api_reference/skeleton/tracks`).
+- Writing an unknown or read-only key on a track entry raises instead of being
+  ignored.
+- ``skeleton.isActive`` is ``false`` once no track has a current entry (see
+  :doc:`api_reference/skeleton/isActive`). A loop that updates and draws only
+  while ``isActive`` is ``true`` stops once every track is cleared or mixed out.
+- ``getSize().offsetY`` is ``getBounds().yMin``; it used to be ``-yMin``.
+- Physics steps in ``updateState``, and ``draw`` only poses (see
+  :doc:`api_reference/skeleton/updateState`). Code that calls ``draw`` without
+  ``updateState``, or ``updateState`` several times per ``draw``, moves physics
+  differently than before.

@@ -22,7 +22,8 @@ public:
     void load(spine::AtlasPage &page, const spine::String &path) override;
     void unload(void *texture) override;
 
-    // load() never raises (it runs inside new Atlas): the first failed texture path since clearFailure(), else empty.
+    // load() never raises (it runs inside new Atlas): the first failed texture path since clearFailure(), followed by
+    // ": <error>" when graphics.newTexture raised, else empty.
     const std::string &failure() const { return failedPath; }
     void clearFailure() { failedPath.clear(); }
 

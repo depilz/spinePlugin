@@ -17,7 +17,7 @@ Syntax:
 
 .. code-block:: lua
 
-   skeleton:addEmptyAnimation(trackIndex, mixDuration, delay)
+   local trackEntry = skeleton:addEmptyAnimation(trackIndex, mixDuration, delay)
 
 - ``trackIndex`` *(required)*:
     ``number`` – The track index to queue the empty animation.
@@ -25,6 +25,11 @@ Syntax:
     ``number`` – The duration of the fade-out.
 - ``delay`` *(optional)*:
     ``number`` – Additional delay in milliseconds before starting.
+
+Return value:
+-------------
+
+- ``trackEntry`` – The :doc:`trackEntry/index` of the queued empty animation.
 
 Example:
 --------

@@ -69,6 +69,7 @@ static int create(lua_State *L) {
     value->skeleton = spc::newSkeleton(skeletonData);
     value->stateData = spc::newStateData(skeletonData);
     value->state = spc::newState(value->stateData);
+    value->skeleton->updateWorldTransform(Physics_Pose); // as spine.create()
     getSkeletonMt(L);
     lua_setmetatable(L, -2);
     lua_setfield(L, -2, "_skeleton");

@@ -1,20 +1,20 @@
 -- T3: TrackEntry wrapper validity after the entry is disposed (animation-2): a stale wrapper must raise or read nil,
 -- never reach the freed or pooled entry. Stale accesses run in pcall so a raising fix completes the script.
 -- mode = "numeric" | "animation" | "alias" | "afterdestroy" | "listener_entry"
-local fx = require("realdata_fixture")
+local spine = require("plugin.spine")
 local C = dofile(arg[0]:match("^(.*)/") .. "/../check.lua")
 local mode = arg[1]
-local data = fx.loadData("spineboy/spineboy.atlas", "spineboy/spineboy.json")
-local s = fx.createPlugin(data, function(ev)
+local data = spine.loadSkeletonData("spineboy/spineboy.json", spine.loadAtlas("spineboy/spineboy.atlas"))
+local s = spine.create(data, function(ev)
   if ev.name == "spine" and ev.phase ~= "began" then print("  [listener]", ev.phase, ev.animation) end
 end)
 s:setDefaultMix(200)
 
 local walk = s:setAnimation(1, "walk", true)
-print("walk entry ptr", fx.entryPtr(walk), "animation", walk.animation)
+print("walk entry ptr", __native.entryPtr(walk), "animation", walk.animation)
 s:updateState(16)
 local run = s:setAnimation(1, "run", true)
-print("run entry ptr", fx.entryPtr(run))
+print("run entry ptr", __native.entryPtr(run))
 for i = 1, 20 do s:updateState(16) end -- 320ms > 200ms mix: walk is ended + disposed (reset + returned to pool)
 print("after mix: run.mixingFrom =", run.mixingFrom)
 
@@ -35,7 +35,7 @@ elseif mode == "animation" then
   stale(walk, "animation") -- TrackEntry::reset() set _animation = NULL -> getAnimation()->getName()
 elseif mode == "alias" then
   local jump = s:setAnimation(2, "jump", false) -- obtains the pooled object
-  print("jump entry ptr", fx.entryPtr(jump), "same object as stale walk wrapper:", fx.entryPtr(jump) == fx.entryPtr(walk))
+  print("jump entry ptr", __native.entryPtr(jump), "same object as stale walk wrapper:", __native.entryPtr(jump) == __native.entryPtr(walk))
   stale(walk, "animation"); stale(walk, "index")
   pcall(function() walk.timeScale = 0 end) -- user thinks they're pausing the old walk entry...
   for i = 1, 10 do s:updateState(16) end
@@ -43,7 +43,7 @@ elseif mode == "alias" then
   C.expect(jump.trackTime > 0, "stale walk.timeScale = 0 froze jump (animation-2)")
 elseif mode == "afterdestroy" then
   local e = s:getTrackEntry(1)
-  fx.dispose(s) -- ~SpineSkeleton -> delete state -> ~AnimationState deletes entries + pool
+  s:removeSelf(); __stub.frame() -- finalize, then the next frame disposes: ~AnimationState deletes entries + pool
   print("entry after skeleton destroyed ->")
   io.stdout:flush()
   stale(e, "trackTime")

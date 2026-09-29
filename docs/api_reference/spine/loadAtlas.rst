@@ -20,7 +20,8 @@ when the atlas object is garbage collected, so as long as you hold references
 to the atlas object or the atlas is still in use by a skeleton, the 
 textures will be kept in memory. This is why reusing atlases is good.
 
-If a page texture cannot be loaded, ``loadAtlas`` raises ``Failed to load texture: <path>``.
+If a page texture cannot be loaded, ``loadAtlas`` raises ``Failed to load texture: <path>``, followed by
+``: <reason>`` when Solar2D's ``graphics.newTexture`` raised an error.
 The atlas and the pages that did load are released first, so a failed call keeps nothing in memory.
 
 

@@ -8,7 +8,11 @@ skeleton:setListener()
 Overview:
 .........
 
-Sets or clears the animation state listener for this skeleton.
+Sets or clears the animation listener for this skeleton, the one passed to :doc:`../spine/create`.
+
+It only swaps that one function. ``"spine"`` listeners added with ``skeleton:addEventListener`` and
+:doc:`trackEntry/onComplete` functions keep receiving events. Calling it inside a listener takes effect from the next
+event.
 
 Syntax:
 --------
@@ -26,7 +30,7 @@ Example:
 .. code-block:: lua
 
    hero:setListener(function(event)
-       if event.name == "spine" and event.phase == "completed" then
+       if event.phase == "completed" then
            print("Completed:", event.animation)
        end
    end)

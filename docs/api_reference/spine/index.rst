@@ -18,6 +18,17 @@ The returned ``spine`` table contains core methods for loading atlases,
 loading SkeletonData, and creating new Spine objects in Solar2D.
 
 
+Properties:
+-----------
+
+- **spine.version**:
+    ``string`` – The plugin version, for example ``"2.0.0"`` for ``plugin.spine42`` and ``"3.0.0"`` for
+    ``plugin.spine43``.
+
+- **spine.runtimeVersion**:
+    ``string`` – The Spine runtime the plugin is built on: ``"4.2"`` or ``"4.3"``.
+
+
 Methods:
 --------
 

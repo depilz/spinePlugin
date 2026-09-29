@@ -1,15 +1,4 @@
 suite	test	key	kind	note
-render	h1_stale_world	render-12	defect	world transform only in draw(): getBounds and bone world reads stale
-animation	t1_surface	animation-15	defect	isActive stays true after clearTrack(1) while getTrackEntry(1) is nil
-animation	t2_events payload	animation-4	defect	footstep events report EventData defaults (int 1, float 0.5, data-default), not key 0's per-key values
-animation	t2_events target	animation-5	defect	event.target is the raw SpineSkeleton userdata, not the spine object; checked through fixture createPlugin, a copy of Lua_Spine.cpp create(): a fix must be mirrored there
-animation	t4_reentrancy dispose_in_complete	animation-1	defect	ASan heap-use-after-free in EventQueue::drain: skeleton destroyed inside 'completed'; fx.dispose runs ~SpineSkeleton directly, so a deferred-destroy fix must route it through the new path
-animation	t4_reentrancy dispose_in_event	animation-1	defect	ASan heap-use-after-free in EventQueue::drain: skeleton destroyed inside a custom event; fx.dispose runs ~SpineSkeleton directly, so a deferred-destroy fix must route it through the new path
-animation	t5_addAnimationAt	animation-10	defect	addAnimationAt jump@1000 after run@1200 clamps to delay 0 and starts jump at 1870ms, after run completes
-animation	t6_delay_phases	animation-15	defect	isActive stays true once the queued empty animation ended and no animation is current
-animation	t8_gc_listener	animation-5	defect	50/50 listener closures and SpineSkeleton userdata stay alive without removeSelf (luaSelf registry ref); checked through fixture createPlugin, a copy of Lua_Spine.cpp create(): a fix must be mirrored there
-animation	t9_prototype_fix	animation-2	defect	the reviewed fix's contract for animation-1/2/3: no entry.isValid, then SEGV on stale entry.animation; later sections also need animation-1 and animation-3
-animation	t10_create_args	animation-18	defect	create(data, fn, nil|42) refs the wrong stack slot and the listener gets 0 calls; checked through fixture createPlugin, a copy of Lua_Spine.cpp create(): a fix must be mirrored there
 skins	s1_api_contract A2	I7	pending-api	final skins API: skin:getAttachment(o:getSlot('head'), 'head')
 skins	s1_api_contract A3	I7	pending-api	final skins API: Slot object of another instance, same data
 skins	s1_api_contract A4	I7	pending-api	final skins API: skin:getAttachment(<number>, 'head') raises

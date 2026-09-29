@@ -105,6 +105,19 @@ static int physicsInfo(lua_State *L) {
     return 2;
 }
 
+// fx.resetPhysics(obj) : resets every physics constraint's state without a world transform, as if no transform had
+// run since the skeleton was built.
+static int resetPhysics(lua_State *L) {
+    Skeleton &sk = *getSk(L, 1)->skeleton;
+    auto &pcs = sk.getPhysicsConstraints();
+#if SPINE_43()
+    for (size_t i = 0; i < pcs.size(); ++i) pcs[i]->reset(sk);
+#else
+    for (size_t i = 0; i < pcs.size(); ++i) pcs[i]->reset();
+#endif
+    return 0;
+}
+
 // fx.makePhysicsSkinRequired(obj, index1) : marks physics constraint data as skin-required (no skin has it) and updates cache.
 static int makePhysicsSkinRequired(lua_State *L) {
     SpineSkeleton *s = getSk(L, 1);
@@ -151,6 +164,7 @@ static int meshCount(lua_State *L) {
 extern "C" int luaopen_renderfx(lua_State *L) {
     lua_newtable(L);
     const luaL_Reg fns[] = {{"expected", expected}, {"boneWorld", boneWorld}, {"physicsInfo", physicsInfo},
+                            {"resetPhysics", resetPhysics},
                             {"makePhysicsSkinRequired", makePhysicsSkinRequired}, {"skinRequire", skinRequire},
                             {"bufLen", bufLen},
                             {"meshCount", meshCount}, {"newStats", newStats}, {NULL, NULL}};

@@ -27,7 +27,7 @@ elseif mode == "tracks" then
   local tracks = obj.tracks
   obj:removeSelf(); S.frame()
   collectgarbage()
-  print("after removeSelf: #tracks, tracks[1]")
-  S.raises("Track entry belongs to a removed skeleton", function() return #tracks end)
-  S.raises("Track entry belongs to a removed skeleton", function() return tracks[1] end)
+  print("after removeSelf: #tracks, tracks[1]", #tracks, type(tracks[1]))
+  assert(#tracks == 1 and tracks[1].isValid == false, "a held tracks snapshot keeps its entry wrappers")
+  S.raises("Track entry belongs to a removed skeleton", function() return tracks[1].animation end)
 end

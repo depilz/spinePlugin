@@ -25,3 +25,4 @@ t16_physics_timescale.lua freeze
 t17_constraint_active.lua ik
 t17_constraint_active.lua physics
 t17_constraint_active.lua ik-timeline
+t18_create_pose.lua

@@ -67,6 +67,59 @@
 - **Mesh updates no longer create Lua garbage on every draw.** Updating a skeleton's meshes reuses one parameter table
   and its vertex buffers instead of allocating new ones per mesh per draw: for 150 copies of the Spine raptor example,
   Lua allocation drops from about 7.9 MB to about 0.27 MB per frame.
+- **Breaking: custom animation events have `name = "spine"` and `phase = "event"`.** Every animation event now has
+  `event.name == "spine"`. A custom event keyed in Spine has `event.phase == "event"` and its name in `event.event`,
+  plus `int`, `float`, `string`, `time`, `animation`, `trackIndex` and `target`, and `audioPath`, `volume` and
+  `balance` when it has audio. It used to arrive with its name in `event.name` and no `phase`, so a listener that
+  tells custom events apart with `event.name ~= "spine"` must check `event.phase == "event"` instead. A custom event
+  named `"spine"` no longer looks like a lifecycle event. Lifecycle events are unchanged.
+- **Breaking: custom events carry the values of the key that fired.** `event.int`, `event.float`, `event.string`,
+  `event.volume` and `event.balance` are the values set on that key in the animation; they used to be the event's
+  default values from the Spine editor for every key. The new `event.time` is the key's time in milliseconds.
+- **Breaking: `skeleton.isActive` is `true` only while a track has a current entry.** It becomes `false` after
+  `clearTrack` on the last track that had an entry, and once an empty animation that mixes a track out has ended on
+  every track. It used to stay `true` until `clearTracks`, as "Physics steps without an animation track" above still
+  describes it. Loops that call `updateState` and `draw` only while
+  `isActive` is `true` stop updating such a skeleton earlier than before.
+- **Breaking: physics steps in `updateState`, and `draw` only poses.** `updateState` now steps the physics
+  constraints and poses the skeleton, so bone and slot world values, `getBounds()` and `getSize()` are current after
+  every `updateState`, and right after `spine.create()`. `draw` poses without stepping physics, so bone changes made
+  from Lua between `updateState` and `draw` are drawn, and physics reacts at the next `updateState`. With one
+  `updateState` and one `draw` per frame nothing changes. Code that calls `draw` without `updateState`, `updateState`
+  several times per `draw`, or `updateState` without `draw` (for example for off-screen skeletons) now moves physics
+  once per `updateState` instead of once per `draw`.
+- **Breaking: `skeleton.tracks` is a plain table.** Each read builds a new table where `tracks[i]` is the current
+  track entry of track `i`, or `false` for an empty track, for every track up to the highest one used. `ipairs` and
+  `#` now work on it, and `if tracks[i] then` keeps working. It used to be a proxy object that `ipairs` and `pairs`
+  rejected.
+- **Breaking: writing an unknown or read-only track-entry key raises.** `entry.foo = 1` raises
+  `SpineTrackEntry: unknown property 'foo'`, and writing `index`, `animation`, `animationTime`, `isComplete`,
+  `isValid`, `trackComplete`, `next`, `mixingFrom` or `mixingTo` raises
+  `SpineTrackEntry: property '<key>' is read-only`. Both used to be ignored silently. Reading an unknown key still
+  returns `nil`.
+- **Breaking: `getSize().offsetY` is `getBounds().yMin`.** `(offsetX, offsetY)` is now the top-left corner of the bounds in
+  the skeleton's y-down coordinates; `offsetY` used to be `-yMin`. `width`, `height` and `offsetX` are unchanged.
+- **Added `skeleton:addEventListener("spine", listener)`.** The skeleton now dispatches every animation event to its
+  own `"spine"` listeners, after the listener passed to `spine.create()` or `setListener`: function listeners, then
+  table listeners, as Solar2D does for every event. All listeners get the same event table. Such listeners used to
+  never fire. `setListener(nil)` clears only the `spine.create()` listener.
+- **Added `entry.onComplete`.** A function set on a track entry is called with the `completed` event every time that
+  entry completes, before the other listeners. It never fires after the skeleton was removed, and an entry reused
+  from the pool starts without one.
+- **`addAnimationAt` no longer waits for the previous entry to complete when its time has already passed.** On a
+  track that is playing, a time at or before the start of the last queued entry now starts the new entry on the
+  update right after that entry starts. It used to start when that entry completed. Times after it are unchanged.
+- **`setEmptyAnimation` and `addEmptyAnimation` return their track entry.** They used to return nothing.
+  `setEmptyAnimations` still returns nothing.
+- **Track entries compare with `==`.** Two track-entry objects are equal when they stand for the same entry, for
+  example `skeleton:getTrackEntry(1) == skeleton.tracks[1]`. Comparing never raises.
+- **Added `spine.version` and `spine.runtimeVersion`.** `spine.version` is the plugin version (`"2.0.0"` for
+  `plugin.spine42`, `"3.0.0"` for `plugin.spine43`) and `spine.runtimeVersion` the Spine runtime line (`"4.2"` or
+  `"4.3"`).
+- **Load errors say why.** `spine.loadSkeletonData()` raises
+  `Failed to load skeleton data: <path>: <reason>` with the Spine runtime's reason, for example a version mismatch,
+  and `spine.loadAtlas()` adds the error `graphics.newTexture` raised to `Failed to load texture: <path>`. The message
+  prefixes are unchanged.
 
 ### plugin.spine42 (4.2 line)
 
@@ -82,6 +135,10 @@
   `entry.delay` is never negative.
 - **With timeScale 0 (paused), a zero-mix `setAnimation` ends the old entry immediately.** Its `ended` and `disposed`
   events fire at the new animation's start instead of waiting for time to advance.
+- **Sequence animations show the setup frame when mixed out** (matches the official 4.2.120 and 4.3 runtimes). While
+  a sequence (flipbook) animation mixes out, for example after `setEmptyAnimation` with a mix, its slot shows the setup
+  frame and keeps it afterwards. It used to keep flipping frames during the mix-out and then stay on a mid-sequence
+  frame.
 - **Clipping masks match the Spine editor.** A clipping attachment on an inactive bone (a skin bone whose skin is not
   set) no longer clips the slots after it. A clip whose end slot holds a bounding box, point or path attachment now
   ends at that slot instead of clipping the rest of the draw order. On arm64 builds (iOS, Apple Silicon Mac, Android
@@ -97,6 +154,10 @@
   that share a texture and blend mode into one mesh, as the 4.3 line already did. A skeleton's `numChildren` and its
   child list change: 150 copies of the Spine raptor example go from 5,157 meshes to about 450. Code that walks a
   skeleton's children sees fewer, larger meshes.
+- **`getSize().offsetY` changes sign.** "Physics gravity points down on screen" above says `getSize()` is unchanged;
+  that still holds for `width`, `height` and `offsetX`, but `offsetY` is now `yMin` (see "Both lines").
+- **A custom event key in `.json` data without its own volume or balance reports `1` and `0`**, as the 4.2 runtime
+  reads it; the 4.3 line reports the event's default volume and balance.
 
 ### plugin.spine43 (4.3 line)
 

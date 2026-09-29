@@ -8,4 +8,13 @@ line	owner	kind	key	change
 4.2	SkeletonData	field	__gc	+
 4.2	SpineObject	get	physicsTimeScale	+
 4.2	SpineObject	set	physicsTimeScale	+
+4.2	SpineTrack	field	__gc	-
+4.2	SpineTrack	field	__index	-
+4.2	SpineTrack	field	__len	-
+4.2	SpineTrack	field	__newindex	-
+4.2	SpineTrackEntry	field	__eq	+
 4.2	SpineTrackEntry	get	isValid	+
+4.2	SpineTrackEntry	get	onComplete	+
+4.2	SpineTrackEntry	set	onComplete	+
+4.2	module	field	runtimeVersion	+
+4.2	module	field	version	+

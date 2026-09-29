@@ -1,7 +1,7 @@
 -- gap-4: does the plugin's Lua physics:translate/rotate (shared/Lua_Physics.cpp:3-48) keep the same on-screen
 -- direction in A (the plugin's configuration; 1.5.0: scaleY=-1) and B (Bone::setYDown(true))? Same Lua calls in A and B;
 -- R (y-up) gets the mirrored call so that mirror(R) is the expected y-down result.
--- Frame loop = what Corona/Spine.lua does: updateState(ms) then draw() (draw = UWT(Physics_Update), meshes stubbed).
+-- Frame loop = what Corona/Spine.lua does: updateState(ms) then draw() (updateState steps physics with UWT(Physics_Update); draw poses with Physics_Pose; meshes stubbed).
 -- A case passes when A and B both match mirror(R).
 local fx = require("realdata_fixture")
 local function check(ok, id) print((ok and "PASS" or "FAIL") .. "\t" .. id) end  -- one check row per case

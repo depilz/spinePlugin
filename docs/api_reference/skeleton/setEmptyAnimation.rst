@@ -29,12 +29,17 @@ Syntax:
 
 .. code-block:: lua
 
-   skeleton:setEmptyAnimation(trackIndex, mixDuration)
+   local trackEntry = skeleton:setEmptyAnimation(trackIndex, mixDuration)
 
 - ``trackIndex`` *(required)*:
     ``number`` – The track index to fade out.
 - ``mixDuration`` *(required)*:
     ``number (ms)`` – The duration of the fade-out.
+
+Return value:
+-------------
+
+- ``trackEntry`` – The :doc:`trackEntry/index` of the empty animation.
 
 Example:
 --------

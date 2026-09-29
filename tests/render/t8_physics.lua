@@ -2,7 +2,7 @@
 local C = dofile(arg[0]:match("^(.*)/") .. "/common.lua")
 local fx = C.fx
 local part = arg[1]
--- (a) draw() uses Physics_Update only if physicsConstraints[0]:isActive()
+-- (a) updateState() steps physics (Physics_Update); draw() only poses it (Physics_Pose)
 local function run(mode)
   local obj = C.spine.create(C.data("sack", 0.5))
   local info = fx.physicsInfo(obj)

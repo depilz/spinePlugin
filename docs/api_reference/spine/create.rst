@@ -21,6 +21,10 @@ Creating multiple skeletons with the same `skeletonData` is efficient, reuse the
 The skeleton is freed on the frame after it is removed, not at once. See :doc:`../../lifecycle`
 for what still works during that window.
 
+The new skeleton is already posed: bone and slot world values, :doc:`../skeleton/getBounds` and
+:doc:`../skeleton/getSize` are current right after ``create()``. Physics does not step until the first
+:doc:`../skeleton/updateState`.
+
 Syntax:
 -------
 
@@ -33,7 +37,8 @@ Syntax:
 
 - ``listener`` *(optional)*:
     ``function`` – A Lua callback function that handles animation events. See :doc:`event` for more details.
-    Any other non-``nil`` value raises an error.
+    Any other non-``nil`` value raises an error. It runs before the ``"spine"`` listeners added with
+    ``skeleton:addEventListener``; :doc:`../skeleton/setListener` replaces or clears it later.
 
 
 
@@ -57,14 +62,12 @@ Example:
    
    -- Define a listener function to handle animation events
    local function listener(event)
-       if event.name == "spine" then
-           if event.phase == "began" then
-               print("Animation began:", event.animation)
-            elseif event.phase == "ended" then
-               print("Animation ended:", event.animation)
-            end
-       else
-           print("Custom event triggered:", event.name) -- prints the custom event name
+       if event.phase == "event" then
+           print("Custom event triggered:", event.event) -- prints the custom event name
+       elseif event.phase == "began" then
+           print("Animation began:", event.animation)
+       elseif event.phase == "ended" then
+           print("Animation ended:", event.animation)
        end
    end
    

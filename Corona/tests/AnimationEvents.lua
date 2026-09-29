@@ -10,10 +10,10 @@ local o = Spine.create(parent, skeleton, display.contentCenterX, display.content
 local animations = o:getAnimations()
 
 o:setListener(function(event)
-    if event.name == "spine" then
-        print("[listener]", event.phase, event.animation, "track", event.trackIndex)
+    if event.phase == "event" then
+        print("[custom event]", event.event, event.int, event.float, event.string, event.time)
     else
-        print("[custom event]", event.name, event.int, event.float, event.string)
+        print("[listener]", event.phase, event.animation, "track", event.trackIndex)
     end
 end)
 

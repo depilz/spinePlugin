@@ -62,9 +62,7 @@ struct SpineSkeleton
     // Removal (removeSelf): through indexing, the object stops updating, drawing and dispatching events now; memory stays valid.
     void markRemoved()
     {
-        disposeRequested = true;
-        // a removed display object dispatches no further events: stop the rest of the current drain
-        if (state) state->setListener((AnimationStateListenerObject *)NULL);
+        disposeRequested = true; // the state listener's removal check drops the rest of the current drain
     }
 
     // Next-frame hook (or finalize without Runtime): wrappers stop working now; native cleanup waits while busy.
