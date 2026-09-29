@@ -1,0 +1,35 @@
+# One worldspace scenario per line: test script, then its arguments. Read by suite.sh; the test id is the script name
+# without .lua, then the arguments.
+w0_harness.lua fixture
+w0_harness.lua stub
+w0_harness.lua probe
+w1_bone.lua roundtrip
+w1_bone.lua setworld
+w1_bone.lua translate
+w1_bone.lua keyed
+w1_bone.lua readonly
+w1_bone.lua rootscale
+w1_bone.lua badargs
+w1_bone.lua content
+w1_bone.lua stale removed
+w1_bone.lua stale parent
+w1_bone.lua stale children
+w1_bone.lua stale slot
+w1_bone.lua stale iktarget
+w1_bone.lua stale window
+w1_bone.lua stale finalize
+w2_hittest.lua geometry
+w2_hittest.lua order
+w2_hittest.lua reorder
+w2_hittest.lua stop
+w2_hittest.lua skin
+w2_hittest.lua applied
+w2_hittest.lua nopose
+w2_hittest.lua badargs
+w2_hittest.lua stale removed
+w2_hittest.lua stale window
+w2_hittest.lua stale finalize
+w2_hittest.lua listener removeself
+w2_hittest.lua listener skin
+w2_hittest.lua listener attachment
+w2_hittest.lua listener error

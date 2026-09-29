@@ -68,12 +68,12 @@ static bool hasCurrentEntry(AnimationState *state)
     return false;
 }
 
-// Pushes the display group's value for key (argument 2) of the object (argument 1).
-static void groupIndex(lua_State *L, SpineSkeleton *skeletonUserdata)
+// Pushes the display group's value for key of the object (argument 1).
+static void groupIndex(lua_State *L, SpineSkeleton *skeletonUserdata, const char *key)
 {
     skeletonUserdata->groupmt__index->pushTable(L);
     lua_pushvalue(L, 1);
-    lua_pushvalue(L, 2);
+    lua_pushstring(L, key);
     lua_call(L, 2, 1);
 }
 
@@ -161,7 +161,7 @@ static int skeleton_index(lua_State *L)
     {
         // removed: only the EventDispatcher keys resolve (so `if obj.removeSelf then` skips it), numChildren is nil
         if (!isEventDispatcherKey(key)) return 0;
-        groupIndex(L, skeletonUserdata);
+        groupIndex(L, skeletonUserdata, key);
         return 1;
     }
 
@@ -207,7 +207,7 @@ static int skeleton_index(lua_State *L)
         for (size_t i = 0; i < n; i++)
         {
             LuaBone *boneUserdata = (LuaBone *)lua_newuserdata(L, sizeof(LuaBone));
-            new (boneUserdata) LuaBone(L, bones[i], skeletonUserdata->alive);
+            new (boneUserdata) LuaBone(L, bones[i], skeleton, skeletonUserdata->alive);
 
             lua_rawseti(L, -2, static_cast<int>(i + 1));
         }
@@ -1480,6 +1480,176 @@ static int getSize(lua_State *L)
     return 1;
 }
 
+// A bounding box containing a hitTest point: plain data, so no Slot or Attachment pointer outlives a listener call.
+struct BoxHit
+{
+    std::string slotName;
+    std::string attachmentName;
+};
+
+// SkeletonBounds::containsPoint's even-odd test over count world vertex coordinates (x, y pairs).
+static bool polygonContains(Vector<float> &vertices, size_t count, float x, float y)
+{
+    bool inside = false;
+    for (size_t i = 0, prev = count - 2; i < count; prev = i, i += 2)
+    {
+        float vertexX = vertices[i], vertexY = vertices[i + 1], prevY = vertices[prev + 1];
+        if (((vertexY < y && prevY >= y) || (prevY < y && vertexY >= y)) &&
+            vertexX + (y - vertexY) / (prevY - vertexY) * (vertices[prev] - vertexX) < x)
+        {
+            inside = !inside;
+        }
+    }
+    return inside;
+}
+
+// The bounding boxes (applied attachments of slots on active bones) containing the skeleton-space point, last
+// drawn first. Reads the current world transform: no pose refresh.
+static std::vector<BoxHit> boxesAt(Skeleton *skeleton, float x, float y)
+{
+    std::vector<BoxHit> hits;
+    Vector<float> vertices;
+    Vector<Slot *> &drawOrder = spc::drawOrder(skeleton);
+    for (size_t i = drawOrder.size(); i-- > 0;)
+    {
+        Slot &slot = *drawOrder[i];
+        Attachment *attachment = spc::applied(slot).getAttachment();
+        if (!slot.getBone().isActive() || !attachment ||
+            !attachment->getRTTI().instanceOf(BoundingBoxAttachment::rtti))
+        {
+            continue;
+        }
+        BoundingBoxAttachment &box = *static_cast<BoundingBoxAttachment *>(attachment);
+        size_t count = box.getWorldVerticesLength();
+        vertices.setSize(count, 0);
+        spc::vertexWorldVertices(box, slot, vertices);
+        if (polygonContains(vertices, count, x, y))
+        {
+            hits.push_back({slot.getData().getName().buffer(), box.getName().buffer()});
+        }
+    }
+    return hits;
+}
+
+// Pushes the array of hit tables, top-most first, for content point (x, y) = skeleton-space (localX, localY).
+static void pushHits(lua_State *L, SpineSkeleton *skeletonUserdata, lua_Number x, lua_Number y, lua_Number localX,
+                     lua_Number localY)
+{
+    std::vector<BoxHit> hits = boxesAt(skeletonUserdata->skeleton, (float)localX, (float)localY);
+    lua_createtable(L, static_cast<int>(hits.size()), 0);
+    for (size_t i = 0; i < hits.size(); i++)
+    {
+        lua_createtable(L, 0, 7);
+        lua_pushstring(L, hits[i].slotName.c_str());
+        lua_setfield(L, -2, "slotName");
+        lua_pushstring(L, hits[i].attachmentName.c_str());
+        lua_setfield(L, -2, "attachmentName");
+        lua_pushvalue(L, 1);
+        lua_setfield(L, -2, "target");
+        lua_pushnumber(L, x);
+        lua_setfield(L, -2, "x");
+        lua_pushnumber(L, y);
+        lua_setfield(L, -2, "y");
+        lua_pushnumber(L, localX);
+        lua_setfield(L, -2, "localX");
+        lua_pushnumber(L, localY);
+        lua_setfield(L, -2, "localY");
+        lua_rawseti(L, -2, static_cast<int>(i + 1));
+    }
+}
+
+// Whether the skin and every slot's applied attachment still match the identities recorded in state (slots + 1
+// entries); records them when record is true. Identities are compared, never dereferenced.
+static bool sameAttachments(Skeleton *skeleton, const void **state, bool record)
+{
+    Vector<Slot *> &slots = skeleton->getSlots();
+    bool same = true;
+    for (size_t i = 0; i <= slots.size(); i++)
+    {
+        const void *current = i < slots.size() ? (const void *)spc::applied(*slots[i]).getAttachment()
+                                               : (const void *)skeleton->getSkin();
+        if (record) state[i] = current;
+        else same = same && state[i] == current;
+    }
+    return same;
+}
+
+// hitTest's listener walk as a Lua C function (the skeleton userdata as upvalue), run through hitTest's guard:
+// calls the listener (argument 1) with each hit table of the array (argument 2) until one returns a truthy value,
+// or a listener removes the skeleton or changes its skin or attachments (the remaining hits are stale). Returns
+// whether a listener stopped the walk.
+static int hitTestWalk(lua_State *L)
+{
+    SpineSkeleton *skeletonUserdata = (SpineSkeleton *)lua_touserdata(L, lua_upvalueindex(1));
+    Skeleton *skeleton = skeletonUserdata->skeleton;
+    const void **state = (const void **)lua_newuserdata(L, (skeleton->getSlots().size() + 1) * sizeof(void *));
+    sameAttachments(skeleton, state, true);
+
+    size_t n = lua_objlen(L, 2);
+    for (size_t i = 1; i <= n; i++)
+    {
+        lua_pushvalue(L, 1);
+        lua_rawgeti(L, 2, static_cast<int>(i));
+        lua_call(L, 1, 1);
+        if (lua_toboolean(L, -1))
+        {
+            lua_pushboolean(L, 1);
+            return 1;
+        }
+        lua_pop(L, 1);
+        if (skeletonUserdata->disposeRequested || !skeletonUserdata->skeleton ||
+            !sameAttachments(skeleton, state, false))
+        {
+            break;
+        }
+    }
+    lua_pushboolean(L, 0);
+    return 1;
+}
+
+// skeleton:hitTest(x, y [, listener]): the bounding boxes containing content point (x, y), top-most first. Without
+// a listener returns the top-most hit table or nil; with one, calls it per hit until it returns true, and returns
+// whether it did.
+static int hitTest(lua_State *L)
+{
+    SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
+    if (!skeletonUserdata)
+    {
+        return 0;
+    }
+
+    lua_Number x = luaL_checknumber(L, 2);
+    lua_Number y = luaL_checknumber(L, 3);
+    bool hasListener = !lua_isnoneornil(L, 4);
+    if (hasListener) luaL_checktype(L, 4, LUA_TFUNCTION);
+
+    groupIndex(L, skeletonUserdata, "contentToLocal");
+    lua_pushvalue(L, 1);
+    lua_pushnumber(L, x);
+    lua_pushnumber(L, y);
+    lua_call(L, 3, 2);
+    lua_Number localX = lua_tonumber(L, -2), localY = lua_tonumber(L, -1);
+    lua_pop(L, 2);
+
+    pushHits(L, skeletonUserdata, x, y, localX, localY);
+    if (!hasListener)
+    {
+        lua_rawgeti(L, -1, 1);
+        return 1;
+    }
+
+    // the walk's listener may remove the skeleton: the guard defers its dispose, the upvalue keeps the userdata
+    int hits = lua_gettop(L);
+    SkeletonCallGuard guard(skeletonUserdata);
+    lua_pushstring(L, "_skeleton");
+    lua_rawget(L, 1);
+    lua_pushcclosure(L, hitTestWalk, 1);
+    lua_pushvalue(L, 4);
+    lua_pushvalue(L, hits);
+    guard.call(L, 2, 1);
+    return 1;
+}
+
 // skeleton:setFillColor(r, g, b, a)
 static int setFillColor(lua_State *L)
 {
@@ -1913,6 +2083,7 @@ void getSpineObjectMt(lua_State *L)
             {"setFillColor", setFillColor},
             {"getBounds", getBounds},
             {"getSize", getSize},
+            {"hitTest", hitTest},
 
             {"setDefaultMix", setDefaultMix},
             {"setMix", setMix},

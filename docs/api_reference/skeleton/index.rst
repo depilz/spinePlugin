@@ -105,6 +105,14 @@ Update & Rendering
    getSize
    getBounds
 
+Hit Testing
+...........
+
+.. toctree::
+   :maxdepth: 1
+
+   hitTest
+
 Attachment / Slot Management
 .............................
 

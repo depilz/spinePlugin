@@ -32,3 +32,6 @@ s20_group_dispatch.lua error
 s20_group_dispatch.lua remove_create_split
 s20_group_dispatch.lua remove_group_split
 s20_group_dispatch.lua remove_lua_split
+s2x_ik_drag.lua scaled
+s2x_ik_drag.lua rotated
+s2x_hittest.lua

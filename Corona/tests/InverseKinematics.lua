@@ -8,7 +8,7 @@ local o = Spine.create(parent, skeleton, display.contentCenterX, display.content
 local animations = o:getAnimations()
 o:setAnimation(1, animations[1], true)
 
-local crosshair = o.ikConstraints[1].target
+local crosshair = o:getIKConstraint("aim-ik").target
 
 local prevX, prevY
 o:addEventListener("touch", function(event)
@@ -19,11 +19,7 @@ o:addEventListener("touch", function(event)
         o.stage:setFocus(event.target)
 
     elseif event.phase == "moved" then
-        local dx, dy = event.x - prevX, event.y - prevY
-        prevX, prevY = event.x, event.y
-
-        crosshair.x = crosshair.x + dx / o.xScale
-        crosshair.y = crosshair.y + dy / o.yScale
+        crosshair:setWorldPosition(o:contentToLocal(event.x, event.y))
 
     elseif event.phase == "ended" or event.phase == "cancelled" then
         prevX, prevY = nil, nil

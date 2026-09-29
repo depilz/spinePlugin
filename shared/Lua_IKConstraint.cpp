@@ -22,7 +22,7 @@ static int ikConstraint_index(lua_State *L)
         for (size_t i = 0; i < bones.size(); i++)
         {
             LuaBone *boneUserdata = (LuaBone *)lua_newuserdata(L, sizeof(LuaBone));
-            new (boneUserdata) LuaBone(L, spc::boneOf(bones[i]), ikConstraintUserdata->alive);
+            new (boneUserdata) LuaBone(L, spc::boneOf(bones[i]), ikConstraintUserdata->skeleton, ikConstraintUserdata->alive);
 
             lua_rawseti(L, -2, static_cast<int>(i + 1));
         }
@@ -70,7 +70,7 @@ static int ikConstraint_index(lua_State *L)
         if (target)
         {
             LuaBone *boneUserdata = (LuaBone *)lua_newuserdata(L, sizeof(LuaBone));
-            new (boneUserdata) LuaBone(L, target, ikConstraintUserdata->alive);
+            new (boneUserdata) LuaBone(L, target, ikConstraintUserdata->skeleton, ikConstraintUserdata->alive);
         }
         else
         {

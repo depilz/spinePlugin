@@ -13,10 +13,11 @@ struct LuaBone
 {
     lua_State *L;
     Bone *bone;
+    Skeleton *skeleton; // the owner, for a root bone's world position (4.3's Bone has no getSkeleton())
     std::shared_ptr<SkeletonLife> alive;
 
-    LuaBone(lua_State *L, Bone *bone, std::shared_ptr<SkeletonLife> alive)
-        : L(L), bone(bone), alive(alive)
+    LuaBone(lua_State *L, Bone *bone, Skeleton *skeleton, std::shared_ptr<SkeletonLife> alive)
+        : L(L), bone(bone), skeleton(skeleton), alive(alive)
     {
         getBoneMt(L);
         lua_setmetatable(L, -2);
@@ -31,6 +32,7 @@ struct LuaBone
     ~LuaBone()
     {
         bone = nullptr;
+        skeleton = nullptr;
         L = nullptr;
     }
 };

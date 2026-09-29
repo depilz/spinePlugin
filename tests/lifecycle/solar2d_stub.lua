@@ -303,3 +303,36 @@ function S.frame()
   end
   return ok, result
 end
+
+-- content <-> local transforms (Solar2D obj:localToContent / obj:contentToLocal): each object maps its local point
+-- into its parent as T(x, y) * R(rotation degrees, clockwise with y down) * S(xScale, yScale), up the parent chain to
+-- the stage. Emulated, not measured: no anchor math, and the properties are read, never written (defaults inside
+-- the math).
+local function props(t)
+  local p = rawget(t, "__props")
+  return p.x or 0, p.y or 0, p.xScale or 1, p.yScale or 1, math.rad(p.rotation or 0)
+end
+local function chain(t)
+  local objects = {}
+  while t do objects[#objects + 1] = t; t = t.parent end
+  return objects
+end
+function methods.localToContent(self, x, y)
+  for _, t in ipairs(chain(self)) do
+    local tx, ty, sx, sy, r = props(t)
+    local c, s = math.cos(r), math.sin(r)
+    x, y = x * sx, y * sy
+    x, y = tx + x * c - y * s, ty + x * s + y * c
+  end
+  return x, y
+end
+function methods.contentToLocal(self, x, y)
+  local objects = chain(self)
+  for i = #objects, 1, -1 do
+    local tx, ty, sx, sy, r = props(objects[i])
+    local c, s = math.cos(r), math.sin(r)
+    x, y = x - tx, y - ty
+    x, y = (x * c + y * s) / sx, (y * c - x * s) / sy
+  end
+  return x, y
+end

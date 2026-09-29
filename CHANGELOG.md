@@ -120,6 +120,16 @@
   `Failed to load skeleton data: <path>: <reason>` with the Spine runtime's reason, for example a version mismatch,
   and `spine.loadAtlas()` adds the error `graphics.newTexture` raised to `Failed to load texture: <path>`. The message
   prefixes are unchanged.
+- **Added `skeleton:hitTest(x, y[, listener])`.** It tells which bounding-box attachments contain a point given in
+  content coordinates, last drawn first. Without a listener it returns the top-most hit table (`slotName`,
+  `attachmentName`, `target`, `x`, `y`, `localX`, `localY`) or `nil`; with one it calls the listener for every hit
+  until it returns `true`, and returns whether one did. Visibility and alpha do not affect it.
+- **Added `bone:setWorldPosition`, `bone:translateWorld`, `bone:localToWorld` and `bone:worldToLocal`.** They move a
+  bone to a position, or by an offset, in skeleton space and convert points between a bone's space and skeleton
+  space. Skeleton space is the skeleton object's local coordinates, y down. A write shows in the world values after
+  the next `updateState` or `draw`, and an animation keying the bone overwrites it.
+- **Breaking: writing `bone.worldX` or `bone.worldY` raises.** The error is
+  `worldX is read-only; use bone:setWorldPosition(x, y)` (or `worldY`). Such writes used to be ignored silently.
 
 ### plugin.spine42 (4.2 line)
 

@@ -1,0 +1,215 @@
+{
+ "skeleton": {
+  "spine": "4.3.75-beta"
+ },
+ "bones": [
+  {
+   "name": "root"
+  },
+  {
+   "name": "base",
+   "parent": "root"
+  },
+  {
+   "name": "skinbone",
+   "parent": "root",
+   "x": 200,
+   "skin": true
+  },
+  {
+   "name": "chain1",
+   "parent": "root",
+   "x": 50,
+   "y": 20,
+   "rotation": 30,
+   "scaleX": 1.5,
+   "scaleY": 0.75,
+   "shearX": 10,
+   "shearY": -5
+  },
+  {
+   "name": "chain2",
+   "parent": "chain1",
+   "x": 40,
+   "rotation": -20,
+   "scaleX": 0.8,
+   "scaleY": 1.25,
+   "shearY": 15
+  },
+  {
+   "name": "chain3",
+   "parent": "chain2",
+   "x": 30
+  }
+ ],
+ "slots": [
+  {
+   "name": "boxA",
+   "bone": "base",
+   "attachment": "boxA"
+  },
+  {
+   "name": "boxB",
+   "bone": "base",
+   "attachment": "boxB"
+  },
+  {
+   "name": "boxC",
+   "bone": "base",
+   "attachment": "boxC"
+  },
+  {
+   "name": "boxSkin",
+   "bone": "skinbone",
+   "attachment": "boxSkin"
+  },
+  {
+   "name": "boxSlid",
+   "bone": "base",
+   "attachment": "slidPose"
+  }
+ ],
+ "constraints": [
+  {
+   "name": "slid",
+   "type": "slider",
+   "animation": "slide"
+  }
+ ],
+ "skins": [
+  {
+   "name": "default",
+   "attachments": {
+    "boxA": {
+     "boxA": {
+      "type": "boundingbox",
+      "vertexCount": 4,
+      "vertices": [
+       -50,
+       -50,
+       50,
+       -50,
+       50,
+       50,
+       -50,
+       50
+      ]
+     }
+    },
+    "boxB": {
+     "boxB": {
+      "type": "boundingbox",
+      "vertexCount": 4,
+      "vertices": [
+       -30,
+       -30,
+       70,
+       -30,
+       70,
+       70,
+       -30,
+       70
+      ]
+     }
+    },
+    "boxC": {
+     "boxC": {
+      "type": "boundingbox",
+      "vertexCount": 4,
+      "vertices": [
+       -10,
+       -10,
+       90,
+       -10,
+       90,
+       90,
+       -10,
+       90
+      ]
+     }
+    },
+    "boxSkin": {
+     "boxSkin": {
+      "type": "boundingbox",
+      "vertexCount": 4,
+      "vertices": [
+       -20,
+       -20,
+       20,
+       -20,
+       20,
+       20,
+       -20,
+       20
+      ]
+     }
+    },
+    "boxSlid": {
+     "slidPose": {
+      "type": "boundingbox",
+      "vertexCount": 4,
+      "vertices": [
+       300,
+       -20,
+       340,
+       -20,
+       340,
+       20,
+       300,
+       20
+      ]
+     },
+     "slidApplied": {
+      "type": "boundingbox",
+      "vertexCount": 4,
+      "vertices": [
+       300,
+       -20,
+       340,
+       -20,
+       340,
+       20,
+       300,
+       20
+      ]
+     }
+    }
+   }
+  },
+  {
+   "name": "extra",
+   "bones": [
+    "skinbone"
+   ]
+  }
+ ],
+ "animations": {
+  "reorder": {
+   "drawOrder": [
+    {
+     "offsets": [
+      {
+       "slot": "boxA",
+       "offset": 2
+      },
+      {
+       "slot": "boxC",
+       "offset": -2
+      }
+     ]
+    }
+   ]
+  },
+  "slide": {
+   "slots": {
+    "boxSlid": {
+     "attachment": [
+      {
+       "name": "slidApplied"
+      }
+     ]
+    }
+   }
+  }
+ }
+}

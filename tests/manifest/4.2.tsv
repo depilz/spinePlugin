@@ -479,6 +479,40 @@ yflip	l2_lua_visible tank drive
 yflip	l3_lua_gravity
 yflip	l3_lua_gravity A
 yflip	l3_lua_gravity B
+worldspace	w0_harness fixture
+worldspace	w0_harness stub
+worldspace	w0_harness probe
+worldspace	w1_bone roundtrip
+worldspace	w1_bone setworld
+worldspace	w1_bone translate
+worldspace	w1_bone keyed
+worldspace	w1_bone readonly
+worldspace	w1_bone rootscale
+worldspace	w1_bone badargs
+worldspace	w1_bone content
+worldspace	w1_bone stale removed
+worldspace	w1_bone stale parent
+worldspace	w1_bone stale children
+worldspace	w1_bone stale slot
+worldspace	w1_bone stale iktarget
+worldspace	w1_bone stale window
+worldspace	w1_bone stale finalize
+worldspace	w2_hittest geometry
+worldspace	w2_hittest order
+worldspace	w2_hittest reorder
+worldspace	w2_hittest stop
+worldspace	w2_hittest skin
+worldspace	w2_hittest applied
+worldspace	w2_hittest nopose
+worldspace	w2_hittest badargs
+worldspace	w2_hittest stale removed
+worldspace	w2_hittest stale window
+worldspace	w2_hittest stale finalize
+worldspace	w2_hittest listener removeself
+worldspace	w2_hittest listener skin
+worldspace	w2_hittest listener attachment
+worldspace	w2_hittest listener error
+worldspace	gen_fixture check
 sim	s0_smoke
 sim	s0_smoke identity
 sim	s0_smoke cpath
@@ -684,3 +718,29 @@ sim	s20_group_dispatch remove_lua_split meshes left
 sim	s20_group_dispatch remove_lua_split group kept
 sim	s20_group_dispatch remove_lua_split no later events
 sim	s20_group_dispatch remove_lua_split control continues
+sim	s2x_ik_drag scaled
+sim	s2x_ik_drag scaled identity
+sim	s2x_ik_drag scaled cpath
+sim	s2x_ik_drag scaled crosshair
+sim	s2x_ik_drag scaled point 1
+sim	s2x_ik_drag scaled point 2
+sim	s2x_ik_drag scaled point 3
+sim	s2x_ik_drag scaled point 4
+sim	s2x_ik_drag scaled point 5
+sim	s2x_ik_drag scaled point 6
+sim	s2x_ik_drag rotated
+sim	s2x_ik_drag rotated identity
+sim	s2x_ik_drag rotated cpath
+sim	s2x_ik_drag rotated crosshair
+sim	s2x_ik_drag rotated point 1
+sim	s2x_ik_drag rotated point 2
+sim	s2x_ik_drag rotated point 3
+sim	s2x_ik_drag rotated point 4
+sim	s2x_ik_drag rotated point 5
+sim	s2x_ik_drag rotated point 6
+sim	s2x_hittest
+sim	s2x_hittest identity
+sim	s2x_hittest cpath
+sim	s2x_hittest head
+sim	s2x_hittest outside
+sim	s2x_hittest fidelity

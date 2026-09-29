@@ -1,5 +1,103 @@
 #include "Lua_Bone.h"
 
+// The world helpers take skeleton-space coordinates (bone.worldX/worldY space). setWorldPosition/translateWorld write
+// the local pose only: the world values follow on the next updateState or draw, and an animation keying the bone
+// overwrites the write on its next apply.
+static LuaBone &checkBone(lua_State *L)
+{
+    LuaBone *boneUserdata = (LuaBone *)luaL_checkudata(L, 1, "SpineBone");
+    boneUserdata->checkAlive(L);
+    return *boneUserdata;
+}
+
+static void setBoneWorldPosition(lua_State *L, LuaBone &boneUserdata, float worldX, float worldY)
+{
+    Bone &bone = *boneUserdata.bone;
+    float localX, localY;
+
+    if (Bone *parent = bone.getParent())
+    {
+        spc::applied(*parent).worldToLocal(worldX, worldY, localX, localY);
+    }
+    else
+    {
+        Skeleton &skeleton = *boneUserdata.skeleton;
+        float scaleX = skeleton.getScaleX();
+        float scaleY = skeleton.getScaleY();
+        if (scaleX == 0 || scaleY == 0)
+        {
+            luaL_error(L, "Cannot set a root bone's world position when skeleton scale is zero");
+            return;
+        }
+
+        localX = (worldX - skeleton.getX()) / scaleX;
+        localY = (worldY - skeleton.getY()) / scaleY;
+    }
+
+    spc::pose(bone).setX(localX);
+    spc::pose(bone).setY(localY);
+}
+
+// the world position of the bone's local pose, which may hold a write not yet applied
+static void getPoseWorldPosition(LuaBone &boneUserdata, float &worldX, float &worldY)
+{
+    Bone &bone = *boneUserdata.bone;
+    auto &pose = spc::pose(bone);
+
+    if (Bone *parent = bone.getParent())
+    {
+        spc::applied(*parent).localToWorld(pose.getX(), pose.getY(), worldX, worldY);
+    }
+    else
+    {
+        Skeleton &skeleton = *boneUserdata.skeleton;
+        worldX = pose.getX() * skeleton.getScaleX() + skeleton.getX();
+        worldY = pose.getY() * skeleton.getScaleY() + skeleton.getY();
+    }
+}
+
+// bone:setWorldPosition(worldX, worldY)
+static int setWorldPosition(lua_State *L)
+{
+    LuaBone &boneUserdata = checkBone(L);
+    setBoneWorldPosition(L, boneUserdata, luaL_checknumber(L, 2), luaL_checknumber(L, 3));
+    return 0;
+}
+
+// bone:translateWorld(deltaX, deltaY)
+static int translateWorld(lua_State *L)
+{
+    LuaBone &boneUserdata = checkBone(L);
+    float deltaX = luaL_checknumber(L, 2);
+    float deltaY = luaL_checknumber(L, 3);
+    float worldX, worldY;
+    getPoseWorldPosition(boneUserdata, worldX, worldY);
+    setBoneWorldPosition(L, boneUserdata, worldX + deltaX, worldY + deltaY);
+    return 0;
+}
+
+// bone:localToWorld(localX, localY) -> worldX, worldY
+static int localToWorld(lua_State *L)
+{
+    LuaBone &boneUserdata = checkBone(L);
+    float worldX, worldY;
+    spc::applied(*boneUserdata.bone).localToWorld(luaL_checknumber(L, 2), luaL_checknumber(L, 3), worldX, worldY);
+    lua_pushnumber(L, worldX);
+    lua_pushnumber(L, worldY);
+    return 2;
+}
+
+// bone:worldToLocal(worldX, worldY) -> localX, localY
+static int worldToLocal(lua_State *L)
+{
+    LuaBone &boneUserdata = checkBone(L);
+    float localX, localY;
+    spc::applied(*boneUserdata.bone).worldToLocal(luaL_checknumber(L, 2), luaL_checknumber(L, 3), localX, localY);
+    lua_pushnumber(L, localX);
+    lua_pushnumber(L, localY);
+    return 2;
+}
+
 static int bone_index(lua_State *L)
 {
     LuaBone *boneUserdata = (LuaBone *)luaL_checkudata(L, 1, "SpineBone");
@@ -20,7 +118,7 @@ static int bone_index(lua_State *L)
         if (parent)
         {
             LuaBone *parentUserdata = (LuaBone *)lua_newuserdata(L, sizeof(LuaBone));
-            new (parentUserdata) LuaBone(L, parent, boneUserdata->alive);
+            new (parentUserdata) LuaBone(L, parent, boneUserdata->skeleton, boneUserdata->alive);
         }
         else
         {
@@ -36,7 +134,7 @@ static int bone_index(lua_State *L)
         {
             Bone *child = children[i];
             LuaBone *childUserdata = (LuaBone *)lua_newuserdata(L, sizeof(LuaBone));
-            new (childUserdata) LuaBone(L, child, boneUserdata->alive);
+            new (childUserdata) LuaBone(L, child, boneUserdata->skeleton, boneUserdata->alive);
             lua_rawseti(L, -2, i + 1);
         }
         return 1;
@@ -197,6 +295,10 @@ static int bone_newindex(lua_State *L)
         spc::setAppliedRotation(bone, appliedRotation);
         return 0;
     }
+    else if (strcmp(key, "worldX") == 0 || strcmp(key, "worldY") == 0)
+    {
+        return luaL_error(L, "%s is read-only; use bone:setWorldPosition(x, y)", key);
+    }
     else if (strcmp(key, "a") == 0)
     {
         float a = luaL_checknumber(L, 3);
@@ -261,5 +363,17 @@ void getBoneMt(lua_State *L)
 
         lua_pushcfunction(L, bone_gc);
         lua_setfield(L, -2, "__gc");
+
+        lua_pushcfunction(L, setWorldPosition);
+        lua_setfield(L, -2, "setWorldPosition");
+
+        lua_pushcfunction(L, translateWorld);
+        lua_setfield(L, -2, "translateWorld");
+
+        lua_pushcfunction(L, localToWorld);
+        lua_setfield(L, -2, "localToWorld");
+
+        lua_pushcfunction(L, worldToLocal);
+        lua_setfield(L, -2, "worldToLocal");
     }
 }

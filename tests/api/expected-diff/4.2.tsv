@@ -6,6 +6,13 @@ line	owner	kind	key	change
 4.2	Atlas	field	__gc	+
 4.2	DataHolder	field	__gc	-
 4.2	SkeletonData	field	__gc	+
+4.2	SpineBone	field	localToWorld	+
+4.2	SpineBone	field	setWorldPosition	+
+4.2	SpineBone	field	translateWorld	+
+4.2	SpineBone	field	worldToLocal	+
+4.2	SpineBone	set	worldX	+
+4.2	SpineBone	set	worldY	+
+4.2	SpineObject	field	hitTest	+
 4.2	SpineObject	get	physicsTimeScale	+
 4.2	SpineObject	set	physicsTimeScale	+
 4.2	SpineTrack	field	__gc	-

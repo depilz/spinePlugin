@@ -15,6 +15,9 @@ If you try re-splitting a skeleton, it will overwrite the list of slots, but kee
 
 To reassemble the skeleton, use the :doc:`reassemble <reassemble>` function.
 
+:doc:`hitTest` keeps testing split slots in the skeleton object's space, so they hit correctly only while the split
+group has the same content transform as the skeleton object.
+
 .. image:: split.gif
     :align: center
 
