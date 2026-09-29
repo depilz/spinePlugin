@@ -1,5 +1,5 @@
--- obj.fill userdata: registry self-reference (never collected) and raw owner pointer after removeSelf.
--- t7_fill.lua [reads] [uaf]: "uaf" also writes through the fill proxy after removeSelf.
+-- obj.fill userdata: Lua heap per read after full GC (render-10 leak census).
+-- t7_fill.lua [reads] [uaf]: "uaf" also writes through the fill proxy after removeSelf + GC, which must raise.
 local C = dofile(arg[0]:match("^(.*)/") .. "/common.lua")
 local obj = C.spine.create(C.data("raptor", 0.5))
 local function gc() collectgarbage("collect"); collectgarbage("collect") end
@@ -14,8 +14,9 @@ if arg[2] == "uaf" then
   local f = obj.fill
   obj:removeSelf(); obj = nil
   gc()
-  print("removed skeleton; now writing f.r ...")
-  f.r = 0.5
-  print("wrote f.r without crash (UB)")
+  local ok, err = pcall(function() f.r = 0.5 end)
+  print("removed skeleton + GC; f.r = 0.5: ok=", ok, err or "")
+  C.expect(not ok and tostring(err):find("Fill belongs to a removed skeleton", 1, true),
+    "fill write after removeSelf raises (render-10)")
 end
 C.done()

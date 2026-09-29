@@ -99,16 +99,19 @@ if not which or which == "L3" then
   end
 end
 
--- L4 caller removes the split group, then split() again
+-- L4 caller removes the split group, then split() again (same frame / next frame)
 if not which or which == "L4" then
-  local scene, layer, obj, sg = setup()
-  display.remove(sg); pcall(C.frame, obj); mock.endFrame()
-  local ok, sg2 = pcall(obj.split, obj, { "raptor-body", "gun" })
-  local newGroup = ok and sg2 ~= sg and not mock.isFinalized(sg2)
-  if ok and sg2 and not mock.isFinalized(sg2) then scene:insert(sg2) end
-  local later = frames(obj, ok and sg2 or nil, 10, "L4")
-  print(("L4 split() after the caller removed the old group: %s, returns a live new group=%s; then %s"):format(ok and "ok" or ("raised: " .. tostring(sg2)), tostring(newGroup), later))
-  C.expect(newGroup and clean(later), "L4: split() after the caller removed the split group returns the dead group (lifecycle-15)")
+  for _, when in ipairs({ "same frame", "next frame" }) do
+    local scene, layer, obj, sg = setup()
+    display.remove(sg)
+    if when == "next frame" then pcall(C.frame, obj); mock.endFrame() end
+    local ok, sg2 = pcall(obj.split, obj, { "raptor-body", "gun" })
+    local newGroup = ok and sg2 ~= sg and not mock.isFinalized(sg2)
+    if ok and sg2 and not mock.isFinalized(sg2) then scene:insert(sg2) end
+    local later = frames(obj, ok and sg2 or nil, 10, "L4")
+    print(("L4 split() %s after the caller removed the old group: %s, returns a live new group=%s; then %s"):format(when, ok and "ok" or ("raised: " .. tostring(sg2)), tostring(newGroup), later))
+    C.expect(newGroup and clean(later), "L4 " .. when .. ": split() after the caller removed the split group returns the dead group (lifecycle-15)")
+  end
 end
 
 -- L5 scene removal (skeleton and split group both inside the removed scene)

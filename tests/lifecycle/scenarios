@@ -61,11 +61,16 @@ t31_dispose_hook.lua rearm
 t31_dispose_hook.lua no-runtime
 t31_dispose_hook.lua reassemble
 t31_dispose_hook.lua reassemble-remove
+t31_dispose_hook.lua split-busy
+t31_dispose_hook.lua split-coroutine
+t31_dispose_hook.lua split-coroutine-no-runtime
 t32_stale_animation.lua live
 t32_stale_animation.lua cached
 t32_stale_animation.lua method
 t33_removed_listeners.lua window
 t33_removed_listeners.lua finalize
+t34_remove_in_update.lua control
+t34_remove_in_update.lua removed
 g1_create_args.lua
 g3_events_after_remove.lua ended
 g3_events_after_remove.lua interrupted

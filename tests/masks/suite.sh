@@ -5,8 +5,11 @@
 #   spineboy head-bb   spineboy with its head-bb bounding box shown: the clip must end at that slot (D-B)
 #   spineboy-da        spineboy with the clipping bone skin-required and the clip in the setup pose, so the clip sits
 #                      on an inactive bone and must not clip (D-A; the comparator edits the loaded data in memory)
-# On 4.3 the public rows cover only the D-A/D-B render loop (the reference clipper is the line's own); the 4.3
-# clipper and Triangulator are covered only by private tritest43.
+#   tri fma43          4.3 only: the triangulation check (comparator tri) on tri_fma43.txt, a synthetic concave
+#                      pentagon whose reflex vertex lies within float rounding of the diagonal of another vertex's ear.
+#                      Exact with the Triangulator's fp contract(off); with it removed, fused multiply-add misjudges
+#                      that vertex and the triangulation leaves the polygon.
+# On 4.3 the reference clipper is the line's own, so the 4.3 clipper is covered only by private tritest43.
 # Private inputs (never in the repo) run only when SPINE_MASKS_PRIVATE_DIR is set. Their test ids are the line's rows
 # of optional.tsv, declared optional there for the expected-ids manifest; this suite runs exactly those rows:
 #   private masked     $SPINE_MASKS_PRIVATE_DIR/masked.txt lists .skel files (atlas beside, same name) relative to
@@ -35,6 +38,7 @@ for dir in "$SPINES"/*/; do
 done
 compare "spineboy head-bb" spineboy --set head-bb:head --need-clips
 compare "spineboy-da" spineboy --inactive-bone clipping --setup-attachment clipping:clipping
+if [[ "$SPINE_RUNTIME" == 4.3 ]]; then run_test "tri fma43" "$CMP" tri "$W/tri_fma43.txt"; fi
 
 private_masked() {
   local skel app="$SPINE_MASKS_PRIVATE_DIR/app" rc=0 count=0

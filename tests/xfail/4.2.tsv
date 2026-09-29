@@ -1,20 +1,5 @@
 suite	test	key	kind	note
-render	t2_blend	render-6	defect	blend mode lost when a reused mesh changes texture
-render	t3_emptycmd	render-2	defect	empty first command pops the parent group: draw fails after attachment.color = {a=0} on the injected slot
-render	t4_injlistener	render-8	defect	injection listener called twice per frame (isVisible false, then true)
-render	t5_split	render-7	defect	meshes left in the wrong group after re-split/reassemble
-render	t7_fill 10000 uaf	render-10	defect	ASan heap-use-after-free: fill proxy written after removeSelf
-render	t10_scale raptor 10	render-1	defect	batching disabled by the inverted injection check: one mesh per attachment
-render	t12_drawargs	render-13	defect	draw(event) after a re-split inserts into a non-group parent
-render	t14_effect_uaf	render-10	defect	ASan heap-use-after-free: fill.effect proxy written after removeSelf
 render	h1_stale_world	render-12	defect	world transform only in draw(): getBounds and bone world reads stale
-probe-batching	pb_place	render-1	defect	P=360 injected objects misplaced vs the unbatched reference; also R=60/Q=30 mesh order and paint after an injected object, and X=266 draws raised (render-2)
-probe-batching	pb_place split	render-2	defect	ASan global-buffer-overflow in skeletonRender (lua_remove) at coin, as recorded (Bus error); with render-2 fixed it still fails on render-7 (celestial-circus G/R)
-probe-batching	pb_t15t16	render-2	defect	t16: hiding the injected slot's region moves the injected object and breaks the mesh order
-probe-batching	pb_coin2	render-1	defect	coin-side injection misplaced when both injected slots batch together; then aborts on the hidden slot (render-2)
-probe-batching	pb_coin3	render-2	defect	empty first command pops the parent group: group.insert with a mesh as parent once coin-side is hidden
-probe-batching	pb_coin4	render-1	defect	coin-side injection misplaced when both injected slots batch together; then aborts on the hidden slot (render-2)
-probe-batching	pb_coin5	render-2	defect	empty first command pops the parent group: group.insert with a mesh as parent once coin-side is hidden
 animation	t1_surface	animation-15	defect	isActive stays true after clearTrack(1) while getTrackEntry(1) is nil
 animation	t2_events payload	animation-4	defect	footstep events report EventData defaults (int 1, float 0.5, data-default), not key 0's per-key values
 animation	t2_events target	animation-5	defect	event.target is the raw SpineSkeleton userdata, not the spine object; checked through fixture createPlugin, a copy of Lua_Spine.cpp create(): a fix must be mirrored there
@@ -25,20 +10,6 @@ animation	t6_delay_phases	animation-15	defect	isActive stays true once the queue
 animation	t8_gc_listener	animation-5	defect	50/50 listener closures and SpineSkeleton userdata stay alive without removeSelf (luaSelf registry ref); checked through fixture createPlugin, a copy of Lua_Spine.cpp create(): a fix must be mirrored there
 animation	t9_prototype_fix	animation-2	defect	the reviewed fix's contract for animation-1/2/3: no entry.isValid, then SEGV on stale entry.animation; later sections also need animation-1 and animation-3
 animation	t10_create_args	animation-18	defect	create(data, fn, nil|42) refs the wrong stack slot and the listener gets 0 calls; checked through fixture createPlugin, a copy of Lua_Spine.cpp create(): a fix must be mirrored there
-split	s1_random_split skip-portal	render-7	defect	894/12558 random split/re-split/reassemble frames wrong vs the oracle and 8 runs raised in draw(), as recorded on 1.5.0
-split	s2_portal_split	render-2	defect	ASan global-buffer-overflow in skeletonRender (lua_remove): split pass starts with a fully clipped (empty) command during spineboy portal
-split	s3_reassemble_dead	render-7	defect	reassemble() leaves a mesh in the removed split group; every later draw() raises 'attempt to index a nil value'
-split	s4_injection a	render-8	defect	injection listeners get isVisible false then true every frame ({FT} x20) in split mode
-split	s4_injection b2	render-1	defect	after reassemble the injected object for raptor-horn is drawn after 2328 vertices, reference 2163: the inverted batching rule merges adjacent injection-slot commands (split-11)
-split	s4_injection c	split-8	defect	reassemble() destroys an injected object whose split slot is hidden; local id from EV/notes/split.md, no findings.json entry
-split	s4_injection d	render-2	defect	injection into an alpha-0 region first in the split pass: ENGINE-ABORT group.insert called with a non-group self (mesh)
-split	s5_lifetime L1	tests-examples-14	defect	removeSelf while split leaves 4 split meshes on screen
-split	s5_lifetime L2	lifecycle-15	defect	after display.remove(splitGroup) every draw() raises 'attempt to index a nil value'
-split	s5_lifetime L3	lifecycle-15	defect	reassemble() the frame after display.remove(splitGroup) raises, then every draw() raises
-split	s5_lifetime L4	lifecycle-15	defect	split() after the caller removed the split group returns the dead group; every draw() raises
-split	s5_lifetime L6	lifecycle-15	defect	after removing the layer that holds the split group every draw() raises
-split	s5_lifetime L7	lifecycle-15	defect	skeleton removed with its parent: the split group in another layer stays live with 4 meshes on screen
-split	s6_stack_leak drawargs	render-13	defect	draw(event table) and draw(1, 2) after a re-split: ENGINE-ABORT group.insert called with a non-group self
 skins	s1_api_contract A2	I7	pending-api	final skins API: skin:getAttachment(o:getSlot('head'), 'head')
 skins	s1_api_contract A3	I7	pending-api	final skins API: Slot object of another instance, same data
 skins	s1_api_contract A4	I7	pending-api	final skins API: skin:getAttachment(<number>, 'head') raises
@@ -103,6 +74,3 @@ skins	s1_api_contract M1	I7	pending-api	final skins API: clear() empties entries
 skins	s1_api_contract M2	I7	pending-api	final skins API: clear()+refill of the APPLIED skin + setSkin(same) = fresh build
 skins	s1_api_contract M3	I7	pending-api	final skins API: findSkin('goblin'):clear() raises
 gate	win32/data.tgz	gap-1-1	defect	4.3 DLL v2.0.0 shipped in 1.5.0
-sim	s3_emptycmd raptor	gap-3-4	defect	empty first render command: "Argument(1) is not a GroupObject", then SIGABRT even inside pcall
-sim	s3_emptycmd spineboy	gap-3-4	defect	empty first render command: "Argument(1) is not a GroupObject", then SIGABRT even inside pcall
-sim	s3_emptycmd second	gap-3-4	defect	empty first render command with a second injection: SIGABRT even inside pcall

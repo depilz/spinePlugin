@@ -9,10 +9,10 @@ struct Vertex2
     float y;
 };
 
-void CreateBufferUserdata(lua_State *L, const void *buffer, size_t size)
+// Pushes an uninitialized buffer userdata of `size` bytes that Solar2D reads through its __memory interface.
+static void *NewBufferUserdata(lua_State *L, size_t size)
 {
     void *userdata = lua_newuserdata(L, size);
-    memcpy(userdata, buffer, size);
     const char *metatableName = "BufferMeshMemoryMetatable";
 
     if (luaL_newmetatable(L, metatableName))
@@ -42,6 +42,12 @@ void CreateBufferUserdata(lua_State *L, const void *buffer, size_t size)
     }
 
     lua_setmetatable(L, -2);
+    return userdata;
+}
+
+void CreateBufferUserdata(lua_State *L, const void *buffer, size_t size)
+{
+    memcpy(NewBufferUserdata(L, size), buffer, size);
 }
 
 void engine_drawMesh(lua_State *L, LuaTableHolder *newMesh, size_t numIndices, unsigned short *indices, float *positions, float *uvs)
@@ -132,6 +138,51 @@ void engine_drawMesh(lua_State *L, LuaTableHolder *newMesh, size_t numIndices, u
     lua_call(L, 1, 1); // Call newMesh
 }
 
+// Registry key of the per-lua_State mesh-update params table { vertices = { buffer, count }, uvs = { buffer, count } }.
+// It lives in the registry, not in a static ref, so a Simulator relaunch (new lua_State) starts a fresh one.
+static const char updateParamsKey = 0;
+
+// Pushes the reusable params table, creating it on first use for this lua_State.
+static void pushUpdateParams(lua_State *L)
+{
+    lua_pushlightuserdata(L, (void *)&updateParamsKey);
+    lua_rawget(L, LUA_REGISTRYINDEX);
+    if (lua_istable(L, -1))
+        return;
+
+    lua_pop(L, 1);
+    lua_createtable(L, 0, 2);
+    lua_createtable(L, 0, 2);
+    lua_setfield(L, -2, "vertices");
+    lua_createtable(L, 0, 2);
+    lua_setfield(L, -2, "uvs");
+
+    lua_pushlightuserdata(L, (void *)&updateParamsKey);
+    lua_pushvalue(L, -2);
+    lua_rawset(L, LUA_REGISTRYINDEX);
+}
+
+// Returns params[field].buffer with room for `count` vertices (grow-only) and sets params[field].count.
+// Expects the params table on top of the stack and leaves the stack as it found it.
+static Vertex2 *reuseVertexBuffer(lua_State *L, const char *field, size_t count)
+{
+    lua_getfield(L, -1, field); // params, sub
+    lua_getfield(L, -1, "buffer"); // params, sub, buffer
+    size_t size = count * sizeof(Vertex2);
+    void *buffer = lua_touserdata(L, -1);
+    if (!buffer || lua_objlen(L, -1) < size)
+    {
+        buffer = NewBufferUserdata(L, size);
+        lua_setfield(L, -3, "buffer");
+    }
+    lua_pop(L, 1);
+
+    lua_pushinteger(L, count);
+    lua_setfield(L, -2, "count");
+    lua_pop(L, 1);
+    return (Vertex2 *)buffer;
+}
+
 void engine_updateMesh(lua_State *L, LuaTableHolder *meshHolder, size_t numIndices, unsigned short *indices, float *positions, float *uvs)
 {
     meshHolder->pushTable(L);      // meshTable
@@ -141,76 +192,37 @@ void engine_updateMesh(lua_State *L, LuaTableHolder *meshHolder, size_t numIndic
     lua_pushvalue(L, -2); // meshTable, path, update, path
     lua_remove(L, -3);    // meshTable, update, path
 
-    lua_newtable(L);
+    pushUpdateParams(L); // meshTable, update, path, params
 
     double minX = 99999999;
     double minY = 99999999;
     double maxX = -99999999;
     double maxY = -99999999;
 
-    // Set up 'vertices' field
+    Vertex2 *vertices = reuseVertexBuffer(L, "vertices", numIndices);
+    for (size_t i = 0; i < numIndices; ++i)
     {
-        lua_pushstring(L, "vertices");
-        lua_newtable(L);
+        if (positions[indices[i] * 2] < minX)
+            minX = positions[indices[i] * 2];
+        if (positions[indices[i] * 2] > maxX)
+            maxX = positions[indices[i] * 2];
+        if (positions[indices[i] * 2 + 1] < minY)
+            minY = positions[indices[i] * 2 + 1];
+        if (positions[indices[i] * 2 + 1] > maxY)
+            maxY = positions[indices[i] * 2 + 1];
 
-        Vertex2 *vertices = new Vertex2[numIndices];
-        for (size_t i = 0; i < numIndices; ++i)
-        {
-            if (positions[indices[i] * 2] < minX)
-                minX = positions[indices[i] * 2];
-            if (positions[indices[i] * 2] > maxX)
-                maxX = positions[indices[i] * 2];
-            if (positions[indices[i] * 2 + 1] < minY)
-                minY = positions[indices[i] * 2 + 1];
-            if (positions[indices[i] * 2 + 1] > maxY)
-                maxY = positions[indices[i] * 2 + 1];
-
-            vertices[i].x = positions[indices[i] * 2];
-            vertices[i].y = positions[indices[i] * 2 + 1];
-        }
-
-        lua_pushstring(L, "buffer");
-
-        size_t verticesBufferSize = numIndices * sizeof(Vertex2);
-        CreateBufferUserdata(L, vertices, verticesBufferSize); // "vertices", t, "buffer", userdata
-        lua_settable(L, -3);
-
-        delete[] vertices;
-
-        lua_pushstring(L, "count");
-        lua_pushinteger(L, numIndices);
-        lua_settable(L, -3);
-
-        lua_settable(L, -3);
+        vertices[i].x = positions[indices[i] * 2];
+        vertices[i].y = positions[indices[i] * 2 + 1];
     }
 
-    // Set up 'uvs' field
+    Vertex2 *uvVertices = reuseVertexBuffer(L, "uvs", numIndices);
+    for (size_t i = 0; i < numIndices; ++i)
     {
-        lua_pushstring(L, "uvs");
-        lua_newtable(L);
-
-        Vertex2 *uvVertices = new Vertex2[numIndices];
-        for (size_t i = 0; i < numIndices; ++i)
-        {
-            uvVertices[i].x = uvs[indices[i] * 2];
-            uvVertices[i].y = uvs[indices[i] * 2 + 1];
-        }
-
-        lua_pushstring(L, "buffer");
-
-        size_t uvsBufferSize = numIndices * sizeof(Vertex2);
-        CreateBufferUserdata(L, uvVertices, uvsBufferSize);
-        lua_settable(L, -3);
-
-        delete[] uvVertices;
-
-        lua_pushstring(L, "count");
-        lua_pushinteger(L, numIndices);
-        lua_settable(L, -3);
-
-        lua_settable(L, -3);
+        uvVertices[i].x = uvs[indices[i] * 2];
+        uvVertices[i].y = uvs[indices[i] * 2 + 1];
     }
 
+    // Solar2D copies `count` vertices out of the buffers synchronously, so they are free to reuse on the next update
     lua_call(L, 2, 0); // Call update(path, { vertices = vertices, uvs = uvs })
 
     lua_pushnumber(L, (minX + maxX) / 2);
@@ -375,9 +387,14 @@ void renderCommands(lua_State *L, SpineSkeleton *skeletonUserdata, RenderCommand
     Skeleton *skeleton = skeletonUserdata->skeleton;
     LuaTableHolder *newMesh = skeletonUserdata->newMesh;
 
-    int i = 1;
     int drawIndex = 1;
     bool insertMesh = false;
+    // parentIndex 1 is the skeleton group; any other index is the split group
+    const int group = parentIndex == 1 ? 1 : 2;
+    // unsplit, or the split group's pass: the frame's last pass. Read on entry, a listener may split or reassemble
+    const bool lastPass = group == 2 || !skeletonUserdata->splitData.isSplitted();
+    // each command leaves at most its mesh on the stack; restore to here so an empty command pops nothing of the caller's
+    const int top = lua_gettop(L);
 
     while (command)
     {
@@ -387,7 +404,8 @@ void renderCommands(lua_State *L, SpineSkeleton *skeletonUserdata, RenderCommand
         float *uvs = command->uvs;
         Texture *texture = (Texture *)command->texture;
         BlendMode blendMode = command->blendMode;
-        uint32_t color = command->colors[0];
+        // an empty command (numVertices == 0) has no colors to read
+        uint32_t color = command->numVertices > 0 ? command->colors[0] : 0xffffffff;
 
         bool updateBlendMode = false;
         bool updateColor = false;
@@ -412,9 +430,11 @@ void renderCommands(lua_State *L, SpineSkeleton *skeletonUserdata, RenderCommand
                 LuaTableHolder &mesh = meshData->mesh;
                 engine_updateMesh(L, &mesh, numIndices, indices, positions, uvs);
 
-                insertMesh = insertMesh || meshData->index != drawIndex;
+                insertMesh = insertMesh || meshData->index != drawIndex || meshData->group != group;
+                meshData->group = group;
                 updateTexture = meshData->texture != texture;
-                updateBlendMode = meshData->blendMode != blendMode;
+                // a texture swap resets the paint to normal blend, so a non-normal blend must be re-applied
+                updateBlendMode = meshData->blendMode != blendMode || (updateTexture && blendMode != spine::BlendMode_Normal);
                 updateColor = (updateTexture && color != 0xffffffff) || (meshData->color != color);
 
                 meshData->used = true;
@@ -426,7 +446,7 @@ void renderCommands(lua_State *L, SpineSkeleton *skeletonUserdata, RenderCommand
                 engine_drawMesh(L, newMesh, numIndices, indices, positions, uvs);
 
                 lua_pushvalue(L, -1);
-                meshData = &meshes.newMesh(L, i, numIndices, texture, blendMode, color, true);
+                meshData = &meshes.newMesh(L, drawIndex, numIndices, texture, blendMode, color, true, group);
 
                 insertMesh = true;
                 updateBlendMode = blendMode != spine::BlendMode_Normal;
@@ -484,6 +504,8 @@ void renderCommands(lua_State *L, SpineSkeleton *skeletonUserdata, RenderCommand
                     lua_pushnumber(L, drawIndex);
                     injections[k].pushObject(L);
                     lua_call(L, 3, 0);
+                    // the injection shifted everything after it: insert the following meshes, never reuse them in place
+                    insertMesh = true;
 
                     injections[k].active = true;
                     injections[k].updated = true;
@@ -493,22 +515,23 @@ void renderCommands(lua_State *L, SpineSkeleton *skeletonUserdata, RenderCommand
             }
         }
 
-        lua_pop(L, 1);
-
-        // finish updating injections
-        auto &injections = skeletonUserdata->injections;
-        for (size_t k = 0; k < injections.size(); ++k)
-        {
-            if (!injections[k].updated && injections[k].active)
-            {
-                injections[k].active = false;
-                callInjectionListener(L, &injections[k], skeleton, false);
-                if (skeletonUserdata->disposeRequested) return;
-            }
-        }
+        lua_settop(L, top);
 
         command = command->next;
-        i++;
         drawIndex++;
+    }
+
+    if (!lastPass) return;
+
+    // finish updating injections: once per frame, after every pass, tell the listeners of injections not drawn
+    auto &injections = skeletonUserdata->injections;
+    for (size_t k = 0; k < injections.size(); ++k)
+    {
+        if (!injections[k].updated && injections[k].active)
+        {
+            injections[k].active = false;
+            callInjectionListener(L, &injections[k], skeleton, false);
+            if (skeletonUserdata->disposeRequested) return;
+        }
     }
 }

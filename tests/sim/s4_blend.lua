@@ -1,7 +1,9 @@
 -- S4 (render-6): blend mode of a reused mesh after its texture changes (mesh.fill = {...}).
+-- CHECK multiply: the swapped globe-shadow mesh keeps its multiply blend on both frames after the swap.
 local L = require("simlib")
 L.watchdogMs = 20000
 L.open("s4_blend")
+L.expect("multiply")
 local spine = L.loadPlugin()
 local gidx = getmetatable(display.newGroup()).__index
 local function children(obj)
@@ -76,6 +78,8 @@ L.log("(1) after swap to", donor and donor.name, ": meshes", #children(obj), "bl
 obj:updateState(16); obj:draw()
 local c3, l3 = blendSummary(obj)
 L.log("(1) one more frame: blend counts", c3, "non-normal", l3)
+local function multiplyOne(c) return (" " .. c .. " "):find(" multiply=1 ", 1, true) ~= nil end
+L.check("multiply", multiplyOne(c2) and multiplyOne(c3), "after swap", c2, "one more frame", c3)
 
 -- (2) control: fresh object with the swap applied before its first draw (new meshes)
 local obj2 = spine.create(data)

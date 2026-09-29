@@ -11,6 +11,7 @@ s4_injection.lua c
 s4_injection.lua d
 s4_injection.lua e
 s4_injection.lua f
+s4_injection.lua g
 s5_lifetime.lua L1
 s5_lifetime.lua L1b
 s5_lifetime.lua L2
@@ -25,6 +26,9 @@ s6_stack_leak.lua drawargs
 s6_stack_leak.lua leak
 s8_production.lua
 s9_partsets.lua
+s10_app_replay.lua
+e1_sequences.lua
+v3_split_injections.lua
 p2_portal_unsplit.lua
 p6_plain.lua
 p7_data_dropped.lua

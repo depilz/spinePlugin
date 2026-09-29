@@ -5,6 +5,7 @@ t1_churn.lua 20
 t2_blend.lua
 t3_emptycmd.lua
 t4_injlistener.lua
+t4_injlistener.lua hidden
 t5_split.lua
 t6_textures.lua
 t7_fill.lua 10000

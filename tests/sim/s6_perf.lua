@@ -1,7 +1,10 @@
 -- S6: Corona/tests/Performance.lua workload (150 raptors @0.3) timed in the real Simulator. Mac Simulator, not device.
+-- CHECK meshes: <= 460 real children for the 150 raptors (batched). CHECK alloc: <= 1000 KB of Lua allocation per
+-- frame with the collector stopped.
 local L = require("simlib")
 L.watchdogMs = 240000
 L.open("s6_perf")
+L.expect("meshes", "alloc")
 L.log("(Mac Simulator, not device)")
 local spine = L.loadPlugin()
 math.randomseed(1)
@@ -71,10 +74,14 @@ Runtime:addEventListener("enterFrame", function()
       L.log(("updateState+draw x150 per frame over %d frames: avg %.2f ms, p50 %.2f, p95 %.2f, max %.2f"):format(#work, avg, p50, p95, mx))
       local gavg = 0; for i = 1, #gcDelta do gavg = gavg + gcDelta[i] end; gavg = gavg / #gcDelta
       L.log(("collectgarbage('count') delta per measured frame (collector running): mean %.1f KB"):format(gavg))
-      L.log(("Lua allocation per frame with collector stopped (mean of %d frames): %.1f KB"):format(GCPROBE, gcDelta.stopped / GCPROBE))
+      local alloc = gcDelta.stopped / GCPROBE
+      L.log(("Lua allocation per frame with collector stopped (mean of %d frames): %.1f KB"):format(GCPROBE, alloc))
       local iavg, ip95 = stats(intervals)
       L.log(("enterFrame interval: avg %.1f ms, p95 %.1f ms (Simulator window throttled; not a render-cost measure)"):format(iavg, ip95))
-      L.log("meshes at end:", meshCount())
+      local meshes = meshCount()
+      L.log("meshes at end:", meshes)
+      L.check("meshes", meshes <= 460, meshes)
+      L.check("alloc", alloc <= 1000, ("%.1f KB"):format(alloc))
       L.finish(0)
     end
   end

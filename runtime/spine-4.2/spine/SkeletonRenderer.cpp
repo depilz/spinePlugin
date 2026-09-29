@@ -74,7 +74,8 @@ static RenderCommand *createRenderCommand(BlockAllocator &allocator,
     return cmd;
 }
 
-static RenderCommand *batchSubCommands(BlockAllocator &allocator, Vector<RenderCommand *> &commands, int first, int last, int numVertices, int numIndices) {
+static RenderCommand *batchSubCommands(BlockAllocator &allocator, Vector<RenderCommand *> &commands, int first, int last, int numVertices,
+									   int numIndices) {
 	RenderCommand *batched = createRenderCommand(allocator, numVertices, numIndices, commands[first]->blendMode, commands[first]->texture);
 	float *positions = batched->positions;
 	float *uvs = batched->uvs;
@@ -84,18 +85,11 @@ static RenderCommand *batchSubCommands(BlockAllocator &allocator, Vector<RenderC
 	int indicesOffset = 0;
 	for (int i = first; i <= last; i++) {
 		RenderCommand *cmd = commands[i];
-
-        if (cmd->injectionSlotIndex >= 0)
-        {
-            batched->injectionSlotIndex = cmd->injectionSlotIndex;
-        }
-
-        memcpy(positions, cmd->positions, sizeof(float) * 2 * cmd->numVertices);
+		memcpy(positions, cmd->positions, sizeof(float) * 2 * cmd->numVertices);
 		memcpy(uvs, cmd->uvs, sizeof(float) * 2 * cmd->numVertices);
 		memcpy(colors, cmd->colors, sizeof(int32_t) * cmd->numVertices);
 		memcpy(darkColors, cmd->darkColors, sizeof(int32_t) * cmd->numVertices);
-		for (int ii = 0; ii < cmd->numIndices; ii++)
-			indices[ii] = cmd->indices[ii] + indicesOffset;
+		for (int ii = 0; ii < cmd->numIndices; ii++) indices[ii] = cmd->indices[ii] + indicesOffset;
 		indicesOffset += cmd->numVertices;
 		positions += 2 * cmd->numVertices;
 		uvs += 2 * cmd->numVertices;
@@ -103,6 +97,7 @@ static RenderCommand *batchSubCommands(BlockAllocator &allocator, Vector<RenderC
 		darkColors += cmd->numVertices;
 		indices += cmd->numIndices;
 	}
+	batched->injectionSlotIndex = commands[first]->injectionSlotIndex;
 	return batched;
 }
 
@@ -111,46 +106,39 @@ static RenderCommand *batchCommands(BlockAllocator &allocator, Vector<RenderComm
 
 	RenderCommand *root = nullptr;
 	RenderCommand *last = nullptr;
-
-	RenderCommand *first = commands[0];
-	int startIndex = 0;
-	int i = 1;
-	int numVertices = first->numVertices;
-	int numIndices = first->numIndices;
-	while (i <= (int) commands.size()) {
-		RenderCommand *cmd = i < (int) commands.size() ? commands[i] : nullptr;
-
-		if (cmd && cmd->numVertices == 0 && cmd->numIndices == 0) {
-			i++;
+	for (int first = 0; first < (int) commands.size();) {
+		RenderCommand *command = commands[first];
+		if (command->numVertices == 0 && command->numIndices == 0) {
+			if (last)
+				last->next = command;
+			else
+				root = command;
+			last = command;
+			first++;
 			continue;
 		}
 
-        if (cmd != nullptr && cmd->texture == first->texture &&
-            (first->injectionSlotIndex >= 0 && cmd->injectionSlotIndex >= 0) &&
-            cmd->blendMode == first->blendMode &&
-            cmd->colors[0] == first->colors[0] &&
-            cmd->darkColors[0] == first->darkColors[0] &&
-            numIndices + cmd->numIndices < 0xffff)
-        {
-            numVertices += cmd->numVertices;
-			numIndices += cmd->numIndices;
-        }
-        else
-        {
-            RenderCommand *batched = batchSubCommands(allocator, commands, startIndex, i - 1, numVertices, numIndices);
-			if (!last) {
-				root = last = batched;
-			} else {
-				last->next = batched;
-				last = batched;
-			}
-			if (i == (int) commands.size()) break;
-			first = commands[i];
-			startIndex = i;
-			numVertices = first->numVertices;
-			numIndices = first->numIndices;
-        }
-        i++;
+		int end = first;
+		int numVertices = command->numVertices;
+		int numIndices = command->numIndices;
+		while (end + 1 < (int) commands.size()) {
+			RenderCommand *next = commands[end + 1];
+			if (next->numVertices == 0 || next->texture != command->texture || next->blendMode != command->blendMode ||
+				next->injectionSlotIndex != command->injectionSlotIndex || next->colors[0] != command->colors[0] ||
+				next->darkColors[0] != command->darkColors[0] || numIndices + next->numIndices >= 0xffff)
+				break;
+			numVertices += next->numVertices;
+			numIndices += next->numIndices;
+			end++;
+		}
+
+		RenderCommand *batched = batchSubCommands(allocator, commands, first, end, numVertices, numIndices);
+		if (last)
+			last->next = batched;
+		else
+			root = batched;
+		last = batched;
+		first = end + 1;
 	}
 	return root;
 }

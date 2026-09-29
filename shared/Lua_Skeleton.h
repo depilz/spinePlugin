@@ -49,7 +49,7 @@ struct SpineSkeleton
           groupmt__index(nullptr), groupmt__newindex(nullptr),
           injections(0),
           splitData(SplitData()),
-          L(L),
+          L(CoronaLuaGetCoronaThread(L)), // never keep a coroutine: dispose(true) runs Lua on it
           effectData(nullptr)
     {
     }
@@ -78,7 +78,7 @@ struct SpineSkeleton
             disposeDeferred = true;
             return;
         }
-        dispose();
+        dispose(true);
     }
 
     ~SpineSkeleton()
@@ -87,13 +87,16 @@ struct SpineSkeleton
     }
 
     // Idempotent native cleanup; the struct stays valid (members reset) so __gc can run it again safely.
-    void dispose()
+    // luaSafe: the caller may run Lua (requestDispose, the outermost guard), never __gc.
+    void dispose(bool luaSafe = false)
     {
         alive->disposed = true;
         disposeRequested = false;
         disposeDeferred = false;
         if (skeleton)
         {
+            if (luaSafe) removeSplitMeshes(L);
+
             delete state;
             delete stateData;
             delete skeleton;
@@ -134,6 +137,8 @@ struct SpineSkeleton
     }
     
     void onEffectUpdated(const char *key, lua_State *L_in, int valueIndex);
+    // Removes this skeleton's meshes from the caller's live split group; the group itself stays with the caller.
+    void removeSplitMeshes(lua_State *L_in);
 };
 
 
@@ -153,7 +158,7 @@ struct SkeletonCallGuard
         if (!s) return;
         SpineSkeleton *owner = s;
         s = nullptr;
-        if (--owner->busy == 0 && owner->disposeDeferred) owner->dispose();
+        if (--owner->busy == 0 && owner->disposeDeferred) owner->dispose(true);
     }
 
     // lua_call that releases the guard before re-raising the callback's error.

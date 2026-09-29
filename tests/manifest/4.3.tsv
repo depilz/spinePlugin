@@ -110,11 +110,16 @@ lifecycle	t31_dispose_hook rearm
 lifecycle	t31_dispose_hook no-runtime
 lifecycle	t31_dispose_hook reassemble
 lifecycle	t31_dispose_hook reassemble-remove
+lifecycle	t31_dispose_hook split-busy
+lifecycle	t31_dispose_hook split-coroutine
+lifecycle	t31_dispose_hook split-coroutine-no-runtime
 lifecycle	t32_stale_animation live
 lifecycle	t32_stale_animation cached
 lifecycle	t32_stale_animation method
 lifecycle	t33_removed_listeners window
 lifecycle	t33_removed_listeners finalize
+lifecycle	t34_remove_in_update control
+lifecycle	t34_remove_in_update removed
 lifecycle	g1_create_args
 lifecycle	g3_events_after_remove ended
 lifecycle	g3_events_after_remove interrupted
@@ -159,6 +164,7 @@ masks	example vine
 masks	example windmill
 masks	spineboy head-bb
 masks	spineboy-da
+masks	tri fma43
 masks	private tritest43	optional
 probe-batching	pb_place
 probe-batching	pb_place split
@@ -179,6 +185,7 @@ render	t1_churn 20
 render	t2_blend
 render	t3_emptycmd
 render	t4_injlistener
+render	t4_injlistener hidden
 render	t5_split
 render	t6_textures
 render	t7_fill 10000
@@ -283,6 +290,7 @@ split	s4_injection c
 split	s4_injection d
 split	s4_injection e
 split	s4_injection f
+split	s4_injection g
 split	s5_lifetime L1
 split	s5_lifetime L1b
 split	s5_lifetime L2
@@ -297,6 +305,9 @@ split	s6_stack_leak drawargs
 split	s6_stack_leak leak
 split	s8_production
 split	s9_partsets
+split	s10_app_replay
+split	e1_sequences
+split	v3_split_injections
 split	p2_portal_unsplit
 split	p6_plain
 split	p7_data_dropped
@@ -426,21 +437,27 @@ sim	s2_event_target target
 sim	s3_emptycmd raptor
 sim	s3_emptycmd raptor identity
 sim	s3_emptycmd raptor cpath
+sim	s3_emptycmd raptor marker
 sim	s3_emptycmd spineboy
 sim	s3_emptycmd spineboy identity
 sim	s3_emptycmd spineboy cpath
+sim	s3_emptycmd spineboy marker
 sim	s3_emptycmd second
 sim	s3_emptycmd second identity
 sim	s3_emptycmd second cpath
+sim	s3_emptycmd second marker
 sim	s4_blend
 sim	s4_blend identity
 sim	s4_blend cpath
+sim	s4_blend multiply
 sim	s5_pma
 sim	s5_pma identity
 sim	s5_pma cpath
 sim	s6_perf
 sim	s6_perf identity
 sim	s6_perf cpath
+sim	s6_perf meshes
+sim	s6_perf alloc
 sim	s7_remove_in_listener
 sim	s7_remove_in_listener identity
 sim	s7_remove_in_listener cpath

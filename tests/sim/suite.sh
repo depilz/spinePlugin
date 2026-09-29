@@ -51,17 +51,20 @@ guard_user_plugins() {
 }
 trap guard_user_plugins EXIT
 
-# build_dylib project product: $SUITE_OUT/dylib/<product>/<HEAD>/<product>.dylib, ad-hoc signed, appended to DYLIBS.
-# The project's "Copy to Simulator's Plugin Directory" phase is pointed at dylib/<product>/<HEAD>/copied (and HOME at
-# a fake home) before building.
+# build_dylib project product: $DYLIB_CACHE/<product>/<HEAD>/<product>.dylib, ad-hoc signed, appended to DYLIBS.
+# DYLIB_CACHE sits next to the line's SPINE_TEST_OUT, so the lines of one tests/run.sh run share it and the second
+# line reports a cache hit. The project's "Copy to Simulator's Plugin Directory" phase is pointed at
+# <product>/<HEAD>/copied (and HOME at a fake home) before building.
+DYLIB_CACHE=$(dirname "$SPINE_TEST_OUT")/sim-dylib
 DYLIBS=()
 build_dylib() {
   local project=$1 product=$2 head dir tree pbx
   head=$(git -C "$SPINE_REPO" rev-parse HEAD) || return 1
-  dir=$SUITE_OUT/dylib/$product/$head
+  dir=$DYLIB_CACHE/$product/$head
   DYLIBS+=("$dir/$product.dylib")
-  [[ -f "$dir/$product.dylib" ]] && return
-  rm -rf "$SUITE_OUT/dylib/$product"
+  if [[ -f "$dir/$product.dylib" ]]; then echo "sim: $product cache hit $dir"; return; fi
+  echo "sim: $product building $dir"
+  rm -rf "$DYLIB_CACHE/$product"
   tree=$dir/tree
   pbx=$tree/$project/project.pbxproj
   mkdir -p "$tree" "$dir/copied" "$dir/home"

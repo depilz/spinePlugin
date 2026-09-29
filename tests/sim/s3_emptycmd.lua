@@ -1,7 +1,9 @@
 -- S3 (render-2): inject into the first-drawn slot, set that slot's attachment alpha to 0, draw() in pcall.
+-- CHECK marker: the marker is then the first real child, the position of its (first-drawn, now hidden) slot.
 local L = require("simlib")
 L.watchdogMs = 20000
 L.open("s3_emptycmd " .. L.arg)
+L.expect("marker")
 local CASES = { L.arg == "spineboy" and "spineboy" or "raptor" }
 local SECOND_INJECT = L.arg == "second"
 local spine = L.loadPlugin()
@@ -48,5 +50,6 @@ for _, name in ipairs(CASES) do
   local kinds = {}
   for i, c in ipairs(kids) do kinds[#kinds + 1] = (c == marker) and "MARKER" or tostring(c.path and c.path.type or "?") end
   L.log(name, "real children after", #kids, table.concat(kinds, ","))
+  L.check("marker", kids[1] == marker, "real children", table.concat(kinds, ","))
 end
 timer.performWithDelay(300, function() L.log("still alive after 300 ms"); L.finish(0) end)

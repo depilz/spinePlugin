@@ -13,6 +13,7 @@ struct MeshData
     spine::BlendMode blendMode;
     uint32_t color; // You might need to copy this if it's an array
     bool used;        // Flag to indicate if the mesh was used in the current frame
+    int group = 1;    // display group the mesh sits in: 1 = skeleton group, 2 = split group
 };
 
 class MeshManager
@@ -57,7 +58,7 @@ public:
         }
     }
 
-    MeshData &newMesh(lua_State *L, int index, size_t numIndices, Texture *texture, spine::BlendMode blendMode, uint32_t color, bool used)
+    MeshData &newMesh(lua_State *L, int index, size_t numIndices, Texture *texture, spine::BlendMode blendMode, uint32_t color, bool used, int group = 1)
     {
         for (auto &meshData : meshDataList)
         {
@@ -70,12 +71,13 @@ public:
                 meshData.blendMode = blendMode;
                 meshData.color = color;
                 meshData.used = used;
+                meshData.group = group;
                 return meshData;
             }
         }
 
         // If no empty slot was found, add a new mesh
-        meshDataList.push_back({LuaTableHolder(L), index, numIndices, texture, blendMode, color, used});
+        meshDataList.push_back({LuaTableHolder(L), index, numIndices, texture, blendMode, color, used, group});
 
         return meshDataList.back();
     }

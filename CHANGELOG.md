@@ -44,6 +44,29 @@
   misreading it, and bad arguments to `spine.loadSkeletonData()` and `skeleton:inject()` no longer leak.
 - **Leak fixes.** A texture shared by two atlases is released, reading `obj.fill` no longer leaks, and requiring the
   plugin or using a fill inside a coroutine no longer keeps the dead coroutine's state.
+- **The split group belongs to you, and the skeleton cleans up after itself in it.** Removing a split skeleton now
+  takes the skeleton's meshes out of the group returned by `split()` and leaves the group where you put it; they used
+  to stay on screen. `removeSelf()` and `display.remove()` take them out at once; when the skeleton goes with its
+  parent group or scene, they leave when its memory is freed on the next frame. If you remove the
+  split group yourself, the skeleton draws unsplit from the next `draw` and a later `split()` returns a new group,
+  instead of every `draw` raising; `reassemble()` after that no longer raises. `reassemble()` keeps an object injected
+  into a split slot that is hidden at that moment, instead of destroying it with the group.
+- **Injection listeners are called once per frame with the real visibility.** The listener passed to
+  `skeleton:inject()` is now called once per `draw` with `isVisible = true` while its slot is drawn, once with
+  `isVisible = false` on the frame its slot stops being drawn, and not at all while the slot stays hidden. It used to
+  get an extra `isVisible = false` call before the `true` one on most frames, and in split mode on every frame. The
+  event fields are unchanged.
+- **A draw with an empty render command no longer aborts the Simulator, and `draw()` with extra arguments works.**
+  A skeleton whose frame produced a render command with no vertices used to abort the Simulator on `draw`; calling
+  `draw()` with extra arguments used to corrupt the Lua stack. Both now draw normally.
+- **Meshes land in the right group and draw order after split, re-split, reassemble or injection.** A mesh reused from
+  the skeleton group in the split group (or the other way round), or from another draw position, used to stay where it
+  was, so pieces showed in the wrong group or on top of the wrong slots. It is now moved to its group and draw position.
+- **A non-normal blend mode stays applied after a texture swap.** A slot drawn with `multiply`, `add` or `screen` used to
+  fall back to normal blending when its mesh switched to another atlas page texture.
+- **Mesh updates no longer create Lua garbage on every draw.** Updating a skeleton's meshes reuses one parameter table
+  and its vertex buffers instead of allocating new ones per mesh per draw: for 150 copies of the Spine raptor example,
+  Lua allocation drops from about 7.9 MB to about 0.27 MB per frame.
 
 ### plugin.spine42 (4.2 line)
 
@@ -70,6 +93,10 @@
   not set). Now only the inactive constraints are skipped.
 - **Split rendering no longer leaks on every draw.** The split renderer allocated a command pair per draw and never
   freed it; it now returns the pair by value, as the 4.3 line already did.
+- **Consecutive compatible attachments are drawn as one mesh.** The 4.2 renderer now batches consecutive attachments
+  that share a texture and blend mode into one mesh, as the 4.3 line already did. A skeleton's `numChildren` and its
+  child list change: 150 copies of the Spine raptor example go from 5,157 meshes to about 450. Code that walks a
+  skeleton's children sees fewer, larger meshes.
 
 ### plugin.spine43 (4.3 line)
 

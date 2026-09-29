@@ -112,5 +112,50 @@ elseif mode == "reassemble-remove" then
   S.frame()
   assert(S.isRemoved(splitGroup), "the split group was not finalized")
   assert(disposed("obj"), "the next-frame hook did not free the skeleton")
+elseif mode == "split-busy" then
+  -- with no Runtime, finalized during draw (busy): the outermost guard's dispose takes the skeleton's meshes out of
+  -- the caller's split group and leaves the group with the caller
+  local obj = newTracked("obj")
+  local splitGroup = obj:split({ "head", "eye", "mouth" })
+  local layer = display.newGroup(); layer:insert(splitGroup)
+  local armed, fired = false, false
+  obj:inject(display.newGroup(), "torso", function()
+    if armed and not fired then fired = true; obj:dispatchEvent({ name = "finalize", target = obj }) end
+  end)
+  obj:updateState(16); obj:draw()
+  local before = #S.children(splitGroup)
+  armed = true
+  local runtime = Runtime
+  Runtime = nil
+  local ok, err = pcall(obj.draw, obj)
+  Runtime = runtime
+  print("draw with a disposing injection listener ->", ok, err, "listener fired", fired,
+    "split group children before", before, "after", #S.children(splitGroup))
+  assert(ok and fired and before > 0, "draw did not survive a dispose from its injection listener")
+  assert(#S.children(splitGroup) == 0, "the skeleton's meshes stayed in the caller's split group")
+  assert(splitGroup.parent == layer, "the caller's split group was moved or removed")
+  assert(disposed("obj"), "draw's call guard did not free the skeleton")
+elseif mode == "split-coroutine" or mode == "split-coroutine-no-runtime" then
+  -- created in a coroutine that is collected before its parent is removed: the dispose that takes the meshes out of
+  -- the caller's split group (the next-frame hook, or finalize with no Runtime) must not run Lua on the dead thread
+  local parent, layer = display.newGroup(), display.newGroup()
+  local obj
+  local co = coroutine.create(function() obj = newTracked("obj"); parent:insert(obj) end)
+  assert(coroutine.resume(co)); co = nil
+  local splitGroup = obj:split({ "head", "eye", "mouth" })
+  layer:insert(splitGroup)
+  obj:updateState(16); obj:draw()
+  local before = #S.children(splitGroup)
+  S.gcfull()                                    -- the finished coroutine and its lua_State are collected
+  local runtime = Runtime
+  if mode == "split-coroutine-no-runtime" then Runtime = nil end
+  display.remove(parent); obj = nil
+  S.endFrame()                                  -- finalize: frees at once with no Runtime, else arms the hook
+  Runtime = runtime
+  S.frame()
+  print("split group children before", before, "after", #S.children(splitGroup))
+  assert(before > 0 and #S.children(splitGroup) == 0, "the skeleton's meshes stayed in the caller's split group")
+  assert(splitGroup.parent == layer, "the caller's split group was moved or removed")
+  assert(disposed("obj"), "the skeleton was not freed")
 end
 print("survived")

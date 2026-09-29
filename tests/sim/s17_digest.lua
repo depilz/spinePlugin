@@ -1,7 +1,14 @@
 -- S17: render digests of the sample exports (every example's first animation, skins, injections, split), logged
--- every 5th frame as "DIGEST <case> <label> <digest>". Argument base loads plugin.spine (the shipped 1.5.0 dylib);
--- spine42 loads the line's plugin (plugin.spine42: the scenario runs on the 4.2 line only) and checks each case's
--- digests against the base run's results file, or against s17_moved.lua for a case an accepted runtime change moved.
+-- every 5th frame as "DIGEST <case> <label> <geometry> <layout>". Argument base loads plugin.spine (the shipped 1.5.0
+-- dylib); spine42 loads the line's plugin (plugin.spine42: the scenario runs on the 4.2 line only) and checks each
+-- case's geometry against the base run's results file, or against s17_moved.lua for a case an accepted runtime change
+-- moved. The layout (how the vertices are split into mesh children) is logged and never compared.
+-- Geometry comparison: nv, su, sv and every non-sum token (e.g. the injection event history) must match exactly. The
+-- position sums sx, sy, sw may differ by float32 rounding, because the per-mesh vertex offset depends on how the
+-- vertices are batched into meshes: |d| <= nv * 2^-23 * m (sw: times 3 * 96, its largest vertex weight), where m is the
+-- largest |x| or |y| of the spine42 digest, plus 1e-4 for the %.4f print rounding. A geometry change larger than the
+-- case's float32 bound fails the case (moving the first vertex of every batched mesh by 0.01 fails 21/24 cases, as
+-- does a dropped clipping or masks patch).
 local L = require("simlib")
 L.watchdogMs = 240000
 L.open("s17_digest " .. L.arg)
@@ -11,9 +18,12 @@ local EXAMPLES = { "alien","celestial-circus","chibi-stickers","cloud-pot","coin
   "owl","powerup","raptor","sack","snowglobe","speedy","spineboy","stretchyman","tank","vine","windmill" }
 local FRAMES = 40
 
+-- digest(group) -> geometry "nv sx sy sw su sv", layout "n sa nb", largest |x| or |y|. getVertex returns the positions the plugin wrote,
+-- not re-centred on mesh.x/y, so the geometry sums depend on the grouping only through float32 rounding of the positions
+-- (see the header); sw weights each vertex by its running index over the whole group, so it holds while the draw order does.
 local function digest(group)
   local n = gidx(group, "numChildren")
-  local nv, sx, sy, sw, su, sv, sa, nb = 0, 0, 0, 0, 0, 0, 0, 0
+  local nv, sx, sy, sw, su, sv, sa, nb, m = 0, 0, 0, 0, 0, 0, 0, 0, 0
   for i = 1, n do
     local c = gidx(group, i)
     sa = sa + (c.alpha or 0) * i
@@ -26,12 +36,13 @@ local function digest(group)
         if not ok or x == nil then break end
         local ok2, u, v = pcall(p.getUV, p, k)
         nv = nv + 1; sx = sx + x; sy = sy + y; sw = sw + (nv % 97) * (x + 2 * y)
+        m = math.max(m, math.abs(x), math.abs(y))
         if ok2 and u then su = su + u; sv = sv + v end
         k = k + 1
       end
     end
   end
-  return ("%d %d %.4f %.4f %.4f %.5f %.5f %.4f %d"):format(n, nv, sx, sy, sw, su, sv, sa, nb)
+  return ("%d %.4f %.4f %.4f %.5f %.5f"):format(nv, sx, sy, sw, su, sv), ("%d %.4f %d"):format(n, sa, nb), m
 end
 
 local datas = {}
@@ -52,11 +63,19 @@ local function newObject(name)
   return obj
 end
 
--- play(obj, frames, emit, label, extra): updateState(16) + draw() per frame, a digest every 5th frame
+-- play(obj, frames, emit, label, extra): updateState(16) + draw() per frame, a digest every 5th frame; extra() returns
+-- more geometry and, optionally, more layout and its largest coordinate
 local function play(obj, frames, emit, label, extra)
   for fr = 1, frames do
     obj:updateState(16); obj:draw()
-    if fr % 5 == 0 then emit(("%s%d"):format(label or "", fr), digest(obj) .. (extra and " " .. extra() or "")) end
+    if fr % 5 == 0 then
+      local geometry, layout, m = digest(obj)
+      if extra then
+        local g, l, em = extra()
+        geometry, layout, m = geometry .. " " .. g, layout .. (l and " " .. l or ""), math.max(m, em or 0)
+      end
+      emit(("%s%d"):format(label or "", fr), geometry, layout, m)
+    end
   end
 end
 
@@ -100,19 +119,23 @@ CASES[#CASES + 1] = { "split raptor", function(obj, emit)
   local even, odd = {}, {}
   for i, slot in ipairs(obj.slots) do table.insert(i % 2 == 0 and even or odd, slot.name) end
   local group = obj:split(even)
-  local function splitDigest() return "| " .. digest(group) end
+  local function splitDigest()
+    local g, l, m = digest(group)
+    return "| " .. g, "| " .. l, m
+  end
   play(obj, 20, emit, "split ", splitDigest)
   obj:reassemble(); play(obj, 10, emit, "reassembled ")
   group = obj:split(odd); play(obj, 10, emit, "resplit ", splitDigest)
 end, "raptor" }
 
-local mine = {}
+local mine, largest = {}, {}
 for _, case in ipairs(CASES) do
   local label, run, name = case[1], case[2], case[3]
-  mine[label] = {}
-  local function emit(at, d)
-    mine[label][#mine[label] + 1] = at .. "\t" .. d
-    L.log("DIGEST", label, at, d)
+  mine[label], largest[label] = {}, {}
+  local function emit(at, geometry, layout, m)
+    mine[label][#mine[label] + 1] = at .. "\t" .. geometry
+    largest[label][#mine[label]] = m or 0
+    L.log("DIGEST", label, at, geometry, layout or "")
   end
   local ok, err = pcall(function()
     local obj = newObject(name)
@@ -122,22 +145,53 @@ for _, case in ipairs(CASES) do
   if not ok then emit("error", tostring(err)) end
 end
 
--- base digests: case -> list of "label\tdigest", from the results file of the "base" run
+-- base geometry: case -> list of "label\tgeometry", from the results file of the "base" run
 local function readBase()
   local f = io.open(L.dir .. "/s17_digest_base.txt")
   if not f then return nil end
   local base = {}
   for line in f:lines() do
-    local label, rest = line:match("^DIGEST\t([^\t]*)\t(.*)$")
-    if label then base[label] = base[label] or {}; table.insert(base[label], rest) end
+    local label, at, geometry = line:match("^DIGEST\t([^\t]*)\t([^\t]*)\t([^\t]*)")
+    if label then base[label] = base[label] or {}; table.insert(base[label], at .. "\t" .. geometry) end
   end
   f:close()
   return base
 end
 
-local function firstDifference(a, b, source)
+local EPS = 2 ^ -23
+local SUM_WEIGHT = { [2] = 1, [3] = 1, [4] = 3 * 96 } -- position of sx, sy, sw in a "nv sx sy sw su sv" tuple
+
+local function words(s)
+  local t = {}
+  for w in s:gmatch("%S+") do t[#t + 1] = w end
+  return t
+end
+
+-- sameGeometry(a, b, m): the "label\tgeometry" entries a and b are equal but for float32 rounding of the position sums;
+-- a geometry tuple starts at the first geometry token and after each "|"
+local function sameGeometry(a, b, m)
+  local la, ga = a:match("^([^\t]*)\t(.*)$")
+  local lb, gb = b:match("^([^\t]*)\t(.*)$")
+  if not (ga and gb) or la ~= lb then return a == b end
+  local wa, wb = words(ga), words(gb)
+  if #wa ~= #wb then return false end
+  local at, nv = 0, 0 -- at: the token's position in its tuple
+  for i = 1, #wa do
+    at = wa[i] == "|" and 0 or at + 1
+    if at == 1 then nv = tonumber(wa[i]) or 0 end
+    local weight, x, y = SUM_WEIGHT[at], tonumber(wa[i]), tonumber(wb[i])
+    if weight and x and y then
+      if math.abs(x - y) > nv * EPS * m * weight + 1e-4 then return false end
+    elseif wa[i] ~= wb[i] then return false end
+  end
+  return true
+end
+
+local function firstDifference(a, b, source, m)
   for i = 1, math.max(#a, #b) do
-    if a[i] ~= b[i] then return ("#%d %s %s spine42 %s"):format(i, source, tostring(a[i]), tostring(b[i])) end
+    if not (a[i] and b[i] and sameGeometry(a[i], b[i], m[i] or 0)) then
+      return ("#%d %s %s spine42 %s"):format(i, source, tostring(a[i]), tostring(b[i]))
+    end
   end
 end
 
@@ -146,9 +200,10 @@ if L.arg ~= "base" then
   L.check("baseline", base ~= nil, "results of s17_digest base")
   for _, case in ipairs(CASES) do
     local label = case[1]
-    local diff = "no base digests"
-    if moved[label] then diff = firstDifference(moved[label], mine[label], "s17_moved")
-    elseif base and base[label] then diff = firstDifference(base[label], mine[label], "base") end
+    local diff, cause = "no base digests", moved[label] and moved[label].cause
+    if moved[label] and (type(cause) ~= "string" or cause == "") then diff = "s17_moved entry without a cause"
+    elseif moved[label] then diff = firstDifference(moved[label], mine[label], "s17_moved", largest[label])
+    elseif base and base[label] then diff = firstDifference(base[label], mine[label], "base", largest[label]) end
     L.check(label, diff == nil, diff or (#mine[label] .. " digests equal"))
   end
 end

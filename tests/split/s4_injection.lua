@@ -1,4 +1,4 @@
--- s4: injections while split. arg[1] selects the case (a, b2, c..f); no arg = a (with b2), c, e, f.
+-- s4: injections while split. arg[1] selects the case (a, b2, c..g); no arg = a (with b2), c, e, f.
 -- "a" checks cases a/b, "b2" repeats them and checks only the reassembled frames.
 local C = dofile(arg[0]:match("^(.*)/") .. "/../splitfx/common.lua")
 local mock = C.mock; io.stdout:setvbuf("no")
@@ -88,6 +88,28 @@ if not which or which == "c" then
   local shown = not mock.isFinalized(A) and mock.onscreen(A)
   print(("    slot shown again: draw ok=%s, object on screen=%s"):format(tostring(ok), tostring(shown)))
   C.expect(ok and shown, "injected object not back on screen once its slot is shown (split-8)")
+end
+
+-- (g) hide and show again the slots of injections with listeners, one in the split group and one in the skeleton
+if which == "g" then
+  local scene, obj = setup()
+  local A = display.newRect(0, 0, 10, 10); local B = display.newRect(0, 0, 10, 10)
+  local la, lb = listenerLog(), listenerLog()
+  obj:inject(A, "raptor-horn", la.fn); obj:inject(B, "front-thigh", lb.fn)
+  local injs = { { obj = A, slot = "raptor-horn" }, { obj = B, slot = "front-thigh" } }
+  local sg = obj:split({ "raptor-horn", "raptor-body" }); scene:insert(sg)
+  local function phase(label, n, want, between)
+    la.frames, lb.frames = {}, {}
+    if between then between() end
+    expectClean(run("(g) " .. label, obj, sg, injs, n, { la, lb }))
+    local a, b = seq(la), seq(lb)
+    print(("    listener per frame  A(split slot): %s | B(skeleton slot): %s"):format(a, b))
+    C.expect(a == want and b == want, ("(g) %s: listeners %s | %s, expected %s (render-8)"):format(label, a, b, want))
+  end
+  phase("visible", 5, "{T} x5")
+  phase("hide both slots", 1, "{F} x1", function() obj:setAttachment("raptor-horn", nil); obj:setAttachment("front-thigh", nil) end)
+  phase("hidden", 5, "{-} x5")
+  phase("re-shown", 5, "{T} x5", function() obj:setSlotsToSetupPose() end)   -- 4.3 setAttachment(slot, name) crashes without a skin
 end
 
 -- (d) render-2 via injection: inject into a split slot whose region attachment has alpha 0 and is drawn FIRST in the split pass

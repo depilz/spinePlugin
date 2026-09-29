@@ -6,7 +6,7 @@ repo: https://github.com/EsotericSoftware/spine-runtimes
 branch: 4.2
 layout: spine-cpp/spine-cpp/{include,src}/spine
 base: e7dc1435fa4a0083ab431f1b28e083c14a1f5c68  [ts] Release 4.2.120 (2026-08-30)
-base-evidence: refreshed from eb6a973f9 with the refresh tool (157 files merged, 2 conflicts hand-resolved in SkeletonRenderer.cpp/.h keeping the local changes); after the refresh 140/158 runtime files are byte-identical to the e7dc1435f blobs, the other 18 are the local changes below plus Json.cpp
+base-evidence: probe-verified (git hash-object of the 158 runtime files vs the flat-mapped e7dc1435f blobs, re-measured 2026-09-28 after the batcher port: 138 byte-identical, the 20 differing files are exactly the local-changes and other-differences files below); refreshed from eb6a973f9 with the refresh tool (157 files merged, 2 conflicts hand-resolved in SkeletonRenderer.cpp/.h keeping the local changes); after the refresh 140/158 runtime files are byte-identical to the e7dc1435f blobs, the other 18 are the local changes below plus Json.cpp
 refresh-tool: tools/runtime-refresh/refresh.sh <upstream-clone> <base> <new> runtime/spine-4.2/spine
 
 imported:
@@ -46,6 +46,7 @@ local-changes:
 - Triangulator.cpp: FP contraction off (clang + MSVC pragmas) (masks-runtime-4.2.patch)
 - FP-contraction pragmas: Windows (MSVC) bit-exactness is assumed, not measured (no Windows comparator run)
 - SkeletonRenderer.cpp, SkeletonRenderer.h: the split render() overload returns the command pair by value instead of a heap-allocated std::pair (render-11)
+- SkeletonRenderer.cpp: batchSubCommands/batchCommands replaced by the 4.3 batcher (rule ii): consecutive commands with the same texture, blend, injection slot and first colors merge into one command, empty commands pass through unbatched (4.3 SkeletonRenderer.cpp, Array -> Vector)
 
 other-differences:
 - Json.cpp: one extra blank line after line 120 since 784fd6d; whitespace only, not a local change
@@ -55,3 +56,4 @@ history:
 - 2026-09-27: refreshed eb6a973f9 -> e7dc1435f (4.2.120) with tools/runtime-refresh/refresh.sh; every local change re-verified
 - 2026-09-27: applied masks-runtime-4.2.patch (C1, C3, D-A, D-B, clang pragmas) plus the MSVC pragmas; Windows bit-exactness assumed
 - 2026-09-28: split render() returns the command pair by value (render-11); 4.3 already does
+- 2026-09-28: batchSubCommands/batchCommands ported from the 4.3 runtime (rule ii batching); base-evidence re-measured and labelled

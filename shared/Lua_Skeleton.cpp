@@ -1113,18 +1113,77 @@ static std::vector<int> checkInjections(lua_State *L, SpineSkeleton *skeletonUse
     return injectionSlotIndexes;
 }
 
+// False once the caller removed the split group: Solar2D returns nil for `parent` of a removed object in the same
+// frame, and a finalized object is a plain table, so a group removed with its parent is seen one frame later.
+static bool isSplitGroupAlive(lua_State *L, SplitData &splitData)
+{
+    splitData.pushGroup(L);
+    lua_getfield(L, -1, "parent");
+    bool alive = !lua_isnil(L, -1);
+    lua_pop(L, 2);
+    return alive;
+}
+
+// The caller removed the split group: its meshes went with it. Forget them without touching them (they may already
+// be plain tables) and draw the skeleton unsplit from now on.
+static void dropDeadSplit(SpineSkeleton *skeletonUserdata)
+{
+    auto &meshes = skeletonUserdata->meshes;
+    for (int index = static_cast<int>(meshes.size()) - 1; index >= 0; index--)
+    {
+        if (meshes[index].group == 2)
+        {
+            meshes.removeMesh(index);
+        }
+    }
+    skeletonUserdata->splitData.clear();
+}
+
+// removeSelf, and dispose from a Lua-safe caller (a skeleton removed with its parent): the split group belongs to the
+// caller. Remove only the live meshes this skeleton drew into it and take them out of the pool.
+void SpineSkeleton::removeSplitMeshes(lua_State *L_in)
+{
+    if (!splitData.isSplitted() || !isSplitGroupAlive(L_in, splitData)) return;
+
+    const int top = lua_gettop(L_in);
+    splitData.pushGroup(L_in);
+    for (int index = static_cast<int>(meshes.size()) - 1; index >= 0; index--)
+    {
+        LuaTableHolder &mesh = meshes[index].mesh;
+        if (!mesh.isValid() || !mesh.hasMetatable()) continue;
+
+        mesh.pushTable(L_in);
+        lua_getfield(L_in, -1, "parent");
+        bool inSplitGroup = lua_rawequal(L_in, -1, top + 1) != 0;
+        lua_settop(L_in, top + 1);
+        if (inSplitGroup)
+        {
+            engine_removeMesh(L_in, &mesh);
+            meshes.removeMesh(index);
+        }
+    }
+    lua_settop(L_in, top);
+}
+
 static void skeletonRender(lua_State *L, SpineSkeleton *skeletonUserdata)
 {
     Skeleton *skeleton = skeletonUserdata->skeleton;
     SkeletonRenderer skeletonRenderer;
 
     RenderCommand *command;
+    // draw's display object is at 1 and extra draw arguments may follow: the split group goes above top
+    const int top = lua_gettop(L);
 
     auto &meshes = skeletonUserdata->meshes;
 
     for (auto &meshData : meshes)
     {
         meshData.used = false;
+    }
+
+    if (skeletonUserdata->splitData.isSplitted() && !isSplitGroupAlive(L, skeletonUserdata->splitData))
+    {
+        dropDeadSplit(skeletonUserdata);
     }
 
     if (skeletonUserdata->splitData.isSplitted())
@@ -1137,10 +1196,10 @@ static void skeletonRender(lua_State *L, SpineSkeleton *skeletonUserdata)
         if (skeletonUserdata->disposeRequested) return;
 
         skeletonUserdata->splitData.pushGroup(L);
-        renderCommands(L, skeletonUserdata, commands.second, meshes, 2);
+        renderCommands(L, skeletonUserdata, commands.second, meshes, top + 1);
         if (skeletonUserdata->disposeRequested) return;
-        
-        lua_remove(L, 2);
+
+        lua_settop(L, top);
     }
     else {
         command = skeletonRenderer.render(*skeleton, checkInjections(L, skeletonUserdata));
@@ -1164,7 +1223,7 @@ static void skeletonRender(lua_State *L, SpineSkeleton *skeletonUserdata)
         }
     }
 
-    lua_pop(L, -1);
+    lua_settop(L, top);
 }
 
 // skeletonRender as a Lua C function over draw's own arguments (the skeleton as upvalue), so draw can run it through
@@ -1717,6 +1776,11 @@ static int split(lua_State *L)
 
     SplitData &splitData = skeletonUserdata->splitData;
 
+    if (splitData.isSplitted() && !isSplitGroupAlive(L, splitData))
+    {
+        dropDeadSplit(skeletonUserdata); // the caller removed the old group: start a new one
+    }
+
     if (!splitData.isSplitted())
     {
         // we create a new group and set it as the parent of the splitted skeleton
@@ -1746,7 +1810,11 @@ static int reassemble(lua_State *L)
 
     if (splitData.isSplitted())
     {
-        LuaTableHolder group = splitData.releaseGroup();
+        // a group the caller already removed is only dropped: Solar2D's removeSelf on a finalized table aborts the app
+        bool alive = isSplitGroupAlive(L, splitData);
+        LuaTableHolder group;
+        if (alive) group = splitData.releaseGroup();
+        else dropDeadSplit(skeletonUserdata);
 
         // re-draw so all meshes are in the right place (through the guard, like draw: injection listeners may raise)
         SkeletonCallGuard guard(skeletonUserdata);
@@ -1755,6 +1823,27 @@ static int reassemble(lua_State *L)
         lua_pushcclosure(L, skeletonRenderCall, 1);
         lua_insert(L, 1);
         guard.call(L, nargs, 0);
+        if (!alive) return 0;
+
+        // an injected object whose split slot was not drawn (hidden slot) is still in the group: move it back to the
+        // skeleton before the group is removed, or reassemble() destroys the caller's object
+        for (size_t k = 0; k < skeletonUserdata->injections.size(); ++k)
+        {
+            skeletonUserdata->injections[k].pushObject(L);
+            int object = lua_gettop(L);
+            lua_getfield(L, object, "parent");
+            group.pushTable(L);
+            bool inSplitGroup = lua_rawequal(L, -1, -2) != 0;
+            lua_settop(L, object);
+            if (inSplitGroup)
+            {
+                skeletonUserdata->groupInsert->pushTable(L);
+                skeletonUserdata->luaSelf.pushTable(L);
+                lua_pushvalue(L, object);
+                guard.call(L, 2, 0);
+            }
+            lua_settop(L, object - 1);
+        }
 
         // remove group (the guard keeps the skeleton alive: a dispose requested meanwhile runs when it ends)
         skeletonUserdata->groupRemoveSelf->pushTable(L);
@@ -1779,6 +1868,7 @@ static int removeSelf(lua_State *L)
     }
 
     skeletonUserdata->markRemoved();
+    skeletonUserdata->removeSplitMeshes(L);
 
     skeletonUserdata->groupRemoveSelf->pushTable(L);
     lua_pushvalue(L, 1);
