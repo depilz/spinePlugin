@@ -16,6 +16,7 @@ If no animation is currently playing on the track, the queued animation will sta
 Syntax:
 --------
 
+.. fragment: syntax line; trackIndex, animationName, loop and delay are placeholders
 .. code-block:: lua
 
    local trackEntryOrFalse = skeleton:addAnimation(trackIndex, animationName, loop, delay)

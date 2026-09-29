@@ -61,6 +61,24 @@ static void loadGroupReferences(lua_State *L)
     lua_pop(L, 1);
 }
 
+// The plugin renders straight alpha only: prints one warning through Lua print when any page declares pma: true.
+// A missing or raising print is ignored; the stack is left as it was.
+static void warnPremultipliedAlpha(lua_State *L, Atlas *atlas, const char *path)
+{
+    Vector<AtlasPage *> &pages = atlas->getPages();
+    for (size_t i = 0; i < pages.size(); i++)
+    {
+        if (!pages[i]->pma)
+            continue;
+        lua_getglobal(L, "print");
+        lua_pushfstring(L, "WARNING: plugin.spine: %s: premultiplied-alpha atlas (pma: true) is not supported; "
+                           "export with straight alpha", path);
+        if (lua_pcall(L, 1, 0, 0) != 0)
+            lua_pop(L, 1);
+        return;
+    }
+}
+
 // spine.loadAtlas(path)
 int loadAtlas(lua_State *L)
 {
@@ -119,6 +137,7 @@ int loadAtlas(lua_State *L)
     auto atlasUserdata = std::make_shared<DataHolder<Atlas>>(atlas);
 
     DataHolder<Atlas>::push(L, atlasUserdata);
+    warnPremultipliedAlpha(L, atlas, shortPath); // after the push, so a raise here cannot leak the Atlas
 
     return 1;
 }

@@ -7,7 +7,7 @@ attachment.name
 
 The name of the attachment as defined in the Spine editor.
 
-This is the identifier used to reference the attachment and is typically 
+This is the identifier used to reference the attachment and is typically
 the same as the image filename (without extension) for region attachments.
 
 Example
@@ -15,11 +15,11 @@ Example
 
 .. code-block:: lua
 
-   local slot = skeleton:findSlot("weapon")
+   local slot = skeleton:findSlot("hand1")
    local attachment = slot.attachment
-   
+
    if attachment then
        print("Current attachment:", attachment.name)
-       -- Output: "sword" or "shield" etc.
+       -- Output: hand1
    end
 

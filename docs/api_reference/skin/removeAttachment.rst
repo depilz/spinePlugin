@@ -13,6 +13,7 @@ Removes an attachment from the skin by slot and attachment name.
 Syntax:
 --------
 
+.. fragment: syntax line; skin, slot and attachmentName are placeholders
 .. code-block:: lua
 
    skin:removeAttachment(slot, attachmentName)
@@ -34,31 +35,39 @@ slot is not found or has the wrong type.
 Example:
 --------
 
+The examples use the mix-and-match example skeleton, whose skins each dress part of the character.
+
 Remove Specific Attachments
-............................
+...........................
 
 .. code-block:: lua
 
-   local customSkin = skeleton:createSkin("custom")
-   customSkin:copySkin("default")
-   
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+
+   local customSkin = girl:createSkin("custom")
+   customSkin:copySkin("full-skins/girl")
+
    -- Remove an unwanted attachment
-   customSkin:removeAttachment("weapon-slot", "sword")
-   
-   skeleton:setSkin(customSkin)
+   customSkin:removeAttachment("hat", "hat")
+
+   girl:setSkin(customSkin)
 
 Clean Up Skin
 .............
 
 .. code-block:: lua
 
-   local skin = skeleton:createSkin("cleaned")
-   skin:addSkin("full-character")
-   
-   -- Remove all accessories
-   local accessories = {"hat", "glasses", "necklace"}
-   for _, accessory in ipairs(accessories) do
-       skin:removeAttachment("accessory-slot", accessory)
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+
+   local skin = girl:createSkin("cleaned")
+   skin:addSkin("full-skins/girl")
+
+   -- Remove the hat and its pompom (slot, key)
+   local accessories = { {"hat", "hat"}, {"pompom", "pompom"} }
+   for _, entry in ipairs(accessories) do
+       skin:removeAttachment(entry[1], entry[2])
    end
 
 Notes:
@@ -69,4 +78,3 @@ Notes:
 - To add back an attachment, use :doc:`setAttachment`
 - Raises on a data skin: data skins are read-only (see :doc:`index`)
 - To remove every entry at once, use :doc:`clear`
-

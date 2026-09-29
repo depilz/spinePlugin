@@ -8,8 +8,8 @@ ikConstraint
 Overview:
 ..........
 
-An **IKConstraint** object defines inverse-kinematics relationships for one or more bones in 
-a Spine skeleton. This typically allows you to control bones by a target bone, making complex 
+An **IKConstraint** object defines inverse-kinematics relationships for one or more bones in
+a Spine skeleton. This typically allows you to control bones by a target bone, making complex
 motion (such as arms or legs following a point) much simpler.
 
 Below is a list of all properties on an IKConstraint. Most are **read/write**, except for the

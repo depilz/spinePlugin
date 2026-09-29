@@ -8,7 +8,7 @@ skeleton:split()
 Overview:
 .........
 
-**Splits** a skeleton into a display group containing the slots specified in the table. This lets 
+**Splits** a skeleton into a display group containing the slots specified in the table. This lets
 you manipulate the given slots separately from the rest of the skeleton, being useful for some 3D effects.
 
 If you try re-splitting a skeleton, it will overwrite the list of slots, but keep the group intact.
@@ -24,6 +24,7 @@ group has the same content transform as the skeleton object.
 Syntax:
 --------
 
+.. fragment: syntax line; slotNames is a placeholder
 .. code-block:: lua
 
    local splitGroup = skeleton:split(slotNames)
@@ -42,7 +43,8 @@ Example:
 
 .. code-block:: lua
 
-    local splitGroup = skeleton:split({"slot1", "slot2", "slot3"})
+    local sceneGroup = display.newGroup()
+    local splitGroup = skeleton:split({"upper-arm1", "forearm1", "hand1"})
 
     -- Move the split group
     splitGroup.x = 100

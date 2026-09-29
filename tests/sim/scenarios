@@ -3,6 +3,7 @@
 # aborts the Simulator with no plugin involved) and is run by hand.
 # A line "<runtime>: script arg" runs on that runtime line only. s17_digest spine42 checks each case's geometry, not its
 # layout, against the s17_digest base run (shipped 1.5.0 plugin.spine) or its s17_moved.lua entry + cause (s17_digest.lua).
+# s22_example <Scene> opens that menu scene of the line's example project and runs it 10 s (s22_example.lua).
 s0_smoke.lua
 s1_lifecycle.lua
 s1_lifecycle.lua late
@@ -37,3 +38,18 @@ s2x_ik_drag.lua rotated
 s2x_hittest.lua
 s21_tint_black.lua pixels
 s21_tint_black.lua both
+s22_example.lua Physics
+s22_example.lua InverseKinematics
+s22_example.lua Skins
+s22_example.lua PlayAnimations
+s22_example.lua AnimationEvents
+s22_example.lua Attachments
+s22_example.lua MixAndMatch
+s22_example.lua Performance
+s22_example.lua Performance2
+s22_example.lua Injections
+s22_example.lua SolarEffects
+s22_example.lua Splits
+s22_example.lua AttachmentObject
+s22_example.lua AttachmentProperties
+s22_example.lua SlotAttachmentFromSkin

@@ -16,5 +16,9 @@ Example:
 
 .. code-block:: lua
 
-   hero.physics.massInverse = 1.2
-   print("Mass Inverse:", hero.physics.massInverse)
+   -- the hero has no physics constraints; celestial-circus has
+   local circus = spine.create(spine.loadSkeletonData("assets/characters/celestial-circus.json",
+                                                      spine.loadAtlas("assets/characters/celestial-circus.atlas")))
+
+   circus.physics.massInverse = 1.2
+   print("Mass Inverse:", circus.physics.massInverse)

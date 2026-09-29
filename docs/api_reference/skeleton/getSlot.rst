@@ -14,6 +14,7 @@ none. Use :doc:`findSlot` to get ``nil`` instead.
 Syntax:
 --------
 
+.. fragment: syntax line; slotName is a placeholder
 .. code-block:: lua
 
    local slot = skeleton:getSlot(slotName)
@@ -26,5 +27,5 @@ Example:
 
 .. code-block:: lua
 
-   local swordSlot = hero:getSlot("swordHand")
+   local swordSlot = hero:getSlot("weapon-sword")
    print("Got slot:", swordSlot.name)

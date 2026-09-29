@@ -14,6 +14,7 @@ Returns ``nil`` if the track has no active animation.
 Syntax:
 --------
 
+.. fragment: syntax line; trackIndex is a placeholder
 .. code-block:: lua
 
    local trackEntryOrNil = skeleton:getTrackEntry(trackIndex)

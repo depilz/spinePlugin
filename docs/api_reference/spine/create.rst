@@ -9,8 +9,8 @@ spine.create()
 Overview:
 .........
 
-Creates a new Spine skeleton instance from previously loaded `skeletonData`. Optionally, 
-you can provide a listener function to handle animation events such as animation began, 
+Creates a new Spine skeleton instance from previously loaded `skeletonData`. Optionally,
+you can provide a listener function to handle animation events such as animation began,
 completed, and custom events triggered within Spine animations.
 
 Gotchas:
@@ -28,6 +28,7 @@ The new skeleton is already posed: bone and slot world values, :doc:`../skeleton
 Syntax:
 -------
 
+.. fragment: syntax line; arguments are placeholders
 .. code-block:: lua
 
    local skeleton = spine.create(skeletonData, [listener])
@@ -52,14 +53,14 @@ Example:
 
 .. code-block:: lua
 
-   local spine = require("plugin.spine")
-   
+   local spine = require("@SPINE_PLUGIN@")
+
    -- Load the atlas
    local atlas = spine.loadAtlas("assets/characters/hero.atlas")
-   
+
    -- Load skeleton data with a scale factor of 1.0
    local skeletonData = spine.loadSkeletonData("assets/characters/hero.skel", atlas, 1.0)
-   
+
    -- Define a listener function to handle animation events
    local function listener(event)
        if event.phase == "event" then
@@ -70,17 +71,17 @@ Example:
            print("Animation ended:", event.animation)
        end
    end
-   
+
    -- Create the skeleton with the listener
    local hero = spine.create(skeletonData, listener)
-   
+
    -- Position the skeleton in the scene
    hero.x = display.contentCenterX
    hero.y = display.contentCenterY
-   
+
    -- Set an initial animation
    hero:setAnimation(1, "idle", true)
-   
+
    -- Update the skeleton each frame
    local lastTime = system.getTimer()
    local function onEnterFrame(event)
@@ -90,5 +91,5 @@ Example:
        hero:updateState(deltaTime)
        hero:draw()
    end
-   
+
    Runtime:addEventListener("enterFrame", onEnterFrame)

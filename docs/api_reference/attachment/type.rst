@@ -23,9 +23,9 @@ Example
 
 .. code-block:: lua
 
-   local slot = skeleton:findSlot("character")
+   local slot = skeleton:findSlot("hand1")
    local attachment = slot.attachment
-   
+
    if attachment then
        if attachment.type == "region" then
            -- Can use x, y, rotation, scaleX, scaleY, etc.

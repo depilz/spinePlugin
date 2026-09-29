@@ -14,6 +14,7 @@ that don’t have a specific mix time configured.
 Syntax:
 --------
 
+.. fragment: syntax line; mix is a placeholder
 .. code-block:: lua
 
    skeleton:setDefaultMix(mix)

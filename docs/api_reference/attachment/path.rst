@@ -7,7 +7,7 @@ attachment.path
 
 The file path to the texture or atlas region used by this attachment.
 
-This is typically the path relative to the atlas or the image filename 
+This is typically the path relative to the atlas or the image filename
 without extension, as specified in the Spine editor.
 
 Example
@@ -15,12 +15,12 @@ Example
 
 .. code-block:: lua
 
-   local slot = skeleton:findSlot("weapon")
+   local slot = skeleton:findSlot("hand1")
    local attachment = slot.attachment
-   
+
    if attachment and (attachment.type == "region" or attachment.type == "mesh") then
        print("Texture path:", attachment.path)
-       -- Output: "images/sword" or "characters/hero/body" etc.
+       -- Output: hand1
    end
 
 Notes

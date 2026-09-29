@@ -13,6 +13,7 @@ Returns the **Slot** object with the name `slotName`, or ``nil`` if the skeleton
 Syntax:
 --------
 
+.. fragment: syntax line; slotName is a placeholder
 .. code-block:: lua
 
    local slot = skeleton:findSlot(slotName)

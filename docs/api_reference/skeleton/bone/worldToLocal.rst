@@ -21,6 +21,7 @@ Raises when the bone belongs to a removed skeleton.
 Syntax:
 --------
 
+.. fragment: syntax line; bone, worldX and worldY are placeholders
 .. code-block:: lua
 
    local localX, localY = bone:worldToLocal(worldX, worldY)
@@ -35,5 +36,11 @@ Example:
 
 .. code-block:: lua
 
-   -- Where a touch lands relative to the bone
-   local localX, localY = bone:worldToLocal(skeleton:contentToLocal(event.x, event.y))
+   -- Where a touch lands relative to the head bone
+   local bone = skeleton:findSlot("head").bone
+
+   skeleton:addEventListener("touch", function(event)
+       local localX, localY = bone:worldToLocal(skeleton:contentToLocal(event.x, event.y))
+       print("Touch at", localX, localY, "from the head")
+       return true
+   end)

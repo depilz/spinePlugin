@@ -13,6 +13,7 @@ Returns a specific attachment from the skin by slot and attachment name.
 Syntax:
 --------
 
+.. fragment: syntax line; skin, slot and attachmentName are placeholders
 .. code-block:: lua
 
    local attachment = skin:getAttachment(slot, attachmentName)
@@ -31,16 +32,21 @@ Returns:
 Example:
 --------
 
+The examples use the mix-and-match example skeleton, whose skins each dress part of the character.
+
 Get Specific Attachment
 .......................
 
 .. code-block:: lua
 
-   local customSkin = skeleton:createSkin("custom")
-   customSkin:addSkin("default")
-   
-   local attachment = customSkin:getAttachment("head-slot", "head")
-   
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+
+   local customSkin = girl:createSkin("custom")
+   customSkin:addSkin("full-skins/girl")
+
+   local attachment = customSkin:getAttachment("mouth", "mouth-smile")
+
    if attachment then
        print("Found attachment:", attachment.name)
    else
@@ -48,17 +54,20 @@ Get Specific Attachment
    end
 
 Copy Specific Attachments
-..........................
+.........................
 
 .. code-block:: lua
 
-   local sourceSkin = skeleton:getSkin()
-   local targetSkin = skeleton:createSkin("modified")
-   
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+
+   local sourceSkin = girl:findSkin("full-skins/girl")
+   local targetSkin = girl:createSkin("modified")
+
    -- Copy only specific attachments
-   local headAttachment = sourceSkin:getAttachment("head", "default-head")
-   if headAttachment then
-       targetSkin:setAttachment("head", "default-head", headAttachment)
+   local smile = sourceSkin:getAttachment("mouth", "mouth-smile")
+   if smile then
+       targetSkin:setAttachment("mouth", "mouth-smile", smile)
    end
 
 Notes:
@@ -68,4 +77,3 @@ Notes:
 - The slot is a slot name or a Slot object; a string is always a slot name, and a number raises
 - The attachment object returned includes properties like ``name``, ``type``, etc.
 - Raises a Lua error if the slot is not found or has the wrong type; only a missing attachment returns ``nil``
-

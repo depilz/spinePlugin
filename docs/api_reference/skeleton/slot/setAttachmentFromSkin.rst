@@ -19,6 +19,7 @@ This is particularly useful for:
 Syntax:
 --------
 
+.. fragment: syntax line; slot, skin and attachmentName are placeholders
 .. code-block:: lua
 
    slot:setAttachmentFromSkin(skin, attachmentName)
@@ -44,84 +45,86 @@ belongs to different skeleton data, or when the skin has no such attachment for 
 Example:
 --------
 
+The examples use the mix-and-match example skeleton, whose skins dress the same slots differently.
+
 **Basic Usage:**
 
 .. code-block:: lua
 
-   local slot = hero:getSlot("head")
-   
-   -- Set head attachment from the "warrior" skin
-   slot:setAttachmentFromSkin("warrior", "helmet")
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+   local slot = girl:getSlot("hat")
+
+   -- Set the hat from the "accessories/hat-red-yellow" skin
+   slot:setAttachmentFromSkin("accessories/hat-red-yellow", "hat")
 
 **Mix and Match:**
 
 .. code-block:: lua
 
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+
    -- Create a character mixing parts from different skins
-   local bodySlot = hero:getSlot("body")
-   local headSlot = hero:getSlot("head")
-   local weaponSlot = hero:getSlot("weapon")
-   
-   -- Mix attachments from different skins
-   bodySlot:setAttachmentFromSkin("knight", "armor")
-   headSlot:setAttachmentFromSkin("wizard", "hat")
-   weaponSlot:setAttachmentFromSkin("warrior", "sword")
+   girl:getSlot("body"):setAttachmentFromSkin("clothes/hoodie-orange", "body")
+   girl:getSlot("hat"):setAttachmentFromSkin("accessories/hat-pointy-blue-yellow", "hat")
+   girl:getSlot("leg-front"):setAttachmentFromSkin("legs/boots-red", "leg-front")
 
 **Dynamic Customization:**
 
 .. code-block:: lua
 
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+
    -- Let player choose outfit parts
    local function customizeCharacter(outfits)
        for slotName, skinAndAttachment in pairs(outfits) do
-           local slot = hero:getSlot(slotName)
+           local slot = girl:getSlot(slotName)
            slot:setAttachmentFromSkin(skinAndAttachment.skin, skinAndAttachment.attachment)
        end
    end
-   
+
    customizeCharacter({
-       body = { skin = "casual", attachment = "shirt" },
-       legs = { skin = "casual", attachment = "jeans" },
-       head = { skin = "hats", attachment = "baseball-cap" }
+       body = { skin = "clothes/hoodie-blue-and-scarf", attachment = "body" },
+       ["leg-front"] = { skin = "legs/pants-jeans", attachment = "leg-front" },
+       hat = { skin = "accessories/hat-red-yellow", attachment = "hat" }
    })
 
 **Error Handling:**
 
 .. code-block:: lua
 
-   local slot = hero:getSlot("weapon")
-   
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+   local slot = girl:getSlot("hat")
+
    -- Check first, or catch the raise with pcall
-   local equipment = skeleton:findSkin("equipment")
-   
-   if not (equipment and equipment:getAttachment("weapon", "legendary-sword")) then
-       print("Could not equip legendary sword, using basic sword instead")
-       -- Fallback to default weapon
-       slot:setAttachmentFromSkin("default", "basic-sword")
+   local hats = girl:findSkin("accessories/hat-red-yellow")
+
+   if not (hats and hats:getAttachment("hat", "hat")) then
+       print("Could not find the red and yellow hat, using the pointy hat instead")
+       slot:setAttachmentFromSkin("accessories/hat-pointy-blue-yellow", "hat")
    else
-       slot:setAttachmentFromSkin(equipment, "legendary-sword")
+       slot:setAttachmentFromSkin(hats, "hat")
    end
 
 **Comparing with slot.attachment:**
 
 .. code-block:: lua
 
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+   local slot = girl:getSlot("hat")
+
    -- These two are different:
-   
-   -- Method 1: Uses current/default skin
-   slot.attachment = "sword"
-   
-   -- Method 2: Explicit skin specification
-   slot:setAttachmentFromSkin("warrior", "sword")
-   
-   -- Example showing the difference:
-   skeleton:setSkin("mage")
-   
-   -- This gets "staff" from the mage skin
-   slot.attachment = "staff"
-   
-   -- This gets "sword" specifically from the warrior skin
-   slot:setAttachmentFromSkin("warrior", "sword")
+   girl:setSkin("accessories/hat-pointy-blue-yellow")
+
+   -- Method 1: Uses current/default skin, here the pointy blue and yellow hat
+   slot.attachment = "hat"
+
+   -- Method 2: Explicit skin specification, here the red and yellow hat; the current skin stays
+   slot:setAttachmentFromSkin("accessories/hat-red-yellow", "hat")
 
 Notes:
 ------

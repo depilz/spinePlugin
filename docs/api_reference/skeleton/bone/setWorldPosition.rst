@@ -27,6 +27,7 @@ Raises when the bone belongs to a removed skeleton, and for a root bone when the
 Syntax:
 --------
 
+.. fragment: syntax line; bone, worldX and worldY are placeholders
 .. code-block:: lua
 
    bone:setWorldPosition(worldX, worldY)
@@ -42,11 +43,11 @@ Example:
 
 .. code-block:: lua
 
-   -- Drag a bone with the finger
-   local crosshair = skeleton:getIKConstraint("aim-ik").target
+   -- Drag the hero's look-at target with the finger: the head follows through the IK constraint
+   local lookTarget = skeleton:getIkConstraint("look-constraint").target
 
    local function onTouch(event)
-       crosshair:setWorldPosition(skeleton:contentToLocal(event.x, event.y))
+       lookTarget:setWorldPosition(skeleton:contentToLocal(event.x, event.y))
        return true
    end
    skeleton:addEventListener("touch", onTouch)

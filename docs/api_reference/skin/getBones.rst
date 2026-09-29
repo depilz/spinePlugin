@@ -13,6 +13,7 @@ Returns the bones associated with this skin. Some skins in Spine can include bon
 Syntax:
 --------
 
+.. fragment: syntax line; skin is a placeholder
 .. code-block:: lua
 
    local bones = skin:getBones()
@@ -25,14 +26,20 @@ Returns:
 Example:
 --------
 
+The examples use the mix-and-match example skeleton, whose skins each dress part of the character.
+
 List Skin Bones
 ...............
 
 .. code-block:: lua
 
-   local skin = skeleton:getSkin()
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+
+   girl:setSkin("full-skins/girl")
+   local skin = girl:getSkin()
    local bones = skin:getBones()
-   
+
    if #bones > 0 then
        print("Skin-specific bones:")
        for i, boneName in ipairs(bones) do
@@ -43,36 +50,42 @@ List Skin Bones
    end
 
 Check for Required Bones
-.........................
+........................
 
 .. code-block:: lua
 
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+
    local function hasSkinBones(skinName)
-       local skin = skeleton:findSkin(skinName)
-       
+       local skin = girl:findSkin(skinName)
+
        if skin then
            local bones = skin:getBones()
            return #bones > 0
        end
-       
+
        return false
    end
-   
-   if hasSkinBones("dragon-wings") then
+
+   if hasSkinBones("accessories/hat-red-yellow") then
        print("This skin requires special bone setup")
    end
 
 Combine Skins with Bones
-.........................
+........................
 
 .. code-block:: lua
 
-   local customSkin = skeleton:createSkin("custom")
-   
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+
+   local customSkin = girl:createSkin("custom")
+
    -- When adding a skin with bones, they are preserved
-   customSkin:addSkin("character-base")
-   customSkin:addSkin("special-outfit")  -- Has skin-specific bones
-   
+   customSkin:addSkin("skin-base")
+   customSkin:addSkin("accessories/hat-red-yellow")  -- Has skin-specific bones
+
    local bones = customSkin:getBones()
    print("Combined skin has", #bones, "bones")
 
@@ -83,4 +96,3 @@ Notes:
 - Skin bones are an advanced Spine feature used for linked meshes and other complex setups
 - When using :doc:`addSkin` or :doc:`copySkin`, bone data is preserved
 - Most simple skins will return an empty table
-

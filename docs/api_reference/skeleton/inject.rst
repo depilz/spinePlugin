@@ -25,6 +25,7 @@ update the slot it is attached to, it is recommended to use the :doc:`changeInje
 Syntax:
 --------
 
+.. fragment: syntax line; object, slotName and listener are placeholders
 .. code-block:: lua
 
    skeleton:inject(object, slotName, listener)
@@ -33,20 +34,32 @@ Syntax:
     ``displayObject`` – The Solar2D display object to attach.
 - ``slotName`` *(required)*:
     ``string`` – The slot to which the object will attach.
-- ``listener`` *(required)*:
-    ``function`` – A callback invoked on every slot transform update. See :doc:`injectionEvent` for more details.
+- ``listener`` *(optional)*:
+    ``function`` – Called every time the skeleton draws the object's slot (each :doc:`draw`), and once more
+    with ``isVisible = false`` when the slot stops being drawn. See :doc:`injectionEvent` for more details.
+
+The object goes into the skeleton's display group at the slot's place in the draw order. The plugin does not move
+it: position it from the listener's event, which is in the skeleton group's coordinates.
 
 Example:
 --------
 
 .. code-block:: lua
 
+    local displayObject = display.newRect(0, 0, 20, 20)
+
     local function listener(event)
-        print("Slot:", event.slot)
+        print("Slot:", event.slotName)
         print("Position:", event.x, event.y)
         print("Rotation:", event.rotation)
         print("Scale:", event.xScale, event.yScale)
         print("Alpha:", event.alpha)
+
+        -- Follow the slot's bone
+        event.target.x, event.target.y = event.x, event.y
+        event.target.rotation = event.rotation
+        event.target.isVisible = event.isVisible
     end
 
-    skeleton:inject(displayObject, "slotName", listener)
+    skeleton:inject(displayObject, "hand1", listener)
+    skeleton:draw()

@@ -19,18 +19,75 @@ you can seamlessly play back and control Spine animations in your
 Solar2D games or applications. The result: beautiful and efficient
 character or UI animations that look great on every device.
 
+.. _pick-your-line:
+
+Pick your line
+--------------
+
+The plugin ships one plugin per Spine line. Pick the line of the Spine editor you export your skeletons from, add
+its entry to the plugins table of ``build.settings`` and read that line's documentation.
+
+- **Spine 4.2**: ``plugin.spine42`` (version 2.0.0), `documentation for 4.2 <https://spineplugin.readthedocs.io/en/4.2/>`_.
+
+  .. code-block:: lua
+
+      settings =
+      {
+          plugins =
+          {
+              ["plugin.spine42"] =
+              {
+                  publisherId = "com.studycat",
+              },
+          },
+      }
+
+- **Spine 4.3**: ``plugin.spine43`` (version 3.0.0), `documentation for 4.3 <https://spineplugin.readthedocs.io/en/4.3/>`_.
+
+  .. code-block:: lua
+
+      settings =
+      {
+          plugins =
+          {
+              ["plugin.spine43"] =
+              {
+                  publisherId = "com.studycat",
+              },
+          },
+      }
+
+- **Legacy 1.2**: ``plugin.spine``, the earlier release, `documentation for 1.2 <https://spineplugin.readthedocs.io/en/1.2/>`_.
+
+  .. code-block:: lua
+
+      settings =
+      {
+          plugins =
+          {
+              ["plugin.spine"] =
+              {
+                  publisherId = "com.studycat",
+              },
+          },
+      }
+
+Moving a project from ``plugin.spine`` 1.2 to a line, or from 4.2 to 4.3? See the :doc:`migration guide <migration>`
+and the `CHANGELOG <https://github.com/depilz/spinePlugin/blob/main/CHANGELOG.md>`_.
+
 How to Get Started
 ------------------
 
-1. **Check Spine License Requirements**  
+1. **Check Spine License Requirements**
 
    Make sure you own a valid Spine license if necessary. Esoteric
    Software offers various Spine license tiers. Confirm you have the
    permission required to use the runtime.
 
-2. **Install the Plugin**  
+2. **Install the Plugin**
 
    To use this plugin, add an entry into the plugins table of build.settings. When added, the build server will integrate the plugin during the build phase.
+   This is the entry for the line these docs describe; :ref:`pick-your-line` lists the entry of every line.
 
    .. code-block:: lua
 
@@ -38,7 +95,7 @@ How to Get Started
        {
            plugins =
            {
-               ["plugin.spine"] =
+               ["@SPINE_PLUGIN@"] =
                {
                    publisherId = "com.studycat",
                },
@@ -46,21 +103,21 @@ How to Get Started
        }
 
 
-3. **Load the Plugin in Your Lua Code**  
+3. **Load the Plugin in Your Lua Code**
 
    .. code-block:: lua
-   
-       local spine = require("plugin.spine")
+
+       local spine = require("@SPINE_PLUGIN@")
 
 
-4. **Import Your Spine Assets**  
+4. **Import Your Spine Assets**
 
    Put your Spine-generated JSON or binary skeleton files, as well as
-   any atlas/textures, into your project’s resource directory.  
+   any atlas/textures, into your project’s resource directory.
 
-5. **Start Animating**  
+5. **Start Animating**
 
-   Familiarize yourself with the plugin’s core objects (e.g., Skeleton, physics, ik constraints) 
+   Familiarize yourself with the plugin’s core objects (e.g., Skeleton, physics, ik constraints)
    and methods. These are detailed in the :doc:`api_reference/index`. You’ll learn how to
    mix animations, update skeleton transforms, change skins, and more.
 
@@ -69,7 +126,7 @@ How to Get Started
 Differences from the Original Spine Runtime:
 ---------------------------------------------
 
-I built this plugin trying to make a complete integration to the original C++ Runtime. However, 
+I built this plugin trying to make a complete integration to the original C++ Runtime. However,
 there are some key differences to keep in mind:
 
 * **indexes**: Indexes start at ``1``, not ``0``, including track indexes. Skin methods take slot names or Slot objects, never numeric slot indexes. Not my favorite change, but I want to prioritize consistency with the language and the engine first, and then with the original runtime.
@@ -89,7 +146,13 @@ Key Features
 
 - **Performance**: Unlike the old Lua Runtime, this plugin uses native code for optimal rendering and animation performance.
 
-- **Physics**: The plugin uses spine 4.2, which has the new physics system. You can now create physics constraints in Spine and use them in Solar2D.
+.. only:: spine42
+
+   - **Physics**: This line uses Spine 4.2, which has the new physics system. You can now create physics constraints in Spine and use them in Solar2D.
+
+.. only:: spine43
+
+   - **Physics**: This line uses Spine 4.3, which has the physics system. You can create physics constraints in Spine and use them in Solar2D.
 
 
 Documentation Contents
@@ -103,6 +166,8 @@ Below is a quick look at the main sections of this documentation:
     quickstart
     attachments-and-skins
     lifecycle
+    naming
+    migration
 
 .. toctree::
    :maxdepth: 2
@@ -152,5 +217,5 @@ Acknowledgments
 
 ----------------------------------
 
-We hope you find this documentation helpful and comprehensive. 
+We hope you find this documentation helpful and comprehensive.
 Let’s get animating with Spine for Solar2D!

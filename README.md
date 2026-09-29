@@ -1,10 +1,18 @@
 # Solar2D Spine Plugin
 
-A native Spine plugin for Solar2D, enabling seamless integration of Spine 4.2 animations into your Solar2D projects with enhanced performance and features.
+A native Spine plugin for Solar2D, enabling seamless integration of Spine animations into your Solar2D projects with enhanced performance and features.
+
+The plugin ships one plugin per Spine line; pick the one that matches the Spine editor you export from:
+
+| Spine line | Plugin | Version | Documentation |
+|---|---|---|---|
+| 4.2 | `plugin.spine42` | 2.0.0 | [spineplugin.readthedocs.io/en/4.2](https://spineplugin.readthedocs.io/en/4.2/) |
+| 4.3 | `plugin.spine43` | 3.0.0 | [spineplugin.readthedocs.io/en/4.3](https://spineplugin.readthedocs.io/en/4.3/) |
+| legacy | `plugin.spine` | 1.2 | [spineplugin.readthedocs.io/en/1.2](https://spineplugin.readthedocs.io/en/1.2/) |
 
 The plugin works on Android, iOS, macOS, and Windows platforms, supporting both Spine JSON and binary formats.
 
-For detailed information on the plugin's API, please refer to the [plugin's documentation](https://spineplugin.readthedocs.io/en/latest/index.html)
+For detailed information on the plugin's API, please refer to the [plugin's documentation](https://spineplugin.readthedocs.io/)
 
 
 ### 🤝 Contributing

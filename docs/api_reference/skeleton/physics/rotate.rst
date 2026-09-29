@@ -13,15 +13,16 @@ Rotates all physics constraints around the point `(x, y)` by the specified `degr
 Syntax:
 --------
 
+.. fragment: syntax line; physics and the arguments are placeholders
 .. code-block:: lua
 
    physics:rotate(x, y, degrees)
 
-- ``x`` *(required)*:  
+- ``x`` *(required)*:
     ``number`` – The pivot’s X coordinate.
-- ``y`` *(required)*:  
+- ``y`` *(required)*:
     ``number`` – The pivot’s Y coordinate.
-- ``degrees`` *(required)*:  
+- ``degrees`` *(required)*:
     ``number`` – Degrees to rotate around the pivot.
 
 Example:
@@ -29,5 +30,9 @@ Example:
 
 .. code-block:: lua
 
+   -- the hero has no physics constraints; celestial-circus has
+   local circus = spine.create(spine.loadSkeletonData("assets/characters/celestial-circus.json",
+                                                      spine.loadAtlas("assets/characters/celestial-circus.atlas")))
+
    -- Rotate the physics system around (100, 200) by 45 degrees
-   hero.physics:rotate(100, 200, 45)
+   circus.physics:rotate(100, 200, 45)

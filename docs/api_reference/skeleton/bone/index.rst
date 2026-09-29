@@ -29,17 +29,18 @@ Properties:
 
    name
    parent
+   children
    x
    y
    rotation
-   xScale
-   yScale
+   scaleX
+   scaleY
    worldX
    worldY
    worldRotation
    worldScaleX
    worldScaleY
-   
+
 **Advanced**
 
 .. toctree::
@@ -63,3 +64,14 @@ Methods:
    translateWorld
    localToWorld
    worldToLocal
+
+Aliases:
+--------
+
+See :doc:`/naming`.
+
+.. toctree::
+   :maxdepth: 1
+
+   xScale
+   yScale

@@ -27,20 +27,22 @@ Syntax:
 
 **Reading:**
 
+.. fragment: syntax line; slot is a placeholder
 .. code-block:: lua
 
    local attachmentObject = slot.attachment  -- Returns Attachment userdata or nil
 
 **Writing:**
 
+.. fragment: syntax lines; slot, "attachmentName" and attachmentObject are placeholders
 .. code-block:: lua
 
    -- Set by name (uses current or default skin)
    slot.attachment = "attachmentName"
-   
+
    -- Set by Attachment object
    slot.attachment = attachmentObject
-   
+
    -- Clear attachment
    slot.attachment = nil
 
@@ -61,9 +63,9 @@ Example:
 
 .. code-block:: lua
 
-   local slot = hero:getSlot("weapon")
+   local slot = hero:getSlot("weapon-sword")
    local attachment = slot.attachment
-   
+
    if attachment then
        print("Current attachment:", attachment.name)
        print("Attachment type:", attachment.type)
@@ -75,41 +77,42 @@ Example:
 
 .. code-block:: lua
 
-   local slot = hero:getSlot("weapon")
-   
-   -- Set from current/default skin
-   slot.attachment = "sword"
-   
-   -- Later, change to another attachment
-   slot.attachment = "axe"
-   
+   local slot = hero:getSlot("weapon-sword")
+
    -- Clear it
    slot.attachment = nil
+
+   -- Set it again from the current/default skin
+   slot.attachment = "sword"
 
 **Setting by Object:**
 
 .. code-block:: lua
 
    -- Get an attachment from a specific skin
-   local skin = skeleton:getSkin()
-   local attachment = skin:getAttachment("weapon", "sword")
-   
+   local skin = skeleton:findSkin("default")
+   local attachment = skin:getAttachment("weapon-sword", "sword")
+
    -- Set it directly
-   slot.attachment = attachment
+   skeleton:findSlot("weapon-sword").attachment = attachment
 
 **Using with Different Skins:**
 
 .. code-block:: lua
 
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+   local slot = girl:findSlot("hat")
+
    -- Set the skeleton's skin first
-   skeleton:setSkin("warrior")
-   
-   -- Now slot.attachment uses the warrior skin
-   slot.attachment = "helmet"  -- Gets "helmet" from warrior skin
-   
-   -- Change skin
-   skeleton:setSkin("mage")
-   slot.attachment = "hat"  -- Gets "hat" from mage skin
+   girl:setSkin("accessories/hat-red-yellow")
+
+   -- Now slot.attachment uses that skin
+   slot.attachment = "hat"  -- the red and yellow hat
+
+   -- Change skin: the same key now finds another hat
+   girl:setSkin("accessories/hat-pointy-blue-yellow")
+   slot.attachment = "hat"  -- the pointy blue and yellow hat
 
 Notes:
 ------

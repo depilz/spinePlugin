@@ -13,6 +13,7 @@ Sets an empty animation on every active track and mixes to setup pose over the g
 Syntax:
 --------
 
+.. fragment: syntax line; mixDuration is a placeholder
 .. code-block:: lua
 
    skeleton:setEmptyAnimations(mixDuration)

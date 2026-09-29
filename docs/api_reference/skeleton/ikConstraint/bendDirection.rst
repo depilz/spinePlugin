@@ -8,7 +8,7 @@ ikConstraint.bendDirection
 Overview:
 .........
 
-Indicates whether bones bend **forward** (`1`) or **backward** (`-1`). 
+Indicates whether bones bend **forward** (`1`) or **backward** (`-1`).
 Useful if you want the IK chain to flip how it curves around the target.
 
 Example:

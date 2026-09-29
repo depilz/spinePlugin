@@ -8,12 +8,13 @@ slot:getAttachments()
 Overview:
 .........
 
-Returns a table of all attachments available for this slot. If you only want to know the current attachment, 
+Returns a table of all attachments available for this slot. If you only want to know the current attachment,
 use :doc:`attachment` or if you want to know all the attachments for a given skin, use :doc:`getSkinAttachments`.
 
 Syntax:
 --------
 
+.. fragment: syntax line; slot and the arguments are placeholders
 .. code-block:: lua
 
    local attachments = slot:getAttachments()

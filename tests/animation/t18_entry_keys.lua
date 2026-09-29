@@ -5,8 +5,8 @@ local C = dofile(arg[0]:match("^(.*)/") .. "/../check.lua")
 local mode = arg[1]
 local data = spine.loadSkeletonData("spineboy/spineboy.json", spine.loadAtlas("spineboy/spineboy.atlas"))
 local s = spine.create(data)
-local READ_ONLY = { "index", "animation", "trackComplete", "isComplete", "animationTime", "next", "mixingFrom",
-  "mixingTo", "isValid" }
+local READ_ONLY = { "trackIndex", "index", "animation", "trackComplete", "isComplete", "animationTime", "next",
+  "mixingFrom", "mixingTo", "isValid" }
 
 -- raises(f, message): f raised an error ending in message
 local function raises(f, message)

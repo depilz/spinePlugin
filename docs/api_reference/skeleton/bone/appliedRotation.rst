@@ -16,7 +16,7 @@ Example:
 
 .. code-block:: lua
 
-   local spine = require("plugin.spine")
+   local spine = require("@SPINE_PLUGIN@")
    local bone = hero.bones[2]
    print("Applied rotation before override:", bone.appliedRotation)
    bone.appliedRotation = 30

@@ -3,17 +3,13 @@ slot.alpha
 ===================================
 
 | **Type:** ``number``
-| **See also:** :doc:`index`, :doc:`color`
+| **See also:** :doc:`index`, :doc:`color`, :doc:`a`, :doc:`/naming`
 
 Overview:
 .........
 
-Represents the **alpha** (transparency) channel of the slot’s color (0–1).
-`1.0` is fully opaque, while `0.0` is fully transparent.
-
-At ``slot.alpha = 0`` the slot's attachment emits **no geometry** at all (a clipping attachment still
-clips). An object injected into the slot with :doc:`../inject` is still placed every drawn frame, with
-``isVisible = true``, the same as at any other alpha.
+``slot.alpha`` is an alias of :doc:`a` (``slot.a``): it reads and writes the alpha channel of the slot's color. Both names work on both plugin lines and
+stay supported; :doc:`/naming` explains which name is canonical. The full description is on :doc:`a`.
 
 Example:
 --------
@@ -21,5 +17,5 @@ Example:
 .. code-block:: lua
 
    local slot = hero.slots[1]
-   slot.alpha = 0.8  -- 80% opacity
-   print("Slot alpha:", slot.alpha)
+   slot.alpha = 0.8
+   print(slot.alpha, slot.a)  -- both 0.8

@@ -3,13 +3,13 @@ bone.xScale
 ===================================
 
 | **Type:** ``number``
-| **See also:** :doc:`index`
+| **See also:** :doc:`index`, :doc:`scaleX`, :doc:`/naming`
 
 Overview:
 .........
 
-Scale factor along the bone’s local X-axis. Changing `xScale` affects how wide or narrow
-attachments appear. A value of `1.0` means no scale.
+``bone.xScale`` is an alias of :doc:`scaleX` (``bone.scaleX``): it reads and writes the same local scale. Both names work on both plugin lines and
+stay supported; :doc:`/naming` explains which name is canonical. The full description is on :doc:`scaleX`.
 
 Example:
 --------
@@ -17,4 +17,5 @@ Example:
 .. code-block:: lua
 
    local bone = hero.bones[2]
-   bone.xScale = 2.0  -- Double width
+   bone.xScale = 1.5
+   print(bone.xScale, bone.scaleX)  -- 1.5  1.5

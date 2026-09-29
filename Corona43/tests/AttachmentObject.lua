@@ -8,6 +8,7 @@ local parent = display.newGroup()
 local o = Spine.create(parent, skeleton, display.contentCenterX, display.contentCenterY+100)
 local animations = o:getAnimations()
 o:setAnimation(1, animations[1], true)
+o:setSkin("goblin")
 
 -- Test the attachment object
 timer.performWithDelay(1000, function()
@@ -53,6 +54,27 @@ timer.performWithDelay(1000, function()
     for i, attachment in ipairs(skinAttachments) do
         print(string.format("  Attachment %d: %s (type: %s)", i, attachment.name, attachment.type))
     end
+
+    -- Both optional forms must follow skin changes on the same slot objects.
+    local previousSkin = o:getSkin()
+    for _, skinName in ipairs(o:getSkins()) do
+        o:setSkin(skinName)
+        for _, slot in ipairs(o.slots) do
+            local expected = slot:getSkinAttachments(skinName)
+            local implicit = slot:getSkinAttachments()
+            local explicitNil = slot:getSkinAttachments(nil)
+            assert(type(implicit) == "table" and type(explicitNil) == "table")
+            assert(#implicit == #expected and #explicitNil == #expected)
+            for i, attachment in ipairs(expected) do
+                assert(implicit[i].name == attachment.name)
+                assert(explicitNil[i].name == attachment.name)
+            end
+            assert(not pcall(slot.getSkinAttachments, slot, "__missing_test_skin__"))
+        end
+    end
+    if previousSkin then
+        o:setSkin(previousSkin)
+    end
 end)
 
 -- Test modifying attachment color
@@ -86,9 +108,13 @@ timer.performWithDelay(4000, function()
         slot.attachment = attachment
         print("Attachment set using object!")
         
-        -- Or using a string name
-        slot.attachment = attachment.name
-        print("Attachment set using string name!")
+        -- Or using its skin lookup key (placeholder), which can differ from attachment.name
+        for _, entry in ipairs(slot:getAttachmentEntries()) do
+            if entry.attachment.name == attachment.name then
+                slot.attachment = entry.placeholder
+                print("Attachment set using placeholder '" .. entry.placeholder .. "' of '" .. attachment.name .. "'!")
+                break
+            end
+        end
     end
 end)
-

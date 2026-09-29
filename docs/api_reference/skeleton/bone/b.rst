@@ -3,7 +3,7 @@ bone.b
 ===================================
 
 | **Type:** ``number`` (read/write)
-| **See also:** :doc:`index`
+| **See also:** :doc:`index`, :doc:`/naming`
 
 Overview:
 .........

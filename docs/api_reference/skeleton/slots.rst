@@ -3,7 +3,7 @@ skeleton.slots
 ===================================
 
 | **Type:** ``table`` (read-only)
-| **See also:** :doc:`index`, :doc:`slot/index`
+| **See also:** :doc:`index`, :doc:`slot/index`, :doc:`/naming`
 
 Overview:
 .........
@@ -15,7 +15,7 @@ Example:
 
 .. code-block:: lua
 
-   local spine = require("plugin.spine")
+   local spine = require("@SPINE_PLUGIN@")
    local atlas = spine.loadAtlas("hero.atlas")
    local skeletonData = spine.loadSkeletonData("hero.skel", atlas)
    local hero = spine.create(skeletonData)

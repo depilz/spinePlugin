@@ -25,6 +25,7 @@ order to get one entry after the other at their own times.
 Syntax:
 --------
 
+.. fragment: syntax line; trackIndex, animationName, loop and startTimeMs are placeholders
 .. code-block:: lua
 
    local trackEntryOrFalse = skeleton:addAnimationAt(trackIndex, animationName, loop, startTimeMs)

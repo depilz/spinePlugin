@@ -18,6 +18,7 @@ raises a Lua error without changing the slot. ``"null"`` is a literal key; use
 Syntax:
 --------
 
+.. fragment: syntax line; slotName and attachmentName are placeholders
 .. code-block:: lua
 
    skeleton:setAttachment(slotName, attachmentName)
@@ -32,8 +33,8 @@ Example:
 
 .. code-block:: lua
 
-   -- Equip a sword attachment to the "hand" slot
-   hero:setAttachment("hand", "sword")
-   
    -- Un-equip the sword
-   hero:setAttachment("hand", nil)
+   hero:setAttachment("weapon-sword", nil)
+
+   -- Equip the sword attachment in the "weapon-sword" slot again
+   hero:setAttachment("weapon-sword", "sword")

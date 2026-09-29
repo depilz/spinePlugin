@@ -14,6 +14,7 @@ Returns `nil` if no animation is active.
 Syntax:
 --------
 
+.. fragment: syntax line; the brackets mark trackIndex as optional
 .. code-block:: lua
 
    local animName = skeleton:getCurrentAnimation([trackIndex])

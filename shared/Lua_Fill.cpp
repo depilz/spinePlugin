@@ -32,6 +32,20 @@ static int fill_index(lua_State *L)
         lua_pushnumber(L, skeleton.getColor().a);
         return 1;
     }
+    else if (strcmp(key, "color") == 0)
+    {
+        Color &color = skeleton.getColor();
+        lua_createtable(L, 0, 4);
+        lua_pushnumber(L, color.r);
+        lua_setfield(L, -2, "r");
+        lua_pushnumber(L, color.g);
+        lua_setfield(L, -2, "g");
+        lua_pushnumber(L, color.b);
+        lua_setfield(L, -2, "b");
+        lua_pushnumber(L, color.a);
+        lua_setfield(L, -2, "a");
+        return 1;
+    }
     else if (strcmp(key, "effect") == 0)
     {
         if (!fillUserdata->owner->effectData)
@@ -88,6 +102,24 @@ static int fill_newindex(lua_State *L)
     {
         float a = luaL_checknumber(L, 3);
         skeleton.getColor().a = a;
+        return 0;
+    }
+    else if (strcmp(key, "color") == 0)
+    {
+        luaL_checktype(L, 3, LUA_TTABLE);
+
+        Color &color = skeleton.getColor();
+        float *components[] = {&color.r, &color.g, &color.b, &color.a};
+        const char *names[] = {"r", "g", "b", "a"};
+        for (int i = 0; i < 4; i++)
+        {
+            lua_getfield(L, 3, names[i]);
+            if (lua_isnumber(L, -1))
+            {
+                *components[i] = lua_tonumber(L, -1);
+            }
+            lua_pop(L, 1);
+        }
         return 0;
     }
     else if (strcmp(key, "effect") == 0)

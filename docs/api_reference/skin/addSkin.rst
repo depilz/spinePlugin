@@ -15,10 +15,11 @@ If an attachment with the same slot and name already exists in this skin, it wil
 Syntax:
 --------
 
+.. fragment: syntax line; skin and skinNameOrObject are placeholders
 .. code-block:: lua
 
    skin:addSkin(skinNameOrObject)
-    
+
 - ``skinNameOrObject`` *(required)*:
     ``string`` or ``Skin`` – Either the name of an existing skin or a Skin object of the same skeleton data.
 
@@ -33,37 +34,45 @@ other skin is not found, has the wrong type or belongs to different skeleton dat
 Example:
 --------
 
+The examples use the mix-and-match example skeleton, whose skins each dress part of the character.
+
 Combine Multiple Skins
-.......................
+......................
 
 .. code-block:: lua
 
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+
    -- Create a custom skin
-   local avatar = skeleton:createSkin("myCharacter")
-   
+   local avatar = girl:createSkin("myCharacter")
+
    -- Add attachments from multiple skins
-   avatar:addSkin("base")       -- Base body
-   avatar:addSkin("warrior")    -- Warrior equipment
-   avatar:addSkin("cape")       -- Cape accessory
-   
+   avatar:addSkin("skin-base")              -- Base body
+   avatar:addSkin("clothes/hoodie-orange")  -- Clothes
+   avatar:addSkin("accessories/cape-red")   -- Cape accessory
+
    -- Apply the combined skin
-   skeleton:setSkin(avatar)
+   girl:setSkin(avatar)
 
 Layer Skins
 ...........
 
 .. code-block:: lua
 
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+
    -- Build up a character by layering skins
-   local character = skeleton:createSkin("hero")
-   
+   local character = girl:createSkin("layered")
+
    -- Add base, then layer customization on top
-   character:addSkin("body_type_1")
-   character:addSkin("head_type_2")
-   character:addSkin("armor_knight")
-   character:addSkin("weapon_sword")
-   
-   skeleton:setSkin(character)
+   character:addSkin("skin-base")
+            :addSkin("hair/short-red")
+            :addSkin("eyes/green")
+            :addSkin("legs/pants-jeans")
+
+   girl:setSkin(character)
 
 Notes:
 --------
@@ -74,4 +83,3 @@ Notes:
 - For independent copies, use :doc:`copySkin` instead
 - Raises on a data skin: data skins are read-only (see :doc:`index`)
 - Raises when the skin is not found; use :doc:`../skeleton/findSkin` to check first
-

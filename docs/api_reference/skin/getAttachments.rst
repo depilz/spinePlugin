@@ -13,6 +13,7 @@ Returns a table of all attachments in the skin. Each entry contains the slot nam
 Syntax:
 --------
 
+.. fragment: syntax line; skin is a placeholder
 .. code-block:: lua
 
    local attachments = skin:getAttachments()
@@ -29,19 +30,25 @@ Returns:
 Example:
 --------
 
+The examples use the mix-and-match example skeleton, whose skins each dress part of the character.
+
 List All Attachments
 ....................
 
 .. code-block:: lua
 
-   local currentSkin = skeleton:getSkin()
-   
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+
+   girl:setSkin("full-skins/girl")
+   local currentSkin = girl:getSkin()
+
    if currentSkin then
        local attachments = currentSkin:getAttachments()
        print("Attachments in", currentSkin.name .. ":")
-       
+
        for i, attachment in ipairs(attachments) do
-           print(string.format("  [%d] Slot %s: %s", 
+           print(string.format("  [%d] Slot %s: %s",
                i, attachment.slotName, attachment.placeholder))
        end
    end
@@ -51,12 +58,14 @@ Compare Skins
 
 .. code-block:: lua
 
-   local skin1 = skeleton:createSkin("compare1")
-   skin1:addSkin("soldier")
-   
-   local skin2 = skeleton:createSkin("compare2")
-   skin2:addSkin("warrior")
-   
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+
+   local skin1 = girl:createSkin("compare1")
+   skin1:addSkin("full-skins/girl")
+
+   local skin2 = girl:createSkin("compare2")
+   skin2:addSkin("full-skins/boy")
+
    print("Skin 1 attachments:", #skin1:getAttachments())
    print("Skin 2 attachments:", #skin2:getAttachments())
-

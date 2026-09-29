@@ -3,7 +3,7 @@ physics.isActive
 ===================================
 
 | **Type:** ``boolean`` (read-only)
-| **See also:** :doc:`index`, :doc:`mix`
+| **See also:** :doc:`index`, :doc:`mix`, :doc:`/naming`
 
 Overview:
 .........
@@ -12,12 +12,14 @@ Indicates whether the skeleton's first physics constraint is currently **active*
 a constraint is inactive when it is skin-required and the current skin does not include it, or when its bone
 is inactive. The value changes when the skin changes.
 
-.. note::
+.. only:: spine43
 
-   On the 4.3 line (``plugin.spine43``), earlier builds always read ``true`` here, because of a spine-cpp 4.3
-   runtime issue that the plugin now patches: ``Skeleton::updateCache`` set a different active flag than the one
-   ``isActive()`` reads. ``isActive`` now reads ``false`` for an inactive constraint on both lines, and the
-   constraint's animation timelines no longer change it while it is inactive.
+   .. note::
+
+      On the 4.3 line (``plugin.spine43``), earlier builds always read ``true`` here, because of a spine-cpp 4.3
+      runtime issue that the plugin now patches: ``Skeleton::updateCache`` set a different active flag than the one
+      ``isActive()`` reads. ``isActive`` now reads ``false`` for an inactive constraint on both lines, and the
+      constraint's animation timelines no longer change it while it is inactive.
 
 ``isActive`` is read-only. Writing it raises the error
 ``Physics constraint isActive is read-only; set mix = 0 to stop it``. To stop physics, set
@@ -28,7 +30,11 @@ Example:
 
 .. code-block:: lua
 
-   print("Physics active:", hero.physics.isActive)
+   -- the hero has no physics constraints; celestial-circus has
+   local circus = spine.create(spine.loadSkeletonData("assets/characters/celestial-circus.json",
+                                                      spine.loadAtlas("assets/characters/celestial-circus.atlas")))
 
-   hero.physics.mix = 0  -- Stop physics
-   hero.physics.mix = 1  -- Restart it
+   print("Physics active:", circus.physics.isActive)
+
+   circus.physics.mix = 0  -- Stop physics
+   circus.physics.mix = 1  -- Restart it

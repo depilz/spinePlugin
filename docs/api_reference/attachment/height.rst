@@ -7,12 +7,11 @@ attachment.height
 
 The base height of the attachment in Spine units.
 
-For **region** attachments, this is the height of the rectangular image quad 
+For **region** attachments, this is the height of the rectangular image quad
 before scaling is applied.
 
-For **mesh** attachments, this is used for non-essential mesh data and setup.
-
-Modifying this value will affect the attachment's rendering size.
+For **mesh** attachments, this is non-essential data from the Spine editor: the mesh is drawn from its
+vertices, so writing ``height`` changes nothing on screen.
 
 For **region** attachments, setting this property updates the attachment's geometry at once: the next
 :doc:`../skeleton/draw` shows the change.
@@ -22,10 +21,10 @@ Example
 
 .. code-block:: lua
 
-   local slot = skeleton:findSlot("shield")
+   local slot = skeleton:findSlot("hand1")
    local attachment = slot.attachment
-   
-   if attachment and (attachment.type == "region" or attachment.type == "mesh") then
+
+   if attachment and attachment.type == "region" then
        -- Make it taller
        attachment.height = attachment.height * 1.2
    end

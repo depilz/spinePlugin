@@ -4,6 +4,13 @@
 
 ### Both lines
 
+- **Breaking: the plugin is published once per Spine line.** `plugin.spine42` (version 2.0.0) runs Spine 4.2 and
+  `plugin.spine43` (version 3.0.0) runs Spine 4.3; both have the same Lua API. The `plugin.spine` 1.2.x releases
+  stay as they are. Moving from `plugin.spine` means renaming the plugin in `build.settings` and in every `require`;
+  the 4.3 line also needs skeletons exported with Spine 4.3. The migration page of the documentation lists every
+  change from 1.2.6 and from the 4.2 line to the 4.3 line.
+- **The documentation has one version per line.** The 4.2 and 4.3 documentation each name their own plugin in
+  every sample and link inside their own version; the 1.2 documentation stays for `plugin.spine`.
 - **Breaking: `ikConstraint.isActive` and `physics.isActive` are read-only.** Writing either now raises
   `IK constraint isActive is read-only; set mix = 0 to stop it` or
   `Physics constraint isActive is read-only; set mix = 0 to stop it`. Before, the write was accepted, but Spine
@@ -12,7 +19,8 @@
 - **Physics steps without an animation track.** `updateState` now advances the skeleton's physics time even when no
   animation track exists, so a skeleton with physics and no animation simulates instead of standing still. Loops that
   call `updateState` and `draw` only while `skeleton.isActive` is `true` still skip such skeletons: `isActive` only
-  tells whether the skeleton has a track.
+  tells whether a track has a current entry (see "`skeleton.isActive` is `true` only while a track has a current
+  entry" below).
 - **Added `skeleton.physicsTimeScale`.** It scales the time step of the skeleton's Spine physics constraints: `1` by
   default, `0` pauses physics without a catch-up burst when it resumes. `timeScale` still does not affect physics.
   Writing a negative or non-finite value raises `physicsTimeScale must be a finite number >= 0`.
@@ -51,7 +59,7 @@
   split group yourself, the skeleton draws unsplit from the next `draw` and a later `split()` returns a new group,
   instead of every `draw` raising; `reassemble()` after that no longer raises. `reassemble()` keeps an object injected
   into a split slot that is hidden at that moment, instead of destroying it with the group.
-- **Injection listeners are called once per frame with the real visibility.** The listener passed to
+- **Breaking: injection listeners are called once per frame with the real visibility.** The listener passed to
   `skeleton:inject()` is now called once per `draw` with `isVisible = true` while its slot is drawn, once with
   `isVisible = false` on the frame its slot stops being drawn, and not at all while the slot stays hidden. It used to
   get an extra `isVisible = false` call before the `true` one on most frames, and in split mode on every frame. The
@@ -78,8 +86,7 @@
   default values from the Spine editor for every key. The new `event.time` is the key's time in milliseconds.
 - **Breaking: `skeleton.isActive` is `true` only while a track has a current entry.** It becomes `false` after
   `clearTrack` on the last track that had an entry, and once an empty animation that mixes a track out has ended on
-  every track. It used to stay `true` until `clearTracks`, as "Physics steps without an animation track" above still
-  describes it. Loops that call `updateState` and `draw` only while
+  every track. It used to stay `true` until `clearTracks`. Loops that call `updateState` and `draw` only while
   `isActive` is `true` stop updating such a skeleton earlier than before.
 - **Breaking: physics steps in `updateState`, and `draw` only poses.** `updateState` now steps the physics
   constraints and poses the skeleton, so bone and slot world values, `getBounds()` and `getSize()` are current after
@@ -113,9 +120,10 @@
   `setEmptyAnimations` still returns nothing.
 - **Track entries compare with `==`.** Two track-entry objects are equal when they stand for the same entry, for
   example `skeleton:getTrackEntry(1) == skeleton.tracks[1]`. Comparing never raises.
-- **Added `spine.version` and `spine.runtimeVersion`.** `spine.version` is the plugin version (`"2.0.0"` for
-  `plugin.spine42`, `"3.0.0"` for `plugin.spine43`) and `spine.runtimeVersion` the Spine runtime line (`"4.2"` or
-  `"4.3"`).
+- **Breaking: added `spine.version` and `spine.runtimeVersion`, without the `v` the load banner prints.**
+  `spine.version` is the plugin version (`"2.0.0"` for `plugin.spine42`, `"3.0.0"` for `plugin.spine43`) and
+  `spine.runtimeVersion` the Spine runtime line (`"4.2"` or `"4.3"`). The load banner still prints `v2.0.0`, so
+  code that compares `spine.version` with the banner's form must drop the `v`.
 - **Load errors say why.** `spine.loadSkeletonData()` raises
   `Failed to load skeleton data: <path>: <reason>` with the Spine runtime's reason, for example a version mismatch,
   and `spine.loadAtlas()` adds the error `graphics.newTexture` raised to `Failed to load texture: <path>`. The message
@@ -137,9 +145,10 @@
   define it in your app. While `skeleton.fill.effect` is set, the skeleton draws without its dark colours, so a hit
   flash and tint black cannot combine; tint black is back on the next draw after the effect is cleared. Export
   atlases with straight alpha. See the "skeleton.fill.effect and tint black" page.
-- **Added `slot.darkColor`.** It returns the slot's dark colour as a new `{ r, g, b }` table (0 to 1), or `nil` for a
-  slot without one. It is read-only: writing it raises
-  `SpineSlot: property 'darkColor' is read-only; the skeleton data and its animations set it`.
+- **Breaking: added `slot.darkColor`, read-only.** It returns the slot's dark colour as a new `{ r, g, b }` table
+  (0 to 1), or `nil` for a slot without one. Writing it raises
+  `SpineSlot: property 'darkColor' is read-only; the skeleton data and its animations set it`; such a write used to
+  be ignored.
 - **Added `skeleton:findSkin(name)`.** It returns the named skin of the skeleton data as a Skin object, or `nil`,
   without applying it.
 - **Breaking: `skeleton:registerSkin` is removed.** Apply a custom skin by passing the Skin object to `setSkin`; an
@@ -162,11 +171,17 @@
 - **Breaking: entry records use `slotName` and `placeholder`.** `skin:getAttachments()` returns
   `{slotName, placeholder, attachment}` and `slot:getAttachmentEntries()` returns
   `{slotName, placeholder, skinName, attachment}`; the `slotIndex` and `name` fields are gone.
+- **Breaking: `slot:getAttachments()` and `slot:getSkinAttachments()` return Attachment objects.** They returned
+  attachment names in 1.2.6. `getSkinAttachments` takes a skin name or a Skin object, uses the applied skin (or
+  else the default skin) without one, and raises `Skin not found: <name>` for an unknown skin name, where 1.2.6
+  returned nothing.
 - **Breaking: `skeleton:findSlot(name)` returns the Slot or `nil`** instead of a boolean; `getSlot` still raises when
   the slot does not exist.
 - **Added `setSkin(nil)` and `==` on skins, attachments and slots.** `skeleton:setSkin(nil)` clears the applied skin.
   Two Skin or Attachment objects are equal when they wrap the same native object; two Slot objects are equal when they
-  are the same slot of the same skeleton, and comparing a slot of a removed skeleton raises.
+  are the same slot of the same skeleton.
+- **Breaking: comparing a slot of a removed skeleton raises.** `==` with a Slot whose skeleton was removed raises
+  `Slot belongs to a removed skeleton`. Comparing slots used to compare the wrapper objects and never raised.
 - **Breaking: `slot.attachmentLocked` is removed,** with its runtime change to Spine's `Slot` and `AnimationState` on
   both lines. Reading it returns `nil` and writing it raises `SpineSlot: unknown property 'attachmentLocked'`.
 - **Region attachment geometry setters take effect.** Writing `x`, `y`, `rotation`, `scaleX`, `scaleY`, `width` or
@@ -180,13 +195,37 @@
   `skin:setAttachment` without a `sourceSkin`, a slot whose bone is a skin bone the applied skin does not enable raises
   nothing: its attachment is not updated and not drawn. Pass the attachment's skin as `sourceSkin`, or apply that
   skin, to draw it.
+- **Added naming aliases.** Each of these keys reads and writes the same value as the key it pairs with, on both lines,
+  with no warning, and neither name will be removed:
+  - bone `scaleX`/`scaleY` and `xScale`/`yScale`; region attachment `scaleX`/`scaleY` and `xScale`/`yScale`;
+  - `slot.a` and `slot.alpha`; `fill.color` (`{ r, g, b, a }`) and `fill.r/g/b/a`; `attachment.r/g/b/a` and
+    `attachment.color`;
+  - `entry.trackIndex` and `entry.index` (both read-only); `event.loop` and `event.looping` in animation events
+    (every phase except `"event"`);
+  - `skeleton:getIkConstraint(name)`/`getIkConstraintNames()` and `getIKConstraint`/`getIKConstraintNames`.
+- **Keys that did nothing or raised now work.** `bone.scaleX = v` and `fill.color = { … }` used to set nothing and
+  now take effect. `slot.a`, `attachment.r/g/b/a` and `attachment.xScale/yScale` used to raise an unknown-property
+  error and now work (`xScale`/`yScale` on a non-region attachment still raise it, naming the key you wrote).
+  `entry.trackIndex = x` raises `SpineTrackEntry: property 'trackIndex' is read-only` instead of an unknown-property
+  error.
+- **`spine.loadAtlas()` warns about premultiplied-alpha atlases.** The plugin draws straight alpha only. When any
+  page of the atlas declares `pma: true`, each `loadAtlas` call prints one line,
+  `WARNING: plugin.spine: <path>: premultiplied-alpha atlas (pma: true) is not supported; export with straight alpha`,
+  and the atlas still loads. Export the atlas with premultiplied alpha turned off to remove the warning.
+- **The example projects run every demo scene.** The menus of `Corona/` (4.2) and `Corona43/` (4.3) list all 15
+  scenes. "Attachment Object", "Attachment Properties" and "Attachment From Skin" now run on both lines and load
+  straight-alpha atlases, so no example prints the premultiplied-alpha warning. Every example skeleton folder carries
+  its artist's `license.txt`: Esoteric Software's, except `hero` (XDTech) and `dragon` (Thiago Brayner), whose
+  licences allow demonstration use only and forbid redistribution. The `spine-unity` art, the duplicate
+  `mix-and-match.zip`, the Spine export scripts in `Corona43/spines/export/` and the `.CoronaLiveBuild` files are removed.
 
 ### plugin.spine42 (4.2 line)
 
 - **Physics gravity points down on screen.** The plugin now uses Spine's native Y-down mode (`Bone::setYDown(true)`)
-  instead of flipping the skeleton with `scaleY = -1`. Bone positions, `getBounds()` and `getSize()` are unchanged, but
-  physics constraint gravity, which pulled bones up on screen in 1.5.0, now pulls them down, as in the Spine editor.
-  Content with non-zero gravity moves the other way than before.
+  instead of flipping the skeleton with `scaleY = -1`. Bone positions and `getBounds()` are unchanged (for
+  `getSize()`, see "`getSize().offsetY` is `getBounds().yMin`" under "Both lines"), but physics constraint gravity,
+  which pulled bones up on screen in 1.5.0, now pulls them down, as in the Spine editor. Content with non-zero
+  gravity moves the other way than before.
 - **Spine runtime refreshed to spine-cpp 4.2.120.** The vendored runtime moves from an October 2024 4.2 snapshot to the
   4.2.120 release, bringing upstream's 4.2 fixes (JSON and binary loading, clipping-aware bounds, memory leaks). The
   plugin's own runtime changes are kept.
@@ -195,10 +234,10 @@
   `entry.delay` is never negative.
 - **With timeScale 0 (paused), a zero-mix `setAnimation` ends the old entry immediately.** Its `ended` and `disposed`
   events fire at the new animation's start instead of waiting for time to advance.
-- **Sequence animations show the setup frame when mixed out** (matches the official 4.2.120 and 4.3 runtimes). While
-  a sequence (flipbook) animation mixes out, for example after `setEmptyAnimation` with a mix, its slot shows the setup
-  frame and keeps it afterwards. It used to keep flipping frames during the mix-out and then stay on a mid-sequence
-  frame.
+- **Breaking: sequence animations show the setup frame when mixed out** (matches the official 4.2.120 and 4.3
+  runtimes). While a sequence (flipbook) animation mixes out, for example after `setEmptyAnimation` with a mix, its
+  slot shows the setup frame and keeps it afterwards. It used to keep flipping frames during the mix-out and then stay
+  on a mid-sequence frame.
 - **Clipping masks match the Spine editor.** A clipping attachment on an inactive bone (a skin bone whose skin is not
   set) no longer clips the slots after it. A clip whose end slot holds a bounding box, point or path attachment now
   ends at that slot instead of clipping the rest of the draw order. On arm64 builds (iOS, Apple Silicon Mac, Android
@@ -214,8 +253,6 @@
   that share a texture and blend mode into one mesh, as the 4.3 line already did. A skeleton's `numChildren` and its
   child list change: 150 copies of the Spine raptor example go from 5,157 meshes to about 450. Code that walks a
   skeleton's children sees fewer, larger meshes.
-- **`getSize().offsetY` changes sign.** "Physics gravity points down on screen" above says `getSize()` is unchanged;
-  that still holds for `width`, `height` and `offsetX`, but `offsetY` is now `yMin` (see "Both lines").
 - **A custom event key in `.json` data without its own volume or balance reports `1` and `0`**, as the 4.2 runtime
   reads it; the 4.3 line reports the event's default volume and balance.
 
@@ -235,6 +272,8 @@
   ends at that slot instead of clipping the rest of the draw order. On arm64 builds (iOS, Apple Silicon Mac, Android
   arm64) masks no longer drop whole pieces of a masked attachment or draw triangles outside the mask for single
   frames: the triangulator no longer uses fused multiply-add, so a mask no longer triangulates outside its outline.
+- **`attachment.hullLength` counts numbers, not vertices.** The 4.3 runtime stores a mesh's hull as a count of
+  numbers (x and y of each hull vertex), so the same mesh reads twice the 4.2 line's value, which counts vertices.
 - **`ikConstraint.isActive` and `physics.isActive` read `false` for an inactive constraint.** Both always read `true`
   on the 4.3 line, because of a spine-cpp 4.3 runtime bug (also upstream): `Skeleton::updateCache` set a different
   active flag than the one `isActive()` reads. The vendored runtime is patched so every constraint type (IK, transform,

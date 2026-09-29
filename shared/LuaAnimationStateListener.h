@@ -123,7 +123,7 @@ private:
     // custom event (phase "event") adds the Spine event's name, its per-key values and its time in ms.
     void pushEvent(lua_State *L, spine::EventType type, spine::TrackEntry *entry, spine::Event *event, int groupIndex)
     {
-        lua_createtable(L, 0, type == spine::EventType_Event ? 13 : 6);
+        lua_createtable(L, 0, type == spine::EventType_Event ? 13 : 7);
 
         lua_pushstring(L, "name");
         lua_pushstring(L, "spine");
@@ -198,6 +198,10 @@ private:
         else
         {
             lua_pushstring(L, "looping");
+            lua_pushboolean(L, entry->getLoop() ? 1 : 0);
+            lua_rawset(L, -3);
+
+            lua_pushstring(L, "loop");
             lua_pushboolean(L, entry->getLoop() ? 1 : 0);
             lua_rawset(L, -3);
         }

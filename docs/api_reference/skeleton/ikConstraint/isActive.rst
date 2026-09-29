@@ -3,7 +3,7 @@ ikConstraint.isActive
 ===================================
 
 | **Type:** ``boolean`` (read-only)
-| **See also:** :doc:`index`, :doc:`mix`
+| **See also:** :doc:`index`, :doc:`mix`, :doc:`/naming`
 
 Overview:
 .........
@@ -12,12 +12,14 @@ Indicates whether this IK constraint is currently **active**. Spine decides this
 inactive when it is skin-required and the current skin does not include it, or when its target bone is
 inactive. The value changes when the skin changes.
 
-.. note::
+.. only:: spine43
 
-   On the 4.3 line (``plugin.spine43``), earlier builds always read ``true`` here, because of a spine-cpp 4.3
-   runtime issue that the plugin now patches: ``Skeleton::updateCache`` set a different active flag than the one
-   ``isActive()`` reads. ``isActive`` now reads ``false`` for an inactive constraint on both lines, and the
-   constraint's animation timelines no longer change it while it is inactive.
+   .. note::
+
+      On the 4.3 line (``plugin.spine43``), earlier builds always read ``true`` here, because of a spine-cpp 4.3
+      runtime issue that the plugin now patches: ``Skeleton::updateCache`` set a different active flag than the one
+      ``isActive()`` reads. ``isActive`` now reads ``false`` for an inactive constraint on both lines, and the
+      constraint's animation timelines no longer change it while it is inactive.
 
 ``isActive`` is read-only. Writing it raises the error
 ``IK constraint isActive is read-only; set mix = 0 to stop it``. To stop the constraint, set its

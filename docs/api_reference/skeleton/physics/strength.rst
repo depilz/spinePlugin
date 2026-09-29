@@ -16,5 +16,9 @@ Example:
 
 .. code-block:: lua
 
-   hero.physics.strength = 1.5
-   print("Physics constraint strength:", hero.physics.strength)
+   -- the hero has no physics constraints; celestial-circus has
+   local circus = spine.create(spine.loadSkeletonData("assets/characters/celestial-circus.json",
+                                                      spine.loadAtlas("assets/characters/celestial-circus.atlas")))
+
+   circus.physics.strength = 1.5
+   print("Physics constraint strength:", circus.physics.strength)

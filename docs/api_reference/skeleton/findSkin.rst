@@ -14,6 +14,7 @@ applied; pass it to :doc:`setSkin` to apply it.
 Syntax:
 --------
 
+.. fragment: syntax line; skinName is a placeholder
 .. code-block:: lua
 
    local skin = skeleton:findSkin(skinName)

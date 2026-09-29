@@ -7,10 +7,10 @@ attachment.closed
 
 Indicates whether the path forms a closed loop.
 
-When ``true``, the path connects back to its starting point, forming a continuous 
+When ``true``, the path connects back to its starting point, forming a continuous
 loop. When ``false``, the path has distinct start and end points.
 
-This affects how path constraints and path followers behave, particularly at the 
+This affects how path constraints and path followers behave, particularly at the
 ends of the path.
 
 Example
@@ -18,9 +18,9 @@ Example
 
 .. code-block:: lua
 
-   local pathSlot = skeleton:findSlot("track")
+   local pathSlot = skeleton:findSlot("weapon-morningstar-path")
    local path = pathSlot.attachment
-   
+
    if path and path.type == "path" then
        if path.closed then
            print("Path is a closed loop")
@@ -29,7 +29,7 @@ Example
            print("Path has start and end points")
            -- Followers will stop at the ends
        end
-       
+
        -- Toggle closed state
        path.closed = not path.closed
    end
@@ -38,12 +38,12 @@ Example
 
 .. code-block:: lua
 
-   local trackPath = skeleton:findSlot("railPath").attachment
-   
+   local trackPath = skeleton:findSlot("weapon-morningstar-path").attachment
+
    if trackPath and trackPath.type == "path" then
        -- Make it a closed circuit
        trackPath.closed = true
-       
+
        -- Now path constraints can loop around continuously
    end
 

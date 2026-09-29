@@ -8,12 +8,13 @@ skeleton:changeInjectionSlot(object, slotName)
 Overview:
 .........
 
-**Changes** the slot to which a previously injected Solar2D display object is attached. This 
+**Changes** the slot to which a previously injected Solar2D display object is attached. This
 lets you reassign the slot of an injected object without having to remove and re-inject it.
 
 Syntax:
 --------
 
+.. fragment: syntax line; object and slotName are placeholders
 .. code-block:: lua
 
    skeleton:changeInjectionSlot(object, slotName)
@@ -28,13 +29,14 @@ Example:
 
 .. code-block:: lua
 
+    local myHatObject = display.newRect(0, 0, 40, 20)
+
     local function onUpdateHat(event)
         print("Hat position:", event.x, event.y)
     end
 
     -- Inject an object
     hero:inject(myHatObject, "head", onUpdateHat)
-    ...
 
     -- Later, change the slot of that object
-    hero:changeInjectionSlot(myHatObject, "back")
+    hero:changeInjectionSlot(myHatObject, "hand1")

@@ -14,13 +14,14 @@ Translates all physics constraints by the given `(x, y)` offset.
 Syntax:
 --------
 
+.. fragment: syntax line; physics and the arguments are placeholders
 .. code-block:: lua
 
    physics:translate(x, y)
 
-- ``x`` *(required)*:  
+- ``x`` *(required)*:
     ``number`` – The horizontal translation offset.
-- ``y`` *(required)*:  
+- ``y`` *(required)*:
     ``number`` – The vertical translation offset.
 
 Example:
@@ -28,8 +29,11 @@ Example:
 
 .. code-block:: lua
 
-   local spine = require("plugin.spine")
-   local hero = spine.create(skeletonData)
+   local spine = require("@SPINE_PLUGIN@")
+
+   -- the hero has no physics constraints; celestial-circus has
+   local circus = spine.create(spine.loadSkeletonData("assets/characters/celestial-circus.json",
+                                                      spine.loadAtlas("assets/characters/celestial-circus.atlas")))
 
    -- Move physics constraints 10 units right, 20 units up
-   hero.physics:translate(10, -20)
+   circus.physics:translate(10, -20)

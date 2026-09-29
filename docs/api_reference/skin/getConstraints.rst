@@ -13,6 +13,7 @@ Returns the constraints associated with this skin. Some skins in Spine can inclu
 Syntax:
 --------
 
+.. fragment: syntax line; skin is a placeholder
 .. code-block:: lua
 
    local constraints = skin:getConstraints()
@@ -25,14 +26,20 @@ Returns:
 Example:
 --------
 
+The examples use the mix-and-match example skeleton, whose skins each dress part of the character.
+
 List Skin Constraints
 .....................
 
 .. code-block:: lua
 
-   local skin = skeleton:getSkin()
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+
+   girl:setSkin("full-skins/girl")
+   local skin = girl:getSkin()
    local constraints = skin:getConstraints()
-   
+
    if #constraints > 0 then
        print("Skin-specific constraints:")
        for i, constraintName in ipairs(constraints) do
@@ -43,16 +50,19 @@ List Skin Constraints
    end
 
 Check Constraint Requirements
-..............................
+.............................
 
 .. code-block:: lua
 
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+
    local function validateSkinCompatibility(skinName)
-       local skin = skeleton:findSkin(skinName)
-       
+       local skin = girl:findSkin(skinName)
+
        if skin then
            local constraints = skin:getConstraints()
-           
+
            if #constraints > 0 then
                print("Warning: Skin requires special constraints:")
                for _, name in ipairs(constraints) do
@@ -61,26 +71,31 @@ Check Constraint Requirements
                return false
            end
        end
-       
+
        return true
    end
 
+   validateSkinCompatibility("accessories/hat-red-yellow")
+
 Preserve Constraints When Combining
-....................................
+...................................
 
 .. code-block:: lua
 
-   local customSkin = skeleton:createSkin("advanced")
-   
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+
+   local customSkin = girl:createSkin("advanced")
+
    -- Add skins with constraints
-   customSkin:addSkin("base-character")
-   customSkin:addSkin("mechanical-arm")  -- Has IK constraints
-   
+   customSkin:addSkin("skin-base")
+   customSkin:addSkin("accessories/hat-red-yellow")  -- Has a skin constraint
+
    local constraints = customSkin:getConstraints()
    print("Combined skin has", #constraints, "constraints")
-   
+
    -- All constraints are preserved when combining skins
-   skeleton:setSkin(customSkin)
+   girl:setSkin(customSkin)
 
 Notes:
 --------
@@ -90,4 +105,3 @@ Notes:
 - When using :doc:`addSkin` or :doc:`copySkin`, constraint data is preserved
 - Most simple skins will return an empty table
 - Constraints can include: IK, transform, path, and physics constraints
-

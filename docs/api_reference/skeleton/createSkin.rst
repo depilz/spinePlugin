@@ -12,13 +12,16 @@ Creates a new custom Skin object that can be used to combine attachments from mu
 
 The created skin is initially empty and must have attachments added to it using the :doc:`../skin/addSkin` or :doc:`../skin/copySkin` methods.
 
+The examples use the mix-and-match example skeleton, whose skins each dress part of the character.
+
 Syntax:
 --------
 
+.. fragment: syntax line; skinName is a placeholder
 .. code-block:: lua
 
    local customSkin = skeleton:createSkin(skinName)
-    
+
 - ``skinName`` *(required)*:
     ``string`` – The name for the new custom skin.
 
@@ -35,31 +38,38 @@ Basic Usage
 
 .. code-block:: lua
 
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+
    -- Create a new custom skin
-   local customSkin = skeleton:createSkin("myAvatar")
-   
+   local customSkin = girl:createSkin("myAvatar")
+
    -- Add attachments from different skins
-   customSkin:addSkin("soldier")  -- Add all soldier attachments
-   customSkin:addSkin("warrior")  -- Add all warrior attachments
-   
+   customSkin:addSkin("skin-base")              -- Add the body
+   customSkin:addSkin("clothes/hoodie-orange")  -- Add the hoodie
+
    -- Apply the combined skin
-   skeleton:setSkin(customSkin)
+   girl:setSkin(customSkin)
 
 Mix and Match Character Parts
 ..............................
 
 .. code-block:: lua
 
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+
    -- Create custom avatar combining different skins
-   local avatar = skeleton:createSkin("customAvatar")
-   
+   local avatar = girl:createSkin("customAvatar")
+
    -- Combine parts from different character skins
-   avatar:addSkin("base")      -- Base body
-   avatar:addSkin("soldier")   -- Soldier equipment
-   avatar:addSkin("knight")    -- Knight armor
-   
+   avatar:addSkin("skin-base")                -- Base body
+   avatar:addSkin("hair/brown")               -- Hair
+   avatar:addSkin("clothes/dress-green")      -- Dress
+   avatar:addSkin("accessories/hat-red-yellow")  -- Hat
+
    -- Apply the combined skin
-   skeleton:setSkin(avatar)
+   girl:setSkin(avatar)
 
 Notes:
 --------

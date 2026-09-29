@@ -3,7 +3,7 @@ physics.xVelocity
 ===================================
 
 | **Type:** ``number``
-| **See also:** :doc:`index`
+| **See also:** :doc:`index`, :doc:`/naming`
 
 Overview:
 .........
@@ -15,5 +15,9 @@ Example:
 
 .. code-block:: lua
 
-   hero.physics.xVelocity = 10
-   print("X Velocity:", hero.physics.xVelocity)
+   -- the hero has no physics constraints; celestial-circus has
+   local circus = spine.create(spine.loadSkeletonData("assets/characters/celestial-circus.json",
+                                                      spine.loadAtlas("assets/characters/celestial-circus.atlas")))
+
+   circus.physics.xVelocity = 10
+   print("X Velocity:", circus.physics.xVelocity)

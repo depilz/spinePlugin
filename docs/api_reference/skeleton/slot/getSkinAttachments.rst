@@ -14,6 +14,7 @@ applied skin, or in a skin specified by name or Skin object.
 Syntax:
 --------
 
+.. fragment: syntax line; slot and the arguments are placeholders
 .. code-block:: lua
 
    local attachments = slot:getSkinAttachments()
@@ -47,7 +48,7 @@ Example:
 
     local slot = skeleton.slots[1]
     local attachments = slot:getSkinAttachments(nil)
-    
+
     for _, attachment in ipairs(attachments or {}) do
          print("Attachment:", attachment.name)
     end

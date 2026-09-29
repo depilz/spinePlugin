@@ -3,7 +3,7 @@ spineEvent
 ===================================
 
 | **Type:** ``table``
-| **See also:** :doc:`index`, :doc:`create`, :doc:`../skeleton/setListener`, :doc:`../skeleton/trackEntry/onComplete`
+| **See also:** :doc:`index`, :doc:`create`, :doc:`../skeleton/setListener`, :doc:`../skeleton/trackEntry/onComplete`, :doc:`/naming`
 
 Overview:
 .........
@@ -46,10 +46,13 @@ Properties:
     ``string`` – The name of the animation.
 
 - **event.trackIndex**:
-    ``number`` – The 1-based track index.
+    ``number`` – The 1-based track index, as :doc:`../skeleton/trackEntry/trackIndex`.
+
+- **event.loop**:
+    ``boolean`` – The animation is looping, as :doc:`../skeleton/trackEntry/loop`. Not set on custom events.
 
 - **event.looping**:
-    ``boolean`` – The animation is looping. Not set on custom events.
+    ``boolean`` – An alias of ``event.loop``, with the same value (see :doc:`/naming`).
 
 
 Custom event properties
@@ -128,7 +131,7 @@ Example:
 
 .. code-block:: lua
 
-   local spine = require("plugin.spine")
+   local spine = require("@SPINE_PLUGIN@")
 
    -- Load the atlas
    local atlas = spine.loadAtlas("assets/characters/hero.atlas")

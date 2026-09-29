@@ -4,7 +4,7 @@ skin.name
 
 | **Type:** ``property``
 | **Value:** ``string``
-| **See also:** :doc:`index`, :doc:`getName`
+| **See also:** :doc:`index`, :doc:`getName`, :doc:`/naming`
 
 Overview:
 .........
@@ -19,7 +19,7 @@ Example:
 
    local customSkin = skeleton:createSkin("myAvatar")
    print(customSkin.name)  -- Output: "myAvatar"
-   
+
    local currentSkin = skeleton:getSkin()
    if currentSkin then
        print("Current skin:", currentSkin.name)

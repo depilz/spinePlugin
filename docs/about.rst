@@ -23,8 +23,8 @@ Result
 
 I’m pleased to say these past hurdles are now a thing of the past!
 Whether you need sophisticated physics for bones or just want to animate
-seamlessly without performance slowdowns, this plugin aims to help. 
-I’m excited to share it with the wider Solar2D and Spine communities, 
+seamlessly without performance slowdowns, this plugin aims to help.
+I’m excited to share it with the wider Solar2D and Spine communities,
 hoping it encourages more developers to discover **how well these
 two powerful tools can fit together**.
 

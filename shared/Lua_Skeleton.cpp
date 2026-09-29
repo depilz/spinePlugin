@@ -1314,7 +1314,7 @@ static int getIKConstraint(lua_State *L)
     return 1;
 }
 
-// skeleton:getIKConstraint(ikConstraintName) : Array<string>
+// skeleton:getIKConstraintNames() : Array<string>
 static int getIKConstraintNames(lua_State *L)
 {
     SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
@@ -1647,7 +1647,7 @@ static int getDrawOrder(lua_State *L)
     return 1;
 }
 
-// skeleton:inject(slotName, object, [listener])
+// skeleton:inject(object, slotName, [listener])
 static int injectObject(lua_State *L)
 {
     SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
@@ -2030,6 +2030,8 @@ void getSpineObjectMt(lua_State *L)
             {"getSlot", getSlot},
             {"getSlotNames", getSlotNames},
 
+            {"getIkConstraint", getIKConstraint},
+            {"getIkConstraintNames", getIKConstraintNames},
             {"getIKConstraint", getIKConstraint},
             {"getIKConstraintNames", getIKConstraintNames},
 

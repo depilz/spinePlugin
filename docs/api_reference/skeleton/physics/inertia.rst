@@ -16,5 +16,9 @@ Example:
 
 .. code-block:: lua
 
-   hero.physics.inertia = 0.7
-   print("Inertia:", hero.physics.inertia)
+   -- the hero has no physics constraints; celestial-circus has
+   local circus = spine.create(spine.loadSkeletonData("assets/characters/celestial-circus.json",
+                                                      spine.loadAtlas("assets/characters/celestial-circus.atlas")))
+
+   circus.physics.inertia = 0.7
+   print("Inertia:", circus.physics.inertia)

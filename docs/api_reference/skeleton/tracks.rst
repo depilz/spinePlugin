@@ -3,7 +3,7 @@ skeleton.tracks
 ===================================
 
 | **Type:** ``table`` (read-only)
-| **See also:** :doc:`index`, :doc:`trackEntry/index`, :doc:`getTrackEntry`
+| **See also:** :doc:`index`, :doc:`trackEntry/index`, :doc:`getTrackEntry`, :doc:`/naming`
 
 Overview:
 ---------
@@ -42,7 +42,7 @@ Example:
 
 .. code-block:: lua
 
-   local spine = require("plugin.spine")
+   local spine = require("@SPINE_PLUGIN@")
    local atlas = spine.loadAtlas("assets/characters/hero.atlas")
    local skeletonData = spine.loadSkeletonData("assets/characters/hero.skel", atlas)
    local hero = spine.create(skeletonData)

@@ -1,76 +1,71 @@
 -- Test for slot:setAttachmentFromSkin() method
 -- Demonstrates how to set slot attachments from specific skins
 
-local spine = require "plugin.spine43"
-
--- Clean up any previous display objects
-display.remove(display.getCurrentStage())
-
 -- Create skeleton
-local skeletonData = spine.loadSkeleton("spines/mix-and-match/mix-and-match", {})
-local skeleton = spine.create(skeletonData)
+local atlas = Spine.getAtlasData("mix-and-match")
+local skeletonData = Spine.getSkeletonData("mix-and-match", atlas, 0.5)
+local skeleton = Spine.create(display.newGroup(), skeletonData, display.contentCenterX, display.contentCenterY + 200)
 
-skeleton.x = display.contentCenterX
-skeleton.y = display.contentCenterY + 200
-skeleton:setAnimation(0, "dance", true)
+skeleton:setSkin("full-skins/girl")
+skeleton:setAnimation(1, "dance", true)
 
 -- Get a slot
-local headSlot = skeleton:findSlot("head")
+local hatSlot = skeleton:findSlot("hat")
 
 print("\n=== Testing setAttachmentFromSkin ===")
 
 -- Original attachment
-print("Original attachment:", headSlot.attachment and headSlot.attachment.name or "none")
+print("Original attachment:", hatSlot.attachment and hatSlot.attachment.name or "none")
 
 -- Wait a moment, then switch attachments using setAttachmentFromSkin
 timer.performWithDelay(2000, function()
-    print("\n--- Switching to 'full-skins/girl' skin 'head' attachment ---")
-    
+    print("\n--- Switching to 'full-skins/boy' skin 'hat' attachment ---")
+
     -- Use the explicit method to set attachment from a specific skin
-    headSlot:setAttachmentFromSkin("full-skins/girl", "head")
-    
-    print("New attachment:", headSlot.attachment and headSlot.attachment.name or "none")
+    hatSlot:setAttachmentFromSkin("full-skins/boy", "hat")
+
+    print("New attachment:", hatSlot.attachment and hatSlot.attachment.name or "none")
 end)
 
 -- Switch to another skin's attachment
 timer.performWithDelay(4000, function()
-    print("\n--- Switching to 'full-skins/boy' skin 'head' attachment ---")
-    
-    headSlot:setAttachmentFromSkin("full-skins/boy", "head")
-    
-    print("New attachment:", headSlot.attachment and headSlot.attachment.name or "none")
+    print("\n--- Switching to 'accessories/hat-pointy-blue-yellow' skin 'hat' attachment ---")
+
+    hatSlot:setAttachmentFromSkin("accessories/hat-pointy-blue-yellow", "hat")
+
+    print("New attachment:", hatSlot.attachment and hatSlot.attachment.name or "none")
 end)
 
--- Try setting back to default
+-- And a third skin's
 timer.performWithDelay(6000, function()
-    print("\n--- Switching to 'default' skin 'head' attachment ---")
-    
-    headSlot:setAttachmentFromSkin("default", "head")
-    
-    print("New attachment:", headSlot.attachment and headSlot.attachment.name or "none")
+    print("\n--- Switching to 'accessories/hat-red-yellow' skin 'hat' attachment ---")
+
+    hatSlot:setAttachmentFromSkin("accessories/hat-red-yellow", "hat")
+
+    print("New attachment:", hatSlot.attachment and hatSlot.attachment.name or "none")
 end)
 
 -- Test error handling - invalid skin
 timer.performWithDelay(8000, function()
     print("\n--- Testing error handling: invalid skin ---")
-    
+
     local success, err = pcall(function()
-        headSlot:setAttachmentFromSkin("nonexistent-skin", "head")
+        hatSlot:setAttachmentFromSkin("nonexistent-skin", "hat")
     end)
-    
+
     if not success then
         print("Error caught (as expected):", err)
     end
 end)
 
--- Test error handling - invalid attachment
+-- Test error handling - a skin without the attachment
 timer.performWithDelay(10000, function()
-    print("\n--- Testing error handling: invalid attachment ---")
-    
+    print("\n--- Testing error handling: skin without the attachment ---")
+
     local success, err = pcall(function()
-        headSlot:setAttachmentFromSkin("default", "nonexistent-attachment")
+        hatSlot:setAttachmentFromSkin("skin-base", "hat")
     end)
-    
+
     if not success then
         print("Error caught (as expected):", err)
     end
@@ -79,16 +74,15 @@ end)
 -- Compare with the old property setter (uses current/default skin)
 timer.performWithDelay(12000, function()
     print("\n--- Comparison: Using slot.attachment property (current/default skin) ---")
-    
+
     -- First set a skin
-    skeleton:setSkin("full-skins/girl")
-    
+    skeleton:setSkin("full-skins/boy")
+
     -- Now use the property setter - should get from current skin
-    headSlot.attachment = "head"
-    
-    print("New attachment:", headSlot.attachment and headSlot.attachment.name or "none")
+    hatSlot.attachment = "hat"
+
+    print("New attachment:", hatSlot.attachment and hatSlot.attachment.name or "none")
 end)
 
 print("\n--- Test will cycle through different skin attachments ---")
 print("Watch the console for results and error handling demonstrations")
-

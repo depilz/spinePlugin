@@ -7,12 +7,12 @@ attachment.vertices
 
 An array of vertex data for vertex-based attachments.
 
-The format depends on whether the attachment uses weighted vertices (influenced 
+The format depends on whether the attachment uses weighted vertices (influenced
 by multiple bones) or unweighted vertices (single bone).
 
 **Unweighted vertices:** Array of x, y coordinate pairs: ``{x1, y1, x2, y2, ...}``
 
-**Weighted vertices:** More complex format with bone indices and weights. 
+**Weighted vertices:** More complex format with bone indices and weights.
 Use :doc:`bones` to determine if vertices are weighted.
 
 Example
@@ -20,13 +20,13 @@ Example
 
 .. code-block:: lua
 
-   local slot = skeleton:findSlot("hitbox")
+   local slot = skeleton:findSlot("body")
    local attachment = slot.attachment
-   
-   if attachment and attachment.type == "boundingbox" then
+
+   if attachment and attachment.type == "mesh" then
        local vertices = attachment.vertices
        local bones = attachment.bones
-       
+
        if #bones == 0 then
            -- Unweighted - simple x,y pairs
            print("Unweighted vertices:")
@@ -38,7 +38,7 @@ Example
            -- Weighted - complex format
            print("Weighted vertices (use computeWorldVertices)")
        end
-       
+
        -- Get actual world positions regardless of format
        local worldVerts = attachment:computeWorldVertices(slot)
        for i = 1, #worldVerts, 2 do
@@ -50,13 +50,13 @@ Example
 
 .. code-block:: lua
 
-   local meshSlot = skeleton:findSlot("cape")  
+   local meshSlot = skeleton:findSlot("cape")
    local mesh = meshSlot.attachment
-   
+
    if mesh and mesh.type == "mesh" then
-       print("Mesh has", #mesh.vertices, "vertex coordinates")
-       print("That's", #mesh.vertices / 2, "vertices")
-       
+       print("Mesh has", mesh.worldVerticesLength / 2, "vertices")
+       print("Its vertex data holds", #mesh.vertices, "numbers")  -- more than 2 per vertex: the cape is weighted
+
        -- For collision or physics, use world vertices
        local worldVerts = mesh:computeWorldVertices(meshSlot)
    end

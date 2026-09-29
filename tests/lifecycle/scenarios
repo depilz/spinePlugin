@@ -85,12 +85,26 @@ t34_stub_dispatch.lua forms
 t35_load_errors.lua json
 t35_load_errors.lua skel
 t35_load_errors.lua atlas
+t35_load_errors.lua missing
 t36_version.lua
 t37_slot_darkcolor.lua values
 t37_slot_darkcolor.lua pulse
 t37_slot_darkcolor.lua usereffect
 t37_slot_darkcolor.lua readonly
 t37_slot_darkcolor.lua removed
+t38_aliases.lua bone
+t38_aliases.lua attachment
+t38_aliases.lua slot
+t38_aliases.lua fill
+t38_aliases.lua entry
+t38_aliases.lua event
+t38_aliases.lua ik
+t39_pma_warning.lua pma
+t39_pma_warning.lua straight
+t39_pma_warning.lua print
+t40_write_after_remove.lua removed
+t40_write_after_remove.lua parent
+t40_write_after_remove.lua finalized
 g1_create_args.lua
 g3_events_after_remove.lua ended
 g3_events_after_remove.lua interrupted

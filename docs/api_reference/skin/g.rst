@@ -6,7 +6,8 @@ editor. It is **not multiplied into rendered attachment colors** and does not ti
 or fade the skeleton.
 
 Only a custom skin (from :doc:`../skeleton/createSkin`) can be written; writing it on a data skin
-raises, because data skins are read-only (see :doc:`index`).
+raises, because data skins are read-only (see :doc:`index`). :doc:`/naming` lists the colour keys of every
+Spine object.
 
 .. code-block:: lua
 

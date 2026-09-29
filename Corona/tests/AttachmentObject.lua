@@ -8,6 +8,7 @@ local parent = display.newGroup()
 local o = Spine.create(parent, skeleton, display.contentCenterX, display.contentCenterY+100)
 local animations = o:getAnimations()
 o:setAnimation(1, animations[1], true)
+o:setSkin("goblin")
 
 -- Test the attachment object
 timer.performWithDelay(1000, function()
@@ -107,8 +108,13 @@ timer.performWithDelay(4000, function()
         slot.attachment = attachment
         print("Attachment set using object!")
         
-        -- Or using a string name
-        slot.attachment = attachment.name
-        print("Attachment set using string name!")
+        -- Or using its skin lookup key (placeholder), which can differ from attachment.name
+        for _, entry in ipairs(slot:getAttachmentEntries()) do
+            if entry.attachment.name == attachment.name then
+                slot.attachment = entry.placeholder
+                print("Attachment set using placeholder '" .. entry.placeholder .. "' of '" .. attachment.name .. "'!")
+                break
+            end
+        end
     end
 end)

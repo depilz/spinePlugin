@@ -43,6 +43,7 @@ function nor ``nil``.
 Syntax:
 --------
 
+.. fragment: syntax line; x, y and listener are placeholders
 .. code-block:: lua
 
    local hit = skeleton:hitTest(x, y)

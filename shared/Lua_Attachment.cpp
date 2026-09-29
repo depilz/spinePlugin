@@ -44,6 +44,52 @@ static const char* getAttachmentTypeName(Attachment *attachment)
     return "unknown";
 }
 
+// the attachment's colour, nullptr for an attachment type without one
+static Color *attachmentColor(Attachment *attachment)
+{
+    if (attachment->getRTTI().instanceOf(RegionAttachment::rtti))
+    {
+        return &static_cast<RegionAttachment *>(attachment)->getColor();
+    }
+    else if (attachment->getRTTI().instanceOf(MeshAttachment::rtti))
+    {
+        return &static_cast<MeshAttachment *>(attachment)->getColor();
+    }
+    else if (attachment->getRTTI().instanceOf(PointAttachment::rtti))
+    {
+        return &static_cast<PointAttachment *>(attachment)->getColor();
+    }
+    else if (attachment->getRTTI().instanceOf(PathAttachment::rtti))
+    {
+        return &static_cast<PathAttachment *>(attachment)->getColor();
+    }
+    else if (attachment->getRTTI().instanceOf(BoundingBoxAttachment::rtti))
+    {
+        return &static_cast<BoundingBoxAttachment *>(attachment)->getColor();
+    }
+    else if (attachment->getRTTI().instanceOf(ClippingAttachment::rtti))
+    {
+        return &static_cast<ClippingAttachment *>(attachment)->getColor();
+    }
+    return nullptr;
+}
+
+// the component of color that key ("r", "g", "b" or "a") names
+static float &colorComponent(Color &color, const char *key)
+{
+    switch (key[0])
+    {
+    case 'r':
+        return color.r;
+    case 'g':
+        return color.g;
+    case 'b':
+        return color.b;
+    default:
+        return color.a;
+    }
+}
+
 static int attachment_index(lua_State *L)
 {
     LuaAttachment *attachmentUserdata = (LuaAttachment *)luaL_checkudata(L, 1, "SpineAttachment");
@@ -69,32 +115,7 @@ static int attachment_index(lua_State *L)
     }
     else if (strcmp(key, "color") == 0)
     {
-        Color *color = nullptr;
-
-        if (attachment->getRTTI().instanceOf(RegionAttachment::rtti))
-        {
-            color = &static_cast<RegionAttachment *>(attachment)->getColor();
-        }
-        else if (attachment->getRTTI().instanceOf(MeshAttachment::rtti))
-        {
-            color = &static_cast<MeshAttachment *>(attachment)->getColor();
-        }
-        else if (attachment->getRTTI().instanceOf(PointAttachment::rtti))
-        {
-            color = &static_cast<PointAttachment *>(attachment)->getColor();
-        }
-        else if (attachment->getRTTI().instanceOf(PathAttachment::rtti))
-        {
-            color = &static_cast<PathAttachment *>(attachment)->getColor();
-        }
-        else if (attachment->getRTTI().instanceOf(BoundingBoxAttachment::rtti))
-        {
-            color = &static_cast<BoundingBoxAttachment *>(attachment)->getColor();
-        }
-        else if (attachment->getRTTI().instanceOf(ClippingAttachment::rtti))
-        {
-            color = &static_cast<ClippingAttachment *>(attachment)->getColor();
-        }
+        Color *color = attachmentColor(attachment);
 
         if (color)
         {
@@ -118,6 +139,19 @@ static int attachment_index(lua_State *L)
             lua_pushnil(L);
             return 1;
         }
+    }
+    else if (strcmp(key, "r") == 0 || strcmp(key, "g") == 0 || strcmp(key, "b") == 0 || strcmp(key, "a") == 0)
+    {
+        Color *color = attachmentColor(attachment);
+        if (color)
+        {
+            lua_pushnumber(L, colorComponent(*color, key));
+        }
+        else
+        {
+            lua_pushnil(L);
+        }
+        return 1;
     }
     else if (strcmp(key, "width") == 0)
     {
@@ -210,7 +244,7 @@ static int attachment_index(lua_State *L)
         lua_pushnil(L);
         return 1;
     }
-    else if (strcmp(key, "scaleX") == 0)
+    else if (strcmp(key, "scaleX") == 0 || strcmp(key, "xScale") == 0)
     {
         if (attachment->getRTTI().instanceOf(RegionAttachment::rtti))
         {
@@ -220,7 +254,7 @@ static int attachment_index(lua_State *L)
         lua_pushnil(L);
         return 1;
     }
-    else if (strcmp(key, "scaleY") == 0)
+    else if (strcmp(key, "scaleY") == 0 || strcmp(key, "yScale") == 0)
     {
         if (attachment->getRTTI().instanceOf(RegionAttachment::rtti))
         {
@@ -430,32 +464,7 @@ static int attachment_newindex(lua_State *L)
     {
         luaL_checktype(L, 3, LUA_TTABLE);
 
-        Color *color = nullptr;
-
-        if (attachment->getRTTI().instanceOf(RegionAttachment::rtti))
-        {
-            color = &static_cast<RegionAttachment *>(attachment)->getColor();
-        }
-        else if (attachment->getRTTI().instanceOf(MeshAttachment::rtti))
-        {
-            color = &static_cast<MeshAttachment *>(attachment)->getColor();
-        }
-        else if (attachment->getRTTI().instanceOf(PointAttachment::rtti))
-        {
-            color = &static_cast<PointAttachment *>(attachment)->getColor();
-        }
-        else if (attachment->getRTTI().instanceOf(PathAttachment::rtti))
-        {
-            color = &static_cast<PathAttachment *>(attachment)->getColor();
-        }
-        else if (attachment->getRTTI().instanceOf(BoundingBoxAttachment::rtti))
-        {
-            color = &static_cast<BoundingBoxAttachment *>(attachment)->getColor();
-        }
-        else if (attachment->getRTTI().instanceOf(ClippingAttachment::rtti))
-        {
-            color = &static_cast<ClippingAttachment *>(attachment)->getColor();
-        }
+        Color *color = attachmentColor(attachment);
 
         if (color)
         {
@@ -492,6 +501,17 @@ static int attachment_newindex(lua_State *L)
             return unknownProperty(L, attachment, key);
         }
 
+        return 0;
+    }
+    else if (strcmp(key, "r") == 0 || strcmp(key, "g") == 0 || strcmp(key, "b") == 0 || strcmp(key, "a") == 0)
+    {
+        float value = luaL_checknumber(L, 3);
+        Color *color = attachmentColor(attachment);
+        if (!color)
+        {
+            return unknownProperty(L, attachment, key);
+        }
+        colorComponent(*color, key) = value;
         return 0;
     }
     else if (strcmp(key, "width") == 0)
@@ -590,7 +610,7 @@ static int attachment_newindex(lua_State *L)
         }
         return 0;
     }
-    else if (strcmp(key, "scaleX") == 0)
+    else if (strcmp(key, "scaleX") == 0 || strcmp(key, "xScale") == 0)
     {
         float scaleX = luaL_checknumber(L, 3);
         if (attachment->getRTTI().instanceOf(RegionAttachment::rtti))
@@ -605,7 +625,7 @@ static int attachment_newindex(lua_State *L)
         }
         return 0;
     }
-    else if (strcmp(key, "scaleY") == 0)
+    else if (strcmp(key, "scaleY") == 0 || strcmp(key, "yScale") == 0)
     {
         float scaleY = luaL_checknumber(L, 3);
         if (attachment->getRTTI().instanceOf(RegionAttachment::rtti))

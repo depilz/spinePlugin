@@ -9,12 +9,12 @@ attachment
 Overview:
 ..........
 
-An **Attachment** object represents visual or functional elements attached to a skeleton's slots. 
-Attachments can be images (regions), deformable meshes, collision boxes, paths for constraints, 
+An **Attachment** object represents visual or functional elements attached to a skeleton's slots.
+Attachments can be images (regions), deformable meshes, collision boxes, paths for constraints,
 points for spawning effects, or clipping masks.
 
-The attachment type determines which properties and methods are available. All attachments share 
-common properties like ``name`` and ``type``, while type-specific properties are only available 
+The attachment type determines which properties and methods are available. All attachments share
+common properties like ``name`` and ``type``, while type-specific properties are only available
 on the appropriate attachment types.
 
 Attachment objects are **shared**: skins that contain the same attachment (for example after
@@ -29,7 +29,7 @@ Attachment Types
 ................
 
 - **region** - A rectangular image/sprite (RegionAttachment)
-- **mesh** - A deformable mesh with vertices and triangles (MeshAttachment)  
+- **mesh** - A deformable mesh with vertices and triangles (MeshAttachment)
 - **boundingbox** - A polygon used for collision detection (BoundingBoxAttachment)
 - **path** - A curved path used for path constraints (PathAttachment)
 - **point** - A single point with rotation, useful for spawn points (PointAttachment)
@@ -55,6 +55,10 @@ Color and appearance:
    :maxdepth: 1
 
    color
+   r
+   g
+   b
+   a
 
 RegionAttachment Properties
 ----------------------------
@@ -138,6 +142,17 @@ Methods
    computeWorldVertices
    copy
 
+Aliases
+-------
+
+See :doc:`/naming`.
+
+.. toctree::
+   :maxdepth: 1
+
+   xScale
+   yScale
+
 Example Usage
 -------------
 
@@ -145,15 +160,15 @@ Example Usage
 
 .. code-block:: lua
 
-   local slot = skeleton:findSlot("head")
+   local slot = skeleton:findSlot("hand1")
    local attachment = slot.attachment
-   
+
    if attachment and attachment.type == "region" then
        print("Attachment name:", attachment.name)
        print("Position:", attachment.x, attachment.y)
        print("Rotation:", attachment.rotation)
        print("Scale:", attachment.scaleX, attachment.scaleY)
-       
+
        -- Modify the attachment
        attachment.rotation = 45
        attachment.scaleX = 1.5
@@ -164,30 +179,30 @@ Example Usage
 
 .. code-block:: lua
 
-   local pointSlot = skeleton:findSlot("bulletSpawn")
-   local point = pointSlot.attachment
-   
-   if point and point.type == "point" then
-       -- Use for spawning effects at the point location
-       print("Spawn point:", point.x, point.y, point.rotation)
+   for _, pointSlot in ipairs(skeleton.slots) do
+       local point = pointSlot.attachment
+       if point and point.type == "point" then
+           -- Use for spawning effects at the point location
+           print("Spawn point:", point.x, point.y, point.rotation)
+       end
    end
 
 **Computing World Vertices for Collision:**
 
 .. code-block:: lua
 
-   local slot = skeleton:findSlot("hitbox")
-   local attachment = slot.attachment
-   
-   if attachment and attachment.type == "boundingbox" then
-       -- Get world-space vertex positions
-       local worldVerts = attachment:computeWorldVertices(slot)
-       
-       -- worldVerts is an array: {x1, y1, x2, y2, x3, y3, ...}
-       -- Use for collision detection
-       for i = 1, #worldVerts, 2 do
-           local x, y = worldVerts[i], worldVerts[i+1]
-           print("Vertex:", x, y)
+   for _, slot in ipairs(skeleton.slots) do
+       local attachment = slot.attachment
+       if attachment and attachment.type == "boundingbox" then
+           -- Get the vertex positions in skeleton space
+           local worldVerts = attachment:computeWorldVertices(slot)
+
+           -- worldVerts is an array: {x1, y1, x2, y2, x3, y3, ...}
+           -- Use for collision detection
+           for i = 1, #worldVerts, 2 do
+               local x, y = worldVerts[i], worldVerts[i+1]
+               print("Vertex:", x, y)
+           end
        end
    end
 
@@ -197,11 +212,11 @@ Example Usage
 
    local meshSlot = skeleton:findSlot("cape")
    local mesh = meshSlot.attachment
-   
+
    if mesh and mesh.type == "mesh" then
        print("Mesh has", #mesh.triangles / 3, "triangles")
        print("Hull length:", mesh.hullLength)
-       
+
        -- Get mesh vertices in world space
        local worldVerts = mesh:computeWorldVertices(meshSlot)
    end
@@ -210,9 +225,9 @@ Example Usage
 
 .. code-block:: lua
 
-   local pathSlot = skeleton:findSlot("ropePath")
+   local pathSlot = skeleton:findSlot("weapon-morningstar-path")
    local path = pathSlot.attachment
-   
+
    if path and path.type == "path" then
        print("Path is closed:", path.closed)
        print("Constant speed:", path.constantSpeed)

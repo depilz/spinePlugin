@@ -134,6 +134,9 @@ env/
 Corona/spines/studycat4_2
 builtDocs/
 
+# Solar2D Live Build keys of the example projects
+.CoronaLiveBuild
+
 # Generated docs build output and Visual Studio local state
 docs/_build/
 win32/.vs/

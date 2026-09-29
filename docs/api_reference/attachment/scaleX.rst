@@ -4,11 +4,14 @@ attachment.scaleX
 
 | **Type:** ``number`` (read/write)
 | **Attachment Types:** region
+| **See also:** :doc:`index`, :doc:`xScale`, :doc:`/naming`
 
 The horizontal scale factor of the region attachment.
 
-This scale is applied in addition to the image's width and any bone scaling. 
+This scale is applied in addition to the image's width and any bone scaling.
 A value of 1.0 means normal scale, 2.0 means double width, 0.5 means half width.
+
+``attachment.xScale`` is an alias of ``attachment.scaleX``: it reads and writes the same value.
 
 Negative values will flip the attachment horizontally.
 
@@ -20,22 +23,22 @@ Example
 
 .. code-block:: lua
 
-   local slot = skeleton:findSlot("body")
+   local slot = skeleton:findSlot("hand1")
    local attachment = slot.attachment
-   
+
    if attachment and attachment.type == "region" then
        -- Get current scale
        print("Scale:", attachment.scaleX, attachment.scaleY)
-       
+
        -- Make it twice as wide
        attachment.scaleX = 2.0
-       
+
        -- Flip horizontally
        attachment.scaleX = -1.0
-       
+
        -- Make it narrower
        attachment.scaleX = 0.5
-       
+
        -- Uniform scale
        attachment.scaleX = 1.5
        attachment.scaleY = 1.5

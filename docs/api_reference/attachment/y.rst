@@ -7,10 +7,10 @@ attachment.y
 
 The Y position offset of the attachment relative to its bone, in local space.
 
-For **region** attachments, this is the vertical offset of the image's center 
+For **region** attachments, this is the vertical offset of the image's center
 from the bone position.
 
-For **point** attachments, this is the Y coordinate of the point in the bone's 
+For **point** attachments, this is the Y coordinate of the point in the bone's
 local coordinate system.
 
 For **region** attachments, setting this property updates the attachment's geometry at once: the next
@@ -21,11 +21,11 @@ Example
 
 .. code-block:: lua
 
-   local slot = skeleton:findSlot("hat")
+   local slot = skeleton:findSlot("hand1")
    local attachment = slot.attachment
-   
+
    if attachment and attachment.type == "region" then
-       -- Move the hat up slightly
+       -- Move the hand 5 units along its bone's Y axis
        attachment.y = attachment.y + 5
    end
 

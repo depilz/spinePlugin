@@ -9,19 +9,20 @@ the simulator or on a device.
 
 1. Installation & Requirements
 ------------------------------
-- **Solar2D**: Make sure you have the latest Solar2D build, the plugin is
-  compatible only with `Solar2D-3721` or later.
+- **Solar2D**: Use the latest Solar2D release. The plugin's tests run on
+  Solar2D (Corona) build 3731.
 - **Spine License**: You need a valid Spine runtime license to use this
   plugin. Confirm you have the necessary permissions to use the runtime.
 - **Spine Plugin**: Include it in your project’s ``build.settings`` or
-  reference it in the Solar2D Marketplace.
+  reference it in the Solar2D Marketplace. The entry below is for the line
+  these docs describe; :ref:`pick-your-line` lists the entry of every line.
 
 .. code-block:: lua
 
    settings = {
      plugins = {
-       ["plugin.spine"] = {
-         publisherId = "com.studycat" 
+       ["@SPINE_PLUGIN@"] = {
+         publisherId = "com.studycat"
        },
      },
    }
@@ -34,7 +35,7 @@ plugin:
 
 .. code-block:: lua
 
-   local spine = require("plugin.spine")
+   local spine = require("@SPINE_PLUGIN@")
 
 3. Load the Atlas & Skeleton Data
 ---------------------------------
@@ -44,11 +45,11 @@ Solar2D project’s resource directory:
 
 .. code-block:: lua
 
-   local atlas = spine.loadAtlas("assets/hero.atlas")
-   local skeletonData = spine.loadSkeletonData("assets/hero.skel", atlas)
+   local atlas = spine.loadAtlas("assets/characters/hero.atlas")
+   local skeletonData = spine.loadSkeletonData("assets/characters/hero.json", atlas)
 
-   -- Optionally provide a scale factor:
-   -- local skeletonData = spine.loadSkeletonData("assets/hero.skel", atlas, 0.5)
+   -- Binary exports (.skel) load the same way; optionally provide a scale factor:
+   -- local skeletonData = spine.loadSkeletonData("assets/characters/hero.skel", atlas, 0.5)
 
 4. Create the Skeleton
 ----------------------
@@ -56,6 +57,7 @@ Create a skeleton from the loaded skeleton data. Optionally, you can
 provide a listener function to handle animation events (e.g., footsteps,
 attack triggers).
 
+.. fragment: continues step 3, it uses that step's skeletonData
 .. code-block:: lua
 
    local function onSpineEvent(event)
@@ -85,7 +87,8 @@ indexed starting at **1**. Set loop to `true` or `false`.
 6. Update & Draw Each Frame
 ---------------------------
 
-In order for the skeleton to animate, you need to:
+The plugin never updates or draws a skeleton on its own: your app drives
+both, every frame. In order for the skeleton to animate, you need to:
 1. **Calculate delta time** (in milliseconds).
 2. **Call** `hero:updateState(dt)` to advance animations.
 3. **Call** `hero:draw()` to render the skeleton.

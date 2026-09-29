@@ -24,8 +24,8 @@ Example:
 .. code-block:: lua
 
    local lastTime = system.getTimer()
-   
-   local spine = require("plugin.spine")
+
+   local spine = require("@SPINE_PLUGIN@")
    local atlas = spine.loadAtlas("hero.atlas")
    local skeletonData = spine.loadSkeletonData("hero.skel", atlas)
    local hero = spine.create(skeletonData)

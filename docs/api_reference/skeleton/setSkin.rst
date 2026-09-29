@@ -24,7 +24,7 @@ Syntax:
    skeleton:setSkin(skinNameOrObject)
    skeleton:setSkin(skinNameOrObject, false)
    skeleton:setSkin(nil)
-    
+
 - ``skinNameOrObject`` *(required)*:
     ``string``, ``Skin`` or ``nil`` – The name of an existing skin, a Skin object, or ``nil`` to clear the
     skin: attachment lookups then use only the default skin (so the setup-pose reset shows the default skin's
@@ -44,34 +44,48 @@ skin that enables the bone (or a custom skin built with that skin's bones) to dr
 Example:
 --------
 
+The examples use the mix-and-match example skeleton, whose skins each dress part of the character.
+
 Using Skin Name
 ...............
 
 .. code-block:: lua
 
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+
    -- Apply a predefined skin by name
-   hero:setSkin("warrior")
+   girl:setSkin("full-skins/girl")
 
 Using Custom Skin Object
 .........................
 
 .. code-block:: lua
 
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+
    -- Create and apply a custom skin
-   local customSkin = skeleton:createSkin("myAvatar")
-   customSkin:addSkin("base")
-   customSkin:addSkin("armor")
-   
-   skeleton:setSkin(customSkin)
+   local customSkin = girl:createSkin("myAvatar")
+   customSkin:addSkin("skin-base")
+   customSkin:addSkin("clothes/hoodie-orange")
+
+   girl:setSkin(customSkin)
 
 Switch Between Skins
 .....................
 
 .. code-block:: lua
 
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+
    -- Switch between different character appearances
-   if powerupActive then
-       skeleton:setSkin("powered")
-   else
-       skeleton:setSkin("normal")
+   local function setPowerUp(powerupActive)
+       if powerupActive then
+           girl:setSkin("full-skins/girl-blue-cape")
+       else
+           girl:setSkin("full-skins/girl")
+       end
    end
+   setPowerUp(true)

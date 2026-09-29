@@ -55,7 +55,7 @@ details.
 Disclaimer
 ----------
 - The authors of this plugin disclaim any liability for damages arising
-  from its use.  
+  from its use.
 - This plugin does **not** replace or supersede Esoteric Software’s own
   legal requirements or terms regarding Spine usage.
 

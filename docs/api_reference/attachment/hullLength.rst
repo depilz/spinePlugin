@@ -5,41 +5,65 @@ attachment.hullLength
 | **Type:** ``number`` (read-only)
 | **Attachment Types:** mesh
 
-The number of vertices that make up the mesh's convex hull boundary.
+The size of the mesh's hull: the outer boundary drawn in the Spine editor.
 
-The convex hull vertices are stored at the beginning of the vertices array. 
-These vertices define the outer boundary of the mesh before any internal 
-vertices or deformation.
+The hull vertices come first, so the hull is the start of the array
+:doc:`computeWorldVertices` returns.
+
+.. only:: spine42
+
+   On this line ``hullLength`` counts **vertices**: the hull is the first ``hullLength * 2`` numbers of
+   the world vertices array.
+
+.. only:: spine43
+
+   On this line ``hullLength`` counts **numbers** (x and y of each vertex): the hull is the first
+   ``hullLength`` numbers of the world vertices array, ``hullLength / 2`` vertices.
 
 Example
 -------
 
-.. code-block:: lua
+.. only:: spine42
 
-   local slot = skeleton:findSlot("cloth")
-   local attachment = slot.attachment
-   
-   if attachment and attachment.type == "mesh" then
-       print("Hull vertices:", attachment.hullLength)
-       print("Total vertices:", #attachment.vertices / 2)
-       
-       -- The first hullLength vertices form the outer boundary
-       local worldVerts = attachment:computeWorldVertices(slot)
-       
-       -- Draw hull outline (first hullLength vertices)
-       for i = 1, attachment.hullLength * 2, 2 do
-           local x, y = worldVerts[i], worldVerts[i+1]
-           print("Hull vertex:", x, y)
-       end
-   end
+   .. code-block:: lua
+
+      local slot = skeleton:findSlot("cape")
+      local attachment = slot.attachment
+
+      if attachment and attachment.type == "mesh" then
+          print("Hull vertices:", attachment.hullLength)
+          print("Total vertices:", attachment.worldVerticesLength / 2)
+
+          -- The hull is the start of the world vertices
+          local worldVerts = attachment:computeWorldVertices(slot)
+          for i = 1, attachment.hullLength * 2, 2 do
+              print("Hull vertex:", worldVerts[i], worldVerts[i+1])
+          end
+      end
+
+.. only:: spine43
+
+   .. code-block:: lua
+
+      local slot = skeleton:findSlot("cape")
+      local attachment = slot.attachment
+
+      if attachment and attachment.type == "mesh" then
+          print("Hull vertices:", attachment.hullLength / 2)
+          print("Total vertices:", attachment.worldVerticesLength / 2)
+
+          -- The hull is the start of the world vertices
+          local worldVerts = attachment:computeWorldVertices(slot)
+          for i = 1, attachment.hullLength, 2 do
+              print("Hull vertex:", worldVerts[i], worldVerts[i+1])
+          end
+      end
 
 Notes
 -----
 
-- Measured in number of vertices, not array indices
-- Hull vertices occupy the first ``hullLength`` positions in the vertices array
-- Each vertex is 2 floats (x, y), so hull data is ``hullLength * 2`` array elements
-- Used for mesh boundaries and weighted vertex calculations
+- The Spine 4.2 runtime stores the hull as a vertex count and the Spine 4.3 runtime as a count of numbers,
+  so the same export reads 24 on the 4.2 line and 48 on the 4.3 line
 
 See Also
 --------

@@ -7,11 +7,11 @@ attachment.bones
 
 An array of bone indices for weighted vertex attachments.
 
-If this array is empty, the attachment uses unweighted vertices (attached to a 
-single bone). If it contains data, the attachment's vertices are influenced by 
+If this array is empty, the attachment uses unweighted vertices (attached to a
+single bone). If it contains data, the attachment's vertices are influenced by
 multiple bones with individual weights.
 
-The format is complex and primarily used internally. For practical vertex 
+The format is complex and primarily used internally. For practical vertex
 positions, use :doc:`computeWorldVertices` instead.
 
 Example
@@ -19,19 +19,19 @@ Example
 
 .. code-block:: lua
 
-   local slot = skeleton:findSlot("cloth")
+   local slot = skeleton:findSlot("cape")
    local attachment = slot.attachment
-   
+
    if attachment and attachment.type == "mesh" then
        local bones = attachment.bones
-       
+
        if #bones == 0 then
            print("Mesh is attached to single bone:", slot.bone.name)
        else
            print("Mesh uses weighted vertices with", #bones, "bone references")
            print("Use computeWorldVertices() for actual positions")
        end
-       
+
        -- Get world vertices regardless of weighting
        local worldVerts = attachment:computeWorldVertices(slot)
    end
@@ -46,7 +46,8 @@ Example
        end
        return false
    end
-   
+
+   local slot = skeleton:findSlot("body")
    local attachment = slot.attachment
    if attachment and attachment.type == "mesh" then
        if isWeighted(attachment) then

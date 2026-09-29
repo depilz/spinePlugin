@@ -3,7 +3,7 @@ slot.b
 ===================================
 
 | **Type:** ``number``
-| **See also:** :doc:`index`, :doc:`color`
+| **See also:** :doc:`index`, :doc:`color`, :doc:`/naming`
 
 Overview:
 .........

@@ -3,7 +3,7 @@ skeleton:getSlotNames()
 ===================================
 
 | **Type:** ``function``
-| **See also:** :doc:`index`
+| **See also:** :doc:`index`, :doc:`/naming`
 
 Overview:
 .........

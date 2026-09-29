@@ -9,8 +9,8 @@ slot
 Overview:
 ..........
 
-A **Slot** object represents the attachment slot for a bone in a Spine skeleton. It holds color 
-tints (RGBA), a current attachment, and a reference to its owning bone. 
+A **Slot** object represents the attachment slot for a bone in a Spine skeleton. It holds color
+tints (RGBA), a current attachment, and a reference to its owning bone.
 Each slot can be manipulated independently to change visuals (e.g., attachments)
 or adjust colors.
 
@@ -33,7 +33,7 @@ Properties:
    r
    g
    b
-   alpha
+   a
    color
    darkColor
 
@@ -47,3 +47,13 @@ Methods:
    getAttachments
    getSkinAttachments
    getAttachmentEntries
+
+Aliases:
+--------
+
+See :doc:`/naming`.
+
+.. toctree::
+   :maxdepth: 1
+
+   alpha

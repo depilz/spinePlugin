@@ -29,6 +29,7 @@ The dispose window
 
    .. code-block:: lua
 
+      local deltaTime = 16 -- milliseconds since the last frame
       if skeleton.removeSelf then
           skeleton:updateState(deltaTime)
           if skeleton.removeSelf then -- a listener may have removed it
@@ -82,6 +83,28 @@ The ``false``/boolean results are for **live** skeletons only:
   boolean.
 - On a removed skeleton, the same calls raise, as described above. Do not use
   their return value to detect removal; check ``skeleton.removeSelf`` instead.
+
+Writing properties
+------------------
+
+.. Tested by tests/lifecycle/t40_write_after_remove (removed, parent, finalized).
+
+What a property write does on a removed skeleton depends on how far the removal
+got:
+
+- After ``skeleton:removeSelf()`` or ``display.remove(skeleton)``, the plugin hands
+  every write, such as ``skeleton.timeScale = 2``, to the display group, as for any
+  other display object. It never raises, and the skeleton does not change: the
+  animation state keeps its own ``timeScale``, and
+  :doc:`api_reference/skeleton/physicsTimeScale` is not checked (``-1`` does not
+  raise).
+- After a parent group removal, the skeleton stays live until Solar2D finalizes it
+  at the end of the frame, so a write before that still changes the skeleton.
+- After finalize, the skeleton is a plain Lua table and the write sets a plain
+  field on it.
+
+A write cannot tell you whether the skeleton was removed: check
+``skeleton.removeSelf`` first, as in the guard above.
 
 Track entries
 -------------

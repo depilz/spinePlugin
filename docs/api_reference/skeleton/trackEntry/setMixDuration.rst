@@ -15,6 +15,7 @@ change mix duration, so delay is recomputed consistently.
 Syntax:
 --------
 
+.. fragment: syntax lines; trackEntry, mixDurationMs and delayMs are placeholders
 .. code-block:: lua
 
    trackEntry:setMixDuration(mixDurationMs)

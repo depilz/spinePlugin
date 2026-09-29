@@ -85,6 +85,26 @@ api	surface SpineTrackEntry
 api	surface module
 attachments	run_attachments.py
 attachments	attachments.lua
+docs-samples	samples attachment
+docs-samples	samples attachments-and-skins
+docs-samples	samples bone
+docs-samples	samples guides
+docs-samples	samples ikConstraint
+docs-samples	samples lifecycle
+docs-samples	samples physics
+docs-samples	samples quickstart
+docs-samples	samples skeleton
+docs-samples	samples skin
+docs-samples	samples slot
+docs-samples	samples spine
+docs-samples	samples trackEntry
+docs-samples	keys have pages
+docs-samples	pages name keys
+docs-samples	firing: a failing sample fails its family
+docs-samples	firing: a fragment that runs fails its family
+docs-samples	firing: a fragment without a reason fails its family
+docs-samples	firing: a key without a page fails
+docs-samples	firing: a page without a key fails
 lifecycle	t00_smoke
 lifecycle	t01_parent_removal parent
 lifecycle	t01_parent_removal explicit
@@ -170,12 +190,26 @@ lifecycle	t34_stub_dispatch forms
 lifecycle	t35_load_errors json
 lifecycle	t35_load_errors skel
 lifecycle	t35_load_errors atlas
+lifecycle	t35_load_errors missing
 lifecycle	t36_version
 lifecycle	t37_slot_darkcolor values
 lifecycle	t37_slot_darkcolor pulse
 lifecycle	t37_slot_darkcolor usereffect
 lifecycle	t37_slot_darkcolor readonly
 lifecycle	t37_slot_darkcolor removed
+lifecycle	t38_aliases bone
+lifecycle	t38_aliases attachment
+lifecycle	t38_aliases slot
+lifecycle	t38_aliases fill
+lifecycle	t38_aliases entry
+lifecycle	t38_aliases event
+lifecycle	t38_aliases ik
+lifecycle	t39_pma_warning pma
+lifecycle	t39_pma_warning straight
+lifecycle	t39_pma_warning print
+lifecycle	t40_write_after_remove removed
+lifecycle	t40_write_after_remove parent
+lifecycle	t40_write_after_remove finalized
 lifecycle	g1_create_args
 lifecycle	g3_events_after_remove ended
 lifecycle	g3_events_after_remove interrupted
@@ -773,3 +807,78 @@ sim	s21_tint_black both define
 sim	s21_tint_black both line
 sim	s21_tint_black both sampling
 sim	s21_tint_black both log
+sim	s22_example Physics
+sim	s22_example Physics identity
+sim	s22_example Physics cpath
+sim	s22_example Physics menu
+sim	s22_example Physics log
+sim	s22_example InverseKinematics
+sim	s22_example InverseKinematics identity
+sim	s22_example InverseKinematics cpath
+sim	s22_example InverseKinematics menu
+sim	s22_example InverseKinematics log
+sim	s22_example Skins
+sim	s22_example Skins identity
+sim	s22_example Skins cpath
+sim	s22_example Skins menu
+sim	s22_example Skins log
+sim	s22_example PlayAnimations
+sim	s22_example PlayAnimations identity
+sim	s22_example PlayAnimations cpath
+sim	s22_example PlayAnimations menu
+sim	s22_example PlayAnimations log
+sim	s22_example AnimationEvents
+sim	s22_example AnimationEvents identity
+sim	s22_example AnimationEvents cpath
+sim	s22_example AnimationEvents menu
+sim	s22_example AnimationEvents log
+sim	s22_example Attachments
+sim	s22_example Attachments identity
+sim	s22_example Attachments cpath
+sim	s22_example Attachments menu
+sim	s22_example Attachments log
+sim	s22_example MixAndMatch
+sim	s22_example MixAndMatch identity
+sim	s22_example MixAndMatch cpath
+sim	s22_example MixAndMatch menu
+sim	s22_example MixAndMatch log
+sim	s22_example Performance
+sim	s22_example Performance identity
+sim	s22_example Performance cpath
+sim	s22_example Performance menu
+sim	s22_example Performance log
+sim	s22_example Performance2
+sim	s22_example Performance2 identity
+sim	s22_example Performance2 cpath
+sim	s22_example Performance2 menu
+sim	s22_example Performance2 log
+sim	s22_example Injections
+sim	s22_example Injections identity
+sim	s22_example Injections cpath
+sim	s22_example Injections menu
+sim	s22_example Injections log
+sim	s22_example SolarEffects
+sim	s22_example SolarEffects identity
+sim	s22_example SolarEffects cpath
+sim	s22_example SolarEffects menu
+sim	s22_example SolarEffects log
+sim	s22_example Splits
+sim	s22_example Splits identity
+sim	s22_example Splits cpath
+sim	s22_example Splits menu
+sim	s22_example Splits log
+sim	s22_example AttachmentObject
+sim	s22_example AttachmentObject identity
+sim	s22_example AttachmentObject cpath
+sim	s22_example AttachmentObject menu
+sim	s22_example AttachmentObject log
+sim	s22_example AttachmentProperties
+sim	s22_example AttachmentProperties identity
+sim	s22_example AttachmentProperties cpath
+sim	s22_example AttachmentProperties menu
+sim	s22_example AttachmentProperties log
+sim	s22_example SlotAttachmentFromSkin
+sim	s22_example SlotAttachmentFromSkin identity
+sim	s22_example SlotAttachmentFromSkin cpath
+sim	s22_example SlotAttachmentFromSkin menu
+sim	s22_example SlotAttachmentFromSkin log

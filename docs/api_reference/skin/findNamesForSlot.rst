@@ -13,6 +13,7 @@ Returns all attachment names available for a specific slot in the skin. Useful f
 Syntax:
 --------
 
+.. fragment: syntax line; skin and slot are placeholders
 .. code-block:: lua
 
    local names = skin:findNamesForSlot(slot)
@@ -30,17 +31,22 @@ Returns:
 Example:
 --------
 
+The examples use the mix-and-match example skeleton, whose skins each dress part of the character.
+
 List Available Options
-.......................
+......................
 
 .. code-block:: lua
 
-   local skin = skeleton:getSkin()
-   
-   local weaponOptions = skin:findNamesForSlot("weapon-slot")
-   
-   print("Available weapons:")
-   for _, name in ipairs(weaponOptions) do
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+
+   local skin = girl:findSkin("full-skins/girl")
+
+   local mouthOptions = skin:findNamesForSlot("mouth")
+
+   print("Available mouths:")
+   for _, name in ipairs(mouthOptions) do
        print("  -", name)
    end
 
@@ -49,44 +55,54 @@ Create Selection UI
 
 .. code-block:: lua
 
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+
+   girl:setSkin("full-skins/girl")
+
    local function createAttachmentSelector(slotName)
-       local currentSkin = skeleton:getSkin()
+       local currentSkin = girl:getSkin()
        local options = currentSkin:findNamesForSlot(slotName)
-       
+
        -- Create UI buttons for each option
        for i, attachmentName in ipairs(options) do
            local button = display.newText({
                text = attachmentName,
                y = i * 40
            })
-           
+
            button:addEventListener("tap", function()
-               skeleton:setAttachment(slotName, attachmentName)
+               girl:setAttachment(slotName, attachmentName)
            end)
        end
    end
-   
-   createAttachmentSelector("head")
+
+   createAttachmentSelector("mouth")
 
 Random Customization
 ....................
 
 .. code-block:: lua
 
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+
+   girl:setSkin("full-skins/girl")
+
    local function randomizeSlot(slotName)
-       local skin = skeleton:getSkin()
+       local skin = girl:getSkin()
        local options = skin:findNamesForSlot(slotName)
-       
+
        if #options > 0 then
            local randomIndex = math.random(1, #options)
-           skeleton:setAttachment(slotName, options[randomIndex])
+           girl:setAttachment(slotName, options[randomIndex])
        end
    end
-   
+
    -- Randomize character appearance
-   randomizeSlot("head")
-   randomizeSlot("body")
-   randomizeSlot("legs")
+   randomizeSlot("mouth")
+   randomizeSlot("hair-back")
+   randomizeSlot("eye-front-iris")
 
 Notes:
 --------
@@ -96,4 +112,3 @@ Notes:
 - Useful for implementing character customization interfaces
 - To get the actual attachment objects (not just names), use :doc:`findAttachmentsForSlot`
 - Raises a Lua error if the slot is not found or has the wrong type
-

@@ -15,6 +15,7 @@ avatar in place.
 Syntax:
 --------
 
+.. fragment: syntax line; skin is a placeholder
 .. code-block:: lua
 
    skin:clear()
@@ -30,15 +31,20 @@ Raises a Lua error, and changes nothing, when the skin is a data skin: data skin
 Example:
 --------
 
+The examples use the mix-and-match example skeleton, whose skins each dress part of the character.
+
 .. code-block:: lua
 
-   local avatar = skeleton:createSkin("avatar")
-   avatar:addSkin("body"):addSkin("hat")
-   skeleton:setSkin(avatar)
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+
+   local avatar = girl:createSkin("avatar")
+   avatar:addSkin("skin-base"):addSkin("accessories/hat-red-yellow")
+   girl:setSkin(avatar)
 
    -- Later: rebuild the same skin with other parts, then reapply it
-   avatar:clear():addSkin("body"):addSkin("helmet")
-   skeleton:setSkin(avatar)
+   avatar:clear():addSkin("skin-base"):addSkin("accessories/hat-pointy-blue-yellow")
+   girl:setSkin(avatar)
 
 Notes:
 --------

@@ -24,10 +24,13 @@ local tests = {
     {"Injections", "Injections"},
     {"Solar Effect", "SolarEffects"},
     {"Splits", "Splits"},
+    {"Attachment Object", "AttachmentObject"},
+    {"Attachment Properties", "AttachmentProperties"},
+    {"Attachment From Skin", "SlotAttachmentFromSkin"},
 }
 
 local buttons = display.newGroup()
-local scale = .7
+local scale = math.min(1, h / ((#tests + 1) * 100))
 local ySpacing = 100 * scale
 local yStart = oy + ySpacing
 local Widget = require('widget')
@@ -37,7 +40,7 @@ for i, spine in ipairs(tests) do
     local button = Widget.newButton{
         x = cx,
         y = yStart + (i - 1) * ySpacing,
-        width = 400 * scale,
+        width = 480 * scale,
         height = 80 * scale,
         label = name,
         shape = "roundedRect",

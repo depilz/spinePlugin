@@ -2,7 +2,7 @@
 -- "json": well-formed JSON whose slot names a missing bone (the runtime's JSON reader asserts on a syntax error and
 -- crashes on a missing parent bone, so neither is tested here). "skel": the line's .skel cut right after its version
 -- string, with the version changed (a cut past the version check over-reads in the runtime's reader on both lines).
--- "atlas": graphics.newTexture raises for the atlas page.
+-- "atlas": graphics.newTexture raises for the atlas page. "missing": no file at the path raises "File not found: <path>".
 local S = __stub
 local mode = arg[1]
 local reason = "decoder rejected the page"
@@ -46,6 +46,9 @@ elseif mode == "skel" then
   local cut = skel:sub(1, 9) .. version
   expectLoadError(writeTemp(".skel", cut), atlas,
     "Skeleton version " .. version .. " does not match runtime version " .. os.getenv("SPINE_RUNTIME"))
+elseif mode == "missing" then
+  local message = S.raises("File not found: ", spine.loadSkeletonData, "spineboy/missing.json", atlas)
+  assert(message == "File not found: spineboy/missing.json", "unexpected message: " .. message)
 elseif mode == "atlas" then
   local message = S.raises("Failed to load texture: ", spine.loadAtlas, "spineboy/spineboy.atlas")
   assert(message == "Failed to load texture: spineboy/spineboy.png: " .. reason, "unexpected message: " .. message)

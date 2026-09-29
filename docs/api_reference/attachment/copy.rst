@@ -19,6 +19,7 @@ parent mesh.
 Syntax:
 --------
 
+.. fragment: syntax line; attachment is a placeholder
 .. code-block:: lua
 
    local copy = attachment:copy()
@@ -33,11 +34,11 @@ Example:
 
 .. code-block:: lua
 
-   local skin = skeleton:createSkin("redHat")
-   local hat = skeleton:findSkin("default"):getAttachment("head", "hat")
+   local skin = skeleton:createSkin("redHand")
+   local hand = skeleton:findSkin("default"):getAttachment("hand1", "hand1")
 
-   local redHat = hat:copy()
-   redHat.color = {r = 1, g = 0, b = 0, a = 1}   -- the "default" skin's hat keeps its color
+   local redHand = hand:copy()
+   redHand.color = {r = 1, g = 0, b = 0, a = 1}   -- the "default" skin's hand keeps its color
 
-   skin:addSkin("default"):setAttachment("head", "hat", redHat)
+   skin:addSkin("default"):setAttachment("hand1", "hand1", redHand)
    skeleton:setSkin(skin)

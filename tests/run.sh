@@ -13,9 +13,9 @@ set -euo pipefail
 TESTS_DIR="$(cd "$(dirname "$0")" && pwd)"
 SUPPORTED_SDKS="26.4"
 XCODE_SDK_EXAMPLE="/Applications/Xcode_26.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk"
-# Suites that run on the 4.2 line only: gate (checks the tracked archives, not a line) and guard (checks the history
-# of both lines at once).
-ONLY_42="gate guard"
+# Suites that run on the 4.2 line only: gate (checks the tracked archives, not a line), guard (checks the history
+# of both lines at once) and docs (builds the one docs tree for each plugin line).
+ONLY_42="gate guard docs"
 # flat_spines, line_spines and spines_check
 source "$TESTS_DIR/host/spines.sh"
 

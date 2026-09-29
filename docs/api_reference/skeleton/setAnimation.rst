@@ -13,6 +13,7 @@ Immediately sets an animation on a given track, overwriting any existing animati
 Syntax:
 --------
 
+.. fragment: syntax line; trackIndex, animationName and loop are placeholders
 .. code-block:: lua
 
    local trackEntryOrFalse = skeleton:setAnimation(trackIndex, animationName, loop)

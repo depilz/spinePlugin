@@ -39,7 +39,7 @@ static int slot_index(lua_State *L)
         lua_pushnumber(L, slot.getSolarColor().b);
         return 1;
     }
-    else if (strcmp(key, "alpha") == 0)
+    else if (strcmp(key, "a") == 0 || strcmp(key, "alpha") == 0)
     {
         lua_pushnumber(L, slot.getSolarColor().a);
         return 1;
@@ -224,7 +224,7 @@ static int slot_newindex(lua_State *L)
         slotUserdata->slot->getSolarColor().b = b;
         return 0;
     }
-    else if (strcmp(key, "alpha") == 0)
+    else if (strcmp(key, "a") == 0 || strcmp(key, "alpha") == 0)
     {
         float alpha = luaL_checknumber(L, 3);
         slotUserdata->slot->getSolarColor().a = alpha;

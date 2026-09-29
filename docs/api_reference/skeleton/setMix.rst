@@ -14,6 +14,7 @@ another by name. This overrides the default mix for that specific pair.
 Syntax:
 --------
 
+.. fragment: syntax line; fromAnim, toAnim and mix are placeholders
 .. code-block:: lua
 
    skeleton:setMix(fromAnim, toAnim, mix)

@@ -14,6 +14,7 @@ useful if you want to cancel an animation on one track but leave others running.
 Syntax:
 --------
 
+.. fragment: syntax line; trackIndex is a placeholder
 .. code-block:: lua
 
    skeleton:clearTrack(trackIndex)
@@ -26,9 +27,9 @@ Example:
 
 .. code-block:: lua
 
-    hero:setAnimation("walk", 1, true, 1)
-    hero:setAnimation("run", 2, true, 1)
+   hero:setAnimation(1, "walk", true)
+   hero:setAnimation(2, "attack", true)
 
-   -- Clear the "run" animation
+   -- Clear the "attack" animation
    hero:clearTrack(2)
    hero:draw()

@@ -20,6 +20,7 @@ dispatched from ``updateState`` (see :doc:`../spine/event`).
 Syntax:
 --------
 
+.. fragment: syntax line; deltaTime is a placeholder
 .. code-block:: lua
 
    skeleton:updateState(deltaTime)

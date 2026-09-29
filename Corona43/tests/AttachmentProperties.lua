@@ -1,14 +1,10 @@
 -- Test: Attachment Properties
 -- Demonstrates all attachment properties and methods
 
-local spine = require("plugin.spine43")
-
--- Load skeleton
-local atlas = spine.loadAtlas("spines/spineboy/export/spineboy-pma.atlas")
-local skeletonData = spine.loadSkeletonData("spines/spineboy/export/spineboy-pro.json", atlas, 0.3)
-local skeleton = spine.create(skeletonData)
-skeleton.x = display.contentCenterX
-skeleton.y = display.contentCenterY + 200
+-- Load skeleton (straight-alpha atlas)
+local atlas = Spine.getAtlasData("spineboy")
+local skeletonData = Spine.getSkeletonData("spineboy", atlas, 0.3)
+local skeleton = Spine.create(display.newGroup(), skeletonData, display.contentCenterX, display.contentCenterY + 200)
 
 local function printSeparator(title)
     print("\n" .. string.rep("=", 60))
@@ -77,9 +73,9 @@ local function testRegionAttachment(slotName)
     att.scaleX = origScaleX -- restore
 end
 
--- Test various slots
-testRegionAttachment("head")
-testRegionAttachment("torso")
+-- Test various slots ("head" and "torso" hold meshes)
+testRegionAttachment("neck")
+testRegionAttachment("gun")
 
 -- Test color modification
 printSeparator("COLOR MODIFICATION TEST")
@@ -198,6 +194,9 @@ end
 
 -- Test BoundingBoxAttachment (if available)
 printSeparator("BOUNDINGBOX ATTACHMENT PROPERTIES")
+
+-- The head bounding box has no attachment in the setup pose: set it by its placeholder
+skeleton:findSlot("head-bb").attachment = "head"
 
 local function findBoundingBoxAttachment()
     for _, slotName in ipairs(skeleton:getSlotNames()) do

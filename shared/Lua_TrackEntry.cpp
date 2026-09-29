@@ -37,7 +37,7 @@ static int entry_index(lua_State *L)
 
     TrackEntry &entry = *entryUserdata->entry;
 
-    if (strcmp(key, "index") == 0)
+    if (strcmp(key, "trackIndex") == 0 || strcmp(key, "index") == 0)
     {
         // Lua-facing track indices are 1-based.
         lua_pushinteger(L, entry.getTrackIndex() + 1);
@@ -201,7 +201,7 @@ static int entry_index(lua_State *L)
 }
 
 // The keys entry_index reads that entry_newindex does not write.
-static const char *const readOnlyKeys[] = {"index", "animation", "trackComplete", "isComplete", "animationTime",
+static const char *const readOnlyKeys[] = {"trackIndex", "index", "animation", "trackComplete", "isComplete", "animationTime",
                                            "next", "mixingFrom", "mixingTo", "isValid", NULL};
 
 static int entry_newindex(lua_State *L)

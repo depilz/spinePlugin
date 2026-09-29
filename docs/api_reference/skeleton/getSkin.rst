@@ -3,7 +3,7 @@ skeleton:getSkin()
 ===================================
 
 | **Type:** ``function``
-| **See also:** :doc:`index`, :doc:`setSkin`, :doc:`createSkin`, :doc:`../skin/index`
+| **See also:** :doc:`index`, :doc:`setSkin`, :doc:`createSkin`, :doc:`../skin/index`, :doc:`/naming`
 
 Overview:
 .........
@@ -35,10 +35,10 @@ Get Current Skin
 
    -- Get the current skin
    local skin = skeleton:getSkin()
-   
+
    if skin then
        print("Current skin:", skin.name)
-       
+
        -- Inspect attachments
        local attachments = skin:getAttachments()
        print("Number of attachments:", #attachments)
@@ -51,14 +51,14 @@ Clone Current Skin
 
    -- Get current skin and make a modified copy
    local currentSkin = skeleton:getSkin()
-   
+
    if currentSkin then
        local newSkin = skeleton:createSkin("modified")
        newSkin:copySkin(currentSkin)
-       
+
        -- Add more attachments
        newSkin:addSkin("accessories")
-       
+
        skeleton:setSkin(newSkin)
    end
 

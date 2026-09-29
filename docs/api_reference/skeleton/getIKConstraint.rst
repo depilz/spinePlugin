@@ -1,21 +1,25 @@
 ===================================
-skeleton:getIKConstraint()
+skeleton:getIkConstraint()
 ===================================
 
 | **Type:** ``function``
-| **See also:** :doc:`index`, :doc:`getIKConstraintNames`, :doc:`ikConstraint/index`
+| **See also:** :doc:`index`, :doc:`getIKConstraintNames`, :doc:`ikConstraint/index`, :doc:`/naming`
 
 Overview:
 .........
 
-Retrieves a :doc:`ikConstraint/index` for the specified IK constraint name or `nil` if not found.
+Retrieves the :doc:`ikConstraint/index` with the specified IK constraint name. An unknown name raises
+``IKConstraint not found: <name>``; use :doc:`getIKConstraintNames` to check the names first.
+``skeleton:getIKConstraint()`` is an alias of this method: it is the same function, and both names stay supported
+(see :doc:`/naming`).
 
 Syntax:
 --------
 
+.. fragment: syntax line; ikConstraintName is a placeholder
 .. code-block:: lua
 
-   local ikObj = skeleton:getIKConstraint(ikConstraintName)
+   local ikObj = skeleton:getIkConstraint(ikConstraintName)
 
 - ``ikConstraintName`` *(required)*:
     ``string`` – The name of the IK constraint to search for.
@@ -23,14 +27,16 @@ Syntax:
 Return value:
 -------------
 
-``LuaIKConstraint or nil`` – The IK constraint object, or `nil` if not found. See :doc:`ikConstraint/index` for more information.
+``IKConstraint`` – The IK constraint object. See :doc:`ikConstraint/index` for more information.
 
 Example:
 --------
 
 .. code-block:: lua
 
-   local armIK = hero:getIKConstraint("armIK")
-   if armIK then
-       print("Found IK constraint:", armIK.name)
-   end
+   local lookIK = hero:getIkConstraint("look-constraint")
+   print("Found IK constraint:", lookIK.name)
+
+   -- An unknown name raises: check the names first, or catch the error
+   local ok = pcall(hero.getIkConstraint, hero, "armIK")
+   print("armIK exists:", ok)

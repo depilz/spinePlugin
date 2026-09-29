@@ -13,6 +13,7 @@ Checks if an animation with the given name exists in the skeleton’s data.
 Syntax:
 --------
 
+.. fragment: syntax line; animationName is a placeholder
 .. code-block:: lua
 
    local exists = skeleton:findAnimation(animationName)

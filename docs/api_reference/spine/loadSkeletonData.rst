@@ -14,19 +14,30 @@ Loads Spine skeleton data (``.json`` or ``.skel``) from the specified path using
 Gotchas:
 --------
 
-The referenced atlas and the skeleton data will remain alive as long as this object is 
-alive or has references to it. 
+The referenced atlas and the skeleton data will remain alive as long as this object is
+alive or has references to it.
 
 The scale, if provided, will affect all skeletons created with this skeleton data. Alternatively you
 can scale the skeleton instance directly.
 
-If the file is missing, ``loadSkeletonData`` raises ``File not found: <path>``. If Spine cannot read it, it raises
-``Failed to load skeleton data: <absolute path>: <reason>``, where the reason is the Spine runtime's message (for
-example a version mismatch). The ``: <reason>`` part is left out when the runtime gives none.
+.. Tested by tests/lifecycle/t35_load_errors (missing, skel, json).
+
+If no file exists at ``path``, ``loadSkeletonData`` raises ``File not found: <path>``, with the path as you passed it.
+
+It raises ``Failed to load skeleton data: <path>: <reason>``, where ``<path>`` is the full path Solar2D resolves and
+``<reason>`` is the Spine runtime's message, for these files:
+
+- a ``.skel`` file exported by another Spine version:
+  ``Skeleton version <version> does not match runtime version <line>``;
+- a ``.json`` file whose slot names a bone the file does not have: ``Slot bone not found: <bone>``.
+
+Other malformed files are not guaranteed to raise: depending on the damage, the Spine runtime's reader can stop the
+app instead. Export with the Spine editor version your plugin line supports.
 
 Syntax:
 -------
 
+.. fragment: syntax line; arguments are placeholders
 .. code-block:: lua
 
    local skeletonData = spine.loadSkeletonData(path, atlas, [scale])
@@ -50,25 +61,27 @@ Example:
 
 .. code-block:: lua
 
-   local spine = require("plugin.spine")
-   
+   local spine = require("@SPINE_PLUGIN@")
+
    -- Load the atlas
    local atlas = spine.loadAtlas("assets/characters/hero.atlas")
-   
+
    -- Load skeleton data with a scale factor of 0.75
    local skeletonData = spine.loadSkeletonData("assets/characters/hero.skel", atlas, 0.75)
-   
+
    -- Create the skeleton
    local hero = spine.create(skeletonData)
-   
+
    -- Set an animation
-   hero:setAnimation(0, "walk", true)
-   
+   hero:setAnimation(1, "walk", true)
+
    -- Update the skeleton each frame
+   local lastTime = system.getTimer()
    local function onEnterFrame(event)
-       local deltaTime = event.time / 1000  -- Convert milliseconds to seconds
+       local deltaTime = event.time - lastTime  -- milliseconds since the last frame
+       lastTime = event.time
        hero:updateState(deltaTime)
        hero:draw()
    end
-   
+
    Runtime:addEventListener("enterFrame", onEnterFrame)

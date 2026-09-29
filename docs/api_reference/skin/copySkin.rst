@@ -18,10 +18,11 @@ This operation uses more memory than ``addSkin()``. See :doc:`/attachments-and-s
 Syntax:
 --------
 
+.. fragment: syntax line; skin and skinNameOrObject are placeholders
 .. code-block:: lua
 
    skin:copySkin(skinNameOrObject)
-    
+
 - ``skinNameOrObject`` *(required)*:
     ``string`` or ``Skin`` – Either the name of an existing skin or a Skin object of the same skeleton data.
 
@@ -36,43 +37,52 @@ other skin is not found, has the wrong type or belongs to different skeleton dat
 Example:
 --------
 
+The examples use the mix-and-match example skeleton, whose skins each dress part of the character.
+
 Create Independent Copy
-........................
+.......................
 
 .. code-block:: lua
+
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
 
    -- Create a custom skin with independent attachments
-   local variant = skeleton:createSkin("blueVariant")
-   
+   local variant = girl:createSkin("blueVariant")
+
    -- Deep copy the original skin
-   variant:copySkin("original")
-   
-   -- Now we could modify the attachments without affecting "original"
-   skeleton:setSkin(variant)
+   variant:copySkin("full-skins/girl")
+
+   -- Now we could modify the attachments without affecting "full-skins/girl"
+   girl:setSkin(variant)
 
 Template-Based Customization
-.............................
+............................
 
 .. code-block:: lua
+
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
 
    -- Create character variants from a template
    local function createVariant(name, baseSkin, additions)
-       local custom = skeleton:createSkin(name)
-       
+       local custom = girl:createSkin(name)
+
        -- Copy template as starting point
        custom:copySkin(baseSkin)
-       
+
        -- Add variant-specific parts
        for _, skinName in ipairs(additions) do
            custom:addSkin(skinName)
        end
-       
+
        return custom
    end
-   
+
    -- Create red and blue team variants
-   local redTeam = createVariant("red", "soldier_base", {"red_armor", "red_badge"})
-   local blueTeam = createVariant("blue", "soldier_base", {"blue_armor", "blue_badge"})
+   local redTeam = createVariant("red", "full-skins/boy", {"accessories/cape-red"})
+   local blueTeam = createVariant("blue", "full-skins/boy", {"accessories/cape-blue"})
+   girl:setSkin(redTeam)
 
 Notes:
 --------
@@ -85,4 +95,3 @@ Notes:
 - Raises on a data skin: data skins are read-only (see :doc:`index`)
 - Raises when the skin is not found; use :doc:`../skeleton/findSkin` to check first
 - To copy a single attachment, use :doc:`../attachment/copy`
-

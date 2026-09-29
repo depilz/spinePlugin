@@ -6,6 +6,8 @@
 # share one plugins dir; on 4.2 the shipped 1.5.0 plugin_spine.dylib from the tracked mac-sim archive (the baseline of
 # s17_digest) sits next to them. build.settings is generated per run and names the line's plugin, which simlib loads;
 # the project also gets the tint-black fixture of both lines (assets/tintblack/<line>/ as tintblack/<line>/).
+# s22_example runs in a second project instead: a copy of the line's example project (Corona/ on 4.2, Corona43/ on
+# 4.3) with its main.lua as example_main.lua, the sim main.lua and simlib.lua, and the same build.settings.
 # A scenario passes when it runs to "DONE exit 0" with no unhandled or logged error; its CHECK lines are recorded as
 # "<test> <check>" (a check declared by an EXPECT line that never reported, as when it crashed first, as FAIL; a
 # scenario script with a <script>.py next to it gets that checker's CHECK lines, over its results and stdout, too), and
@@ -30,6 +32,8 @@ SIM_HOME=$SUITE_OUT/home
 APP="$SUITE_OUT/app/Corona Simulator.app"
 PLUGINS=$SUITE_OUT/plugins
 PROJECT=$SUITE_OUT/project
+EXAMPLE=$SUITE_OUT/example
+EXAMPLE_SCRIPT=s22_example.lua
 PLUGIN=plugin.spine${SPINE_RUNTIME//./}
 BASE_TEST="s17_digest base" # loads the 1.5.0 plugin.spine, not the line's plugin
 BASE_BANNER="Solar2d Spine plugin v1.5.0 loaded with Spine 4.2.XX"
@@ -146,19 +150,30 @@ setup_project() {
   } >"$PROJECT/build.settings"
 }
 
+# setup_example: the line's example project as a Solar2D project for $EXAMPLE_SCRIPT
+setup_example() {
+  local src=$SPINE_REPO/Corona
+  [[ "$SPINE_RUNTIME" == 4.2 ]] || src+=${SPINE_RUNTIME//./}
+  rm -rf "$EXAMPLE"
+  cp -R "$src" "$EXAMPLE"
+  mv "$EXAMPLE/main.lua" "$EXAMPLE/example_main.lua"
+  cp "$W/main.lua" "$W/simlib.lua" "$W/$EXAMPLE_SCRIPT" "$PROJECT/build.settings" "$EXAMPLE/"
+}
+
 result_file() { printf '%s/results/%s.txt' "$SUITE_OUT" "$(printf '%s' "$1" | tr '/ ' '__')"; }
 stdout_file() { printf '%s/results/%s.stdout.log' "$SUITE_OUT" "$(printf '%s' "$1" | tr '/ ' '__')"; }
 
 # scenario test script arg: one Simulator run of script, its stdout in stdout_file; prints that, then the results file
 scenario() {
-  local test=$1 script=$2 arg=$3 out pid rc=0 i=0
+  local test=$1 script=$2 arg=$3 project=$PROJECT out pid rc=0 i=0
+  [[ "$script" == "$EXAMPLE_SCRIPT" ]] && project=$EXAMPLE
   out=$(result_file "$test")
   rm -f "$out"
-  printf '%s\n%s\n%s\n' "${script%.lua}" "$arg" "$out" >"$PROJECT/scenario.txt"
+  printf '%s\n%s\n%s\n' "${script%.lua}" "$arg" "$out" >"$project/scenario.txt"
   HOME=$SIM_HOME CFFIXED_USER_HOME=$SIM_HOME "$APP/Contents/MacOS/Corona Simulator" -no-console YES \
     -allowLuaExit YES -NSAppSleepDisabled YES -ApplePersistenceIgnoreState YES \
     -suppressUnsupportedOSWarning "$(sw_vers -productVersion)" -pluginsDirectory "$PLUGINS" \
-    -project "$PROJECT/main.lua" </dev/null >"$(stdout_file "$test")" 2>&1 &
+    -project "$project/main.lua" </dev/null >"$(stdout_file "$test")" 2>&1 &
   pid=$!
   while kill -0 "$pid" 2>/dev/null && (( i < TIMEOUT_S * 5 )); do sleep 0.2; i=$((i + 1)); done
   if kill -0 "$pid" 2>/dev/null; then echo "sim: timeout after ${TIMEOUT_S}s, killing $pid"; kill -9 "$pid"; fi
@@ -197,6 +212,7 @@ build_dylib mac/Plugin43.xcodeproj plugin_spine43
 make_app
 setup_plugins
 setup_project
+setup_example
 # a scenario line "<runtime>: script arg" runs on that line only
 while read -r script arg; do
   [[ -z "$script" || "$script" == \#* ]] && continue

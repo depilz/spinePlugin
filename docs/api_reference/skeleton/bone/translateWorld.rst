@@ -21,6 +21,7 @@ Raises when the bone belongs to a removed skeleton, and for a root bone when the
 Syntax:
 --------
 
+.. fragment: syntax line; bone, deltaX and deltaY are placeholders
 .. code-block:: lua
 
    bone:translateWorld(deltaX, deltaY)
@@ -36,5 +37,6 @@ Example:
 
 .. code-block:: lua
 
-   -- Move the bone 20 units right and 10 units down
+   -- Move the hip bone 20 units right and 10 units down
+   local bone = skeleton:findSlot("body").bone.parent
    bone:translateWorld(20, 10)

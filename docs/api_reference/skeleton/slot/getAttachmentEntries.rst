@@ -3,6 +3,7 @@ slot:getAttachmentEntries()
 
 Returns entries containing usable skin lookup keys and their attachment objects.
 
+.. fragment: syntax lines; slot and goldSkin are placeholders
 .. code-block:: lua
 
    local effective = slot:getAttachmentEntries()
@@ -26,6 +27,7 @@ Each entry contains:
 
 .. code-block:: lua
 
+   local slot = hero:getSlot("hand1")
    for _, entry in ipairs(slot:getAttachmentEntries()) do
        print(entry.placeholder, entry.attachment.name, entry.skinName)
    end

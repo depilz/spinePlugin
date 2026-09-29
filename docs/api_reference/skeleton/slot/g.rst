@@ -3,13 +3,13 @@ slot.g
 ===================================
 
 | **Type:** ``number``
-| **See also:** :doc:`index`, :doc:`color`, :doc:`../setFillColor`
+| **See also:** :doc:`index`, :doc:`color`, :doc:`../setFillColor`, :doc:`/naming`
 
 Overview:
 .........
 
-The **green** (G) component of this slot’s color (0–1 range). 
-Adjusting `r`, `g`, `b`, or `alpha` individually modifies the overall tint
+The **green** (G) component of this slot’s color (0–1 range).
+Adjusting `r`, `g`, `b`, or `a` individually modifies the overall tint
 of the slot’s attachment.
 
 Example:

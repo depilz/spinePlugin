@@ -3,7 +3,7 @@ slot.darkColor
 ===================================
 
 | **Type:** ``table`` or ``nil`` (read-only)
-| **See also:** :doc:`index`, :doc:`color`, :doc:`../fill`
+| **See also:** :doc:`index`, :doc:`color`, :doc:`../fill/effect`
 
 Overview:
 .........
@@ -14,9 +14,9 @@ setup data sets a dark colour ("Tint black" in the Spine editor); that is fixed 
 slot that returns ``nil`` always does.
 
 The values follow the slot's current pose: an animation that keys the dark colour changes them frame by frame.
-They are the slot's colour values, not the bytes the renderer draws with (see :doc:`../fill` for how tint black
+They are the slot's colour values, not the bytes the renderer draws with (see :doc:`../fill/effect` for how tint black
 is drawn and its limits). Each read returns a new table; changing it does not change the slot. The dark colour
-is still reported while a skeleton :doc:`fill effect <../fill>` turns tint black off.
+is still reported while a skeleton :doc:`fill effect <../fill/effect>` turns tint black off.
 
 ``darkColor`` is read-only: the skeleton data and its animations set it. Writing it raises
 ``SpineSlot: property 'darkColor' is read-only; the skeleton data and its animations set it``.
@@ -28,7 +28,7 @@ Example:
 
 .. code-block:: lua
 
-   local dark = hero:getSlot("armor").darkColor
+   local dark = hero:getSlot("body").darkColor
    if dark then
       print(("Dark colour RGB: %f, %f, %f"):format(dark.r, dark.g, dark.b))
    else

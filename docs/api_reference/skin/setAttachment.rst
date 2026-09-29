@@ -22,6 +22,7 @@ Optionally, you can provide a source skin to copy bones and constraints from.
 Syntax:
 --------
 
+.. fragment: syntax line; its arguments are placeholders
 .. code-block:: lua
 
    skin:setAttachment(slot, attachmentName, attachment, [sourceSkin])
@@ -51,97 +52,114 @@ Raises a Lua error, and changes nothing, when:
 Example:
 --------
 
+The examples use the mix-and-match example skeleton, whose skins each dress part of the character.
+
 Build Custom Skin
 .................
 
 .. code-block:: lua
 
-   local customSkin = skeleton:createSkin("myCharacter")
-   
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+
+   local customSkin = girl:createSkin("myCharacter")
+
    -- Get attachments from existing skins
-   local currentSkin = assert(skeleton:getSkin(), "Apply a source skin first")
-   local hatAttachment = currentSkin:getAttachment("head", "wizard-hat")
-   local bodyAttachment = currentSkin:getAttachment("torso", "armor")
-   
-   customSkin:setAttachment("head", "wizard-hat", hatAttachment)
-             :setAttachment("torso", "armor", bodyAttachment)
-   
-   skeleton:setSkin(customSkin)
+   local sourceSkin = girl:findSkin("full-skins/girl")
+   local smile = sourceSkin:getAttachment("mouth", "mouth-smile")
+   local head = sourceSkin:getAttachment("base-head", "base-head")
+
+   customSkin:setAttachment("mouth", "mouth-smile", smile)
+             :setAttachment("base-head", "base-head", head)
+
+   girl:setSkin(customSkin)
 
 Remove Attachment
 .................
 
 .. code-block:: lua
 
-   local skin = skeleton:createSkin("modified")
-   skin:copySkin("default")
-   
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+
+   local skin = girl:createSkin("modified")
+   skin:copySkin("full-skins/girl")
+
    -- Remove an attachment by passing nil
-   skin:setAttachment("weapon-slot", "sword", nil)
+   skin:setAttachment("hat", "hat", nil)
 
 Own Copy of an Attachment
 .........................
 
 .. code-block:: lua
 
-   local skin = skeleton:createSkin("tinted")
-   local hat = skeleton:findSkin("default"):getAttachment("head", "hat")
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
 
-   -- Tint only this skin's hat; the "default" skin keeps its color
-   local myHat = hat:copy()
-   myHat.color = {r = 1, g = 0.5, b = 0.5, a = 1}
-   skin:setAttachment("head", "hat", myHat)
+   local skin = girl:createSkin("tinted")
+   local iris = girl:findSkin("eyes/green"):getAttachment("eye-front-iris", "eye-front-iris")
+
+   -- Tint only this skin's iris; the "eyes/green" skin keeps its color
+   local myIris = iris:copy()
+   myIris.color = {r = 1, g = 0.5, b = 0.5, a = 1}
+   skin:setAttachment("eye-front-iris", "eye-front-iris", myIris)
 
 Copy with Source Skin
-......................
+.....................
 
 .. code-block:: lua
 
-   local customSkin = skeleton:createSkin("advanced")
-   local sourceSkin = skeleton:getSkin()
-   
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+
+   local customSkin = girl:createSkin("advanced")
+   local sourceSkin = girl:findSkin("accessories/hat-red-yellow")
+
    -- Get attachment from source
-   local attachment = sourceSkin:getAttachment("body", "special-mesh")
-   
+   local attachment = sourceSkin:getAttachment("hat", "hat")
+
    -- Set it with source skin to preserve bones and constraints
-   customSkin:setAttachment("body", "special-mesh", attachment, sourceSkin)
-   
+   customSkin:setAttachment("hat", "hat", attachment, sourceSkin)
+
    -- Or pass source skin name as string
-   customSkin:setAttachment("body", "special-mesh", attachment, "default")
+   customSkin:setAttachment("hat", "hat", attachment, "accessories/hat-red-yellow")
 
 Mix and Match System
 ....................
 
 .. code-block:: lua
 
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+
    local function createCustomCharacter(parts)
-       local customSkin = skeleton:createSkin("custom")
-       
+       local customSkin = girl:createSkin("custom")
+
        for slotName, attachmentName in pairs(parts) do
            -- Find attachment in any skin
-           local skins = skeleton:getSkins()
-           
+           local skins = girl:getSkins()
+
            for _, skinName in ipairs(skins) do
-               local skin = skeleton:findSkin(skinName)
+               local skin = girl:findSkin(skinName)
                local attachment = skin:getAttachment(slotName, attachmentName)
-               
+
                if attachment then
                    customSkin:setAttachment(slotName, attachmentName, attachment, skin)
                    break
                end
            end
        end
-       
+
        return customSkin
    end
-   
+
    local mySkin = createCustomCharacter({
-       ["head"] = "elf-head",
-       ["body"] = "knight-armor",
-       ["legs"] = "running-shoes"
+       ["base-head"] = "base-head",
+       ["mouth"] = "mouth-smile",
+       ["hat"] = "hat"
    })
-   
-   skeleton:setSkin(mySkin)
+
+   girl:setSkin(mySkin)
 
 Notes:
 --------

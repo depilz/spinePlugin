@@ -154,12 +154,12 @@ static int bone_index(lua_State *L)
         lua_pushnumber(L, spc::pose(bone).getRotation());
         return 1;
     }
-    else if (strcmp(key, "xScale") == 0)
+    else if (strcmp(key, "scaleX") == 0 || strcmp(key, "xScale") == 0)
     {
         lua_pushnumber(L, spc::pose(bone).getScaleX());
         return 1;
     }
-    else if (strcmp(key, "yScale") == 0)
+    else if (strcmp(key, "scaleY") == 0 || strcmp(key, "yScale") == 0)
     {
         lua_pushnumber(L, spc::pose(bone).getScaleY());
         return 1;
@@ -265,13 +265,13 @@ static int bone_newindex(lua_State *L)
         spc::pose(bone).setRotation(rotation);
         return 0;
     }
-    else if (strcmp(key, "xScale") == 0)
+    else if (strcmp(key, "scaleX") == 0 || strcmp(key, "xScale") == 0)
     {
         float xScale = luaL_checknumber(L, 3);
         spc::pose(bone).setScaleX(xScale);
         return 0;
     }
-    else if (strcmp(key, "yScale") == 0)
+    else if (strcmp(key, "scaleY") == 0 || strcmp(key, "yScale") == 0)
     {
         float yScale = luaL_checknumber(L, 3);
         spc::pose(bone).setScaleY(yScale);

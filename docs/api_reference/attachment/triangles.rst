@@ -7,7 +7,7 @@ attachment.triangles
 
 An array of vertex indices that define the triangles of the mesh.
 
-The array contains indices into the vertices array, with every 3 indices 
+The array contains indices into the vertices array, with every 3 indices
 defining one triangle. The indices are in counter-clockwise winding order.
 
 Example
@@ -17,19 +17,19 @@ Example
 
    local slot = skeleton:findSlot("cape")
    local attachment = slot.attachment
-   
+
    if attachment and attachment.type == "mesh" then
        local triangles = attachment.triangles
        local numTriangles = #triangles / 3
-       
+
        print("Mesh has", numTriangles, "triangles")
-       
+
        -- Print first triangle's vertex indices
        if #triangles >= 3 then
-           print("First triangle uses vertices:", 
+           print("First triangle uses vertices:",
                  triangles[1], triangles[2], triangles[3])
        end
-       
+
        -- Iterate all triangles
        for i = 1, #triangles, 3 do
            local v1, v2, v3 = triangles[i], triangles[i+1], triangles[i+2]

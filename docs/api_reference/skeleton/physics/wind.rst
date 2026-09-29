@@ -8,7 +8,7 @@ physics.wind
 Overview:
 .........
 
-The **wind** force applied to all physics constraints. This is commonly used to simulate wind 
+The **wind** force applied to all physics constraints. This is commonly used to simulate wind
 or directional forces on bones in a skeleton.
 
 Example:
@@ -16,8 +16,12 @@ Example:
 
 .. code-block:: lua
 
+   -- the hero has no physics constraints; celestial-circus has
+   local circus = spine.create(spine.loadSkeletonData("assets/characters/celestial-circus.json",
+                                                      spine.loadAtlas("assets/characters/celestial-circus.atlas")))
+
    -- Increase wind force
-   hero.physics.wind = 0.3
-   
+   circus.physics.wind = 0.3
+
    -- Print current wind
-   print("Wind value:", hero.physics.wind)
+   print("Wind value:", circus.physics.wind)

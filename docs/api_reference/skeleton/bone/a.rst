@@ -3,7 +3,7 @@ bone.a
 ===================================
 
 | **Type:** ``number``
-| **See also:** :doc:`index`
+| **See also:** :doc:`index`, :doc:`/naming`
 
 Overview:
 .........
