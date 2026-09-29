@@ -5,12 +5,13 @@ Gets or sets the editor skin color’s red component. This is metadata exported 
 editor. It is **not multiplied into rendered attachment colors** and does not tint
 or fade the skeleton.
 
+Only a custom skin (from :doc:`../skeleton/createSkin`) can be written; writing it on a data skin
+raises, because data skins are read-only (see :doc:`index`).
+
 .. code-block:: lua
 
-   local skin = skeleton:getSkin()
-   if skin then
-       skin.r = 0.5
-   end
+   local skin = skeleton:createSkin("tinted")
+   skin.r = 0.5
 
 For rendered color changes, use :doc:`../skeleton/slot/color` or
 :doc:`../skeleton/setFillColor`. Attachment-object colors are shared by users of

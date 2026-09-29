@@ -1,12 +1,12 @@
 # Upstream record of runtime/spine-4.2/spine: vendored Esoteric spine-cpp, flattened (include/spine + src/spine -> spine/).
 # Refresh with the tool below from base to the new upstream commit, then update base, imported and history here.
-# Local changes and history are appended to, never dropped.
+# Local changes and history are appended to, never dropped silently.
 
 repo: https://github.com/EsotericSoftware/spine-runtimes
 branch: 4.2
 layout: spine-cpp/spine-cpp/{include,src}/spine
 base: e7dc1435fa4a0083ab431f1b28e083c14a1f5c68  [ts] Release 4.2.120 (2026-08-30)
-base-evidence: probe-verified (git hash-object of the 158 runtime files vs the flat-mapped e7dc1435f blobs, re-measured 2026-09-28 after the batcher port: 138 byte-identical, the 20 differing files are exactly the local-changes and other-differences files below); refreshed from eb6a973f9 with the refresh tool (157 files merged, 2 conflicts hand-resolved in SkeletonRenderer.cpp/.h keeping the local changes); after the refresh 140/158 runtime files are byte-identical to the e7dc1435f blobs, the other 18 are the local changes below plus Json.cpp
+base-evidence: probe-verified (git hash-object of the 158 runtime files vs the flat-mapped e7dc1435f blobs, re-measured 2026-09-29: 139 byte-identical, the 19 differing files are exactly the local-changes and other-differences files below); refreshed from eb6a973f9 with the refresh tool (157 files merged, 2 conflicts hand-resolved in SkeletonRenderer.cpp/.h keeping the local changes); after the refresh 140/158 runtime files are byte-identical to the e7dc1435f blobs, the other 18 are the local changes below plus Json.cpp
 refresh-tool: tools/runtime-refresh/refresh.sh <upstream-clone> <base> <new> runtime/spine-4.2/spine
 
 imported:
@@ -34,10 +34,9 @@ imported:
 
 local-changes:
 - SkeletonRenderer.cpp, SkeletonRenderer.h: injections, splits, Slot color blend, renamed include guard (b9fdd19, 7a632b3, 1a98d61, 652aebc)
-- Slot.cpp, Slot.h: solar color, attachmentLocked, attachment refcount (fdac450, 1a98d61, a27bde4)
+- Slot.cpp, Slot.h: solar color, attachment refcount (1a98d61, a27bde4)
 - MeshAttachment.cpp, VertexAttachment.cpp: attachment refcount (a27bde4)
 - SkeletonBinary.cpp, SkeletonJson.cpp: setter calls instead of direct field writes (a27bde4)
-- AnimationState.cpp: isAttachmentLocked() skips (fdac450)
 - Extension.cpp: memory-leak rewrite (3a773fc)
 - Skeleton.h, SkeletonBinary.h, SkeletonBounds.h, SkeletonClipping.h, SkeletonData.h, SkeletonJson.h: include guards renamed Spine_X_h -> SpineX_h (652aebc)
 - Version.h: SPINE_PLUGIN_VERSION (c624405)
@@ -47,6 +46,9 @@ local-changes:
 - FP-contraction pragmas: Windows (MSVC) bit-exactness is assumed, not measured (no Windows comparator run)
 - SkeletonRenderer.cpp, SkeletonRenderer.h: the split render() overload returns the command pair by value instead of a heap-allocated std::pair (render-11)
 - SkeletonRenderer.cpp: batchSubCommands/batchCommands replaced by the 4.3 batcher (rule ii): consecutive commands with the same texture, blend, injection slot and first colors merge into one command, empty commands pass through unbatched (4.3 SkeletonRenderer.cpp, Array -> Vector)
+- SkeletonRenderer.cpp: both render() overloads skip the geometry of a slot whose solar color (Lua slot.alpha) alpha is 0, except a clipping attachment; an injection slot gets an empty placeholder command on that path, on the slot color alpha 0 early-out and on the mesh attachment color alpha 0 early-out (D11)
+- SkeletonRenderer.cpp: the tint-black dark color bytes round (x * 255 + 0.5) instead of truncating; the light color bytes stay truncated (D12)
+- SkeletonRenderer.cpp: both render() overloads emit the region attachment color alpha 0 injection placeholder through addInjectionPlaceholder, the helper of the other alpha-0 paths; same command, same split routing (C67-A3)
 
 other-differences:
 - Json.cpp: one extra blank line after line 120 since 784fd6d; whitespace only, not a local change
@@ -57,3 +59,7 @@ history:
 - 2026-09-27: applied masks-runtime-4.2.patch (C1, C3, D-A, D-B, clang pragmas) plus the MSVC pragmas; Windows bit-exactness assumed
 - 2026-09-28: split render() returns the command pair by value (render-11); 4.3 already does
 - 2026-09-28: batchSubCommands/batchCommands ported from the 4.3 runtime (rule ii batching); base-evidence re-measured and labelled
+- 2026-09-29: removed the attachmentLocked local change (Slot.cpp, Slot.h, AnimationState.cpp; fdac450) by owner decision L1; AnimationState.cpp is byte-identical to e7dc1435f again; base-evidence re-measured
+- 2026-09-29: added the solar-alpha-0 early-out and the injection placeholders on the three alpha-0 paths in SkeletonRenderer.cpp (D11); base unchanged
+- 2026-09-29: the tint-black dark color bytes in SkeletonRenderer.cpp round instead of truncating (D12); base unchanged
+- 2026-09-29: routed the region attachment color alpha 0 injection placeholder in SkeletonRenderer.cpp through addInjectionPlaceholder (C67-A3); behaviour unchanged, base unchanged

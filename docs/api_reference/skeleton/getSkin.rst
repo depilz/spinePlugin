@@ -8,7 +8,10 @@ skeleton:getSkin()
 Overview:
 .........
 
-Returns the skeleton's currently active Skin object. This allows you to inspect or modify the current skin's properties.
+Returns the skeleton's currently active Skin object. This allows you to inspect the current skin. A data
+skin is read-only; the applied custom skin can be modified (see :doc:`../skin/index`).
+
+``getSkin`` takes no argument: passing one raises. To look a skin up by name, use :doc:`findSkin`.
 
 Syntax:
 --------

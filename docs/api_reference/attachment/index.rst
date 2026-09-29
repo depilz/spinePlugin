@@ -17,6 +17,14 @@ The attachment type determines which properties and methods are available. All a
 common properties like ``name`` and ``type``, while type-specific properties are only available 
 on the appropriate attachment types.
 
+Attachment objects are **shared**: skins that contain the same attachment (for example after
+:doc:`../skin/addSkin` or :doc:`../skin/setAttachment`) and every skeleton instance of the same skeleton data
+use the same object, so a property write shows everywhere. Use :doc:`copy` for a separate object. Two
+Attachment objects compare equal with ``==`` when they wrap the same attachment.
+
+Writing a property the attachment's type does not have raises
+``SpineAttachment: unknown property '<key>' on a <type> attachment``.
+
 Attachment Types
 ................
 
@@ -128,6 +136,7 @@ Methods
    :maxdepth: 1
 
    computeWorldVertices
+   copy
 
 Example Usage
 -------------

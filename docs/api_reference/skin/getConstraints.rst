@@ -48,8 +48,7 @@ Check Constraint Requirements
 .. code-block:: lua
 
    local function validateSkinCompatibility(skinName)
-       local skeletonData = skeleton:getSkeletonData()
-       local skin = skeletonData:findSkin(skinName)
+       local skin = skeleton:findSkin(skinName)
        
        if skin then
            local constraints = skin:getConstraints()

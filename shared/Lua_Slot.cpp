@@ -1,6 +1,7 @@
 #include "Lua_Slot.h"
 #include "Lua_Bone.h"
 #include "Lua_Attachment.h"
+#include "Lua_Skin.h"
 #include <set>
 #include <string>
 
@@ -103,11 +104,6 @@ static int slot_index(lua_State *L)
         lua_settable(L, -3);
         return 1;
     }
-    else if (strcmp(key, "attachmentLocked") == 0)
-    {
-        lua_pushboolean(L, slot.isAttachmentLocked());
-        return 1;
-    }
 
     // fallback to methods
     lua_getmetatable(L, 1);
@@ -173,47 +169,30 @@ static void setAttachment(lua_State *L, LuaSlot *slotUserdata)
     spc::pose(*slotUserdata->slot).setAttachment(attachment);
 }
 
-// slot:setAttachmentFromSkin(skinName, attachmentName)
-// Returns: boolean success
+// slot:setAttachmentFromSkin(skin, attachmentName)
+// Returns: the slot
 static int setAttachmentFromSkin(lua_State *L)
 {
     LuaSlot *slotUserdata = (LuaSlot *)luaL_checkudata(L, 1, "SpineSlot");
 
     slotUserdata->checkAlive(L);
-    if (!slotUserdata->slot)
-    {
-        lua_pushboolean(L, false);
-        return 1;
-    }
-
-    const char *skinName = luaL_checkstring(L, 2);
-    const char *attachmentName = luaL_checkstring(L, 3);
 
     Slot &slot = *slotUserdata->slot;
-    int slotIndex = slot.getData().getIndex();
+    Skin *skin = luaL_checkSkinArg(L, 2, &spc::data(slot.getSkeleton()));
+    const char *attachmentName = luaL_checkstring(L, 3);
 
-    // Find the specified skin
-    Skin *skin = spc::data(slot.getSkeleton()).findSkin(skinName);
-    if (!skin)
-    {
-        fprintf(stderr, "WARNING: Skin not found: %s\n", skinName);
-        lua_pushboolean(L, false);
-        return 1;
-    }
-
-    // Get the attachment from the skin
-    Attachment *attachment = skin->getAttachment(slotIndex, attachmentName);
+    Attachment *attachment = skin->getAttachment(slot.getData().getIndex(), attachmentName);
     if (!attachment)
-    {
-        fprintf(stderr, "WARNING: Attachment \"%s\" not found in skin \"%s\"\n", attachmentName, skinName);
-        lua_pushboolean(L, false);
-        return 1;
-    }
+        return luaL_error(L, "Attachment '%s' not found in skin '%s' for slot '%s'", attachmentName,
+                          skin->getName().buffer(), slot.getData().getName().buffer());
 
     spc::pose(slot).setAttachment(attachment);
-    lua_pushboolean(L, true);
+    lua_settop(L, 1);
     return 1;
 }
+
+// Readable keys that slot_newindex does not write.
+static const char *const readOnlyKeys[] = {"name", "bone", NULL};
 
 static int slot_newindex(lua_State *L)
 {
@@ -298,14 +277,13 @@ static int slot_newindex(lua_State *L)
     {
         return luaL_error(L, "SpineSlot: property 'darkColor' is read-only; the skeleton data and its animations set it");
     }
-    else if (strcmp(key, "attachmentLocked") == 0)
-    {
-        bool locked = lua_toboolean(L, 3);
-        slotUserdata->slot->setAttachmentLocked(locked);
-        return 0;
-    }
 
-    return 0;
+    for (const char *const *readOnly = readOnlyKeys; *readOnly; readOnly++)
+    {
+        if (strcmp(key, *readOnly) == 0)
+            return luaL_error(L, "SpineSlot: property '%s' is read-only", key);
+    }
+    return luaL_error(L, "SpineSlot: unknown property '%s'", key);
 }
 
 static int getAttachments(lua_State *L)
@@ -348,32 +326,27 @@ static int getAttachments(lua_State *L)
     return 1;
 }
 
+// slot:getSkinAttachments([skin]): without a skin, the applied skin or else the default skin.
 static int getSkinAttachments(lua_State *L)
 {
     LuaSlot *slotUserdata = (LuaSlot *)luaL_checkudata(L, 1, "SpineSlot");
-    const char *skinName = luaL_optstring(L, 2, NULL);
 
     slotUserdata->checkAlive(L);
-    if (!slotUserdata->slot)
-    {
-        return 0;
-    }
 
     Slot &slot = *slotUserdata->slot;
-
-    // return a table with all the attachments available in the skin
-    lua_newtable(L);
-
     SkeletonData *skeletonData = &spc::data(slot.getSkeleton());
-    Skin *skin = skinName ? skeletonData->findSkin(skinName) : slot.getSkeleton().getSkin();
-    if (!skinName && !skin)
+    Skin *skin = lua_isnoneornil(L, 2) ? slot.getSkeleton().getSkin() : luaL_checkSkinArg(L, 2, skeletonData);
+    if (!skin)
     {
         skin = skeletonData->getDefaultSkin();
     }
 
+    // return a table with all the attachments available in the skin
+    lua_newtable(L);
+
     if (!skin)
     {
-        return 0;
+        return 1;
     }
 
     int i = 1;
@@ -394,20 +367,19 @@ static int getSkinAttachments(lua_State *L)
     return 1;
 }
 
-// With no name, enumerate effective lookup entries: current skin first, then
-// default entries not shadowed by the current skin. A name selects exactly one skin.
+// With no skin, enumerate effective lookup entries: current skin first, then
+// default entries not shadowed by the current skin. A skin argument selects exactly that skin.
 static int getAttachmentEntries(lua_State *L)
 {
     LuaSlot *slotUserdata = (LuaSlot *)luaL_checkudata(L, 1, "SpineSlot");
     slotUserdata->checkAlive(L);
-    const char *skinName = luaL_optstring(L, 2, nullptr);
     Skeleton &skeleton = slotUserdata->slot->getSkeleton();
-    Skin *skin = skinName ? spc::data(skeleton).findSkin(skinName) : skeleton.getSkin();
-    if (skinName && !skin) return 0;
+    bool explicitSkin = !lua_isnoneornil(L, 2);
+    Skin *skin = explicitSkin ? luaL_checkSkinArg(L, 2, &spc::data(skeleton)) : skeleton.getSkin();
 
     lua_newtable(L);
     std::set<std::string> seen;
-    Skin *sources[] = {skin, skinName ? nullptr : spc::data(skeleton).getDefaultSkin()};
+    Skin *sources[] = {skin, explicitSkin ? nullptr : spc::data(skeleton).getDefaultSkin()};
     int index = 1;
     int slotIndex = slotUserdata->slot->getData().getIndex();
     for (Skin *source : sources)
@@ -419,10 +391,10 @@ static int getAttachmentEntries(lua_State *L)
             auto &entry = entries.next();
             if (entry._slotIndex != slotIndex || !seen.insert(spc::entryName(entry).buffer()).second) continue;
             lua_createtable(L, 0, 4);
-            lua_pushinteger(L, slotIndex);
-            lua_setfield(L, -2, "slotIndex");
+            lua_pushstring(L, slotUserdata->slot->getData().getName().buffer());
+            lua_setfield(L, -2, "slotName");
             lua_pushstring(L, spc::entryName(entry).buffer());
-            lua_setfield(L, -2, "name");
+            lua_setfield(L, -2, "placeholder");
             lua_pushstring(L, source->getName().buffer());
             lua_setfield(L, -2, "skinName");
             auto *attachment = (LuaAttachment *)lua_newuserdata(L, sizeof(LuaAttachment));
@@ -441,6 +413,17 @@ static int slot_gc(lua_State *L)
     slotUserdata->~LuaSlot();
 
     return 0;
+}
+
+// Same native slot of the same skeleton instance; raises if either skeleton was removed (D7).
+static int slot_eq(lua_State *L)
+{
+    LuaSlot *a = (LuaSlot *)luaL_checkudata(L, 1, "SpineSlot");
+    LuaSlot *b = (LuaSlot *)luaL_checkudata(L, 2, "SpineSlot");
+    a->checkAlive(L);
+    b->checkAlive(L);
+    lua_pushboolean(L, a->slot == b->slot && a->alive == b->alive);
+    return 1;
 }
 
 void getSlotMt(lua_State *L)
@@ -467,5 +450,8 @@ void getSlotMt(lua_State *L)
 
         lua_pushcfunction(L, slot_gc);
         lua_setfield(L, -2, "__gc");
+
+        lua_pushcfunction(L, slot_eq);
+        lua_setfield(L, -2, "__eq");
     }
 }

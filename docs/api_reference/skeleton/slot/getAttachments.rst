@@ -22,8 +22,8 @@ Syntax:
 Return value:
 -------------
 
-``table`` – An array of attachment objects from skins registered in skeleton data.
-Duplicates are possible. Unregistered custom skins are excluded. For usable lookup
+``table`` – An array of attachment objects from the skeleton data's skins.
+Duplicates are possible. Custom skins are excluded. For usable lookup
 keys and source skin names, use :doc:`getAttachmentEntries`.
 
 Example:

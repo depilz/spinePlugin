@@ -8,7 +8,8 @@ skeleton:getSlot()
 Overview:
 .........
 
-Returns a **Slot** userdata for the specified slot name, or throws an error if not found.
+Returns a **Slot** userdata for the specified slot name, or raises ``Slot not found: <name>`` if there is
+none. Use :doc:`findSlot` to get ``nil`` instead.
 
 Syntax:
 --------
@@ -26,6 +27,4 @@ Example:
 .. code-block:: lua
 
    local swordSlot = hero:getSlot("swordHand")
-   if swordSlot then
-       print("Got slot:", swordSlot.name)
-   end
+   print("Got slot:", swordSlot.name)

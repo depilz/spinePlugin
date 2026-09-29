@@ -512,7 +512,6 @@ bool AnimationState::apply(Skeleton &skeleton) {
 	Vector<Slot *> &slots = skeleton.getSlots();
 	for (int i = 0, n = (int) slots.size(); i < n; i++) {
 		Slot *slot = slots[i];
-		if (slot->isAttachmentLocked()) continue;
 		if (slot->getAttachmentState() == setupState) {
 			const String &attachmentName = slot->getData().getAttachmentName();
 			slot->setAttachment(attachmentName.isEmpty() ? NULL : skeleton.getAttachment(slot->getData().getIndex(), attachmentName));
@@ -712,7 +711,6 @@ void AnimationState::applyAttachmentTimeline(AttachmentTimeline *attachmentTimel
 											 MixBlend blend, bool attachments) {
 	Slot *slot = skeleton.getSlots()[attachmentTimeline->getSlotIndex()];
 	if (!slot->getBone().isActive()) return;
-	if (slot->isAttachmentLocked()) return;
 
 	Vector<float> &frames = attachmentTimeline->getFrames();
 	if (time < frames[0]) {

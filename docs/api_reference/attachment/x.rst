@@ -13,6 +13,9 @@ from the bone position.
 For **point** attachments, this is the X coordinate of the point in the bone's 
 local coordinate system.
 
+For **region** attachments, setting this property updates the attachment's geometry at once: the next
+:doc:`../skeleton/draw` shows the change.
+
 Example
 -------
 

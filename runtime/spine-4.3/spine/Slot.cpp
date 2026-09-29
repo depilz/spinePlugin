@@ -42,8 +42,7 @@ Slot::Slot(SlotData &data, Skeleton &skeleton)
 	  _skeleton(skeleton),
 	  _bone(*skeleton.getBones()[data._boneData._index]),
 	  _attachmentState(0),
-	  _solarColor(1, 1, 1, 1),
-	  _attachmentLocked(false) {
+	  _solarColor(1, 1, 1, 1) {
 
 	if (data.getSetupPose().hasDarkColor()) {
 		_pose._hasDarkColor = true;
@@ -62,14 +61,6 @@ Skeleton &Slot::getSkeleton() {
 
 Color &Slot::getSolarColor() {
 	return _solarColor;
-}
-
-bool Slot::isAttachmentLocked() {
-	return _attachmentLocked;
-}
-
-void Slot::setAttachmentLocked(bool locked) {
-	_attachmentLocked = locked;
 }
 
 void Slot::setupPose() {

@@ -12,6 +12,9 @@ A value of 1.0 means normal scale, 2.0 means double width, 0.5 means half width.
 
 Negative values will flip the attachment horizontally.
 
+For **region** attachments, setting this property updates the attachment's geometry at once: the next
+:doc:`../skeleton/draw` shows the change.
+
 Example
 -------
 

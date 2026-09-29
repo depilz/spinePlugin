@@ -404,6 +404,15 @@ static int attachment_index(lua_State *L)
     return 0;
 }
 
+// Readable keys that attachment_newindex does not write.
+static const char *const readOnlyKeys[] = {"name", "type", "path", "triangles", "hullLength", "lengths", "vertices",
+                                           "bones", "worldVerticesLength", NULL};
+
+static int unknownProperty(lua_State *L, Attachment *attachment, const char *key)
+{
+    return luaL_error(L, "SpineAttachment: unknown property '%s' on a %s attachment", key, getAttachmentTypeName(attachment));
+}
+
 static int attachment_newindex(lua_State *L)
 {
     LuaAttachment *attachmentUserdata = (LuaAttachment *)luaL_checkudata(L, 1, "SpineAttachment");
@@ -478,6 +487,10 @@ static int attachment_newindex(lua_State *L)
             }
             lua_pop(L, 1);
         }
+        else
+        {
+            return unknownProperty(L, attachment, key);
+        }
 
         return 0;
     }
@@ -486,11 +499,17 @@ static int attachment_newindex(lua_State *L)
         float width = luaL_checknumber(L, 3);
         if (attachment->getRTTI().instanceOf(RegionAttachment::rtti))
         {
-            static_cast<RegionAttachment *>(attachment)->setWidth(width);
+            RegionAttachment *region = static_cast<RegionAttachment *>(attachment);
+            region->setWidth(width);
+            spc::updateRegion(*region);
         }
         else if (attachment->getRTTI().instanceOf(MeshAttachment::rtti))
         {
             static_cast<MeshAttachment *>(attachment)->setWidth(width);
+        }
+        else
+        {
+            return unknownProperty(L, attachment, key);
         }
         return 0;
     }
@@ -499,11 +518,17 @@ static int attachment_newindex(lua_State *L)
         float height = luaL_checknumber(L, 3);
         if (attachment->getRTTI().instanceOf(RegionAttachment::rtti))
         {
-            static_cast<RegionAttachment *>(attachment)->setHeight(height);
+            RegionAttachment *region = static_cast<RegionAttachment *>(attachment);
+            region->setHeight(height);
+            spc::updateRegion(*region);
         }
         else if (attachment->getRTTI().instanceOf(MeshAttachment::rtti))
         {
             static_cast<MeshAttachment *>(attachment)->setHeight(height);
+        }
+        else
+        {
+            return unknownProperty(L, attachment, key);
         }
         return 0;
     }
@@ -513,11 +538,17 @@ static int attachment_newindex(lua_State *L)
         float x = luaL_checknumber(L, 3);
         if (attachment->getRTTI().instanceOf(RegionAttachment::rtti))
         {
-            static_cast<RegionAttachment *>(attachment)->setX(x);
+            RegionAttachment *region = static_cast<RegionAttachment *>(attachment);
+            region->setX(x);
+            spc::updateRegion(*region);
         }
         else if (attachment->getRTTI().instanceOf(PointAttachment::rtti))
         {
             static_cast<PointAttachment *>(attachment)->setX(x);
+        }
+        else
+        {
+            return unknownProperty(L, attachment, key);
         }
         return 0;
     }
@@ -526,11 +557,17 @@ static int attachment_newindex(lua_State *L)
         float y = luaL_checknumber(L, 3);
         if (attachment->getRTTI().instanceOf(RegionAttachment::rtti))
         {
-            static_cast<RegionAttachment *>(attachment)->setY(y);
+            RegionAttachment *region = static_cast<RegionAttachment *>(attachment);
+            region->setY(y);
+            spc::updateRegion(*region);
         }
         else if (attachment->getRTTI().instanceOf(PointAttachment::rtti))
         {
             static_cast<PointAttachment *>(attachment)->setY(y);
+        }
+        else
+        {
+            return unknownProperty(L, attachment, key);
         }
         return 0;
     }
@@ -539,11 +576,17 @@ static int attachment_newindex(lua_State *L)
         float rotation = luaL_checknumber(L, 3);
         if (attachment->getRTTI().instanceOf(RegionAttachment::rtti))
         {
-            static_cast<RegionAttachment *>(attachment)->setRotation(rotation);
+            RegionAttachment *region = static_cast<RegionAttachment *>(attachment);
+            region->setRotation(rotation);
+            spc::updateRegion(*region);
         }
         else if (attachment->getRTTI().instanceOf(PointAttachment::rtti))
         {
             static_cast<PointAttachment *>(attachment)->setRotation(rotation);
+        }
+        else
+        {
+            return unknownProperty(L, attachment, key);
         }
         return 0;
     }
@@ -552,7 +595,13 @@ static int attachment_newindex(lua_State *L)
         float scaleX = luaL_checknumber(L, 3);
         if (attachment->getRTTI().instanceOf(RegionAttachment::rtti))
         {
-            static_cast<RegionAttachment *>(attachment)->setScaleX(scaleX);
+            RegionAttachment *region = static_cast<RegionAttachment *>(attachment);
+            region->setScaleX(scaleX);
+            spc::updateRegion(*region);
+        }
+        else
+        {
+            return unknownProperty(L, attachment, key);
         }
         return 0;
     }
@@ -561,7 +610,13 @@ static int attachment_newindex(lua_State *L)
         float scaleY = luaL_checknumber(L, 3);
         if (attachment->getRTTI().instanceOf(RegionAttachment::rtti))
         {
-            static_cast<RegionAttachment *>(attachment)->setScaleY(scaleY);
+            RegionAttachment *region = static_cast<RegionAttachment *>(attachment);
+            region->setScaleY(scaleY);
+            spc::updateRegion(*region);
+        }
+        else
+        {
+            return unknownProperty(L, attachment, key);
         }
         return 0;
     }
@@ -573,6 +628,10 @@ static int attachment_newindex(lua_State *L)
         {
             static_cast<PathAttachment *>(attachment)->setClosed(closed);
         }
+        else
+        {
+            return unknownProperty(L, attachment, key);
+        }
         return 0;
     }
     else if (strcmp(key, "constantSpeed") == 0)
@@ -582,10 +641,19 @@ static int attachment_newindex(lua_State *L)
         {
             static_cast<PathAttachment *>(attachment)->setConstantSpeed(constantSpeed);
         }
+        else
+        {
+            return unknownProperty(L, attachment, key);
+        }
         return 0;
     }
 
-    return 0;
+    for (const char *const *readOnly = readOnlyKeys; *readOnly; readOnly++)
+    {
+        if (strcmp(key, *readOnly) == 0)
+            return luaL_error(L, "SpineAttachment: property '%s' is read-only", key);
+    }
+    return unknownProperty(L, attachment, key);
 }
 
 static int attachment_computeWorldVertices(lua_State *L)
@@ -652,6 +720,26 @@ static int attachment_computeWorldVertices(lua_State *L)
     return 1;
 }
 
+// attachment:copy()
+// Returns a new attachment with this one's properties, for per-instance changes (skins share attachments)
+static int attachment_copy(lua_State *L)
+{
+    LuaAttachment *attachmentUserdata = (LuaAttachment *)luaL_checkudata(L, 1, "SpineAttachment");
+    if (!attachmentUserdata->attachment) return luaL_argerror(L, 1, "Invalid attachment");
+
+    Attachment *copy = spc::copy(attachmentUserdata->attachment);
+    LuaAttachment *copyUserdata = (LuaAttachment *)lua_newuserdata(L, sizeof(LuaAttachment));
+    new (copyUserdata) LuaAttachment(L, copy, attachmentUserdata->dataOwner);
+    return 1;
+}
+
+// Lua calls __eq only for two SpineAttachment userdata: same native attachment, never raises (D7).
+static int attachment_eq(lua_State *L)
+{
+    lua_pushboolean(L, ((LuaAttachment *)lua_touserdata(L, 1))->attachment == ((LuaAttachment *)lua_touserdata(L, 2))->attachment);
+    return 1;
+}
+
 static int attachment_gc(lua_State *L)
 {
     LuaAttachment *attachmentUserdata = (LuaAttachment *)luaL_checkudata(L, 1, "SpineAttachment");
@@ -674,9 +762,15 @@ void getAttachmentMt(lua_State *L)
         lua_pushcfunction(L, attachment_gc);
         lua_setfield(L, -2, "__gc");
 
+        lua_pushcfunction(L, attachment_eq);
+        lua_setfield(L, -2, "__eq");
+
         // Methods
         lua_pushcfunction(L, attachment_computeWorldVertices);
         lua_setfield(L, -2, "computeWorldVertices");
+
+        lua_pushcfunction(L, attachment_copy);
+        lua_setfield(L, -2, "copy");
     }
 }
 

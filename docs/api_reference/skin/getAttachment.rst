@@ -8,21 +8,19 @@ skin:getAttachment()
 Overview:
 .........
 
-Returns a specific attachment from the skin by slot index (or name) and attachment name.
+Returns a specific attachment from the skin by slot and attachment name.
 
 Syntax:
 --------
 
 .. code-block:: lua
 
-   local attachment = skin:getAttachment(slotIndex, attachmentName)
-   -- or using slot name
-   local attachment = skin:getAttachment(slotName, attachmentName)
+   local attachment = skin:getAttachment(slot, attachmentName)
 
 Parameters:
 -----------
 
-- ``slotIndex`` (number) or ``slotName`` (string) – The zero-based slot index or slot name to query
+- ``slot`` (string or Slot) – The slot name, or a Slot object of the same skeleton data. A number raises.
 - ``attachmentName`` (string) – The name of the attachment to retrieve
 
 Returns:
@@ -41,10 +39,6 @@ Get Specific Attachment
    local customSkin = skeleton:createSkin("custom")
    customSkin:addSkin("default")
    
-   -- Get attachment by slot index
-   local attachment = customSkin:getAttachment(0, "head")
-   
-   -- Get attachment by slot name  
    local attachment = customSkin:getAttachment("head-slot", "head")
    
    if attachment then
@@ -71,7 +65,7 @@ Notes:
 --------
 
 - Returns ``nil`` if the attachment is not found in the skin
-- Both slot index (number) and slot name (string) are supported
+- The slot is a slot name or a Slot object; a string is always a slot name, and a number raises
 - The attachment object returned includes properties like ``name``, ``type``, etc.
-- Prints a warning message starting with ``"WARNING: "`` to stderr if the slot is not found or invalid
+- Raises a Lua error if the slot is not found or has the wrong type; only a missing attachment returns ``nil``
 

@@ -143,6 +143,20 @@ static RenderCommand *batchCommands(BlockAllocator &allocator, Vector<RenderComm
 	return root;
 }
 
+// Plugin: an injection slot that draws nothing still gets an empty placeholder command, so its injected object keeps its place.
+static void addInjectionPlaceholder(BlockAllocator &allocator, Slot &slot, const std::vector<int> &injectionSlotIndices,
+									const std::vector<int> *splitSlotIndices, Vector<RenderCommand *> &commandsInSplit,
+									Vector<RenderCommand *> &commandsNotInSplit) {
+	int slotIndex = slot.getData().getIndex();
+	if (std::find(injectionSlotIndices.begin(), injectionSlotIndices.end(), slotIndex) == injectionSlotIndices.end()) return;
+	RenderCommand *command = createRenderCommand(allocator, 0, 0, slot.getData().getBlendMode(), nullptr);
+	command->injectionSlotIndex = slotIndex;
+	if (splitSlotIndices && std::find(splitSlotIndices->begin(), splitSlotIndices->end(), slotIndex) != splitSlotIndices->end())
+		commandsInSplit.add(command);
+	else
+		commandsNotInSplit.add(command);
+}
+
 RenderCommand *SkeletonRenderer::render(Skeleton &skeleton, const std::vector<int> &injectionSlotIndices) {
     _allocator.compress();
     _renderCommands.clear();
@@ -164,6 +178,16 @@ RenderCommand *SkeletonRenderer::render(Skeleton &skeleton, const std::vector<in
         if (slot.getColor().a == 0 &&
             !attachment->getRTTI().isExactly(ClippingAttachment::rtti))
         {
+            addInjectionPlaceholder(_allocator, slot, injectionSlotIndices, nullptr, _renderCommands, _renderCommands);
+            clipper.clipEnd(slot);
+            continue;
+        }
+
+        // Plugin: a slot hidden with the Lua tint (slot.alpha = 0) produces no geometry, unless it's a clipping attachment.
+        if (slot.getSolarColor().a == 0 &&
+            !attachment->getRTTI().isExactly(ClippingAttachment::rtti))
+        {
+            addInjectionPlaceholder(_allocator, slot, injectionSlotIndices, nullptr, _renderCommands, _renderCommands);
             clipper.clipEnd(slot);
             continue;
         }
@@ -184,22 +208,7 @@ RenderCommand *SkeletonRenderer::render(Skeleton &skeleton, const std::vector<in
             attachmentColor = &regionAttachment->getColor();
             if (attachmentColor->a == 0)
             {
-                // Even if alpha is zero, we may need a dummy command if this slot is an injection slot
-                bool isInjectionSlot = false;
-                for (size_t si = 0; si < injectionSlotIndices.size(); si++)
-                {
-                    if (slot.getData().getIndex() == injectionSlotIndices[si])
-                    {
-                        isInjectionSlot = true;
-                        break;
-                    }
-                }
-                if (isInjectionSlot)
-                {
-                    RenderCommand *cmd = createRenderCommand( _allocator, 0, 0, slot.getData().getBlendMode(), nullptr);
-                    cmd->injectionSlotIndex = slot.getData().getIndex();
-                    _renderCommands.add(cmd);
-                }
+                addInjectionPlaceholder(_allocator, slot, injectionSlotIndices, nullptr, _renderCommands, _renderCommands);
                 clipper.clipEnd(slot);
                 continue;
             }
@@ -217,6 +226,7 @@ RenderCommand *SkeletonRenderer::render(Skeleton &skeleton, const std::vector<in
             attachmentColor = &mesh->getColor();
             if (attachmentColor->a == 0)
             {
+                addInjectionPlaceholder(_allocator, slot, injectionSlotIndices, nullptr, _renderCommands, _renderCommands);
                 clipper.clipEnd(slot);
                 continue;
             }
@@ -264,7 +274,7 @@ RenderCommand *SkeletonRenderer::render(Skeleton &skeleton, const std::vector<in
         if (slot.hasDarkColor())
         {
             Color &slotDarkColor = slot.getDarkColor();
-            darkColor = 0xff000000 | (static_cast<uint8_t>(slotDarkColor.r * 255) << 16) | (static_cast<uint8_t>(slotDarkColor.g * 255) << 8) | (static_cast<uint8_t>(slotDarkColor.b * 255));
+            darkColor = 0xff000000 | (static_cast<uint8_t>(slotDarkColor.r * 255 + 0.5f) << 16) | (static_cast<uint8_t>(slotDarkColor.g * 255 + 0.5f) << 8) | (static_cast<uint8_t>(slotDarkColor.b * 255 + 0.5f));
         }
 
         if (clipper.isClipping())
@@ -340,6 +350,16 @@ std::pair<RenderCommand *, RenderCommand *> SkeletonRenderer::render(Skeleton &s
         if (slot.getColor().a == 0 &&
             !attachment->getRTTI().isExactly(ClippingAttachment::rtti))
         {
+            addInjectionPlaceholder(_allocator, slot, injectionSlotIndices, &splitSlotIndices, commandsInSplit, commandsNotInSplit);
+            clipper.clipEnd(slot);
+            continue;
+        }
+
+        // Plugin: a slot hidden with the Lua tint (slot.alpha = 0) produces no geometry, unless it's a clipping attachment.
+        if (slot.getSolarColor().a == 0 &&
+            !attachment->getRTTI().isExactly(ClippingAttachment::rtti))
+        {
+            addInjectionPlaceholder(_allocator, slot, injectionSlotIndices, &splitSlotIndices, commandsInSplit, commandsNotInSplit);
             clipper.clipEnd(slot);
             continue;
         }
@@ -360,28 +380,7 @@ std::pair<RenderCommand *, RenderCommand *> SkeletonRenderer::render(Skeleton &s
             attachmentColor = &regionAttachment->getColor();
             if (attachmentColor->a == 0)
             {
-                // Even if alpha is zero, we may need a dummy command if this slot is an injection slot
-                bool isInjectionSlot = false;
-                for (size_t si = 0; si < injectionSlotIndices.size(); si++)
-                {
-                    if (slot.getData().getIndex() == injectionSlotIndices[si])
-                    {
-                        isInjectionSlot = true;
-                        break;
-                    }
-                }
-                if (isInjectionSlot)
-                {
-                    RenderCommand *cmd = createRenderCommand(_allocator, 0, 0, slot.getData().getBlendMode(), nullptr);
-                    cmd->injectionSlotIndex = slot.getData().getIndex();
-                    // Also check if this slot is in the "split" list, to push into correct vector.
-                    bool isInSplit =
-                        std::find(splitSlotIndices.begin(), splitSlotIndices.end(), slot.getData().getIndex()) != splitSlotIndices.end();
-                    if (isInSplit)
-                        commandsInSplit.add(cmd);
-                    else
-                        commandsNotInSplit.add(cmd);
-                }
+                addInjectionPlaceholder(_allocator, slot, injectionSlotIndices, &splitSlotIndices, commandsInSplit, commandsNotInSplit);
                 clipper.clipEnd(slot);
                 continue;
             }
@@ -399,6 +398,7 @@ std::pair<RenderCommand *, RenderCommand *> SkeletonRenderer::render(Skeleton &s
             attachmentColor = &mesh->getColor();
             if (attachmentColor->a == 0)
             {
+                addInjectionPlaceholder(_allocator, slot, injectionSlotIndices, &splitSlotIndices, commandsInSplit, commandsNotInSplit);
                 clipper.clipEnd(slot);
                 continue;
             }
@@ -446,7 +446,7 @@ std::pair<RenderCommand *, RenderCommand *> SkeletonRenderer::render(Skeleton &s
         if (slot.hasDarkColor())
         {
             Color &slotDarkColor = slot.getDarkColor();
-            darkColor = 0xff000000 | (static_cast<uint8_t>(slotDarkColor.r * 255) << 16) | (static_cast<uint8_t>(slotDarkColor.g * 255) << 8) | (static_cast<uint8_t>(slotDarkColor.b * 255));
+            darkColor = 0xff000000 | (static_cast<uint8_t>(slotDarkColor.r * 255 + 0.5f) << 16) | (static_cast<uint8_t>(slotDarkColor.g * 255 + 0.5f) << 8) | (static_cast<uint8_t>(slotDarkColor.b * 255 + 0.5f));
         }
 
         if (clipper.isClipping())

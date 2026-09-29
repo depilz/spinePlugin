@@ -72,7 +72,7 @@ Differences from the Original Spine Runtime:
 I built this plugin trying to make a complete integration to the original C++ Runtime. However, 
 there are some key differences to keep in mind:
 
-* **indexes**: Indexes start at ``1``, not ``0``, including track indexes. Skin methods and attachment-entry records retain zero-based slot indexes; prefer slot names with skin methods. Not my favorite change, but I want to prioritize consistency with the language and the engine first, and then with the original runtime.
+* **indexes**: Indexes start at ``1``, not ``0``, including track indexes. Skin methods take slot names or Slot objects, never numeric slot indexes. Not my favorite change, but I want to prioritize consistency with the language and the engine first, and then with the original runtime.
 
 * **events**: Events have been customized to be more Solar2D-friendly. Event phases are ``"began"``, ``"completed"``, and ``"ended"`` instead of ``"start"``, ``"complete"``, and ``"end"``. (See :doc:`api_reference/spine/event` for more details).
 

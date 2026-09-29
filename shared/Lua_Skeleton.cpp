@@ -472,7 +472,7 @@ static int getSkins(lua_State *L)
     return 1;
 }
 
-// skeleton:setSkin(skinNameOrObject)
+// skeleton:setSkin(skinNameOrObject [, resetSlots]); nil clears the skin
 static int setSkin(lua_State *L)
 {
     if (lua_gettop(L) < 2 || lua_gettop(L) > 3)
@@ -494,49 +494,13 @@ static int setSkin(lua_State *L)
     }
 
     Skeleton *skeleton = skeletonUserdata->skeleton;
-    SkeletonData *skeletonData = skeletonUserdata->skeletonData;
-    Skin *skin = nullptr;
-
-    // Check if argument is a string (skin name) or Skin object
-    if (lua_isstring(L, 2))
-    {
-        const char *skinName = lua_tostring(L, 2);
-        if (!skinName)
-        {
-            luaL_argerror(L, 2, "Skin name is required");
-            return 0;
-        }
-
-        skin = skeletonData->findSkin(skinName);
-        if (!skin)
-        {
-            luaL_error(L, "Skin not found: %s", skinName);
-            return 0;
-        }
-    }
-    else if (lua_isuserdata(L, 2))
-    {
-        // Check if it's a Skin object
-        LuaSkin *skinUserdata = (LuaSkin *)luaL_checkudata(L, 2, "SpineSkin");
-        if (!skinUserdata || !skinUserdata->skin)
-        {
-            luaL_argerror(L, 2, "Invalid Skin object");
-            return 0;
-        }
-        if (skinUserdata->skeletonData != skeletonData)
-            return luaL_argerror(L, 2, "Skin belongs to different skeleton data");
-        skin = skinUserdata->skin;
-    }
-    else
-    {
-        luaL_argerror(L, 2, "Expected skin name (string) or Skin object");
-        return 0;
-    }
+    Skin *skin = lua_isnil(L, 2) ? nullptr : luaL_checkSkinArg(L, 2, skeletonUserdata->skeletonData);
 
     if (skeleton->getSkin() == skin) skeleton->updateCache();
     else skeleton->setSkin(skin);
     if (resetSlots) spc::setSlotsToSetupPose(skeleton);
-    skeletonUserdata->appliedSkinOwner = getLuaSkinOwner(skin);
+    if (skin) skeletonUserdata->appliedSkinOwner = getLuaSkinOwner(skin);
+    else skeletonUserdata->appliedSkinOwner.reset();
 
     return 0;
 }
@@ -581,6 +545,8 @@ static int getSkin(lua_State *L)
     {
         return 0;
     }
+    if (lua_gettop(L) > 1)
+        return luaL_argerror(L, 2, "getSkin() takes no argument; use findSkin(name)");
 
     Skin *skin = skeletonUserdata->skeleton->getSkin();
     if (!skin)
@@ -618,64 +584,6 @@ static int findSkin(lua_State *L)
 
     return 1;
 }
-
-// skeleton:registerSkin(skinObject)
-// Adds a custom skin to the SkeletonData so it can be used by name
-static int registerSkin(lua_State *L)
-{
-    if (lua_gettop(L) != 2)
-    {
-        luaL_error(L, "Expected 2 arguments: self, skinObject");
-        return 0;
-    }
-
-    SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
-    if (!skeletonUserdata)
-    {
-        return 0;
-    }
-
-    // Check if argument is a Skin object
-    LuaSkin *skinUserdata = (LuaSkin *)luaL_checkudata(L, 2, "SpineSkin");
-    if (!skinUserdata || !skinUserdata->skin)
-    {
-        luaL_argerror(L, 2, "Invalid Skin object");
-        return 0;
-    }
-
-    if (skinUserdata->skeletonData != skeletonUserdata->skeletonData)
-        return luaL_argerror(L, 2, "Skin belongs to different skeleton data");
-
-    // Add skin to SkeletonData's skins vector
-    SkeletonData *skeletonData = skeletonUserdata->skeletonData;
-    Vector<Skin *> &skins = skeletonData->getSkins();
-    
-    // Check if skin with this name already exists
-    const String &skinName = skinUserdata->skin->getName();
-    bool found = false;
-    for (size_t i = 0; i < skins.size(); i++)
-    {
-        if (skins[i]->getName() == skinName)
-        {
-            if (skins[i] != skinUserdata->skin)
-                return luaL_error(L, "A different skin is already registered as %s", skinName.buffer());
-            found = true;
-            break;
-        }
-    }
-
-    if (!found)
-    {
-        skins.add(skinUserdata->skin);
-        // Transfer ownership to SkeletonData
-        skinUserdata->owner->ownsMemory = false;
-    }
-
-    return 0;
-}
-
-
-
 
 // skeleton:setToSetupPose()
 static int setToSetupPose(lua_State *L)
@@ -1325,7 +1233,7 @@ static int setAttachment(lua_State *L) {
 }
 
 
-// skeleton:findSlot(slotName) : bool
+// skeleton:findSlot(slotName) : Slot|nil
 static int findSlot(lua_State *L)
 {
     SpineSkeleton* skeletonUserdata = luaL_getSkeletonUserdata(L);
@@ -1336,33 +1244,22 @@ static int findSlot(lua_State *L)
     const char* slotName = luaL_checkstring(L, 2);
 
     Slot* slot = skeletonUserdata->skeleton->findSlot(slotName);
-    lua_pushboolean(L, slot != nullptr);
-
-    return 1;
-}
-
-// skeleton:getSlot(slotName) : Slot
-static int getSlot(lua_State *L)
-{
-    SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
-    if (!skeletonUserdata)
-    {
-        return 0;
-    }
-
-    const char *slotName = luaL_checkstring(L, 2);
-
-    Slot *slot = skeletonUserdata->skeleton->findSlot(slotName);
-
-    if (!slot)
-    {
-        luaL_error(L, "Slot not found: %s", slotName);
-        return 0;
+    if (!slot) {
+        lua_pushnil(L);
+        return 1;
     }
 
     LuaSlot *slotUserdata = (LuaSlot *)lua_newuserdata(L, sizeof(LuaSlot));
     new (slotUserdata) LuaSlot(L, slot, skeletonUserdata->dataOwner, skeletonUserdata->alive);
 
+    return 1;
+}
+
+// skeleton:getSlot(slotName) : Slot, raises when there is none
+static int getSlot(lua_State *L)
+{
+    findSlot(L);
+    if (lua_isnil(L, -1)) return luaL_error(L, "Slot not found: %s", lua_tostring(L, 2));
     return 1;
 }
 
@@ -2141,7 +2038,6 @@ void getSpineObjectMt(lua_State *L)
             {"createSkin", createSkin},
             {"getSkin", getSkin},
             {"findSkin", findSkin},
-            {"registerSkin", registerSkin},
 
             {"clearTracks", clearTracks},
             {"clearTrack", clearTrack},

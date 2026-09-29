@@ -9,8 +9,8 @@ The reference is Spine's tint-black formula on straight texels (c, a_t), light (
 (D = 0 for no dark colour: the default shader), composited with the slot's blend over the opaque background. While a
 user effect is set the dark term is dropped and the effect's kernel (brightness, desaturate) applied instead.
 Checks:
-  <capture>     every block within TOL levels of the reference, DARK_TOL more on a channel the dark colour feeds
-                (D11: the runtime truncates dark bytes); a capture in IDENTICAL also has 0 pixels differing from setup
+  <capture>     every block within TOL levels of the reference; a capture in IDENTICAL also has 0 pixels differing
+                from setup
   discriminates some tinted block of setup is more than TOL levels from the same slot with dark = black
   nodark        the no-dark and dark-black slots match the default-shader reference in every capture without a user
                 effect
@@ -26,7 +26,7 @@ import pnglib  # noqa: E402
 from generate import ALPHAS, BLOCK, COLORS, H, PAGE2_COLORS, SLOTS, W, skeleton  # noqa: E402
 
 BG = (40, 80, 120)
-TOL, DARK_TOL, SPREAD = 3, 1, 1
+TOL, SPREAD = 3, 1
 IDENTICAL = {"flashclear", "desatclear", "pulseback", "swapback", "unhide", "reassemble"}
 DESATURATE = (0.2125, 0.7154, 0.0721)
 # The trailing colon keeps out Solar2D's "WARNING: plugin.spine43 is not configured in build.settings" line.
@@ -68,7 +68,7 @@ def blend(mode, src, sa, bg):
 
 
 def reference(slot, color, alpha, effect, dark_off=False):
-    """The block's expected 0..255 rgb, and which channels the dark colour feeds."""
+    """The block's expected 0..255 rgb."""
     c, at = [v / 255 for v in color], alpha / 255
     light, a = slot["light"][:3], slot["light"][3]
     dark = (0, 0, 0) if effect or dark_off or not slot["dark"] else slot["dark"]
@@ -79,7 +79,7 @@ def reference(slot, color, alpha, effect, dark_off=False):
         lum = sum(src[k] * DESATURATE[k] for k in range(3))
         src = [src[k] + (lum - src[k]) * effect[1] for k in range(3)]
     out = blend(slot["blend"], src, at * a, [v / 255 for v in BG])
-    return [255 * min(1.0, max(0.0, v)) for v in out], [d > 0 for d in dark]
+    return [255 * min(1.0, max(0.0, v)) for v in out]
 
 
 def blocks(img, bw, bh, ox, oy, name):
@@ -115,15 +115,15 @@ def main(results, stdout):
             for i, j, v, spread in blocks(img, bw, bh, ox, oy, name):
                 where = "%s %s block %d,%d measured %s" % (capture, name, i, j, tuple(v[:3]))
                 spread_worst = max(spread_worst, (spread, where))
-                ref, fed = reference(slot, slot["page"][i], ALPHAS[j], effect)
+                ref = reference(slot, slot["page"][i], ALPHAS[j], effect)
                 dev = [abs(v[k] - ref[k]) for k in range(3)]
-                fails += any(dev[k] > TOL + (DARK_TOL if fed[k] else 0) for k in range(3))
+                fails += any(d > TOL for d in dev)
                 at = "%s reference %s" % (where, tuple(round(r, 2) for r in ref))
                 worst = max(worst, (max(dev), at))
                 if not effect and not tinted:
                     nodark = max(nodark, (max(dev), at))
                 if capture == "setup" and tinted:
-                    plain, _ = reference(slot, slot["page"][i], ALPHAS[j], effect, dark_off=True)
+                    plain = reference(slot, slot["page"][i], ALPHAS[j], effect, dark_off=True)
                     discriminates = max(discriminates, (max(abs(v[k] - plain[k]) for k in range(3)), where))
         detail = ["blocks out of bound %d" % fails, "worst |measured - reference| %.2f at %s" % worst,
                   "image %dx%d scale %.4f" % (img[0], img[1], img[0] / bw)]

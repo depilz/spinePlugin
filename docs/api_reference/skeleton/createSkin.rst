@@ -3,7 +3,7 @@ skeleton:createSkin()
 ===================================
 
 | **Type:** ``function``
-| **See also:** :doc:`index`, :doc:`setSkin`, :doc:`getSkin`, :doc:`registerSkin`, :doc:`../skin/index`
+| **See also:** :doc:`index`, :doc:`setSkin`, :doc:`getSkin`, :doc:`../skin/index`
 
 Overview:
 .........
@@ -20,7 +20,7 @@ Syntax:
    local customSkin = skeleton:createSkin(skinName)
     
 - ``skinName`` *(required)*:
-    ``string`` – The name for the new custom skin. This name can be used with :doc:`registerSkin` to make the skin reusable.
+    ``string`` – The name for the new custom skin.
 
 Returns:
 --------
@@ -58,17 +58,13 @@ Mix and Match Character Parts
    avatar:addSkin("soldier")   -- Soldier equipment
    avatar:addSkin("knight")    -- Knight armor
    
-   -- Apply and register for reuse
+   -- Apply the combined skin
    skeleton:setSkin(avatar)
-   skeleton:registerSkin(avatar)
-   
-   -- Later, use by name
-   skeleton:setSkin("customAvatar")
 
 Notes:
 --------
 
-- The custom skin is owned by the Lua side until registered with :doc:`registerSkin`
+- The custom skin is owned by the Lua side; an applied custom skin is retained automatically
 - Custom skins can combine any number of existing skins
 - Later additions with :doc:`../skin/addSkin` will overwrite duplicate attachments
 - Use :doc:`../skin/copySkin` if you need independent copies of attachments

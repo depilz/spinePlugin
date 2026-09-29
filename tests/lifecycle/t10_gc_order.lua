@@ -11,7 +11,7 @@ obj:setSkin(skin); obj:setSlotsToSetupPose()
 obj:setAnimation(1, "dance", true)
 local slot = obj:getSlot("backpack")
 local att = slot.attachment
-local dataSkin = obj:getSkin("accessories/backpack")
+local dataSkin = obj:findSkin("accessories/backpack")
 local atts = skin:getAttachments()
 print("wrappers:", skin:getName(), att and att.name, dataSkin and dataSkin:getName(), #atts)
 data, atlas = nil, nil

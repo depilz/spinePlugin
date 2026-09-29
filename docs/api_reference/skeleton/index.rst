@@ -54,7 +54,6 @@ Skin Management
    findSkin
    getSkins
    createSkin
-   registerSkin
 
 Setup Pose
 .............

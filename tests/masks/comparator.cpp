@@ -139,7 +139,7 @@ static void referenceFrame(Skeleton &skeleton, RefClip &clipper, Stream &out, Co
             continue;
         }
         bool isClip = attachment->getRTTI().isExactly(ClippingAttachment::rtti);
-        if (spc::applied(slot).getColor().a == 0 && !isClip) {
+        if ((spc::applied(slot).getColor().a == 0 || slot.getSolarColor().a == 0) && !isClip) {
             clipper.clipEnd(slot);
             continue;
         }

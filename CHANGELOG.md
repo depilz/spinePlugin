@@ -140,6 +140,46 @@
 - **Added `slot.darkColor`.** It returns the slot's dark colour as a new `{ r, g, b }` table (0 to 1), or `nil` for a
   slot without one. It is read-only: writing it raises
   `SpineSlot: property 'darkColor' is read-only; the skeleton data and its animations set it`.
+- **Added `skeleton:findSkin(name)`.** It returns the named skin of the skeleton data as a Skin object, or `nil`,
+  without applying it.
+- **Breaking: `skeleton:registerSkin` is removed.** Apply a custom skin by passing the Skin object to `setSkin`; an
+  applied custom skin is retained automatically.
+- **Breaking: skin calls raise instead of warning and returning `false`.** A skin or slot that is not found, a wrong
+  argument type, a skin, slot or attachment of other skeleton data, and an unknown or read-only property write on a
+  Skin, Slot or Attachment (`SpineSkin: unknown property 'k'`, `SpineSlot: property 'name' is read-only`,
+  `SpineAttachment: unknown property 'k' on a mesh attachment`) now raise a Lua error; nothing is printed to stderr.
+  A slot argument is a slot name or a Slot object and a skin argument is a skin name or a Skin object; a string is
+  always a name and a Lua number raises, so zero-based slot indexes no longer work. `skeleton:getSkin()` with an
+  argument raises (use `findSkin`). Only the `find*` calls and a missing entry in `skin:getAttachment` return `nil`.
+- **Breaking: skin mutators return their receiver.** `addSkin`, `copySkin`, `setAttachment`, `removeAttachment`,
+  `clear` and `slot:setAttachmentFromSkin` return the skin or slot instead of `true`/`false`, so calls can be chained.
+- **Breaking: data skins are read-only.** On a skin loaded with the skeleton data, every mutator and every colour write
+  (`r`, `g`, `b`, `a`, `color`) raises `Skin '<name>' is read-only (a data skin); use skeleton:createSkin() for a
+  mutable skin`. Custom skins stay mutable. This also stops a crash on 4.3 when a data skin's mesh was removed while
+  an animation deformed it.
+- **Breaking: `skin:setAttachment` shares the attachment object instead of copying it.** Added `attachment:copy()` for
+  a separate object and `skin:clear()`, which empties a custom skin so it can be rebuilt in place.
+- **Breaking: entry records use `slotName` and `placeholder`.** `skin:getAttachments()` returns
+  `{slotName, placeholder, attachment}` and `slot:getAttachmentEntries()` returns
+  `{slotName, placeholder, skinName, attachment}`; the `slotIndex` and `name` fields are gone.
+- **Breaking: `skeleton:findSlot(name)` returns the Slot or `nil`** instead of a boolean; `getSlot` still raises when
+  the slot does not exist.
+- **Added `setSkin(nil)` and `==` on skins, attachments and slots.** `skeleton:setSkin(nil)` clears the applied skin.
+  Two Skin or Attachment objects are equal when they wrap the same native object; two Slot objects are equal when they
+  are the same slot of the same skeleton, and comparing a slot of a removed skeleton raises.
+- **Breaking: `slot.attachmentLocked` is removed,** with its runtime change to Spine's `Slot` and `AnimationState` on
+  both lines. Reading it returns `nil` and writing it raises `SpineSlot: unknown property 'attachmentLocked'`.
+- **Region attachment geometry setters take effect.** Writing `x`, `y`, `rotation`, `scaleX`, `scaleY`, `width` or
+  `height` on a region attachment now moves its vertices on the next draw; it used to change only the stored value.
+- **Breaking: a slot with `slot.alpha = 0` draws no geometry.** Its attachment emits no vertices (a clipping
+  attachment still clips); an object injected into that slot is still placed every drawn frame. An injected object is
+  now also placed when the Spine slot colour's alpha or a mesh attachment's own alpha is 0; it used to be skipped.
+- **Tint-black dark colours round to the nearest byte** instead of truncating, so a dark channel keyed at 126/255
+  renders as 126, not 125.
+- **A slot on an inactive skin bone is skipped, not an error.** After `skeleton:setSkin`, and after
+  `skin:setAttachment` without a `sourceSkin`, a slot whose bone is a skin bone the applied skin does not enable raises
+  nothing: its attachment is not updated and not drawn. Pass the attachment's skin as `sourceSkin`, or apply that
+  skin, to draw it.
 
 ### plugin.spine42 (4.2 line)
 

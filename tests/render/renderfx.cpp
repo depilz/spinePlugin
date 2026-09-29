@@ -42,11 +42,12 @@ static void pushCommandList(lua_State *L, RenderCommand *c) {
     lua_newtable(L);
     int i = 1;
     for (; c; c = c->next, ++i) {
-        lua_createtable(L, 0, 6);
+        lua_createtable(L, 0, 7);
+        lua_pushinteger(L, c->numVertices); lua_setfield(L, -2, "numVertices");
         lua_pushinteger(L, c->numIndices); lua_setfield(L, -2, "numIndices");
         lua_pushinteger(L, (int)c->blendMode); lua_setfield(L, -2, "blend");
-        lua_pushnumber(L, (double)(c->colors ? c->colors[0] : 0)); lua_setfield(L, -2, "color");
-        lua_pushnumber(L, (double)(c->darkColors ? c->darkColors[0] : 0)); lua_setfield(L, -2, "dark");
+        lua_pushnumber(L, (double)(c->numVertices > 0 ? c->colors[0] : 0)); lua_setfield(L, -2, "color");
+        lua_pushnumber(L, (double)(c->numVertices > 0 ? c->darkColors[0] : 0)); lua_setfield(L, -2, "dark");
         lua_pushinteger(L, c->injectionSlotIndex); lua_setfield(L, -2, "injectionSlot");
         if (c->texture) {
             Texture *t = (Texture *)c->texture;
@@ -152,6 +153,14 @@ static int skinRequire(lua_State *L) {
     return 0;
 }
 
+// fx.slotColorAlpha(obj, slotName, a) : sets the Spine slot colour alpha (the one animations drive, not slot.alpha).
+static int slotColorAlpha(lua_State *L) {
+    Slot *slot = getSk(L, 1)->skeleton->findSlot(luaL_checkstring(L, 2));
+    if (!slot) return luaL_error(L, "no slot");
+    spc::pose(*slot).getColor().a = (float)luaL_checknumber(L, 3);
+    return 0;
+}
+
 static int bufLen(lua_State *L) { lua_pushinteger(L, (lua_Integer)lua_objlen(L, 1)); return 1; }
 
 static int meshCount(lua_State *L) {
@@ -166,7 +175,7 @@ extern "C" int luaopen_renderfx(lua_State *L) {
     const luaL_Reg fns[] = {{"expected", expected}, {"boneWorld", boneWorld}, {"physicsInfo", physicsInfo},
                             {"resetPhysics", resetPhysics},
                             {"makePhysicsSkinRequired", makePhysicsSkinRequired}, {"skinRequire", skinRequire},
-                            {"bufLen", bufLen},
+                            {"bufLen", bufLen}, {"slotColorAlpha", slotColorAlpha},
                             {"meshCount", meshCount}, {"newStats", newStats}, {NULL, NULL}};
     luaL_register(L, NULL, fns);
     return 1;

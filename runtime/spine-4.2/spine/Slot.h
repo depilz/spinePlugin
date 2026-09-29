@@ -124,11 +124,6 @@ namespace spine {
 
 		void setSequenceIndex(int index);
 
-		/// When true, animations will not change this slot's attachment.
-		bool isAttachmentLocked();
-
-		void setAttachmentLocked(bool locked);
-
 	private:
 		SlotData &_data;
 		Bone &_bone;
@@ -140,7 +135,6 @@ namespace spine {
 		Attachment *_attachment;
 		int _attachmentState;
 		int _sequenceIndex;
-		bool _attachmentLocked;
 		Vector<float> _deform;
 	};
 }

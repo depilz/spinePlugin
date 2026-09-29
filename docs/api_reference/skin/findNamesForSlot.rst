@@ -15,14 +15,12 @@ Syntax:
 
 .. code-block:: lua
 
-   local names = skin:findNamesForSlot(slotIndex)
-   -- or using slot name
-   local names = skin:findNamesForSlot(slotName)
+   local names = skin:findNamesForSlot(slot)
 
 Parameters:
 -----------
 
-- ``slotIndex`` (number) or ``slotName`` (string) – The zero-based slot index or slot name to query
+- ``slot`` (string or Slot) – The slot name, or a Slot object of the same skeleton data. A number raises.
 
 Returns:
 --------
@@ -39,10 +37,6 @@ List Available Options
 
    local skin = skeleton:getSkin()
    
-   -- Get all head options by slot index
-   local headOptions = skin:findNamesForSlot(0)
-   
-   -- Or by slot name
    local weaponOptions = skin:findNamesForSlot("weapon-slot")
    
    print("Available weapons:")
@@ -98,8 +92,8 @@ Notes:
 --------
 
 - Returns an empty table if no attachments are found for the slot
-- Both slot index (number) and slot name (string) are supported
+- The slot is a slot name or a Slot object; a string is always a slot name, and a number raises
 - Useful for implementing character customization interfaces
 - To get the actual attachment objects (not just names), use :doc:`findAttachmentsForSlot`
-- Prints a warning message starting with ``"WARNING: "`` to stderr if the slot is not found or invalid
+- Raises a Lua error if the slot is not found or has the wrong type
 

@@ -68,7 +68,7 @@ timer.performWithDelay(1000, function()
                 assert(implicit[i].name == attachment.name)
                 assert(explicitNil[i].name == attachment.name)
             end
-            assert(slot:getSkinAttachments("__missing_test_skin__") == nil)
+            assert(not pcall(slot.getSkinAttachments, slot, "__missing_test_skin__"))
         end
     end
     if previousSkin then

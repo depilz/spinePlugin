@@ -48,8 +48,7 @@ Check for Required Bones
 .. code-block:: lua
 
    local function hasSkinBones(skinName)
-       local skeletonData = skeleton:getSkeletonData()
-       local skin = skeletonData:findSkin(skinName)
+       local skin = skeleton:findSkin(skinName)
        
        if skin then
            local bones = skin:getBones()

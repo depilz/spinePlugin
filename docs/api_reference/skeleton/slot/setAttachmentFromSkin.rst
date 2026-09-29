@@ -21,13 +21,13 @@ Syntax:
 
 .. code-block:: lua
 
-   local success = slot:setAttachmentFromSkin(skinName, attachmentName)
+   slot:setAttachmentFromSkin(skin, attachmentName)
 
 Parameters:
 -----------
 
-- ``skinName`` *(string, required)*:
-    The name of the skin to get the attachment from
+- ``skin`` *(string or Skin, required)*:
+    The name of the skin to get the attachment from, or a Skin object of the same skeleton data
 
 - ``attachmentName`` *(string, required)*:
     The name of the attachment within that skin
@@ -35,7 +35,11 @@ Parameters:
 Returns:
 --------
 
-``boolean`` – Returns ``true`` if successful, ``false`` if the skin or attachment was not found. A warning message starting with ``"WARNING: "`` is printed to stderr on failure.
+``Slot`` – The slot itself, so calls can be chained.
+
+Raises a Lua error, and leaves the slot unchanged, when the skin is not found, has the wrong type or
+belongs to different skeleton data, or when the skin has no such attachment for this slot
+(``Attachment '<name>' not found in skin '<skin>' for slot '<slot>'``).
 
 Example:
 --------
@@ -87,13 +91,15 @@ Example:
 
    local slot = hero:getSlot("weapon")
    
-   -- Try to set an attachment and check if it succeeded
-   local success = slot:setAttachmentFromSkin("equipment", "legendary-sword")
+   -- Check first, or catch the raise with pcall
+   local equipment = skeleton:findSkin("equipment")
    
-   if not success then
+   if not (equipment and equipment:getAttachment("weapon", "legendary-sword")) then
        print("Could not equip legendary sword, using basic sword instead")
        -- Fallback to default weapon
        slot:setAttachmentFromSkin("default", "basic-sword")
+   else
+       slot:setAttachmentFromSkin(equipment, "legendary-sword")
    end
 
 **Comparing with slot.attachment:**
@@ -124,6 +130,5 @@ Notes:
 - This is more explicit than using :doc:`attachment` with a string
 - Use :doc:`attachment` property for simple cases where current/default skin is appropriate
 - Use this method when you need precise control over which skin provides the attachment
-- Returns ``false`` and prints a warning instead of throwing an error when the skin or attachment is not found
-- Check the return value to handle cases where the skin or attachment might not exist
+- Raises when the skin or the attachment is not found; use :doc:`../findSkin` and :doc:`../../skin/getAttachment` to check first
 

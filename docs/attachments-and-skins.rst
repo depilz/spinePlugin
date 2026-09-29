@@ -41,14 +41,14 @@ default entries, with current-skin entries taking precedence.
 
    local slot = skeleton:getSlot("based_rank_medal")
    for _, entry in ipairs(slot:getAttachmentEntries()) do
-       print(entry.name, entry.attachment.name, entry.skinName)
-       -- entry.name is the lookup key; entry.attachment is the actual object.
+       print(entry.placeholder, entry.attachment.name, entry.skinName)
+       -- entry.placeholder is the lookup key; entry.attachment is the actual object.
    end
 
 ``slot:getSkinAttachments()`` lists only objects in the currently applied skin
 (or default skin if none is applied). It does not merge default entries.
-``slot:getAttachments()`` lists objects from all registered skins, possibly with
-duplicates, and does not include unregistered custom skins.
+``slot:getAttachments()`` lists objects from all of the skeleton data's skins, possibly
+with duplicates, and does not include custom skins.
 
 Direct ``slot.attachment = object`` assignment bypasses lookup. Objects must
 come from the same skeleton data and should be authored for the destination slot;
@@ -74,10 +74,6 @@ manual overrides, use the frame order below:
    skeleton:getSlot("based_rank_medal").attachment = selectedAttachment
    skeleton:draw()
 
-Alternatively, ``slot.attachmentLocked = true`` blocks the plugin's animation-state
-attachment changes for that slot. It does not block direct assignments, skin
-switches, or explicit setup-pose resets. Unlock it to resume animation control.
-
 Composing outfits
 -----------------
 
@@ -94,10 +90,8 @@ and constraints. Later additions replace earlier entries with the same slot/key.
    skeleton:setSkin(outfit)
 
 Build the outfit before applying it. If you later change its required bones or
-constraints, reapply it to refresh the skeleton's update cache. Registration is
-only needed for lookup by name; an applied custom skin is retained automatically.
-``registerSkin`` changes shared skeleton data, rejects a conflicting name, and
-only accepts a skin from the same skeleton data.
+constraints, reapply it to refresh the skeleton's update cache. An applied
+custom skin is retained automatically.
 
 Sharing, copying, and lifetime
 ------------------------------
@@ -108,10 +102,14 @@ tinting. ``skin.color`` is editor metadata and does not tint rendered attachment
 
 ``copySkin`` creates separate attachment objects, but meshes use Spine linked-mesh
 semantics: texture resources and deformation/timeline relationships are not fully
-independent. ``skin:setAttachment(slot, key, object)`` preserves this plugin's
-existing copy-on-insertion behavior. Only ``nil`` removes an entry; invalid values
-raise an error without deleting it. Editing a mapping does not immediately replace
-an attachment already displayed by a slot.
+independent. ``skin:setAttachment(slot, key, object)`` shares the object, like
+``addSkin``; call ``attachment:copy()`` first for a separate one. Only ``nil`` removes
+an entry; invalid values raise an error without deleting it. Editing a mapping does
+not immediately replace an attachment already displayed by a slot.
+
+Skins loaded with the skeleton data (data skins) are read-only: their mutators and
+color writes raise. Build changes in a custom skin from ``skeleton:createSkin()``;
+``skin:clear()`` empties a custom skin so it can be rebuilt in place.
 
 Applied custom skins, displayed attachments, Lua attachment wrappers, and linked
 mesh dependencies retain their native resources. Retained skin/attachment wrappers
@@ -119,9 +117,9 @@ remain usable after a skeleton is removed. Wrappers that belong to the skeleton
 (slots, bones, IK and physics constraints, track entries, fills and effects) raise
 ``<Type> belongs to a removed skeleton`` instead; see :doc:`lifecycle`.
 
-Lua arrays and track indexes are one-based. For compatibility, numeric slot indexes
-in skin methods and entry records are **zero-based**. Prefer slot names in skin
-methods to avoid mixing these conventions.
+Skin methods take a slot as a slot name or a Slot object, and a skin as a skin name
+or a Skin object; a Lua number raises. Entry records name their slot with
+``slotName``.
 
 See Spine's `Runtime Skins guide <https://esotericsoftware.com/spine-runtime-skins>`_
 for the underlying model.

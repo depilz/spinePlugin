@@ -114,7 +114,8 @@ Example:
 Notes:
 ------
 
-- When setting by **string name** and the attachment or skin is not found, a warning message starting with ``"WARNING: "`` is printed to stderr, but no error is thrown
+- When setting by **string name** and the attachment is not found, it raises ``Attachment not found: <name>``
+- An attachment object of other skeleton data raises ``Attachment belongs to different skeleton data``
 - The slot's attachment will not be changed if the lookup fails
-- For more explicit skin control, use :doc:`setAttachmentFromSkin` which returns a boolean success value
+- For more explicit skin control, use :doc:`setAttachmentFromSkin`
 - Reading ``slot.attachment`` returns the actual Attachment object, not a string

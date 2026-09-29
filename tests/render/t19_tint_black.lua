@@ -17,6 +17,8 @@
 --                sees success (no warning) and draws the app's effect, the documented silent-duplicate limit
 --   sharedkey    [failed] the other plugin binary already defined the effect in this Lua state (or its define raised):
 --                no second define, tint on (off) without a warning
+--   alpha        [inject] slot.alpha 1 -> 0 -> 1 on the tinted slot normal, on page 1 and after the swap to page 2:
+--                normal draws its tint again; inject: an injected object on normal, so its placeholder sits among tints
 local C = dofile(arg[0]:match("^(.*)/") .. "/common.lua")
 local mock, spine, fx = C.mock, C.spine, C.fx
 local W = arg[0]:match("^(.*)/")
@@ -310,6 +312,34 @@ elseif mode == "sharedkey" then
   print(("sharedkey %s: defines=%d tint writes=%d warnings=%d"):format(variant or "defined", defines(), stats.sets + stats.params, warnings()))
   C.expect(defines() == 0, "defined again although the other plugin binary defined it")
   C.expect(warnings() == 0, "a warning for the other plugin binary's define")
+
+elseif mode == "alpha" then
+  local obj = fixture()
+  local normal = obj:getSlot("normal")
+  C.expect(obj:getDrawOrder()[1] == "normal", "normal draws first")
+  if variant == "inject" then obj:inject(display.newRect(0, 0, 5, 5), "normal") end
+  local placeholders = 0
+  local function cycle(label)
+    frame(obj, label .. " shown")
+    normal.alpha = 0
+    for f = 1, 2 do
+      frame(obj, label .. " hidden " .. f)
+      for _, c in ipairs((fx.expected(obj))) do
+        if c.injectionSlot >= 0 and c.numVertices == 0 then placeholders = placeholders + 1 end
+      end
+    end
+    normal.alpha = 1
+    for f = 1, 2 do frame(obj, label .. " re-shown " .. f) end
+    local t = tintOf(pairsOf(obj)[1].mesh)
+    C.expect(t.on and t.rgb == 0x3399ff, ("%s: normal's tint %s, expected 3399ff"):format(label, t.on and ("%06x"):format(t.rgb) or "off"))
+  end
+  cycle("page 1")
+  obj:setAnimation(1, "swap", false)
+  for f = 1, 40 do frame(obj, "swap " .. f, 25) end
+  C.expect(obj:getSlot("swap").attachment.name == "tex2", "the swap animation reached page 2")
+  cycle("page 2")
+  print(("alpha %s: frames=%d effect writes=%d param writes=%d placeholders=%d"):format(variant or "plain", stats.frames, stats.sets, stats.params, placeholders))
+  C.expect(placeholders == (variant == "inject" and 4 or 0), "a placeholder on every hidden frame with the injection, none without")
 
 else
   error("unknown mode " .. tostring(mode))

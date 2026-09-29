@@ -17,15 +17,18 @@ Syntax:
 
 .. code-block:: lua
 
-   local success = skin:addSkin(skinNameOrObject)
+   skin:addSkin(skinNameOrObject)
     
 - ``skinNameOrObject`` *(required)*:
-    ``string`` or ``Skin`` – Either the name of an existing skin or a Skin object.
+    ``string`` or ``Skin`` – Either the name of an existing skin or a Skin object of the same skeleton data.
 
 Returns:
 --------
 
-``boolean`` – Returns ``true`` if successful, ``false`` if the skin was not found or invalid. A warning message starting with ``"WARNING: "`` is printed to stderr on failure.
+``Skin`` – The skin itself, so calls can be chained.
+
+Raises a Lua error, and changes nothing, when this skin is a data skin (read-only), or when the
+other skin is not found, has the wrong type or belongs to different skeleton data.
 
 Example:
 --------
@@ -69,6 +72,6 @@ Notes:
 - Later additions overwrite duplicate slot/attachment combinations
 - Very fast operation - suitable for runtime character customization
 - For independent copies, use :doc:`copySkin` instead
-- Returns ``false`` and prints a warning instead of throwing an error when the skin is not found
-- Check the return value to handle cases where the skin might not exist
+- Raises on a data skin: data skins are read-only (see :doc:`index`)
+- Raises when the skin is not found; use :doc:`../skeleton/findSkin` to check first
 

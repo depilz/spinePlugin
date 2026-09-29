@@ -8,7 +8,7 @@ skin:getAttachments()
 Overview:
 .........
 
-Returns a table of all attachments in the skin. Each entry contains the slot index and attachment name. Useful for debugging or inspecting skin contents.
+Returns a table of all attachments in the skin. Each entry contains the slot name, the lookup key and the attachment. Useful for debugging or inspecting skin contents.
 
 Syntax:
 --------
@@ -22,8 +22,8 @@ Returns:
 
 ``table`` – Array of attachment info tables, each containing:
 
-- ``slotIndex`` (number) – The zero-based slot index for this attachment
-- ``name`` (string) – The skin lookup key (placeholder name), not necessarily the object name
+- ``slotName`` (string) – The name of the slot this entry is for
+- ``placeholder`` (string) – The skin lookup key (placeholder name), not necessarily the object name
 - ``attachment`` (Attachment) – The attachment object
 
 Example:
@@ -41,8 +41,8 @@ List All Attachments
        print("Attachments in", currentSkin.name .. ":")
        
        for i, attachment in ipairs(attachments) do
-           print(string.format("  [%d] Slot %d: %s", 
-               i, attachment.slotIndex, attachment.name))
+           print(string.format("  [%d] Slot %s: %s", 
+               i, attachment.slotName, attachment.placeholder))
        end
    end
 

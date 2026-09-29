@@ -72,16 +72,20 @@ raises("C10", "slot:setAttachmentFromSkin('goblin', 'nope')", function() return 
 raises("C11", "slot:getSkinAttachments('nope')", function() return o:getSlot("head"):getSkinAttachments("nope") end, "Skin not found")
 raises("C12", "slot:getAttachmentEntries('nope')", function() return o:getSlot("head"):getAttachmentEntries("nope") end, "Skin not found")
 raises("C13", "skeleton:setSkin('nope') (unchanged)", function() return o:setSkin("nope") end, "Skin not found: nope")
-raises("C14", "skin.name = 'x'", function() custom.name = "x" end, "not writable")
-raises("C15", "skin.foo = 1", function() custom.foo = 1 end, "not writable")
-raises("C16", "slot.foo = 1", function() o:getSlot("head").foo = 1 end, "not writable")
-raises("C17", "attachment.foo = 1", function() o:getSlot("head").attachment.foo = 1 end, "not writable")
-raises("C18", "mesh attachment .x = 1 (not a region)", function() o:getSlot("head").attachment.x = 1 end, "not writable on a mesh")
+raises("C14", "skin.name = 'x'", function() custom.name = "x" end, "SpineSkin: property 'name' is read-only")
+raises("C15", "skin.foo = 1", function() custom.foo = 1 end, "SpineSkin: unknown property 'foo'")
+raises("C16", "slot.foo = 1", function() o:getSlot("head").foo = 1 end, "SpineSlot: unknown property 'foo'")
+raises("C17", "attachment.foo = 1", function() o:getSlot("head").attachment.foo = 1 end, "SpineAttachment: unknown property 'foo'")
+raises("C18", "mesh attachment .x = 1 (not a region)", function() o:getSlot("head").attachment.x = 1 end, "SpineAttachment: unknown property 'x' on a mesh attachment")
+raises("C19", "slot.name = 'x'", function() o:getSlot("head").name = "x" end, "SpineSlot: property 'name' is read-only")
+raises("C20", "attachment.name = 'x'", function() o:getSlot("head").attachment.name = "x" end, "SpineAttachment: property 'name' is read-only")
 
 print("== D return values of mutators (the skin itself; truthy like 1.5.0's true)")
 returns("D1", "skin:addSkin(x) returns the same skin", function() return custom:addSkin("goblingirl") end, function(v) return rawequal(v, custom) end)
 returns("D2", "chaining createSkin():addSkin():addSkin()", function() return o:createSkin("c"):addSkin("goblin"):addSkin("goblingirl") end, function(v) return v and v.name == "c" end)
 returns("D3", "slot:setAttachmentFromSkin returns the slot", function() local s = o:getSlot("head"); return s:setAttachmentFromSkin("goblin", "head") == s end, function(v) return v == true end)
+returns("D4", "skin:setAttachment(slot, 'k', att) returns the same skin", function() local s = o:getSlot("head"); return custom:setAttachment(s, "k", s.attachment) end, function(v) return rawequal(v, custom) end)
+returns("D5", "skin:copySkin('default') returns the same skin", function() local copied = o:createSkin("copied"); return rawequal(copied:copySkin("default"), copied) end, function(v) return v == true end)
 
 print("== E share vs copy")
 local dagger
@@ -137,7 +141,7 @@ print("== I removed API")
 -- (the harness object has no Solar2D group fallback, so probe the method table directly)
 returns("I1", "skeleton method table has no registerSkin", function() return rawget(getmetatable(o), "registerSkin") end, function(v) return v == nil end)
 returns("I2", "slot.attachmentLocked reads nil", function() return o:getSlot("head").attachmentLocked end, function(v) return v == nil end)
-raises("I3", "slot.attachmentLocked = true", function() o:getSlot("head").attachmentLocked = true end, "not writable")
+raises("I3", "slot.attachmentLocked = true", function() o:getSlot("head").attachmentLocked = true end, "SpineSlot: unknown property 'attachmentLocked'")
 
 print("== J __eq on Skin / Attachment / Slot")
 o:setSkin(custom)
@@ -148,6 +152,10 @@ returns("J4", "getSlot('head') == slots[i] of the same instance", function()
   for _, s in ipairs(o.slots) do if s.name == "head" then return s == o:getSlot("head") end end end, function(v) return v == true end)
 returns("J5", "same slot name on another instance is not equal", function() return o:getSlot("head") == o2:getSlot("head") end, function(v) return v == false end)
 returns("J6", "custom ~= data skin", function() return custom == o:findSkin("goblin") end, function(v) return v == false end)
+local function removedSlot() local t = fx.create(data); local s = t:getSlot("head"); fx.dispose(t); return s end
+raises("J7", "removed-skeleton Slot == live Slot", function() return removedSlot() == o:getSlot("head") end, "Slot belongs to a removed skeleton")
+raises("J8", "live Slot == removed-skeleton Slot", function() return o:getSlot("head") == removedSlot() end, "Slot belongs to a removed skeleton")
+raises("J9", "skin:getAttachment(<removed-skeleton Slot>, 'head')", function() return custom:getAttachment(removedSlot(), "head") end, "Slot belongs to a removed skeleton")
 
 print("== K Skin objects accepted wherever a skin is expected")
 returns("K1", "slot:setAttachmentFromSkin(<Skin>, 'head')", function() local s = o:getSlot("head"); s:setAttachmentFromSkin(o:findSkin("goblingirl"), "head"); return s.attachment.name end, function(v) return v == "goblingirl/head" end)
@@ -170,6 +178,26 @@ returns("M2", "clear()+refill of the APPLIED skin + setSkin(same) = fresh build"
   s:clear():addSkin("weapon/sword"); hero:setSkin(s)
   local b = fx.activeBones(hero); return tostring(b["weapon-sword"]) .. "," .. tostring(b["weapon-morningstar"]) end, function(v) return v == "true,false" end)
 raises("M3", "findSkin('goblin'):clear()", function() return o:findSkin("goblin"):clear() end, "read-only")
+print("== N attachment on an inactive skin bone (D4: not drawn, no raise)")
+local heroData = fx.loadData(ASSETS.hero[1], ASSETS.hero[2])
+-- vertices the weapon-sword slot's sword region adds once apply(h, sword) has put it on the slot
+local function swordVertices(apply)
+  local h = fx.create(heroData)
+  apply(h, h:findSkin("default"):getAttachment("weapon-sword", "sword")); fx.worldTransform(h)
+  local _, drawn = fx.renderStats2(h); h:getSlot("weapon-sword").attachment = nil; local _, without = fx.renderStats2(h)
+  fx.dispose(h)
+  return drawn - without
+end
+local function viaSetAttachment(sourceSkin)
+  return function(h, sword) h:setSkin(h:createSkin("d4"):setAttachment("weapon-sword", "sword", sword, sourceSkin)) end
+end
+local function viaSetSkin(skin)
+  return function(h) h:setSkin("weapon/sword"); h:setSkin(skin, false) end
+end
+returns("N1", "skin:setAttachment on a skin bone: 0 vertices without sourceSkin, drawn with it", function()
+  return swordVertices(viaSetAttachment(nil)) .. "," .. swordVertices(viaSetAttachment("weapon/sword")) end, function(v) return v == "0,4" end)
+returns("N2", "setSkin on a skin bone: 0 vertices after setSkin(<other skin>), drawn after setSkin(<bone's skin>)", function()
+  return swordVertices(viaSetSkin("weapon/morningstar")) .. "," .. swordVertices(viaSetSkin("weapon/sword")) end, function(v) return v == "0,4" end)
 print(("== s1 summary: %d PASS, %d FAIL"):format(passes, fails))
 fx.dispose(o); fx.dispose(o2); fx.dispose(foreign); fx.dispose(hero)
 custom, gear, dagger = nil, nil, nil

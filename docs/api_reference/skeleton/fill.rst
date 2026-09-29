@@ -60,6 +60,5 @@ Exporting art with dark colours
 - **The dark colour is not multiplied by the slot's attachment or skeleton colour.** The plugin follows the
   Spine C++ and TypeScript runtimes here. libGDX and the Spine editor multiply the dark colour by those colours,
   so art whose attachment or skeleton colour is not white can look different in the editor.
-- **Dark colours can draw one level darker than set.** The Spine runtime converts the dark colour to bytes by
-  truncating, so a channel can draw one level (1/255) below its value, for example a dark ``7e`` (126) draws as
-  125. A later runtime update rounds it instead.
+- **Dark colours are rounded to the nearest level.** The runtime converts the dark colour to bytes by rounding each
+  channel to the nearest level (1/255), also while an animation fades it between keys.

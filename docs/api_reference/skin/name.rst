@@ -9,7 +9,8 @@ skin.name
 Overview:
 .........
 
-Read-only property that returns the name of the skin.
+Read-only property that returns the name of the skin. Writing it raises
+``SpineSkin: property 'name' is read-only``.
 
 Example:
 --------

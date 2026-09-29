@@ -40,3 +40,11 @@ t19_tint_black.lua definefail
 t19_tint_black.lua duplicate
 t19_tint_black.lua sharedkey
 t19_tint_black.lua sharedkey failed
+t19_tint_black.lua alpha
+t19_tint_black.lua alpha inject
+t18_alpha_zero.lua vertices
+t18_alpha_zero.lua solar region
+t18_alpha_zero.lua solar mesh
+t18_alpha_zero.lua slot-color
+t18_alpha_zero.lua mesh-color
+t19_dark_round.lua

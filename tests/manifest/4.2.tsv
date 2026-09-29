@@ -159,7 +159,7 @@ lifecycle	t24_close_kitchen_sink
 lifecycle	t25_setlistener_in_callback
 lifecycle	t25b_setlistener_ended
 lifecycle	t26_missing_texture
-lifecycle	t27_registerskin
+lifecycle	t27_shared_custom_skin
 lifecycle	t28_longjmp_sharedptr create-bad-listener
 lifecycle	t28_longjmp_sharedptr load-missing
 lifecycle	t29_isactive_readonly ik
@@ -290,6 +290,14 @@ render	t19_tint_black definefail
 render	t19_tint_black duplicate
 render	t19_tint_black sharedkey
 render	t19_tint_black sharedkey failed
+render	t19_tint_black alpha
+render	t19_tint_black alpha inject
+render	t18_alpha_zero vertices
+render	t18_alpha_zero solar region
+render	t18_alpha_zero solar mesh
+render	t18_alpha_zero slot-color
+render	t18_alpha_zero mesh-color
+render	t19_dark_round
 render	h1_stale_world
 render	bench 5
 skins	s1_api_contract
@@ -324,9 +332,13 @@ skins	s1_api_contract C15
 skins	s1_api_contract C16
 skins	s1_api_contract C17
 skins	s1_api_contract C18
+skins	s1_api_contract C19
+skins	s1_api_contract C20
 skins	s1_api_contract D1
 skins	s1_api_contract D2
 skins	s1_api_contract D3
+skins	s1_api_contract D4
+skins	s1_api_contract D5
 skins	s1_api_contract E1
 skins	s1_api_contract E2
 skins	s1_api_contract E3
@@ -358,6 +370,9 @@ skins	s1_api_contract J3
 skins	s1_api_contract J4
 skins	s1_api_contract J5
 skins	s1_api_contract J6
+skins	s1_api_contract J7
+skins	s1_api_contract J8
+skins	s1_api_contract J9
 skins	s1_api_contract K1
 skins	s1_api_contract K2
 skins	s1_api_contract K3
@@ -365,6 +380,21 @@ skins	s1_api_contract L1
 skins	s1_api_contract M1
 skins	s1_api_contract M2
 skins	s1_api_contract M3
+skins	s1_api_contract N1
+skins	s1_api_contract N2
+skins	s4_final_stress seed1 run1
+skins	s4_final_stress seed1 run2
+skins	s4_final_stress seed2 run1
+skins	s4_final_stress seed2 run2
+skins	s4_final_stress seed3 run1
+skins	s4_final_stress seed3 run2
+skins	s4_final_stress seed7 run1
+skins	s4_final_stress seed7 run2
+skins	s4_final_stress seed11 run1
+skins	s4_final_stress seed11 run2
+skins	s6_readonly_vs_pin
+skins	s7_avatar_mix find
+skins	s7_avatar_mix inplace
 split	s0_smoke
 split	s1_random_split skip-portal
 split	s2_portal_split

@@ -14,6 +14,9 @@ For **mesh** attachments, this is used for non-essential mesh data and setup.
 
 Modifying this value will affect the attachment's rendering size.
 
+For **region** attachments, setting this property updates the attachment's geometry at once: the next
+:doc:`../skeleton/draw` shows the change.
+
 Example
 -------
 

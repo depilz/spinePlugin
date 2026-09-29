@@ -105,11 +105,6 @@ namespace spine {
 
 		Color &getSolarColor();
 
-		/// When true, animations will not change this slot's attachment.
-		bool isAttachmentLocked();
-
-		void setAttachmentLocked(bool locked);
-
 		void setupPose() override;
 
 	private:
@@ -117,7 +112,6 @@ namespace spine {
 		Bone &_bone;
 		int _attachmentState;
 		Color _solarColor;
-		bool _attachmentLocked;
 	};
 }
 

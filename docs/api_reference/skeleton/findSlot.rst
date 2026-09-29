@@ -3,19 +3,19 @@ skeleton:findSlot()
 ===================================
 
 | **Type:** ``function``
-| **See also:** :doc:`index`
+| **See also:** :doc:`index`, :doc:`getSlot`
 
 Overview:
 .........
 
-Returns a boolean indicating whether a slot with `slotName` exists in the skeleton.
+Returns the **Slot** object with the name `slotName`, or ``nil`` if the skeleton has no such slot.
 
 Syntax:
 --------
 
 .. code-block:: lua
 
-   local exists = skeleton:findSlot(slotName)
+   local slot = skeleton:findSlot(slotName)
 
 - ``slotName`` *(required)*:
     ``string`` – The name of the slot to search for.
@@ -23,15 +23,16 @@ Syntax:
 Return value:
 -------------
 
-``boolean`` – `true` if the slot exists, `false` otherwise.
+``Slot`` or ``nil`` – The slot, or ``nil`` if it does not exist. Use :doc:`getSlot` to raise instead.
 
 Example:
 ........
 
 .. code-block:: lua
 
-   if hero:findSlot("backpack") then
-       print("Slot 'backpack' exists!")
+   local slot = hero:findSlot("backpack")
+   if slot then
+       print("Slot 'backpack' exists:", slot.name)
    else
        print("Slot 'backpack' not found.")
    end

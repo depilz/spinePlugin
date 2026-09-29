@@ -6,6 +6,8 @@ line	owner	kind	key	change
 4.3	Atlas	field	__gc	+
 4.3	DataHolder	field	__gc	-
 4.3	SkeletonData	field	__gc	+
+4.3	SpineAttachment	field	__eq	+
+4.3	SpineAttachment	field	copy	+
 4.3	SpineBone	field	localToWorld	+
 4.3	SpineBone	field	setWorldPosition	+
 4.3	SpineBone	field	translateWorld	+
@@ -14,9 +16,15 @@ line	owner	kind	key	change
 4.3	SpineBone	set	worldY	+
 4.3	SpineObject	field	findSkin	+
 4.3	SpineObject	field	hitTest	+
+4.3	SpineObject	field	registerSkin	-
 4.3	SpineObject	get	physicsTimeScale	+
 4.3	SpineObject	set	physicsTimeScale	+
+4.3	SpineSkin	field	__eq	+
+4.3	SpineSkin	field	clear	+
+4.3	SpineSlot	field	__eq	+
+4.3	SpineSlot	get	attachmentLocked	-
 4.3	SpineSlot	get	darkColor	+
+4.3	SpineSlot	set	attachmentLocked	-
 4.3	SpineSlot	set	darkColor	+
 4.3	SpineTrack	field	__gc	-
 4.3	SpineTrack	field	__index	-

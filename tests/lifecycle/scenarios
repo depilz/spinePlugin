@@ -45,7 +45,7 @@ t24_close_kitchen_sink.lua
 t25_setlistener_in_callback.lua
 t25b_setlistener_ended.lua
 t26_missing_texture.lua
-t27_registerskin.lua
+t27_shared_custom_skin.lua
 t28_longjmp_sharedptr.lua create-bad-listener
 t28_longjmp_sharedptr.lua load-missing
 t29_isactive_readonly.lua ik

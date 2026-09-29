@@ -10,6 +10,9 @@ The rotation angle of the attachment in degrees, relative to its bone.
 This rotation is applied in the bone's local space before any bone 
 transformations are applied.
 
+For **region** attachments, setting this property updates the attachment's geometry at once: the next
+:doc:`../skeleton/draw` shows the change.
+
 Example
 -------
 

@@ -644,7 +644,6 @@ bool AnimationState::apply(Skeleton &skeleton) {
 	Array<Slot *> &slots = skeleton.getSlots();
 	for (int i = 0, n = (int) slots.size(); i < n; i++) {
 		Slot *slot = slots[i];
-		if (slot->isAttachmentLocked()) continue;
 		if (slot->_attachmentState == setupState) {
 			const String &attachmentName = slot->getData().getAttachmentName();
 			slot->_pose.setAttachment(attachmentName.isEmpty() ? NULL : skeleton.getAttachment(slot->getData().getIndex(), attachmentName));
@@ -852,7 +851,6 @@ Animation *AnimationState::getEmptyAnimation() {
 void AnimationState::applyAttachmentTimeline(AttachmentTimeline *attachmentTimeline, Skeleton &skeleton, float time, MixFrom from, bool retain) {
 	Slot *slot = skeleton.getSlots()[attachmentTimeline->getSlotIndex()];
 	if (!slot->getBone().isActive()) return;
-	if (slot->isAttachmentLocked()) return;
 	if (!retain && slot->_attachmentState == _unkeyedState + AttachRetain) return;
 
 	bool setup = time < attachmentTimeline->getFrames()[0];

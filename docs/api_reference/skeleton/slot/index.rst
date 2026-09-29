@@ -15,7 +15,11 @@ Each slot can be manipulated independently to change visuals (e.g., attachments)
 or adjust colors.
 
 Below is a list of the Slot’s properties. Most can be **read or written**, except for the slot
-name and bone reference.
+name and bone reference: writing those raises ``SpineSlot: property '<key>' is read-only``, and writing
+a key that is not listed raises ``SpineSlot: unknown property '<key>'``.
+
+Two Slot objects compare equal with ``==`` when they are the same slot of the same skeleton instance.
+Comparing a slot of a removed skeleton raises ``Slot belongs to a removed skeleton``.
 
 Properties:
 -----------
@@ -26,7 +30,6 @@ Properties:
    name
    bone
    attachment
-   attachmentLocked
    r
    g
    b

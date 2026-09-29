@@ -9,7 +9,7 @@ Overview:
 .........
 
 Returns a table of attachment objects available for this slot in the currently
-applied skin, or in a skin specified by name.
+applied skin, or in a skin specified by name or Skin object.
 
 Syntax:
 --------
@@ -19,9 +19,11 @@ Syntax:
    local attachments = slot:getSkinAttachments()
    local attachments = slot:getSkinAttachments(nil)
    local attachments = slot:getSkinAttachments("skinName")
+   local attachments = slot:getSkinAttachments(skin)
 
 - ``skinName`` *(optional)*:
-    ``string`` – The name of the skin to get attachments from. If omitted or
+    ``string`` or ``Skin`` – The name of the skin to get attachments from, or a Skin object of the same
+    skeleton data. If omitted or
     ``nil``, the currently applied skin is used. If no skin is applied, the
     skeleton data's default skin is used instead.
 
@@ -30,10 +32,11 @@ Return value:
 
 ``table`` – An array of :doc:`attachment objects </api_reference/attachment/index>`.
 The table is empty if the selected skin has no attachments for this slot.
-Returns ``nil`` if the named skin does not exist or no current/default skin is available.
+The table is also empty if no current/default skin is available. An unknown skin name, a wrong type or a
+skin of other skeleton data raises.
 
 This method lists only the selected skin's attachments. Use :doc:`getAttachments`
-to list attachments across registered skins. Use :doc:`getAttachmentEntries`
+to list attachments across the skeleton data's skins. Use :doc:`getAttachmentEntries`
 to inspect lookup keys or include the effective default-skin fallback.
 
 

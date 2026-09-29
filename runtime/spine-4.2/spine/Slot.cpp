@@ -46,8 +46,7 @@ Slot::Slot(SlotData &data, Bone &bone) : _data(data),
 										 _hasDarkColor(data.hasDarkColor()),
 										 _attachment(NULL),
 										 _attachmentState(0),
-										 _sequenceIndex(0),
-										 _attachmentLocked(false) {
+										 _sequenceIndex(0) {
 	setToSetupPose();
 }
 
@@ -142,12 +141,4 @@ int Slot::getSequenceIndex() {
 
 void Slot::setSequenceIndex(int index) {
 	_sequenceIndex = index;
-}
-
-bool Slot::isAttachmentLocked() {
-	return _attachmentLocked;
-}
-
-void Slot::setAttachmentLocked(bool locked) {
-	_attachmentLocked = locked;
 }

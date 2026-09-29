@@ -48,6 +48,8 @@ inline bool pathConstantSpeed(PathAttachment &p) { return p.getConstantSpeed(); 
 inline void regionWorldVertices(RegionAttachment &r, Slot &slot, float *out) {
     r.computeWorldVertices(slot, r.getOffsets(slot.getAppliedPose()).buffer(), out, 0, 2);
 }
+// Recomputes a region's offsets after a geometry write (x, y, rotation, scale, width, height).
+inline void updateRegion(RegionAttachment &r) { r.updateSequence(); }
 inline void vertexWorldVertices(VertexAttachment &v, Slot &slot, Array<float> &out) {
     v.computeWorldVertices(slot.getSkeleton(), slot, 0, v.getWorldVerticesLength(), out, 0, 2);
 }
@@ -111,6 +113,7 @@ inline float eventBalance(Event &e) { return e.getBalance(); }
 inline bool pathClosed(PathAttachment &p) { return p.isClosed(); }
 inline bool pathConstantSpeed(PathAttachment &p) { return p.isConstantSpeed(); }
 inline void regionWorldVertices(RegionAttachment &r, Slot &slot, float *out) { r.computeWorldVertices(slot, out, 0, 2); }
+inline void updateRegion(RegionAttachment &r) { r.updateRegion(); }
 inline void vertexWorldVertices(VertexAttachment &v, Slot &slot, Vector<float> &out) { v.computeWorldVertices(slot, out); }
 inline void addSkin(Skin *dst, Skin *src) { dst->addSkin(src); }
 inline void copySkin(Skin *dst, Skin *src) { dst->copySkin(src); }
