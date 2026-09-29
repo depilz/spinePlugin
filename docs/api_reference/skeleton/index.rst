@@ -51,6 +51,7 @@ Skin Management
 
    setSkin
    getSkin
+   findSkin
    getSkins
    createSkin
    registerSkin

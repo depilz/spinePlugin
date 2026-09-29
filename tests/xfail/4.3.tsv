@@ -33,8 +33,6 @@ skins	s1_api_contract D3	I7	pending-api	final skins API: slot:setAttachmentFromS
 skins	s1_api_contract E2	I7	pending-api	final skins API: attachment:copy() is a new object
 skins	s1_api_contract E3	I7	pending-api	final skins API: retint a copy leaves the original
 skins	s1_api_contract E4	I7	pending-api	final skins API: mesh copy keeps its deform timeline link (probe)
-skins	s1_api_contract F1	I7	pending-api	final skins API: findSkin('goblingirl') returns it without applying
-skins	s1_api_contract F2	I7	pending-api	final skins API: findSkin('nope')
 skins	s1_api_contract F3	I7	pending-api	final skins API: getSkin('goblingirl') raises
 skins	s1_api_contract F4	I7	pending-api	final skins API: getSkin(nil) raises
 skins	s1_api_contract G1	I7	pending-api	final skins API: findSkin('goblin'):removeAttachment('head','head') raises
@@ -42,7 +40,6 @@ skins	s1_api_contract G2	I7	pending-api	final skins API: findSkin('goblin'):setA
 skins	s1_api_contract G3	I7	pending-api	final skins API: getSkin() (applied data skin):addSkin('goblingirl') raises
 skins	s1_api_contract G4	I7	pending-api	final skins API: findSkin('default'):removeAttachment(...) raises
 skins	s1_api_contract G5	I7	pending-api	final skins API: findSkin('goblin').color = {...} raises
-skins	s1_api_contract G6	I7	pending-api	final skins API: data skin still intact (head entry present)
 skins	s1_api_contract G7	I7	pending-api	final skins API: custom skin mutable (removeAttachment)
 skins	s1_api_contract H1	I7	pending-api	final skins API: setSkin(nil): no skin, only default-skin attachments
 skins	s1_api_contract H2	I7	pending-api	final skins API: setSkin(nil, false): slots keep attachments
@@ -55,7 +52,6 @@ skins	s1_api_contract J1	I7	pending-api	final skins API: getSkin() == custom
 skins	s1_api_contract J2	I7	pending-api	final skins API: findSkin('goblin') == findSkin('goblin')
 skins	s1_api_contract J3	I7	pending-api	final skins API: slot.attachment == slot.attachment
 skins	s1_api_contract J4	I7	pending-api	final skins API: getSlot('head') == slots[i] of the same instance
-skins	s1_api_contract J6	I7	pending-api	final skins API: custom ~= data skin
 skins	s1_api_contract K1	I7	pending-api	final skins API: slot:setAttachmentFromSkin(<Skin>, 'head')
 skins	s1_api_contract K2	I7	pending-api	final skins API: slot:getSkinAttachments(<Skin>)
 skins	s1_api_contract K3	I7	pending-api	final skins API: slot:setAttachmentFromSkin(<foreign Skin>, 'head') raises

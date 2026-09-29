@@ -596,6 +596,29 @@ static int getSkin(lua_State *L)
     return 1;
 }
 
+// skeleton:findSkin(name) -> Skin or nil (looks the skin up in the SkeletonData; does not apply it)
+static int findSkin(lua_State *L)
+{
+    SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
+    if (!skeletonUserdata)
+    {
+        return 0;
+    }
+
+    luaL_checktype(L, 2, LUA_TSTRING);
+    Skin *skin = skeletonUserdata->skeletonData->findSkin(lua_tostring(L, 2));
+    if (!skin)
+    {
+        lua_pushnil(L);
+        return 1;
+    }
+
+    LuaSkin *skinUserdata = (LuaSkin *)lua_newuserdata(L, sizeof(LuaSkin));
+    new (skinUserdata) LuaSkin(L, skin, skeletonUserdata->skeletonData, false, skeletonUserdata->dataOwner); // ownsMemory = false (skin belongs to skeleton data)
+
+    return 1;
+}
+
 // skeleton:registerSkin(skinObject)
 // Adds a custom skin to the SkeletonData so it can be used by name
 static int registerSkin(lua_State *L)
@@ -2117,6 +2140,7 @@ void getSpineObjectMt(lua_State *L)
             {"setSkin", setSkin},
             {"createSkin", createSkin},
             {"getSkin", getSkin},
+            {"findSkin", findSkin},
             {"registerSkin", registerSkin},
 
             {"clearTracks", clearTracks},
