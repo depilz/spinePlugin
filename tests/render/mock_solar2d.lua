@@ -96,12 +96,15 @@ local function fillProxy(paint)
     __index = function(_, k) if k == "effect" then return paint.effectProxy end return paint[k] end,
     __newindex = function(_, k, v)
       if k == "effect" then
-        bump("effectSet")
+        -- effectSet and effectParamSet count every write; the ":<name>" variants split them by effect name ("nil" = clear)
+        bump("effectSet"); bump("effectSet:" .. tostring(v))
         if v == nil then paint.effect, paint.effectProxy = nil, nil
         else
           paint.effect = { name = v, params = {} }
           paint.effectProxy = setmetatable({}, { __index = paint.effect.params,
-            __newindex = function(_, kk, vv) bump("effectParamSet"); paint.effect.params[kk] = vv end })
+            __newindex = function(_, kk, vv)
+              bump("effectParamSet"); bump("effectParamSet:" .. paint.effect.name); paint.effect.params[kk] = vv
+            end })
         end
       else paint[k] = v end
     end })
@@ -168,6 +171,29 @@ function graphics.newTexture(params)
   local tex = { type = params.type, filename = params.filename, baseDir = params.baseDir }
   function tex:releaseSelf() bump("releaseTexture"); M.live.textures = M.live.textures - 1 end
   return tex
+end
+-- Records every call in M.defines (the params table as passed: category, group, name, vertexData, fragment). Like
+-- Solar2D's graphics.defineEffect (Rtt_LuaLibGraphics.cpp:315-325 -> Rtt_ShaderFactory.cpp:1186-1266): returns false
+-- both when it defines the effect (DefineEffect never sets its result) and when group.name already exists, where it
+-- logs the ERROR line below; never raises. M.defineReturns is the value returned for a new effect (a future engine may
+-- return true).
+M.defines = {}
+M.defineReturns = false
+local definedEffects = {}
+function graphics.defineEffect(params)
+  bump("defineEffect")
+  M.defines[#M.defines + 1] = params
+  local fullName = ("%s.%s"):format(params.group or "custom", params.name)
+  local key = params.category .. "." .. fullName
+  if definedEffects[key] then
+    local line = ("ERROR: Could not create custom effect. An effect (%s) for category (%s) already exists!")
+      :format(fullName, params.category)
+    M.warnings[#M.warnings + 1] = line
+    io.write(line, "\n")
+    return false
+  end
+  definedEffects[key] = true
+  return M.defineReturns
 end
 
 system = {}

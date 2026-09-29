@@ -4,11 +4,14 @@
 # process per scenario, on the line's plugin (plugin.spine42 on 4.2, plugin.spine43 on 4.3). plugin_spine42.dylib and
 # plugin_spine43.dylib are built by xcodebuild from a git archive of HEAD (so uncommitted changes are not in them) and
 # share one plugins dir; on 4.2 the shipped 1.5.0 plugin_spine.dylib from the tracked mac-sim archive (the baseline of
-# s17_digest) sits next to them. build.settings is generated per run and names the line's plugin, which simlib loads.
+# s17_digest) sits next to them. build.settings is generated per run and names the line's plugin, which simlib loads;
+# the project also gets the tint-black fixture of both lines (assets/tintblack/<line>/ as tintblack/<line>/).
 # A scenario passes when it runs to "DONE exit 0" with no unhandled or logged error; its CHECK lines are recorded as
-# "<test> <check>" (a check declared by an EXPECT line that never reported, as when it crashed first, as FAIL), and
+# "<test> <check>" (a check declared by an EXPECT line that never reported, as when it crashed first, as FAIL; a
+# scenario script with a <script>.py next to it gets that checker's CHECK lines, over its results and stdout, too), and
 # every scenario records "<test> identity" (its stdout carries exactly the load banner of the plugin it should load,
-# from the line's Version.h) and "<test> cpath" (the first package.cpath entry is the isolated
+# from the line's Version.h; s21_tint_black both loads both lines' plugins and carries both banners, the line's first)
+# and "<test> cpath" (the first package.cpath entry is the isolated
 # plugins dir: isolation, not identity, since both dylibs sit there). Nothing is written to the user's Simulator
 # Plugins dir or its preferences domain (the copy's own ...spinetests preferences and crash reports do land under
 # ~/Library), and the suite fails if any plugin_spine* or plugin.spine* entry of the user's Plugins dir
@@ -30,6 +33,8 @@ PROJECT=$SUITE_OUT/project
 PLUGIN=plugin.spine${SPINE_RUNTIME//./}
 BASE_TEST="s17_digest base" # loads the 1.5.0 plugin.spine, not the line's plugin
 BASE_BANNER="Solar2d Spine plugin v1.5.0 loaded with Spine 4.2.XX"
+BOTH_TEST="s21_tint_black both" # loads the line's plugin, then the other line's
+OTHER_RUNTIME=$([[ "$SPINE_RUNTIME" == 4.2 ]] && echo 4.3 || echo 4.2)
 
 USER_HOME=$(dscl . -read "/Users/$(id -un)" NFSHomeDirectory | sed 's/^NFSHomeDirectory: //')
 USER_PLUGINS=${SPINE_SIM_USER_PLUGINS:-"$USER_HOME/Library/Application Support/Corona/Simulator/Plugins"}
@@ -83,10 +88,10 @@ build_dylib() {
   codesign -f -s - "$dir/$product.unsigned" && mv "$dir/$product.unsigned" "$dir/$product.dylib"
 }
 
-# line_banner: the load banner of the line's plugin, from its Version.h at HEAD
+# line_banner [runtime]: the load banner of the line's (or runtime's) plugin, from its Version.h at HEAD
 line_banner() {
   local h
-  h=$(git -C "$SPINE_REPO" show "HEAD:runtime/spine-$SPINE_RUNTIME/spine/Version.h") || return 1
+  h=$(git -C "$SPINE_REPO" show "HEAD:runtime/spine-${1:-$SPINE_RUNTIME}/spine/Version.h") || return 1
   printf 'Solar2d Spine plugin %s loaded with Spine %s\n' \
     "$(sed -n 's/^#define SPINE_PLUGIN_VERSION "\(.*\)"$/\1/p' <<<"$h")" \
     "$(sed -n 's/^#define SPINE_VERSION_STRING "\(.*\)"$/\1/p' <<<"$h")"
@@ -132,6 +137,8 @@ setup_project() {
   mkdir -p "$PROJECT/spines" "$SUITE_OUT/results" "$SIM_HOME"
   cp "$W"/*.lua "$PROJECT/"
   for s in "$SPINE_SPINES"/*/; do cp -R "${s%/}" "$PROJECT/spines/"; done
+  mkdir -p "$PROJECT/tintblack"
+  for s in "$W"/assets/tintblack/*/; do cp -R "${s%/}" "$PROJECT/tintblack/"; done
   {
     printf 'settings =\n{\n    plugins =\n    {\n'
     for p in "${plugins[@]}"; do printf "        ['%s'] = {publisherId = 'com.studycat.spine'},\n" "$p"; done
@@ -173,6 +180,7 @@ verify() {
 identity() {
   local want=$LINE_BANNER
   [[ "$1" == "$BASE_TEST" ]] && want=$BASE_BANNER
+  [[ "$1" == "$BOTH_TEST" ]] && want=$LINE_BANNER$'\n'$OTHER_BANNER
   verify "$1" identity "$want" "$(grep '^Solar2d Spine plugin ' "$(stdout_file "$1")" 2>/dev/null)"
 }
 
@@ -183,6 +191,7 @@ cpath() {
 }
 
 LINE_BANNER=$(line_banner)
+OTHER_BANNER=$(line_banner "$OTHER_RUNTIME")
 build_dylib mac/Plugin.xcodeproj plugin_spine42
 build_dylib mac/Plugin43.xcodeproj plugin_spine43
 make_app
@@ -201,6 +210,9 @@ while read -r script arg; do
   cpath "$test"
   out=$(result_file "$test")
   [[ -f "$out" ]] || continue
+  if [[ -f "$W/${script%.lua}.py" ]]; then
+    python3 "$W/${script%.lua}.py" "$out" "$(stdout_file "$test")" >>"$out" || echo "sim: ${script%.lua}.py exited $?"
+  fi
   awk -F'\t' '$1 == "CHECK" { print $2 "\t" $3; seen[$3] = 1 } $1 == "EXPECT" { want[++n] = $2 }
     END { for (i = 1; i <= n; i++) if (!(want[i] in seen)) print "FAIL\t" want[i] }' "$out" |
   while IFS=$'\t' read -r verdict check; do

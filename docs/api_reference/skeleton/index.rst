@@ -162,3 +162,4 @@ Effects
    :maxdepth: 1
 
    setFillColor
+   fill

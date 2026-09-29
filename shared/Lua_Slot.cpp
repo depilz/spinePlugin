@@ -82,6 +82,27 @@ static int slot_index(lua_State *L)
         lua_settable(L, -3);
         return 1;
     }
+    else if (strcmp(key, "darkColor") == 0)
+    {
+        // the slot's float dark colour, nil for a slot without one (fixed by its SlotData for the slot's lifetime)
+        if (!spc::applied(slot).hasDarkColor())
+        {
+            lua_pushnil(L);
+            return 1;
+        }
+        lua_createtable(L, 0, 3);
+        Color dark = spc::applied(slot).getDarkColor();
+        lua_pushstring(L, "r");
+        lua_pushnumber(L, dark.r);
+        lua_settable(L, -3);
+        lua_pushstring(L, "g");
+        lua_pushnumber(L, dark.g);
+        lua_settable(L, -3);
+        lua_pushstring(L, "b");
+        lua_pushnumber(L, dark.b);
+        lua_settable(L, -3);
+        return 1;
+    }
     else if (strcmp(key, "attachmentLocked") == 0)
     {
         lua_pushboolean(L, slot.isAttachmentLocked());
@@ -272,6 +293,10 @@ static int slot_newindex(lua_State *L)
         lua_pop(L, 1);
 
         return 0;
+    }
+    else if (strcmp(key, "darkColor") == 0)
+    {
+        return luaL_error(L, "SpineSlot: property 'darkColor' is read-only; the skeleton data and its animations set it");
     }
     else if (strcmp(key, "attachmentLocked") == 0)
     {

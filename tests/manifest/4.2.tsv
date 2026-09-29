@@ -200,6 +200,11 @@ lifecycle	t35_load_errors json
 lifecycle	t35_load_errors skel
 lifecycle	t35_load_errors atlas
 lifecycle	t36_version
+lifecycle	t37_slot_darkcolor values
+lifecycle	t37_slot_darkcolor pulse
+lifecycle	t37_slot_darkcolor usereffect
+lifecycle	t37_slot_darkcolor readonly
+lifecycle	t37_slot_darkcolor removed
 lifecycle	g1_create_args
 lifecycle	g3_events_after_remove ended
 lifecycle	g3_events_after_remove interrupted
@@ -271,6 +276,20 @@ render	t17_constraint_active ik
 render	t17_constraint_active physics
 render	t17_constraint_active ik-timeline
 render	t18_create_pose
+render	t19_tint_black nodark
+render	t19_tint_black fixture
+render	t19_tint_black fixture true
+render	t19_tint_black batching
+render	t19_tint_black pulse
+render	t19_tint_black swap
+render	t19_tint_black hide
+render	t19_tint_black split
+render	t19_tint_black usereffect
+render	t19_tint_black nodefine
+render	t19_tint_black definefail
+render	t19_tint_black duplicate
+render	t19_tint_black sharedkey
+render	t19_tint_black sharedkey failed
 render	h1_stale_world
 render	bench 5
 skins	s1_api_contract
@@ -744,3 +763,33 @@ sim	s2x_hittest cpath
 sim	s2x_hittest head
 sim	s2x_hittest outside
 sim	s2x_hittest fidelity
+sim	s21_tint_black pixels
+sim	s21_tint_black pixels identity
+sim	s21_tint_black pixels cpath
+sim	s21_tint_black pixels define
+sim	s21_tint_black pixels setup
+sim	s21_tint_black pixels flash
+sim	s21_tint_black pixels flashclear
+sim	s21_tint_black pixels desat
+sim	s21_tint_black pixels desat1
+sim	s21_tint_black pixels desatclear
+sim	s21_tint_black pixels pulse
+sim	s21_tint_black pixels pulseblack
+sim	s21_tint_black pixels pulseback
+sim	s21_tint_black pixels swap
+sim	s21_tint_black pixels swapback
+sim	s21_tint_black pixels hide
+sim	s21_tint_black pixels unhide
+sim	s21_tint_black pixels split
+sim	s21_tint_black pixels reassemble
+sim	s21_tint_black pixels discriminates
+sim	s21_tint_black pixels nodark
+sim	s21_tint_black pixels sampling
+sim	s21_tint_black pixels log
+sim	s21_tint_black both
+sim	s21_tint_black both identity
+sim	s21_tint_black both cpath
+sim	s21_tint_black both define
+sim	s21_tint_black both line
+sim	s21_tint_black both sampling
+sim	s21_tint_black both log

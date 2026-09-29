@@ -130,6 +130,16 @@
   the next `updateState` or `draw`, and an animation keying the bone overwrites it.
 - **Breaking: writing `bone.worldX` or `bone.worldY` raises.** The error is
   `worldX is read-only; use bone:setWorldPosition(x, y)` (or `worldY`). Such writes used to be ignored silently.
+- **Tint black: art with dark colours now renders as in the Spine editor.** Slots with a dark colour (Spine's
+  "Tint black", two-colour tint) other than black are drawn with it; before, the plugin ignored the dark colour. This
+  is a visible change from 1.5.0 for such art; skeletons without dark colours render as before. The plugin defines
+  the Solar2D effect `filter.custom.plugin_spine_tintBlack` for this on first use; the name is reserved, so do not
+  define it in your app. While `skeleton.fill.effect` is set, the skeleton draws without its dark colours, so a hit
+  flash and tint black cannot combine; tint black is back on the next draw after the effect is cleared. Export
+  atlases with straight alpha. See the "skeleton.fill.effect and tint black" page.
+- **Added `slot.darkColor`.** It returns the slot's dark colour as a new `{ r, g, b }` table (0 to 1), or `nil` for a
+  slot without one. It is read-only: writing it raises
+  `SpineSlot: property 'darkColor' is read-only; the skeleton data and its animations set it`.
 
 ### plugin.spine42 (4.2 line)
 

@@ -83,6 +83,8 @@ void SpineSkeleton::onEffectUpdated(const char *key, lua_State *L_in, int valueI
 
     for (auto &meshData : meshes)
     {
+        // every user effect change replaces or clears the mesh's effect, so the tint-black state is stale
+        meshData.resetTint();
         if (meshData.mesh.isValid())
         {
             meshData.mesh.pushTable(L_in);

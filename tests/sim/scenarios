@@ -35,3 +35,5 @@ s20_group_dispatch.lua remove_lua_split
 s2x_ik_drag.lua scaled
 s2x_ik_drag.lua rotated
 s2x_hittest.lua
+s21_tint_black.lua pixels
+s21_tint_black.lua both

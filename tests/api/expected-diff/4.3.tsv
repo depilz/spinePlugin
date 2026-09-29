@@ -15,6 +15,8 @@ line	owner	kind	key	change
 4.3	SpineObject	field	hitTest	+
 4.3	SpineObject	get	physicsTimeScale	+
 4.3	SpineObject	set	physicsTimeScale	+
+4.3	SpineSlot	get	darkColor	+
+4.3	SpineSlot	set	darkColor	+
 4.3	SpineTrack	field	__gc	-
 4.3	SpineTrack	field	__index	-
 4.3	SpineTrack	field	__len	-

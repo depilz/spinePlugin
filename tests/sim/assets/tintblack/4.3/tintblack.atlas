@@ -1,0 +1,11 @@
+tintblack.png
+	size: 128, 80
+	filter: Linear, Linear
+tex
+	bounds: 0, 0, 128, 80
+
+tintblack2.png
+	size: 128, 80
+	filter: Linear, Linear
+tex2
+	bounds: 0, 0, 128, 80

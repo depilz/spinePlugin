@@ -2,6 +2,7 @@
 #include "CoronaGraphics.h"
 #include "CoronaLua.h"
 #include "CoronaMemory.h"
+#include "SpineTintBlack.h"
 
 struct Vertex2
 {
@@ -406,6 +407,7 @@ void renderCommands(lua_State *L, SpineSkeleton *skeletonUserdata, RenderCommand
         BlendMode blendMode = command->blendMode;
         // an empty command (numVertices == 0) has no colors to read
         uint32_t color = command->numVertices > 0 ? command->colors[0] : 0xffffffff;
+        uint32_t dark = command->numVertices > 0 ? command->darkColors[0] : 0xff000000;
 
         bool updateBlendMode = false;
         bool updateColor = false;
@@ -484,6 +486,7 @@ void renderCommands(lua_State *L, SpineSkeleton *skeletonUserdata, RenderCommand
             {
                 set_fill_effect(L, skeletonUserdata->effectData);
             }
+            updateTintBlack(L, *meshData, dark, skeletonUserdata->effectData != nullptr, updateTexture);
         }
         else
         {

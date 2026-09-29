@@ -86,6 +86,11 @@ t35_load_errors.lua json
 t35_load_errors.lua skel
 t35_load_errors.lua atlas
 t36_version.lua
+t37_slot_darkcolor.lua values
+t37_slot_darkcolor.lua pulse
+t37_slot_darkcolor.lua usereffect
+t37_slot_darkcolor.lua readonly
+t37_slot_darkcolor.lua removed
 g1_create_args.lua
 g3_events_after_remove.lua ended
 g3_events_after_remove.lua interrupted

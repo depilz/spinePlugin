@@ -14,6 +14,15 @@ struct MeshData
     uint32_t color; // You might need to copy this if it's an array
     bool used;        // Flag to indicate if the mesh was used in the current frame
     int group = 1;    // display group the mesh sits in: 1 = skeleton group, 2 = split group
+    bool tintOn = false;   // the mesh's fill carries the tint-black effect
+    uint32_t tintRgb = 0;  // dark rgb (0x00rrggbb) last written to the tint-black effect
+
+    // Forgets the tint-black state; the next draw re-applies it from the render command
+    void resetTint()
+    {
+        tintOn = false;
+        tintRgb = 0;
+    }
 };
 
 class MeshManager
@@ -72,6 +81,7 @@ public:
                 meshData.color = color;
                 meshData.used = used;
                 meshData.group = group;
+                meshData.resetTint();
                 return meshData;
             }
         }
@@ -106,6 +116,7 @@ public:
         meshDataList[index].texture = nullptr;
         meshDataList[index].color = 0;
         meshDataList[index].used = false;
+        meshDataList[index].resetTint();
 
         // remove the mesh from the list
         meshDataList.erase(meshDataList.begin() + index);

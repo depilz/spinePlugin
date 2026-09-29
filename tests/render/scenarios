@@ -26,3 +26,17 @@ t17_constraint_active.lua ik
 t17_constraint_active.lua physics
 t17_constraint_active.lua ik-timeline
 t18_create_pose.lua
+t19_tint_black.lua nodark
+t19_tint_black.lua fixture
+t19_tint_black.lua fixture true
+t19_tint_black.lua batching
+t19_tint_black.lua pulse
+t19_tint_black.lua swap
+t19_tint_black.lua hide
+t19_tint_black.lua split
+t19_tint_black.lua usereffect
+t19_tint_black.lua nodefine
+t19_tint_black.lua definefail
+t19_tint_black.lua duplicate
+t19_tint_black.lua sharedkey
+t19_tint_black.lua sharedkey failed

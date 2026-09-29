@@ -32,6 +32,7 @@ Properties:
    b
    alpha
    color
+   darkColor
 
 Methods:
 --------

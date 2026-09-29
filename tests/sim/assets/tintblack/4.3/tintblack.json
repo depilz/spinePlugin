@@ -1,0 +1,261 @@
+{
+ "skeleton": {
+  "hash": "tintblack",
+  "spine": "4.3.75-beta",
+  "x": -220,
+  "y": -350,
+  "width": 440,
+  "height": 700
+ },
+ "bones": [
+  {
+   "name": "root"
+  },
+  {
+   "name": "b_normal",
+   "parent": "root",
+   "x": -110,
+   "y": 280
+  },
+  {
+   "name": "b_pulse",
+   "parent": "root",
+   "x": 110,
+   "y": 280
+  },
+  {
+   "name": "b_additive",
+   "parent": "root",
+   "x": -110,
+   "y": 140
+  },
+  {
+   "name": "b_alpha",
+   "parent": "root",
+   "x": 110,
+   "y": 140
+  },
+  {
+   "name": "b_multiply",
+   "parent": "root",
+   "x": -110,
+   "y": 0
+  },
+  {
+   "name": "b_screen",
+   "parent": "root",
+   "x": 110,
+   "y": 0
+  },
+  {
+   "name": "b_darkblack",
+   "parent": "root",
+   "x": -110,
+   "y": -140
+  },
+  {
+   "name": "b_nodark",
+   "parent": "root",
+   "x": 110,
+   "y": -140
+  },
+  {
+   "name": "b_lightblack",
+   "parent": "root",
+   "x": -110,
+   "y": -280
+  },
+  {
+   "name": "b_swap",
+   "parent": "root",
+   "x": 110,
+   "y": -280
+  }
+ ],
+ "slots": [
+  {
+   "name": "normal",
+   "bone": "b_normal",
+   "color": "ffcc66ff",
+   "dark": "3399ff",
+   "attachment": "tex"
+  },
+  {
+   "name": "pulse",
+   "bone": "b_pulse",
+   "color": "ffffffff",
+   "dark": "ff0000",
+   "attachment": "tex"
+  },
+  {
+   "name": "additive",
+   "bone": "b_additive",
+   "color": "ffcc66ff",
+   "dark": "3399ff",
+   "attachment": "tex",
+   "blend": "additive"
+  },
+  {
+   "name": "alpha",
+   "bone": "b_alpha",
+   "color": "4de69980",
+   "dark": "808080",
+   "attachment": "tex"
+  },
+  {
+   "name": "multiply",
+   "bone": "b_multiply",
+   "color": "ffcc66ff",
+   "dark": "3399ff",
+   "attachment": "tex",
+   "blend": "multiply"
+  },
+  {
+   "name": "screen",
+   "bone": "b_screen",
+   "color": "ffcc66ff",
+   "dark": "3399ff",
+   "attachment": "tex",
+   "blend": "screen"
+  },
+  {
+   "name": "darkblack",
+   "bone": "b_darkblack",
+   "color": "ff8040ff",
+   "dark": "000000",
+   "attachment": "tex"
+  },
+  {
+   "name": "nodark",
+   "bone": "b_nodark",
+   "color": "ff8040ff",
+   "attachment": "tex"
+  },
+  {
+   "name": "lightblack",
+   "bone": "b_lightblack",
+   "color": "000000ff",
+   "dark": "7e7e7e",
+   "attachment": "tex"
+  },
+  {
+   "name": "swap",
+   "bone": "b_swap",
+   "color": "ffffffff",
+   "dark": "3399ff",
+   "attachment": "tex"
+  }
+ ],
+ "skins": [
+  {
+   "name": "default",
+   "attachments": {
+    "normal": {
+     "tex": {
+      "width": 128,
+      "height": 80
+     }
+    },
+    "pulse": {
+     "tex": {
+      "width": 128,
+      "height": 80
+     }
+    },
+    "additive": {
+     "tex": {
+      "width": 128,
+      "height": 80
+     }
+    },
+    "alpha": {
+     "tex": {
+      "width": 128,
+      "height": 80
+     }
+    },
+    "multiply": {
+     "tex": {
+      "width": 128,
+      "height": 80
+     }
+    },
+    "screen": {
+     "tex": {
+      "width": 128,
+      "height": 80
+     }
+    },
+    "darkblack": {
+     "tex": {
+      "width": 128,
+      "height": 80
+     }
+    },
+    "nodark": {
+     "tex": {
+      "width": 128,
+      "height": 80
+     }
+    },
+    "lightblack": {
+     "tex": {
+      "width": 128,
+      "height": 80
+     }
+    },
+    "swap": {
+     "tex": {
+      "width": 128,
+      "height": 80
+     },
+     "tex2": {
+      "width": 128,
+      "height": 80
+     }
+    }
+   }
+  }
+ ],
+ "animations": {
+  "pulse": {
+   "slots": {
+    "pulse": {
+     "rgba2": [
+      {
+       "time": 0,
+       "light": "ffffffff",
+       "dark": "ff0000"
+      },
+      {
+       "time": 1,
+       "light": "ffffffff",
+       "dark": "0000ff"
+      },
+      {
+       "time": 2,
+       "light": "ffffffff",
+       "dark": "000000"
+      }
+     ]
+    }
+   }
+  },
+  "swap": {
+   "slots": {
+    "swap": {
+     "attachment": [
+      {
+       "time": 0,
+       "name": "tex"
+      },
+      {
+       "time": 0.5,
+       "name": "tex2"
+      }
+     ]
+    }
+   }
+  }
+ }
+}
