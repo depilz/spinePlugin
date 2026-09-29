@@ -1,0 +1,135 @@
+#include <vector>
+#include <cassert>
+#include "LuaTableHolder.h"
+#include "Texture.h"
+
+
+struct MeshData
+{
+    LuaTableHolder mesh;
+    int index;
+    size_t numIndices;
+    Texture *texture;
+    spine::BlendMode blendMode;
+    uint32_t color; // You might need to copy this if it's an array
+    bool used;        // Flag to indicate if the mesh was used in the current frame
+    int group = 1;    // 1.2.6: 1 = skeleton group, 2 = split group (one manager serves both)
+};
+
+class MeshManager
+{
+private:
+    std::vector<MeshData> meshDataList;
+
+public:
+    MeshManager(int size)
+    {
+        meshDataList.reserve(size);
+        for (int i = 0; i < size; i++)
+        {
+            meshDataList.push_back(MeshData());
+        }
+    }
+
+    size_t size() const
+    {
+        return meshDataList.size();
+    }
+
+    size_t count_valids() const
+    {
+        size_t count = 0;
+        for (const auto &meshData : meshDataList)
+        {
+            if (meshData.mesh.isValid())
+            {
+                ++count;
+            }
+        }
+        return count;
+    }
+
+    // Pushes the Lua table at the specified index onto the Lua stack
+    void pushMesh(lua_State *L, int index)
+    {
+        if (index >= 0 && index < static_cast<int>(meshDataList.size()))
+        {
+            meshDataList[index].mesh.pushTable(L);
+        }
+    }
+
+    MeshData &newMesh(lua_State *L, int index, size_t numIndices, Texture *texture, spine::BlendMode blendMode, uint32_t color, bool used, int group = 1)
+    {
+        for (auto &meshData : meshDataList)
+        {
+            if (!meshData.mesh.isValid())
+            {
+                meshData.mesh = LuaTableHolder(L);
+                meshData.index = index;
+                meshData.numIndices = numIndices;
+                meshData.texture = texture;
+                meshData.blendMode = blendMode;
+                meshData.color = color;
+                meshData.used = used;
+                meshData.group = group;
+                return meshData;
+            }
+        }
+
+        // If no empty slot was found, add a new mesh
+        meshDataList.push_back({LuaTableHolder(L), index, numIndices, texture, blendMode, color, used, group});
+
+        return meshDataList.back();
+    }
+
+    bool isMeshValid(int index) const
+    {
+        return index >= 0 &&
+               index < static_cast<int>(meshDataList.size()) &&
+               meshDataList[index].mesh.isValid();
+    }
+
+    MeshData &operator[](int index)
+    {
+        if (index >= static_cast<int>(meshDataList.size()))
+        {
+            meshDataList.resize(index + 1);
+        }
+        return meshDataList[index];
+    }
+
+    void removeMesh(int index)
+    {
+        meshDataList[index].mesh.releaseTable();
+        meshDataList[index].index = -1;
+        meshDataList[index].numIndices = 0;
+        meshDataList[index].texture = nullptr;
+        meshDataList[index].color = 0;
+        meshDataList[index].used = false;
+
+        // remove the mesh from the list
+        meshDataList.erase(meshDataList.begin() + index);
+    }
+
+    void clear()
+    {
+        for (auto &meshData : meshDataList)
+        {
+            meshData.mesh.releaseTable();
+        }
+
+        meshDataList.clear();
+    }
+
+    // Add begin() and end() member functions
+    std::vector<MeshData>::iterator begin() { return meshDataList.begin(); }
+    std::vector<MeshData>::iterator end() { return meshDataList.end(); }
+    std::vector<MeshData>::const_iterator begin() const { return meshDataList.begin(); }
+    std::vector<MeshData>::const_iterator end() const { return meshDataList.end(); }
+
+    // Add erase() member function
+    std::vector<MeshData>::iterator erase(std::vector<MeshData>::const_iterator position)
+    {
+        return meshDataList.erase(position);
+    }
+};

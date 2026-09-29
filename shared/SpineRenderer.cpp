@@ -1,0 +1,526 @@
+#include "SpineRenderer.h"
+#include "CoronaGraphics.h"
+#include "CoronaLua.h"
+#include "CoronaMemory.h"
+
+struct Vertex2
+{
+    float x;
+    float y;
+};
+
+void CreateBufferUserdata(lua_State *L, const void *buffer, size_t size)
+{
+    void *userdata = lua_newuserdata(L, size);
+    memcpy(userdata, buffer, size);
+    const char *metatableName = "BufferMeshMemoryMetatable";
+
+    if (luaL_newmetatable(L, metatableName))
+    {
+        CoronaMemoryInterfaceInfo info = {};
+
+        info.callbacks.getReadableBytes = [](CoronaMemoryWorkspace *ws)
+        {
+            return ws->vars[0].cp;
+        };
+
+        info.callbacks.getByteCount = [](CoronaMemoryWorkspace *ws)
+        {
+            return ws->vars[1].size;
+        };
+
+        info.getObject = [](lua_State *L, int arg, CoronaMemoryWorkspace *ws)
+        {
+            ws->vars[0].cp = (const char *)lua_touserdata(L, arg);
+            ws->vars[1].size = lua_objlen(L, arg);
+
+            return 1;
+        };
+
+        CoronaMemoryCreateInterface(L, &info);
+        lua_setfield(L, -2, "__memory");
+    }
+
+    lua_setmetatable(L, -2);
+}
+
+void engine_drawMesh(lua_State *L, LuaTableHolder *newMesh, size_t numIndices, unsigned short *indices, float *positions, float *uvs)
+{
+    newMesh->pushTable(L);
+
+    // create the mesh parameters
+    lua_createtable(L, 0, 3);
+
+    // set the mode
+    lua_pushstring(L, "triangles");
+    lua_setfield(L, -2, "mode");
+
+    double minX = 99999999;
+    double minY = 99999999;
+    double maxX = -99999999;
+    double maxY = -99999999;
+
+    // Set up 'vertices' field
+    {
+        lua_pushstring(L, "vertices");
+        lua_createtable(L, 2, 0);
+
+        Vertex2 *vertices = new Vertex2[numIndices];
+        for (size_t i = 0; i < numIndices; ++i)
+        {
+            if (positions[indices[i] * 2] < minX)
+                minX = positions[indices[i] * 2];
+            if (positions[indices[i] * 2] > maxX)
+                maxX = positions[indices[i] * 2];
+            if (positions[indices[i] * 2 + 1] < minY)
+                minY = positions[indices[i] * 2 + 1];
+            if (positions[indices[i] * 2 + 1] > maxY)
+                maxY = positions[indices[i] * 2 + 1];
+
+            vertices[i].x = positions[indices[i] * 2];
+            vertices[i].y = positions[indices[i] * 2 + 1];
+        }
+
+        lua_pushstring(L, "buffer");
+
+        size_t verticesBufferSize = numIndices * sizeof(Vertex2);
+        CreateBufferUserdata(L, vertices, verticesBufferSize); // "vertices", t, "buffer", userdata
+        lua_settable(L, -3);
+
+        delete[] vertices;
+
+        lua_pushstring(L, "count");
+        lua_pushinteger(L, numIndices);
+        lua_settable(L, -3);
+
+        lua_settable(L, -3);
+    }
+
+    // Set up 'uvs' field
+    {
+        lua_pushstring(L, "uvs");
+        lua_createtable(L, 2, 0);
+
+        Vertex2 *uvVertices = new Vertex2[numIndices];
+        for (size_t i = 0; i < numIndices; ++i)
+        {
+            uvVertices[i].x = uvs[indices[i] * 2];
+            uvVertices[i].y = uvs[indices[i] * 2 + 1];
+        }
+
+        lua_pushstring(L, "buffer");
+
+        size_t uvsBufferSize = numIndices * sizeof(Vertex2);
+        CreateBufferUserdata(L, uvVertices, uvsBufferSize);
+        lua_settable(L, -3);
+
+        delete[] uvVertices;
+
+        lua_pushstring(L, "count");
+        lua_pushinteger(L, numIndices);
+        lua_settable(L, -3);
+
+        lua_settable(L, -3);
+    }
+
+    lua_pushnumber(L, (minX + maxX) / 2);
+    lua_setfield(L, -2, "x");
+
+    lua_pushnumber(L, (minY + maxY) / 2);
+    lua_setfield(L, -2, "y");
+
+    lua_call(L, 1, 1); // Call newMesh
+}
+
+void engine_updateMesh(lua_State *L, LuaTableHolder *meshHolder, size_t numIndices, unsigned short *indices, float *positions, float *uvs)
+{
+    meshHolder->pushTable(L);      // meshTable
+    lua_getfield(L, -1, "path");   // meshTable, path
+    lua_getfield(L, -1, "update"); // meshTable, path, update
+
+    lua_pushvalue(L, -2); // meshTable, path, update, path
+    lua_remove(L, -3);    // meshTable, update, path
+
+    lua_newtable(L);
+
+    double minX = 99999999;
+    double minY = 99999999;
+    double maxX = -99999999;
+    double maxY = -99999999;
+
+    // Set up 'vertices' field
+    {
+        lua_pushstring(L, "vertices");
+        lua_newtable(L);
+
+        Vertex2 *vertices = new Vertex2[numIndices];
+        for (size_t i = 0; i < numIndices; ++i)
+        {
+            if (positions[indices[i] * 2] < minX)
+                minX = positions[indices[i] * 2];
+            if (positions[indices[i] * 2] > maxX)
+                maxX = positions[indices[i] * 2];
+            if (positions[indices[i] * 2 + 1] < minY)
+                minY = positions[indices[i] * 2 + 1];
+            if (positions[indices[i] * 2 + 1] > maxY)
+                maxY = positions[indices[i] * 2 + 1];
+
+            vertices[i].x = positions[indices[i] * 2];
+            vertices[i].y = positions[indices[i] * 2 + 1];
+        }
+
+        lua_pushstring(L, "buffer");
+
+        size_t verticesBufferSize = numIndices * sizeof(Vertex2);
+        CreateBufferUserdata(L, vertices, verticesBufferSize); // "vertices", t, "buffer", userdata
+        lua_settable(L, -3);
+
+        delete[] vertices;
+
+        lua_pushstring(L, "count");
+        lua_pushinteger(L, numIndices);
+        lua_settable(L, -3);
+
+        lua_settable(L, -3);
+    }
+
+    // Set up 'uvs' field
+    {
+        lua_pushstring(L, "uvs");
+        lua_newtable(L);
+
+        Vertex2 *uvVertices = new Vertex2[numIndices];
+        for (size_t i = 0; i < numIndices; ++i)
+        {
+            uvVertices[i].x = uvs[indices[i] * 2];
+            uvVertices[i].y = uvs[indices[i] * 2 + 1];
+        }
+
+        lua_pushstring(L, "buffer");
+
+        size_t uvsBufferSize = numIndices * sizeof(Vertex2);
+        CreateBufferUserdata(L, uvVertices, uvsBufferSize);
+        lua_settable(L, -3);
+
+        delete[] uvVertices;
+
+        lua_pushstring(L, "count");
+        lua_pushinteger(L, numIndices);
+        lua_settable(L, -3);
+
+        lua_settable(L, -3);
+    }
+
+    lua_call(L, 2, 0); // Call update(path, { vertices = vertices, uvs = uvs })
+
+    lua_pushnumber(L, (minX + maxX) / 2);
+    lua_setfield(L, -2, "x");
+
+    lua_pushnumber(L, (minY + maxY) / 2);
+    lua_setfield(L, -2, "y");
+}
+
+void engine_removeMesh(lua_State *L, LuaTableHolder *meshHolder)
+{
+    meshHolder->pushTable(L);
+    lua_getfield(L, -1, "removeSelf");
+    meshHolder->pushTable(L);
+    lua_call(L, 1, 0);
+    lua_pop(L, 1);
+}
+
+void set_texture(lua_State *L, Texture *texture)
+{
+    // mesh.fill = { type "image", filename = "raptor.png"}
+    LuaTableHolder *textureTable = ((Texture *)texture)->textureTable;
+    textureTable->pushTable(L);
+    lua_setfield(L, -2, "fill");
+}
+
+void set_blendMode(lua_State *L, BlendMode blendMode)
+{
+    switch (blendMode)
+    {
+    case spine::BlendMode_Normal:
+        lua_pushstring(L, "normal");
+        break;
+    case spine::BlendMode_Additive:
+        lua_pushstring(L, "add");
+        break;
+    case spine::BlendMode_Multiply:
+        lua_pushstring(L, "multiply");
+        break;
+    case spine::BlendMode_Screen:
+        lua_pushstring(L, "screen");
+        break;
+    default:
+        lua_pushstring(L, "normal");
+        break;
+    }
+    lua_setfield(L, -2, "blendMode");
+}
+
+void set_fill_color(lua_State *L, uint32_t color)
+{
+    lua_getfield(L, -1, "setFillColor");
+    lua_pushvalue(L, -2);
+
+    float r = ((color >> 16) & 0xff) / 255.0f;
+    float g = ((color >> 8) & 0xff) / 255.0f;
+    float b = (color & 0xff) / 255.0f;
+    float a = ((color >> 24) & 0xff) / 255.0f;
+
+    lua_pushnumber(L, r);
+    lua_pushnumber(L, g);
+    lua_pushnumber(L, b);
+    lua_pushnumber(L, a);
+    lua_call(L, 5, 0); // Call mesh.setFillColor(mesh, r, g, b, a)
+}
+
+void set_fill_effect(lua_State *L, Lua_EffectData *e)
+{
+    lua_getfield(L, -1, "fill"); // mesh.fill
+
+    const std::string &effectName = e->name();
+    
+    lua_pushstring(L, effectName.c_str());
+    lua_setfield(L, -2, "effect"); // mesh.fill.effect = effectName
+
+    lua_getfield(L, -1, "effect");
+
+    for (const auto &pair : e->attributes())
+    {
+        const std::string &key = pair.first;
+        const auto &val = pair.second;
+        lua_pushstring(L, key.c_str());
+        if (val.type == Lua_EffectData::AttributeValue::Type::Number)
+        {
+            lua_pushnumber(L, val.number);
+        }
+        else
+        {
+            // write array
+            lua_createtable(L, (int)val.array.size(), 0);
+            for (size_t i = 0; i < val.array.size(); ++i)
+            {
+                lua_pushnumber(L, val.array[i]);
+                lua_rawseti(L, -2, (int)i + 1);
+            }
+        }
+        lua_settable(L, -3); // mesh.fill.effect[key] = value
+    }
+
+    // pop effect table
+    lua_pop(L, 1);
+
+    // pop fill (or nil)
+    lua_pop(L, 1);
+}
+
+static void callInjectionListener(lua_State *L, InjectedObject *injection, spine::Skeleton *skeleton, bool isActive)
+{
+    if (!injection->hasListener())
+    {
+        return;
+    }
+
+    int slotIndex = injection->getSlotIndex();
+    const char *slotName = skeleton->getSlots()[slotIndex]->getData().getName().buffer();
+    Slot *slot = skeleton->findSlot(slotName);
+
+    injection->pushListener(L);
+
+    lua_createtable(L, 0, 7);
+    lua_pushstring(L, "slotName");
+    lua_pushstring(L, slotName);
+    lua_settable(L, -3);
+
+    lua_pushstring(L, "x");
+    lua_pushnumber(L, slot->getBone().getWorldX());
+    lua_settable(L, -3);
+
+    lua_pushstring(L, "y");
+    lua_pushnumber(L, slot->getBone().getWorldY());
+    lua_settable(L, -3);
+
+    lua_pushstring(L, "rotation");
+    lua_pushnumber(L, slot->getBone().getWorldRotationX());
+    lua_settable(L, -3);
+
+    lua_pushstring(L, "xScale");
+    lua_pushnumber(L, slot->getBone().getWorldScaleX());
+    lua_settable(L, -3);
+
+    lua_pushstring(L, "yScale");
+    lua_pushnumber(L, slot->getBone().getWorldScaleY());
+    lua_settable(L, -3);
+
+    lua_pushstring(L, "alpha");
+    lua_pushnumber(L, slot->getColor().a);
+    lua_settable(L, -3);
+
+    lua_pushstring(L, "isVisible");
+    lua_pushboolean(L, isActive);
+    lua_settable(L, -3);
+
+    lua_pushstring(L, "target");
+    injection->pushObject(L);
+    lua_settable(L, -3);
+
+    lua_call(L, 1, 0);
+}
+
+void renderCommands(lua_State *L, SpineSkeleton *skeletonUserdata, RenderCommand *command, MeshManager &meshes, int parentIndex)
+{
+    Skeleton *skeleton = skeletonUserdata->skeleton;
+    LuaTableHolder *groupInsert = skeletonUserdata->groupInsert;
+    LuaTableHolder *newMesh = skeletonUserdata->newMesh;
+
+    int i = 1;
+    int drawIndex = 1;
+    bool insertMesh = false;
+    const int group = parentIndex == 1 ? 1 : 2; // 1.2.6: a reused mesh may sit in the other group
+
+    while (command)
+    {
+        size_t numIndices = command->numIndices;
+        uint16_t *indices = command->indices;
+        float *positions = command->positions;
+        float *uvs = command->uvs;
+        Texture *texture = (Texture *)command->texture;
+        BlendMode blendMode = command->blendMode;
+        uint32_t color = command->colors[0];
+
+        bool updateBlendMode = false;
+        bool updateColor = false;
+        bool updateTexture = false;
+        bool updateFillEffect = false;
+
+        MeshData *meshData = nullptr;
+
+        for (auto &meshCandidate : meshes)
+        {
+            if (!meshCandidate.used && meshCandidate.numIndices == numIndices && meshCandidate.mesh.isValid())
+            {
+                meshData = &meshCandidate;
+                break;
+            }
+        }
+
+        if (numIndices >= 3)
+        {
+            if (meshData) // commented until we get an engine fix more mesh update
+            {
+                LuaTableHolder &mesh = meshData->mesh;
+                engine_updateMesh(L, &mesh, numIndices, indices, positions, uvs);
+
+                insertMesh = insertMesh || meshData->index != drawIndex || meshData->group != group;
+                meshData->group = group;
+                updateTexture = meshData->texture != texture;
+                updateBlendMode = meshData->blendMode != blendMode;
+                updateColor = (updateTexture && color != 0xffffffff) || (meshData->color != color);
+
+                meshData->used = true;
+                meshData->index = drawIndex;
+                updateFillEffect = (updateTexture && skeletonUserdata->effectData != nullptr);
+            }
+            else
+            {
+                engine_drawMesh(L, newMesh, numIndices, indices, positions, uvs);
+
+                lua_pushvalue(L, -1);
+                meshData = &meshes.newMesh(L, drawIndex, numIndices, texture, blendMode, color, true, group);
+
+                insertMesh = true;
+                updateBlendMode = blendMode != spine::BlendMode_Normal;
+                updateTexture = texture != nullptr;
+                updateColor = color != 0xffffffff;
+                updateFillEffect = skeletonUserdata->effectData != nullptr;
+            }
+
+            if (insertMesh)
+            {
+                skeletonUserdata->groupInsert->pushTable(L);
+                lua_pushvalue(L, parentIndex);
+                lua_pushnumber(L, drawIndex);
+                meshData->mesh.pushTable(L);
+                lua_call(L, 3, 0);
+            }
+
+            if (updateTexture)
+            {
+                meshData->texture = texture;
+                set_texture(L, texture);
+            }
+            if (updateBlendMode)
+            {
+                meshData->blendMode = blendMode;
+                set_blendMode(L, blendMode);
+            }
+            if (updateColor)
+            {
+                meshData->color = color;
+                set_fill_color(L, color);
+            }
+            
+            if (updateFillEffect)
+            {
+                set_fill_effect(L, skeletonUserdata->effectData);
+            }
+        }
+        else
+        {
+            drawIndex--;
+        }
+
+        if (command->injectionSlotIndex >= 0)
+        {
+            // 1.2.6: index loop; the listener may inject/eject (the vector reallocates/shrinks while we iterate)
+            std::vector<InjectedObject> &injections = skeletonUserdata->injections;
+            for (size_t k = 0; k < injections.size(); k++)
+            {
+                if (injections[k].getSlotIndex() == command->injectionSlotIndex)
+                {
+                    drawIndex++;
+                    skeletonUserdata->groupInsert->pushTable(L);
+                    lua_pushvalue(L, parentIndex);
+                    lua_pushnumber(L, drawIndex);
+                    injections[k].pushObject(L);
+                    lua_call(L, 3, 0);
+
+                    callInjectionListener(L, &injections[k], skeleton, true);
+                    if (skeletonUserdata->releasePending)
+                    {
+                        return; // the listener removed the skeleton: stop touching its display objects
+                    }
+                    if (k < injections.size()) // flags after the call, as in 1.2.5 (an error skips them)
+                    {
+                        injections[k].active = true;
+                        injections[k].updated = true;
+                    }
+                }
+            }
+        }
+
+        if (numIndices >= 3) lua_pop(L, 1); // 1.2.6: only a drawn command pushed a mesh; an empty one popped the parent group
+
+        // finish updating injections
+        for (size_t k = 0; k < skeletonUserdata->injections.size(); k++)
+        {
+            InjectedObject &injection = skeletonUserdata->injections[k];
+            if (!injection.updated && injection.active)
+            {
+                injection.active = false;
+                callInjectionListener(L, &injection, skeleton, false); // no access to injection afterwards
+                if (skeletonUserdata->releasePending)
+                {
+                    return;
+                }
+            }
+        }
+
+        command = command->next;
+        i++;
+        drawIndex++;
+    }
+}
