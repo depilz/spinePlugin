@@ -5,7 +5,8 @@
 # win32 archive (a 4.3 DLL) must fail on version, runtime and 4.3 markers as v1.5.0/4.2 and pass as v2.0.0/4.3,
 # 1.5.0's mac-sim archive must fail as 4.3 for lacking the 4.3 markers, 1.3.0's and 1.2.5's (toolchain 4.4/4.5 strings
 # beside 4.2) must pass as their version/4.2, and 1.5.0's other archives must pass; every tag row passes the gate's
-# legacy opt-out, and 1.5.0's iphone archive without it must fail on local-path and tar-meta. Last, every reason the
+# legacy opt-out, and 1.5.0's iphone archive without it must fail on local-path and tar-meta; a checkout without the
+# tag (a public clone) skips its rows, while a missing archive of a present tag fails. Last, every reason the
 # gate can fail an archive for is proven to fire on a mutant: a tracked archive's copy under $SUITE_OUT/mutants with one
 # defect written in (bytes rewritten, a file removed, or its binary swapped for one compiled at test time), repacked by
 # tools/release/pack.sh and gated under the spine42 identity v2.0.0 / 4.2 / plugin_spine42 its unmutated archive
@@ -64,15 +65,24 @@ rejects() {
   for reason in "$@"; do grep -qE "^FAIL .*::.* $reason( |\$)" <<<"$out" || return 1; done
 }
 
+# tag_test tag test command...: run_test, or skip the test when the checkout lacks the tag
+tag_test() {
+  if git -C "$SPINE_REPO" rev-parse -q --verify "$1^{commit}" >/dev/null; then
+    run_test "${@:2}"
+  else
+    skip "$2" "needs tag $1 from the private history"
+  fi
+}
+
 for plat in android iphone mac-sim; do
-  run_test "1.5.0:$plat/data.tgz passes as v1.5.0/4.2" tag_gate 1.5.0 "$plat" v1.5.0 4.2
+  tag_test 1.5.0 "1.5.0:$plat/data.tgz passes as v1.5.0/4.2" tag_gate 1.5.0 "$plat" v1.5.0 4.2
 done
-run_test "1.5.0:win32/data.tgz fails as v1.5.0/4.2 on version, runtime and 4.3-markers" rejects tag_gate 1.5.0 win32 v1.5.0 4.2 version runtime 4.3-markers
-run_test "1.5.0:win32/data.tgz passes as v2.0.0/4.3" tag_gate 1.5.0 win32 v2.0.0 4.3
-run_test "1.5.0:mac-sim/data.tgz fails as v1.5.0/4.3 on runtime and no-4.3-markers" rejects tag_gate 1.5.0 mac-sim v1.5.0 4.3 runtime no-4.3-markers
-run_test "1.3.0:win32/data.tgz passes as v1.3.0/4.2" tag_gate 1.3.0 win32 v1.3.0 4.2
-run_test "1.2.5:win32/data.tgz passes as v1.2.5/4.2" tag_gate 1.2.5 win32 v1.2.5 4.2
-run_test "1.5.0:iphone/data.tgz without the legacy opt-out fails on local-path and tar-meta" rejects default_tag_gate 1.5.0 iphone v1.5.0 4.2 local-path tar-meta
+tag_test 1.5.0 "1.5.0:win32/data.tgz fails as v1.5.0/4.2 on version, runtime and 4.3-markers" rejects tag_gate 1.5.0 win32 v1.5.0 4.2 version runtime 4.3-markers
+tag_test 1.5.0 "1.5.0:win32/data.tgz passes as v2.0.0/4.3" tag_gate 1.5.0 win32 v2.0.0 4.3
+tag_test 1.5.0 "1.5.0:mac-sim/data.tgz fails as v1.5.0/4.3 on runtime and no-4.3-markers" rejects tag_gate 1.5.0 mac-sim v1.5.0 4.3 runtime no-4.3-markers
+tag_test 1.3.0 "1.3.0:win32/data.tgz passes as v1.3.0/4.2" tag_gate 1.3.0 win32 v1.3.0 4.2
+tag_test 1.2.5 "1.2.5:win32/data.tgz passes as v1.2.5/4.2" tag_gate 1.2.5 win32 v1.2.5 4.2
+tag_test 1.5.0 "1.5.0:iphone/data.tgz without the legacy opt-out fails on local-path and tar-meta" rejects default_tag_gate 1.5.0 iphone v1.5.0 4.2 local-path tar-meta
 
 # mutant_gate mutation platform version runtime: the gate on the tracked platform archive with the mutation function
 # run in its extracted tree, repacked by pack.sh into $SUITE_OUT/mutants/<mutation>; a tree the mutation empties is no

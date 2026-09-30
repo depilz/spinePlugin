@@ -8,12 +8,17 @@
 # base as name43.cpp (host_line_src).
 # A suite records one row per test id with record or run_test and exits 0 once it has run; a non-zero exit
 # or no rows fails it as test _harness. Test ids (no tabs) are what tests/xfail/<runtime>.tsv lists, and every id a
-# suite records on a line is listed in tests/manifest/<runtime>.tsv.
+# suite records on a line is listed in tests/manifest/<runtime>.tsv. A suite that cannot run some ids (a private ref
+# its checkout lacks) marks them with skip instead, decided by an explicit probe and never by a command's exit code.
 
 export ASAN_OPTIONS="${ASAN_OPTIONS:-detect_leaks=0:abort_on_error=0}"
 
 # record PASS|FAIL test
 record() { printf '%s\t%s\t%s\n' "$SPINE_SUITE" "$1" "$2" >>"$SUITE_RESULTS"; }
+
+# skip id|prefix*|* reason: the manifest id, every manifest id of the suite starting with prefix, or every one of
+# them did not run; run.sh reports them SKIP with the reason (FAIL under SPINE_TESTS_NO_SKIP=1)
+skip() { printf '%s\tSKIP\t%s\t%s\n' "$SPINE_SUITE" "${1:-}" "${2:-}" >>"$SUITE_RESULTS"; }
 
 # sanitizer_clean log: UBSan keeps running after a report, so a zero exit is not enough
 sanitizer_clean() { ! grep -qE 'ERROR: (Address|Leak)Sanitizer|runtime error:' "$1"; }

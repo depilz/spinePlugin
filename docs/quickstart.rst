@@ -13,19 +13,52 @@ the simulator or on a device.
   Solar2D (Corona) build 3731.
 - **Spine License**: You need a valid Spine runtime license to use this
   plugin. Confirm you have the necessary permissions to use the runtime.
-- **Spine Plugin**: Include it in your project’s ``build.settings`` or
-  reference it in the Solar2D Marketplace. The entry below is for the line
-  these docs describe; :ref:`pick-your-line` lists the entry of every line.
 
-.. code-block:: lua
+.. only:: spine42
 
-   settings = {
-     plugins = {
-       ["@SPINE_PLUGIN@"] = {
-         publisherId = "com.studycat"
-       },
-     },
-   }
+   - **Spine Plugin**: Include it in your project’s ``build.settings``. The
+     Simulator and the build download the plugin from its GitHub release, one
+     archive per platform, from the URLs in the entry. The entry below is for
+     the line these docs describe; :ref:`pick-your-line` lists the entry of
+     every line.
+
+   .. code-block:: lua
+
+      settings =
+      {
+          plugins =
+          {
+              ["plugin.spine42"] =
+              {
+                  publisherId = "com.studycat",
+                  supportedPlatforms =
+                  {
+                      android        = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-android.tgz" },
+                      iphone         = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-iphone.tgz" },
+                      ["iphone-sim"] = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-iphone-sim.tgz" },
+                      ["mac-sim"]    = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-mac-sim.tgz" },
+                      ["win32-sim"]  = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-win32-sim.tgz" },
+                      ["linux-sim"]  = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-linux-sim.tgz" },
+                  },
+              },
+          },
+      }
+
+.. only:: spine43
+
+   - **Spine Plugin**: Include it in your project’s ``build.settings`` or
+     reference it in the Solar2D Marketplace. The entry below is for the line
+     these docs describe; :ref:`pick-your-line` lists the entry of every line.
+
+   .. code-block:: lua
+
+      settings = {
+        plugins = {
+          ["@SPINE_PLUGIN@"] = {
+            publisherId = "com.studycat"
+          },
+        },
+      }
 
 2. Require the Plugin
 ---------------------

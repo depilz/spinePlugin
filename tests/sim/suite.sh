@@ -4,7 +4,8 @@
 # process per scenario, on the line's plugin (plugin.spine42 on 4.2, plugin.spine43 on 4.3). plugin_spine42.dylib and
 # plugin_spine43.dylib are built by xcodebuild from a git archive of HEAD (so uncommitted changes are not in them) and
 # share one plugins dir; on 4.2 the shipped 1.5.0 plugin_spine.dylib from the mac-sim archive at tag 1.5.0 (the baseline
-# of s17_digest, and the legacy sibling of s24_sibling_guard) sits next to them. build.settings is generated per run
+# of s17_digest, and the legacy sibling of s24_sibling_guard) sits next to them. A checkout without tag 1.5.0 skips the
+# scenarios that need it ($LEGACY_SCENARIOS) and runs the rest. build.settings is generated per run
 # and names the line's plugin, which simlib loads; the project also gets the tint-black fixture of both lines
 # (assets/tintblack/<line>/ as tintblack/<line>/).
 # s22_example runs in a second project instead: a copy of the line's example project (Corona/ on 4.2, Corona43/ on
@@ -44,6 +45,9 @@ BASE_BANNER="Solar2d Spine plugin v1.5.0 loaded with Spine 4.2.XX"
 GUARD_TEST="s24_sibling_guard legacy" # loads the 1.5.0 plugin.spine; the line's plugin then refuses to open
 DOCS_SCRIPT=s23_docs_sample.lua
 DOCS_PAGES="index.rst quickstart.rst attachments-and-skins.rst lifecycle.rst" # their run samples, on 4.2 only (D38)
+# the 4.2 scenarios that load the 1.5.0 plugin or compare against the run that does; skipped when tag 1.5.0 is missing
+LEGACY_SCENARIOS=("$BASE_TEST" "s17_digest spine42" "$GUARD_TEST")
+LEGACY_SKIPPED= # set by setup_plugins when it skipped them
 
 USER_HOME=$(dscl . -read "/Users/$(id -un)" NFSHomeDirectory | sed 's/^NFSHomeDirectory: //')
 USER_PLUGINS=${SPINE_SIM_USER_PLUGINS:-"$USER_HOME/Library/Application Support/Corona/Simulator/Plugins"}
@@ -122,8 +126,8 @@ make_app() {
 }
 
 # setup_plugins: the -pluginsDirectory, with a catalog whose future lastUpdate keeps PluginSync from downloading.
-# The 1.5.0 dylib, staged on 4.2 only, is read from tag 1.5.0 (the suite fails when the tag is absent), ships unsigned
-# and is ad-hoc signed here.
+# The 1.5.0 dylib, staged on 4.2 only, is read from tag 1.5.0, ships unsigned and is ad-hoc signed here. Without the
+# tag it is not staged and every id of the $LEGACY_SCENARIOS is skipped; the catalog still names plugin.spine.
 setup_plugins() {
   local build entries='"com.studycat/plugin.spine42":{"lastUpdate":2100000000},"com.studycat/plugin.spine43":{"lastUpdate":2100000000}'
   build=$(plutil -extract CFBundleVersion raw "$APP/Contents/Info.plist") || return 1
@@ -131,14 +135,16 @@ setup_plugins() {
   mkdir -p "$PLUGINS"
   cp "${DYLIBS[@]}" "$PLUGINS/"
   if [[ "$SPINE_RUNTIME" == 4.2 ]]; then
-    git -C "$SPINE_REPO" rev-parse -q --verify 'refs/tags/1.5.0^{commit}' >/dev/null || {
-      echo "sim: tag 1.5.0 (the s17_digest base) is missing in $SPINE_REPO; run git fetch --tags" >&2
-      return 1
-    }
-    git -C "$SPINE_REPO" show 1.5.0:plugin/com.studycat.spine/plugin.spine/mac-sim/data.tgz |
-      tar -xzf - -C "$PLUGINS" plugin_spine.dylib || return 1
-    codesign -f -s - "$PLUGINS/plugin_spine.dylib" || return 1
     entries+=',"com.studycat/plugin.spine":{"lastUpdate":2100000000}'
+    if git -C "$SPINE_REPO" rev-parse -q --verify 'refs/tags/1.5.0^{commit}' >/dev/null; then
+      git -C "$SPINE_REPO" show 1.5.0:plugin/com.studycat.spine/plugin.spine/mac-sim/data.tgz |
+        tar -xzf - -C "$PLUGINS" plugin_spine.dylib || return 1
+      codesign -f -s - "$PLUGINS/plugin_spine.dylib" || return 1
+    else
+      local t
+      for t in "${LEGACY_SCENARIOS[@]}"; do skip "$t*" "needs tag 1.5.0 from the private history"; done
+      LEGACY_SKIPPED=1
+    fi
   fi
   printf '{"Version":3,"CoronaBuild":"%s",%s}\n' "$build" "$entries" >"$PLUGINS/catalog.json"
 }
@@ -181,6 +187,13 @@ setup_docs_samples() {
     for f in "$s"*; do [[ -f "$f" && ! -e "$PROJECT/assets/characters/${f##*/}" ]] && cp "$f" "$PROJECT/assets/characters/"; done
   done
   return 0
+}
+
+# legacy test: the scenario is one of the $LEGACY_SCENARIOS
+legacy() {
+  local t
+  for t in "${LEGACY_SCENARIOS[@]}"; do [[ "$t" == "$1" ]] && return 0; done
+  return 1
 }
 
 result_file() { printf '%s/results/%s.txt' "$SUITE_OUT" "$(printf '%s' "$1" | tr '/ ' '__')"; }
@@ -262,6 +275,7 @@ while read -r script arg; do
     [[ "${script%:}" == "$SPINE_RUNTIME" ]] || continue
     read -r script arg <<<"$arg"
   fi
+  [[ -n "$LEGACY_SKIPPED" ]] && legacy "${script%.lua}${arg:+ $arg}" && continue
   run_scenario "${script%.lua}${arg:+ $arg}" "$script" "$arg"
 done <"$W/scenarios"
 # on 4.2, every run sample of $DOCS_PAGES as "s23_docs_sample <page>:<line>" (the docs-samples source id)

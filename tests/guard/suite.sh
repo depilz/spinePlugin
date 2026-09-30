@@ -1,8 +1,9 @@
 #!/bin/bash
-# guard: tests/guard/runtime_guard.sh (D10) over SPINE_GUARD_RANGE (default origin/main..HEAD); that its counterpart map
-# lists every file tracked under one runtime line only and nothing that is missing; and that it flags exactly the
-# unmatched files of a synthetic history (a directory-level guard would pass its "cross" commit); and that no two
-# tracked paths differ only in case (they collide on a case-insensitive checkout).
+# guard: tests/guard/runtime_guard.sh (D10) over SPINE_GUARD_RANGE (default origin/main..HEAD; skipped when it is unset
+# and the checkout has no origin/main); that its counterpart map lists every file tracked under one runtime line only
+# and nothing that is missing; and that it flags exactly the unmatched files of a synthetic history (a directory-level
+# guard would pass its "cross" commit); and that no two tracked paths differ only in case (they collide on a
+# case-insensitive checkout).
 set -euo pipefail
 W="$(cd "$(dirname "$0")" && pwd)"
 source "$W/../lib.sh"
@@ -95,6 +96,10 @@ case_firing() {
 
 run_test "counterparts.tsv lists every one-sided runtime file" check_map
 run_test "selftest flags exactly the unmatched files" selftest
-run_test "range" range_check
+if [[ -z ${SPINE_GUARD_RANGE:-} && $(commit origin/main) == unresolved ]]; then
+  skip range "needs origin/main of the upstream clone"
+else
+  run_test "range" range_check
+fi
 run_test "case-insensitive-unique tracked paths" case_check
 run_test "firing: two paths differing in case fail" case_firing

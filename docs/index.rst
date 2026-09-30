@@ -40,6 +40,15 @@ its entry to the plugins table of ``build.settings`` and read that line's docume
               ["plugin.spine42"] =
               {
                   publisherId = "com.studycat",
+                  supportedPlatforms =
+                  {
+                      android        = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-android.tgz" },
+                      iphone         = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-iphone.tgz" },
+                      ["iphone-sim"] = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-iphone-sim.tgz" },
+                      ["mac-sim"]    = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-mac-sim.tgz" },
+                      ["win32-sim"]  = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-win32-sim.tgz" },
+                      ["linux-sim"]  = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-linux-sim.tgz" },
+                  },
               },
           },
       }
@@ -88,21 +97,51 @@ How to Get Started
 
 2. **Install the Plugin**
 
-   To use this plugin, add an entry into the plugins table of build.settings. When added, the build server will integrate the plugin during the build phase.
-   This is the entry for the line these docs describe; :ref:`pick-your-line` lists the entry of every line.
+   .. only:: spine42
 
-   .. code-block:: lua
+      To use this plugin, add this entry into the plugins table of build.settings. The Simulator and the build download
+      the plugin from its GitHub release, one archive per platform, from the URLs in the entry.
+      This is the entry for the line these docs describe; :ref:`pick-your-line` lists the entry of every line.
 
-       settings =
-       {
-           plugins =
-           {
-               ["@SPINE_PLUGIN@"] =
-               {
-                   publisherId = "com.studycat",
-               },
-           },
-       }
+      .. code-block:: lua
+
+          settings =
+          {
+              plugins =
+              {
+                  ["plugin.spine42"] =
+                  {
+                      publisherId = "com.studycat",
+                      supportedPlatforms =
+                      {
+                          android        = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-android.tgz" },
+                          iphone         = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-iphone.tgz" },
+                          ["iphone-sim"] = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-iphone-sim.tgz" },
+                          ["mac-sim"]    = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-mac-sim.tgz" },
+                          ["win32-sim"]  = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-win32-sim.tgz" },
+                          ["linux-sim"]  = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-linux-sim.tgz" },
+                      },
+                  },
+              },
+          }
+
+   .. only:: spine43
+
+      To use this plugin, add an entry into the plugins table of build.settings. When added, the build server will integrate the plugin during the build phase.
+      This is the entry for the line these docs describe; :ref:`pick-your-line` lists the entry of every line.
+
+      .. code-block:: lua
+
+          settings =
+          {
+              plugins =
+              {
+                  ["@SPINE_PLUGIN@"] =
+                  {
+                      publisherId = "com.studycat",
+                  },
+              },
+          }
 
 
 3. **Load the Plugin in Your Lua Code**

@@ -14,6 +14,34 @@ The plugin works on Android, iOS, macOS, and Windows platforms, supporting both 
 
 For detailed information on the plugin's API, please refer to the [plugin's documentation](https://spineplugin.readthedocs.io/)
 
+### 📦 Installing plugin.spine42
+
+Add this entry to the plugins table of your project's `build.settings`. The Simulator and the build download the plugin from this repository's `spine42-2.0.0` release, one archive per platform:
+
+```lua
+settings =
+{
+    plugins =
+    {
+        ["plugin.spine42"] =
+        {
+            publisherId = "com.studycat",
+            supportedPlatforms =
+            {
+                android        = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-android.tgz" },
+                iphone         = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-iphone.tgz" },
+                ["iphone-sim"] = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-iphone-sim.tgz" },
+                ["mac-sim"]    = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-mac-sim.tgz" },
+                ["win32-sim"]  = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-win32-sim.tgz" },
+                ["linux-sim"]  = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-linux-sim.tgz" },
+            },
+        },
+    },
+}
+```
+
+Then load it with `local spine = require("plugin.spine42")`. The [4.2 documentation](https://spineplugin.readthedocs.io/en/4.2/) covers the rest.
+
 
 ### 🤝 Contributing
 

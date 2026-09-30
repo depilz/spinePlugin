@@ -5,8 +5,11 @@
 # every failing test is listed in tests/xfail/<runtime>.tsv and no listed test passes (XPASS) or goes unreported
 # (STALE), and its test ids match tests/manifest/<runtime>.tsv for the suites it ran: no listed id missing (MISSING,
 # unless the row is marked optional), no unlisted id (UNLISTED) and no suite or line without a row (EMPTY). The run
-# passes iff every line that ran a suite does, and at least one line did.
-# Environment (all optional): SPINE_REPO, SPINE_TEST_OUT, SDKROOT, LUA51_SRC, CORONA_NATIVE;
+# passes iff every line that ran a suite does, and at least one line did. Ids a suite skips (tests/lib.sh skip) count
+# as reported, neither passed nor failed, also when xfail-listed; a skip matching no manifest id of its suite, one
+# overlapping a recorded or skipped id, and a malformed one fail the line (BADSKIP). SPINE_TESTS_NO_SKIP=1 fails every
+# skipped id instead.
+# Environment (all optional): SPINE_REPO, SPINE_TEST_OUT, SDKROOT, LUA51_SRC, CORONA_NATIVE, SPINE_TESTS_NO_SKIP;
 # SOLAR2D_SIM_APP for the sim suite.
 set -euo pipefail
 
@@ -14,8 +17,8 @@ TESTS_DIR="$(cd "$(dirname "$0")" && pwd)"
 SUPPORTED_SDKS="26.4"
 XCODE_SDK_EXAMPLE="/Applications/Xcode_26.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk"
 # Suites that run on the 4.2 line only: gate (checks the tracked archives, not a line), guard (checks the history
-# of both lines at once) and docs (builds the one docs tree for each plugin line).
-ONLY_42="gate guard docs"
+# of both lines at once), docs (builds the one docs tree for each plugin line) and publish (checks the export tool).
+ONLY_42="gate guard docs publish"
 # Suites that read SPINE_REPO's git history, so they need it to be a git checkout (not a git archive export)
 GIT_SUITES="api gate guard sim"
 # flat_spines, line_spines and spines_check
@@ -114,8 +117,29 @@ line_suites() {
 # verdict xfail_file manifest_file ran_suites [results_file]: without results only validates the two lists
 verdict() {
   awk -F'\t' -v registered=" $(suites | tr '\n' ' ') " -v online=" $(line_suites | tr '\n' ' ') " -v ran=" $3 " \
-    -v out="$SPINE_TEST_OUT" -v line="$SPINE_RUNTIME" '
+    -v out="$SPINE_TEST_OUT" -v line="$SPINE_RUNTIME" -v strict="${SPINE_TESTS_NO_SKIP:-}" '
     function listed(s) { return index(ran, " " s " ") }
+    # skip_row k: marks the manifest ids skip row k names as reported, skipped (failed when strict), or fails the row
+    function skip_row(k,   what, stem, prefix, i, id, n, hit) {
+      what = sksuite[k] " " skid[k]
+      if (skbad[k]) { print "BADSKIP", what, "(needs suite, SKIP, id|prefix*|*, reason)"; failed++; return }
+      prefix = skid[k] ~ /\*$/; stem = prefix ? substr(skid[k], 1, length(skid[k]) - 1) : skid[k]
+      for (i = 1; i <= mn; i++) {
+        id = morder[i]
+        if (msuite[id] != sksuite[k] || (prefix ? substr(mtest[id], 1, length(stem)) != stem : mtest[id] != stem)) continue
+        if (id in seen) { print "BADSKIP", what, "overlaps", mtest[id]; failed++; return }
+        hit[++n] = id
+      }
+      if (!n) { print "BADSKIP", what, "matches no manifest id"; failed++; return }
+      for (i = 1; i <= n; i++) {
+        seen[hit[i]] = 1
+        if (strict == "1") { print "FAIL ", sksuite[k], mtest[hit[i]], "(skipped: " skwhy[k] ")"; failed++ }
+      }
+      rows[sksuite[k]] += n; total += n
+      if (strict == "1") return
+      skipped += n
+      print "SKIP ", (skid[k] == "*" ? sksuite[k] : what) (prefix ? " (" n (n == 1 ? " id)" : " ids)") : "") ":", skwhy[k]
+    }
     FILENAME == ARGV[2] {
       if ($0 ~ /^#/ || $0 == "" || ($1 == "suite" && $2 == "test")) next
       id = $1 SUBSEP $2
@@ -123,7 +147,7 @@ verdict() {
         mproblem = mproblem sprintf("line %d: needs suite, test and optionally \"optional\"\n", FNR)
       else if (!index(online, " " $1 " ")) mproblem = mproblem sprintf("line %d: suite %s does not run on %s\n", FNR, $1, line)
       else if (id in expect) mproblem = mproblem sprintf("line %d: duplicate %s %s\n", FNR, $1, $2)
-      expect[id] = 1; optional[id] = $3 == "optional"; msuite[id] = $1; mtest[id] = $2
+      expect[id] = 1; optional[id] = $3 == "optional"; msuite[id] = $1; mtest[id] = $2; morder[++mn] = id
       next
     }
     FILENAME == ARGV[1] {
@@ -136,6 +160,7 @@ verdict() {
       key[id] = $3; suite[id] = $1; test[id] = $2
       next
     }
+    $2 == "SKIP" { nskip++; sksuite[nskip] = $1; skid[nskip] = $3; skwhy[nskip] = $4; skbad[nskip] = NF != 4 || $3 == "" || $4 == ""; next }
     {
       id = $1 SUBSEP $3; seen[id] = 1
       if ($2 == "PASS" && (id in key)) { print "XPASS", $1, $3, key[id]; failed++ }
@@ -151,6 +176,7 @@ verdict() {
       if (problem != "") { printf "run.sh: bad xfail list %s\n%s", ARGV[1], problem > "/dev/stderr"; exit 2 }
       if (mproblem != "") { printf "run.sh: bad manifest %s\n%s", ARGV[2], mproblem > "/dev/stderr"; exit 2 }
       if (ARGC < 4) exit 0
+      for (k = 1; k <= nskip; k++) skip_row(k)
       for (id in expect) if (listed(msuite[id]) && !(id in seen) && !optional[id]) {
         if (id in key) print "STALE", msuite[id], mtest[id], key[id]
         else print "MISSING", msuite[id], mtest[id]
@@ -159,7 +185,7 @@ verdict() {
       n = split(ran, names, " ")
       for (i = 1; i <= n; i++) if (!rows[names[i]]) { print "EMPTY", names[i]; failed++ }
       if (!total) { print "EMPTY", "line " line; failed++ }
-      printf "%s: %d passed, %d xfail, %d failed\n", line, passed, xfailed, failed
+      printf "%s: %d passed, %d xfail, %d failed%s\n", line, passed, xfailed, failed, skipped ? ", " skipped " skipped" : ""
       exit failed > 0
     }' "$1" "$2" ${4:+"$4"}
 }

@@ -5,7 +5,8 @@
 # runtime walk can see. The baseline is the same extraction on a27bde4's shared/ (git archive), changed by the line's
 # expected-diff (expected-diff/<runtime>.tsv): the surface's intended changes, one `line owner kind key +|-` row per
 # key. One test per owner (module or registry name) on either side or in the expected-diff, PASS iff the line's rows
-# are the baseline's with exactly the owner's listed changes; a failing test's log is the diff.
+# are the baseline's with exactly the owner's listed changes; a failing test's log is the diff. A checkout without
+# a27bde4 (a public clone) skips every test.
 set -euo pipefail
 W="$(cd "$(dirname "$0")" && pwd)"
 source "$W/../lib.sh"
@@ -24,6 +25,10 @@ extract() {
   python3 "$W/surface.py" "$shared" "$SUITE_OUT/$name"/*.i >"$SUITE_OUT/$name.tsv"
 }
 
+if ! git -C "$SPINE_REPO" rev-parse -q --verify "$BASELINE^{commit}" >/dev/null; then
+  skip '*' "needs the private baseline $BASELINE"
+  exit 0
+fi
 rm -rf "$SUITE_OUT/base" && mkdir -p "$SUITE_OUT/base"
 git -C "$SPINE_REPO" archive "$BASELINE" shared | tar -x -C "$SUITE_OUT/base"
 extract baseline "$SUITE_OUT/base/shared" -I"$LUA51_SRC" -I"$SUITE_OUT/base/shared" -I"$SUITE_OUT/base/shared/spine" \

@@ -324,6 +324,22 @@ probe-batching	pb_coin3
 probe-batching	pb_coin4
 probe-batching	pb_coin5
 probe-batching	pb_inventory
+publish	export: a clone at another path, TZ, HOME and git config gives the same SHAs
+publish	export: public trees are the private trees minus exactly the map's drops and swaps
+publish	export: a drop that matches no path fails
+publish	verify: the export passes
+publish	verify --pub: a clone of the export passes
+publish	firing: another identity fails identity
+publish	firing: an undeclared trailer fails trailers
+publish	firing: an id in a message fails messages
+publish	firing: a private sha in a message fails messages
+publish	firing: a kept private file fails deny on text, path and object
+publish	firing: a wrong archive hash fails hashes
+publish	firing: an extra ref fails refs
+publish	firing: a missing ref fails refs
+publish	firing: --pub, an origin branch off the map fails refs
+publish	firing: a tree off the map fails trees
+publish	scan: a public tree passes and a private one fails
 render	t0_smoke
 render	t1_churn 20
 render	t2_blend
@@ -1004,33 +1020,33 @@ sim	s23_docs_sample attachments-and-skins.rst:279 cpath
 sim	s23_docs_sample index.rst:34
 sim	s23_docs_sample index.rst:34 identity
 sim	s23_docs_sample index.rst:34 cpath
-sim	s23_docs_sample index.rst:49
-sim	s23_docs_sample index.rst:49 identity
-sim	s23_docs_sample index.rst:49 cpath
-sim	s23_docs_sample index.rst:64
-sim	s23_docs_sample index.rst:64 identity
-sim	s23_docs_sample index.rst:64 cpath
-sim	s23_docs_sample index.rst:94
-sim	s23_docs_sample index.rst:94 identity
-sim	s23_docs_sample index.rst:94 cpath
-sim	s23_docs_sample index.rst:110
-sim	s23_docs_sample index.rst:110 identity
-sim	s23_docs_sample index.rst:110 cpath
+sim	s23_docs_sample index.rst:58
+sim	s23_docs_sample index.rst:58 identity
+sim	s23_docs_sample index.rst:58 cpath
+sim	s23_docs_sample index.rst:73
+sim	s23_docs_sample index.rst:73 identity
+sim	s23_docs_sample index.rst:73 cpath
+sim	s23_docs_sample index.rst:106
+sim	s23_docs_sample index.rst:106 identity
+sim	s23_docs_sample index.rst:106 cpath
+sim	s23_docs_sample index.rst:149
+sim	s23_docs_sample index.rst:149 identity
+sim	s23_docs_sample index.rst:149 cpath
 sim	s23_docs_sample lifecycle.rst:30
 sim	s23_docs_sample lifecycle.rst:30 identity
 sim	s23_docs_sample lifecycle.rst:30 cpath
-sim	s23_docs_sample quickstart.rst:20
-sim	s23_docs_sample quickstart.rst:20 identity
-sim	s23_docs_sample quickstart.rst:20 cpath
-sim	s23_docs_sample quickstart.rst:36
-sim	s23_docs_sample quickstart.rst:36 identity
-sim	s23_docs_sample quickstart.rst:36 cpath
-sim	s23_docs_sample quickstart.rst:46
-sim	s23_docs_sample quickstart.rst:46 identity
-sim	s23_docs_sample quickstart.rst:46 cpath
-sim	s23_docs_sample quickstart.rst:80
-sim	s23_docs_sample quickstart.rst:80 identity
-sim	s23_docs_sample quickstart.rst:80 cpath
-sim	s23_docs_sample quickstart.rst:98
-sim	s23_docs_sample quickstart.rst:98 identity
-sim	s23_docs_sample quickstart.rst:98 cpath
+sim	s23_docs_sample quickstart.rst:25
+sim	s23_docs_sample quickstart.rst:25 identity
+sim	s23_docs_sample quickstart.rst:25 cpath
+sim	s23_docs_sample quickstart.rst:69
+sim	s23_docs_sample quickstart.rst:69 identity
+sim	s23_docs_sample quickstart.rst:69 cpath
+sim	s23_docs_sample quickstart.rst:79
+sim	s23_docs_sample quickstart.rst:79 identity
+sim	s23_docs_sample quickstart.rst:79 cpath
+sim	s23_docs_sample quickstart.rst:113
+sim	s23_docs_sample quickstart.rst:113 identity
+sim	s23_docs_sample quickstart.rst:113 cpath
+sim	s23_docs_sample quickstart.rst:131
+sim	s23_docs_sample quickstart.rst:131 identity
+sim	s23_docs_sample quickstart.rst:131 cpath
