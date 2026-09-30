@@ -16,5 +16,5 @@ Example:
 
 .. code-block:: lua
 
-   local legBone = hero.bones[6]
+   local legBone = spineboy.bones[6]
    legBone.shearY = -5

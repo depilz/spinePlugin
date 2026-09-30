@@ -11,12 +11,11 @@
 --   hide         hiding and showing a slot shifts commands onto other meshes
 --   split        split(), a re-split and reassemble()
 --   usereffect   filter.brightness, then filter.desaturate + intensity, win over tint; tint returns on the next draw
+--                [stale] a proxy held across fill.effect = nil and written after tint returned replaces the tint
 --   nodefine     graphics.defineEffect is nil: no tint, no warning
 --   definefail   the define raises: one warning per Lua state, no raise, no tint
 --   duplicate    the app defined the reserved name first: the engine logs its ERROR line and returns false, the plugin
 --                sees success (no warning) and draws the app's effect, the documented silent-duplicate limit
---   sharedkey    [failed] the other plugin binary already defined the effect in this Lua state (or its define raised):
---                no second define, tint on (off) without a warning
 --   alpha        [inject] slot.alpha 1 -> 0 -> 1 on the tinted slot normal, on page 1 and after the swap to page 2:
 --                normal draws its tint again; inject: an injected object on normal, so its placeholder sits among tints
 local C = dofile(arg[0]:match("^(.*)/") .. "/common.lua")
@@ -108,7 +107,7 @@ local function frame(obj, label, dt, userEffect)
     local now, old = tintOf(pr.mesh), before[pr.mesh]
     local oldOn = old and old.paint == now.paint and old.on
     if now.on ~= want then C.expect(false, ("%s #%d: tint %s, expected %s (dark %06x)"):format(label, i, tostring(now.on), tostring(want), rgb)) end
-    if want and now.rgb ~= rgb then C.expect(false, ("%s #%d: params %06x, expected %06x"):format(label, i, now.rgb or -1, rgb)) end
+    if want and now.rgb ~= rgb then C.expect(false, ("%s #%d: params %s, expected %06x"):format(label, i, now.rgb and ("%06x"):format(now.rgb) or "nil", rgb)) end
     if userEffect then
       local e = mock.paint(pr.mesh).effect
       C.expect(e and e.name == userEffect, ("%s #%d: effect %s, expected the user effect %s"):format(label, i, tostring(e and e.name), userEffect))
@@ -251,6 +250,25 @@ elseif mode == "split" then
   C.expect(#errs == 0, "meshes wrong after reassemble: " .. tostring(errs[1]))
   print(("split: frames=%d effect writes=%d param writes=%d"):format(stats.frames, stats.sets, stats.params))
 
+elseif mode == "usereffect" and variant == "stale" then
+  local obj = fixture()
+  obj.fill.effect = "filter.desaturate"
+  local proxy = obj.fill.effect
+  obj.fill.effect = nil
+  C.expect(frame(obj, "stale cleared") == TINTED, "tint back on the first draw after the clear")
+  proxy.intensity = 0.5 -- recreates a nameless user effect, which must replace the tint (not "nil": the mesh gets "")
+  for i, m in ipairs(meshesOf(obj)) do
+    C.expect(not tintOf(m).on, ("stale write #%d: the tint-black effect stays"):format(i))
+  end
+  for f = 1, 3 do frame(obj, "stale " .. f, nil, "") end
+  for i, pr in ipairs(pairsOf(obj)) do
+    local e = mock.paint(pr.mesh).effect
+    C.expect(e and e.params.intensity == 0.5, ("stale #%d: intensity %s"):format(i, tostring(e and e.params.intensity)))
+  end
+  obj.fill.effect = nil
+  C.expect(frame(obj, "stale reset") == TINTED, "tint back on the first draw after the clear")
+  print(("usereffect stale: frames=%d effect writes=%d param writes=%d"):format(stats.frames, stats.sets, stats.params))
+
 elseif mode == "usereffect" then
   local obj = fixture()
   C.expect(frame(obj, "tinted") == TINTED, "tinted before the user effect")
@@ -302,16 +320,6 @@ elseif mode == "duplicate" then
   C.expect(#mock.warnings == 1 and mock.warnings[1]:find("(custom.plugin_spine_tintBlack) for category (filter)", 1, true),
     "one engine ERROR line for the duplicate name")
   C.expect(warnings() == 0, "a plugin warning for a duplicate define")
-
-elseif mode == "sharedkey" then
-  -- what the other plugin binary's define leaves in this Lua state: true, or false when its define raised
-  tintable = variant ~= "failed"
-  debug.getregistry().plugin_spine_tintBlack = tintable
-  local a, b = fixture(), fixture()
-  for f = 1, 3 do frame(a, "a " .. f); frame(b, "b " .. f) end
-  print(("sharedkey %s: defines=%d tint writes=%d warnings=%d"):format(variant or "defined", defines(), stats.sets + stats.params, warnings()))
-  C.expect(defines() == 0, "defined again although the other plugin binary defined it")
-  C.expect(warnings() == 0, "a warning for the other plugin binary's define")
 
 elseif mode == "alpha" then
   local obj = fixture()

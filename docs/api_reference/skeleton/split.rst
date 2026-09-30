@@ -44,7 +44,7 @@ Example:
 .. code-block:: lua
 
     local sceneGroup = display.newGroup()
-    local splitGroup = skeleton:split({"upper-arm1", "forearm1", "hand1"})
+    local splitGroup = skeleton:split({"front-upper-arm", "front-bracer", "front-fist"})
 
     -- Move the split group
     splitGroup.x = 100

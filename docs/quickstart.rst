@@ -45,11 +45,11 @@ Solar2D project’s resource directory:
 
 .. code-block:: lua
 
-   local atlas = spine.loadAtlas("assets/characters/hero.atlas")
-   local skeletonData = spine.loadSkeletonData("assets/characters/hero.json", atlas)
+   local atlas = spine.loadAtlas("assets/characters/spineboy.atlas")
+   local skeletonData = spine.loadSkeletonData("assets/characters/spineboy.json", atlas)
 
    -- Binary exports (.skel) load the same way; optionally provide a scale factor:
-   -- local skeletonData = spine.loadSkeletonData("assets/characters/hero.skel", atlas, 0.5)
+   -- local skeletonData = spine.loadSkeletonData("assets/characters/spineboy.skel", atlas, 0.5)
 
 4. Create the Skeleton
 ----------------------
@@ -66,11 +66,11 @@ attack triggers).
        end
    end
 
-   local hero = spine.create(skeletonData, onSpineEvent)
+   local spineboy = spine.create(skeletonData, onSpineEvent)
 
    -- Position the skeleton in the center of the screen
-   hero.x = display.contentCenterX
-   hero.y = display.contentCenterY
+   spineboy.x = display.contentCenterX
+   spineboy.y = display.contentCenterY
 
 5. Set an Animation
 -------------------
@@ -79,10 +79,10 @@ indexed starting at **1**. Set loop to `true` or `false`.
 
 .. code-block:: lua
 
-   hero:setAnimation(1, "walk", true)
+   spineboy:setAnimation(1, "walk", true)
 
    -- Or queue animations
-   -- hero:addAnimation(1, "run", true, 200)
+   -- spineboy:addAnimation(1, "run", true, 200)
 
 6. Update & Draw Each Frame
 ---------------------------
@@ -90,8 +90,8 @@ indexed starting at **1**. Set loop to `true` or `false`.
 The plugin never updates or draws a skeleton on its own: your app drives
 both, every frame. In order for the skeleton to animate, you need to:
 1. **Calculate delta time** (in milliseconds).
-2. **Call** `hero:updateState(dt)` to advance animations.
-3. **Call** `hero:draw()` to render the skeleton.
+2. **Call** `spineboy:updateState(dt)` to advance animations.
+3. **Call** `spineboy:draw()` to render the skeleton.
 
 A typical approach using **system.getTimer**:
 
@@ -104,8 +104,8 @@ A typical approach using **system.getTimer**:
        local dt = now - lastTime
        lastTime = now
 
-       hero:updateState(dt)  -- advance the skeleton animations
-       hero:draw()           -- render the skeleton
+       spineboy:updateState(dt)  -- advance the skeleton animations
+       spineboy:draw()       -- render the skeleton
    end
 
    Runtime:addEventListener("enterFrame", onEnterFrame)

@@ -16,7 +16,7 @@ Example:
 
 .. code-block:: lua
 
-   local entry = hero:setAnimation(1, "idle", true)
+   local entry = spineboy:setAnimation(1, "idle", true)
    if entry then
        entry.mixDuration = 120
    end

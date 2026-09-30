@@ -1,4 +1,4 @@
--- _G.allSpines = {"alien", "celestial-circus", "cloud-pot", "coin", "goblins", "hero", "mix-and-match", "owl", "powerup", "raptor", "sack", "speedy", "spineboy", "stretchyman",  "vine", "tank", "windmill" }
+-- _G.allSpines = {"alien", "celestial-circus", "cloud-pot", "coin", "goblins", "mix-and-match", "owl", "powerup", "raptor", "sack", "speedy", "spineboy", "stretchyman",  "vine", "tank", "windmill" }
 -- local atlas = Spine.getAtlasData("celestial-circus")
 -- local skeleton = Spine.getSkeletonData("celestial-circus", atlas)
 local atlas = Spine.getAtlasData("raptor")

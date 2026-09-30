@@ -24,16 +24,16 @@ Example:
    local lastTime = system.getTimer()
 
    local spine = require("@SPINE_PLUGIN@")
-   local atlas = spine.loadAtlas("assets/characters/hero.atlas")
-   local skeletonData = spine.loadSkeletonData("assets/characters/hero.skel", atlas)
-   local hero = spine.create(skeletonData)
+   local atlas = spine.loadAtlas("assets/characters/spineboy.atlas")
+   local skeletonData = spine.loadSkeletonData("assets/characters/spineboy.skel", atlas)
+   local spineboy = spine.create(skeletonData)
 
-   -- Run on track 1, turn the head on track 2, then mix track 2 to "attack" without the head
-   -- dipping back to the run's pose during the mix
-   hero:setAnimation(1, "run", true)
-   hero:setAnimation(2, "head-turn", false)
-   local attack = hero:addAnimation(2, "attack", false, 500)
-   attack.holdPrevious = true
+   -- Run on track 1, aim on track 2, then mix track 2 to "shoot" without the arm
+   -- dropping back to the run's pose during the mix
+   spineboy:setAnimation(1, "run", true)
+   spineboy:setAnimation(2, "aim", false)
+   local shoot = spineboy:addAnimation(2, "shoot", false, 500)
+   shoot.holdPrevious = true
 
    -- Update the animation state each frame
    local function onEnterFrame(event)
@@ -41,12 +41,12 @@ Example:
        local dt = time - lastTime
        lastTime = time
 
-       hero:updateState(dt)
-       hero:draw()
+       spineboy:updateState(dt)
+       spineboy:draw()
 
-       local entry = hero.tracks[2]
+       local entry = spineboy.tracks[2]
        if entry and entry.mixingFrom then
-           print("Attack mixing in, holdPrevious:", entry.holdPrevious)
+           print("Shoot mixing in, holdPrevious:", entry.holdPrevious)
        end
    end
 

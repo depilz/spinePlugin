@@ -33,8 +33,8 @@ Example:
 
 .. code-block:: lua
 
-   -- Un-equip the sword
-   hero:setAttachment("weapon-sword", nil)
+   -- Un-equip the gun
+   spineboy:setAttachment("gun", nil)
 
-   -- Equip the sword attachment in the "weapon-sword" slot again
-   hero:setAttachment("weapon-sword", "sword")
+   -- Equip the "gun" attachment in the "gun" slot again
+   spineboy:setAttachment("gun", "gun")

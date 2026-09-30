@@ -25,7 +25,9 @@ Pick your line
 --------------
 
 The plugin ships one plugin per Spine line. Pick the line of the Spine editor you export your skeletons from, add
-its entry to the plugins table of ``build.settings`` and read that line's documentation.
+its entry to the plugins table of ``build.settings`` and read that line's documentation. Use one Spine plugin per app:
+``plugin.spine42`` and ``plugin.spine43`` raise an error naming both plugins when the other line or the legacy
+``plugin.spine`` is already loaded, but a legacy ``plugin.spine`` required after them cannot check and is not caught.
 
 - **Spine 4.2**: ``plugin.spine42`` (version 2.0.0), `documentation for 4.2 <https://spineplugin.readthedocs.io/en/4.2/>`_.
 
@@ -73,7 +75,7 @@ its entry to the plugins table of ``build.settings`` and read that line's docume
       }
 
 Moving a project from ``plugin.spine`` 1.2 to a line, or from 4.2 to 4.3? See the :doc:`migration guide <migration>`
-and the `CHANGELOG <https://github.com/depilz/spinePlugin/blob/main/CHANGELOG.md>`_.
+and the CHANGELOG's `plugin.spine42 2.0.0`_ release and unreleased `4.3 line`_ changes.
 
 How to Get Started
 ------------------
@@ -219,3 +221,6 @@ Acknowledgments
 
 We hope you find this documentation helpful and comprehensive.
 Let’s get animating with Spine for Solar2D!
+
+.. _plugin.spine42 2.0.0: https://github.com/depilz/spinePlugin/blob/main/CHANGELOG.md#pluginspine42-200
+.. _4.3 line: https://github.com/depilz/spinePlugin/blob/main/CHANGELOG.md#pluginspine43-43-line

@@ -1,6 +1,6 @@
 -- probe-batching: inventory of example skeletons (skins, animations, slots)
 local C = dofile(arg[0]:match("^(.*)/") .. "/../splitfx/common.lua")
-local names = { "alien","celestial-circus","chibi-stickers","cloud-pot","coin","dragon","goblins","hero","mix-and-match","owl","powerup","raptor","sack","snowglobe","speedy","spineboy","stretchyman","tank","vine","windmill" }
+local names = { "alien","celestial-circus","chibi-stickers","cloud-pot","coin",C.SEQUENCE[1],"goblins","mix-and-match","owl","powerup","raptor","sack","snowglobe","speedy","spineboy","stretchyman","tank","vine","windmill" }
 for _, n in ipairs(names) do
   local ok, d = pcall(C.data, n, 0.5)
   if not ok then print(n, "LOAD FAIL", tostring(d):sub(1,100)) else

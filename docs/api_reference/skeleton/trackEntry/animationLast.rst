@@ -19,18 +19,18 @@ Example:
 .. code-block:: lua
 
     local spine = require("@SPINE_PLUGIN@")
-    local atlas = spine.loadAtlas("assets/characters/hero.atlas")
-    local skeletonData = spine.loadSkeletonData("assets/characters/hero.skel", atlas)
-    local hero = spine.create(skeletonData)
+    local atlas = spine.loadAtlas("assets/characters/spineboy.atlas")
+    local skeletonData = spine.loadSkeletonData("assets/characters/spineboy.skel", atlas)
+    local spineboy = spine.create(skeletonData)
 
-    -- Set the "attack" animation on track 1
-    hero:setAnimation(1, "attack", false)
-    hero.tracks[1].animationLast = 1000  -- Use a custom animationLast time
+    -- Set the "shoot" animation on track 1
+    spineboy:setAnimation(1, "shoot", false)
+    spineboy.tracks[1].animationLast = 300  -- Use a custom animationLast time
 
     -- Update the animation state each frame and monitor animation end
     local function onEnterFrame(event)
-        hero:updateState(event.time)
-        hero:draw()
+        spineboy:updateState(event.time)
+        spineboy:draw()
     end
 
     Runtime:addEventListener("enterFrame", onEnterFrame)

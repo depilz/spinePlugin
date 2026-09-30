@@ -3,18 +3,21 @@
 local spine = require("plugin.spine")
 local S = __stub
 local name, ext, N = arg[1], arg[2] or "json", tonumber(arg[3] or "20")
+local skinCount = 0
 local function once(withSkins)
   local atlas = spine.loadAtlas(name .. "/" .. name .. ".atlas")
   local data = spine.loadSkeletonData(name .. "/" .. name .. "." .. ext, atlas)
   if withSkins then
     local obj = spine.create(data)
     local skins = obj:getSkins()
+    skinCount = #skins
     local custom = obj:createSkin("c")
     for i, sk in ipairs(skins) do
       if i % 2 == 0 then custom:addSkin(sk) end
     end
     local copy = obj:createSkin("copy")
     for i, sk in ipairs(skins) do if i % 3 == 0 then copy:copySkin(sk) end end   -- newLinkedMesh / copy()
+    assert(#custom:getAttachments() > 0 and #copy:getAttachments() > 0, name .. ": too few skins to fill the custom and copied skins")
     obj:setSkin(copy); obj:setSlotsToSetupPose()
     local anims = obj:getAnimations()
     obj:setAnimation(1, anims[1], true)
@@ -27,10 +30,11 @@ local function once(withSkins)
   end
 end
 for i = 1, 3 do once(true); S.gcfull() end
+assert(skinCount >= 5, name .. ": fewer than 5 skins")
 S.gcfull()
 local h0 = __native.heap()
 for i = 1, N do once(arg[4] == "skins"); S.gcfull() end
 S.gcfull()
 local h1 = __native.heap()
-print(string.format("%s.%s x%d (%s): native heap +%.1f KB (%.0f B/iter); textures created %d released %d",
-  name, ext, N, arg[4] or "load-only", (h1 - h0) / 1024, (h1 - h0) / N, S.texturesCreated, S.texturesReleased))
+print(string.format("%s.%s x%d (%s, %d skins): native heap +%.1f KB (%.0f B/iter); textures created %d released %d",
+  name, ext, N, arg[4] or "load-only", skinCount, (h1 - h0) / 1024, (h1 - h0) / N, S.texturesCreated, S.texturesReleased))

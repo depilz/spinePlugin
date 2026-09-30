@@ -32,4 +32,4 @@ Example:
 .. code-block:: lua
 
    -- Smoothly mix out all tracks in 120ms.
-   hero:setEmptyAnimations(120)
+   spineboy:setEmptyAnimations(120)

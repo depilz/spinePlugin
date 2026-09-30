@@ -16,11 +16,11 @@ Example:
 .. code-block:: lua
 
    local spine = require("@SPINE_PLUGIN@")
-   local atlas = spine.loadAtlas("hero.atlas")
-   local skeletonData = spine.loadSkeletonData("hero.skel", atlas)
-   local hero = spine.create(skeletonData)
+   local atlas = spine.loadAtlas("spineboy.atlas")
+   local skeletonData = spine.loadSkeletonData("spineboy.skel", atlas)
+   local spineboy = spine.create(skeletonData)
 
    -- Print all IK constraints
-   for i, ik in ipairs(hero.ikConstraints) do
+   for i, ik in ipairs(spineboy.ikConstraints) do
        print("IK Constraint:", i, "Name:", ik.name)
    end

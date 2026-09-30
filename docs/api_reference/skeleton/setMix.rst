@@ -31,5 +31,5 @@ Example:
 
 .. code-block:: lua
 
-   hero:setMix("walk", "run", 250)   -- 0.25s transitions from "walk" to "run"
-   hero:setMix("run", "jump", 150)
+   spineboy:setMix("walk", "run", 250)  -- 0.25s transitions from "walk" to "run"
+   spineboy:setMix("run", "jump", 150)

@@ -18,5 +18,5 @@ Example:
 
 .. code-block:: lua
 
-   hero.fill.b = 0.5
-   print(hero.fill.b, hero.fill.color.b)  -- 0.5  0.5
+   spineboy.fill.b = 0.5
+   print(spineboy.fill.b, spineboy.fill.color.b)  -- 0.5  0.5

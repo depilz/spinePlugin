@@ -3,7 +3,9 @@
    display/graphics/system stub (solar2d_stub.lua).
    Usage: host stub.lua test.lua [args...]
    Build: -DHOST_NATIVE=<fn> adds a suite's native helpers: fn(L) registers them into the __native table on top.
-   Env: NO_CLOSE=1 skips lua_close (to compare). */
+   Env: NO_CLOSE=1 skips lua_close (to compare).
+   Exit: 1 when the test raises, or when the stub counted an enterFrame listener error (__stub.frameErrors) the test
+   did not expect (__stub.expectFrameErrors). */
 #include "lua.h"
 #include "lauxlib.h"
 #include "lualib.h"
@@ -32,6 +34,20 @@ static int heap(lua_State *L) {
 }
 static int isMain(lua_State *L) { lua_pushboolean(L, L == g_mainL); return 1; }
 
+/* the stub's enterFrame listener errors the test did not expect (0 without the stub) */
+static int unexpectedFrameErrors(lua_State *L) {
+    int n = 0;
+    lua_getglobal(L, "__stub");
+    if (lua_istable(L, -1)) {
+        lua_getfield(L, -1, "frameErrors");
+        lua_getfield(L, -2, "expectFrameErrors");
+        if (!lua_toboolean(L, -1)) n = (int)lua_tointeger(L, -2);
+        lua_pop(L, 2);
+    }
+    lua_pop(L, 1);
+    return n;
+}
+
 int main(int argc, char **argv) {
     if (argc < 3) { fprintf(stderr, "usage: %s stub.lua test.lua\n", argv[0]); return 2; }
     lua_State *L = luaL_newstate();
@@ -55,6 +71,8 @@ int main(int argc, char **argv) {
     if (luaL_dofile(L, argv[1])) { fprintf(stderr, "STUB ERROR: %s\n", lua_tostring(L, -1)); return 1; }
     int rc = luaL_dofile(L, argv[2]);
     if (rc) { fprintf(stderr, "LUA ERROR: %s\n", lua_tostring(L, -1)); }
+    int frameErrors = unexpectedFrameErrors(L);
+    if (frameErrors) { fprintf(stderr, "[host] %d unexpected enterFrame error(s)\n", frameErrors); rc = 1; }
     if (getenv("NO_CLOSE")) { fprintf(stderr, "[host] skipping lua_close\n"); return rc ? 1 : 0; }
     fprintf(stderr, "[host] lua_close begin\n");
     lua_close(L);

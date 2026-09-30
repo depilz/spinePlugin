@@ -71,11 +71,13 @@ LOCAL_C_INCLUDES := \
 
 LOCAL_LDLIBS := -llog
 
+# ndk-build passes physical absolute paths, so the map derives from LOCAL_PATH, never from $PWD or realpath
 LOCAL_CFLAGS := \
 	-DANDROID_NDK \
 	-DNDEBUG \
 	-D_REENTRANT \
-	-DRtt_ANDROID_ENV
+	-DRtt_ANDROID_ENV \
+	-ffile-prefix-map=$(LOCAL_PATH)/../..=.
 
 LOCAL_LDLIBS := -llog
 

@@ -17,6 +17,6 @@ Example:
 
 .. code-block:: lua
 
-   local slot = hero.slots[2]
+   local slot = spineboy.slots[2]
    slot.g = 1.0  -- max green
    print("Slot green:", slot.g)

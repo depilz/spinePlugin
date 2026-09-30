@@ -16,6 +16,6 @@ Example:
 
 .. code-block:: lua
 
-   local bone = hero.bones[2]
+   local bone = spineboy.bones[2]
    -- Move the bone 10 units right
    bone.x = bone.x + 10

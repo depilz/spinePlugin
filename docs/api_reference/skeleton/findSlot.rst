@@ -31,7 +31,7 @@ Example:
 
 .. code-block:: lua
 
-   local slot = hero:findSlot("backpack")
+   local slot = spineboy:findSlot("backpack")
    if slot then
        print("Slot 'backpack' exists:", slot.name)
    else

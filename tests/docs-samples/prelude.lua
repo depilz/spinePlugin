@@ -2,9 +2,10 @@
 -- arg[1] with what the pages take as given, then 120 frames (2 s at 60 fps) so its timers, transitions and
 -- enterFrame listeners run. Any raise fails the sample (the host exits 1); an enterFrame raise fails it in run.sh.
 -- Given: both plugin names (require("plugin.spine42") and ("plugin.spine43") load the host's plugin.spine), the
--- globals spine (the plugin), hero (spine.create of the line's hero example, as the pages call it) and skeleton (the
--- same object, as the syntax lines call it), and the Solar2D calls the stub lacks: display.newRect/newCircle/
--- newText/newImageRect, display.content*, timer.performWithDelay/cancel, transition.to/cancel.
+-- globals spine (the plugin), spineboy (spine.create of the line's spineboy example, as the pages call it) and
+-- skeleton (the spineboy object, as the syntax lines call it), and the Solar2D calls the stub lacks:
+-- display.newRect/newCircle/newText/newImageRect, display.content*, timer.performWithDelay/cancel,
+-- transition.to/cancel.
 local S = __stub
 local FRAME_MS = 1000 / 60
 
@@ -70,9 +71,9 @@ local function fireTimers()
 end
 
 spine = require("plugin.spine")
-local atlas = spine.loadAtlas("hero/hero.atlas")
-hero = spine.create(spine.loadSkeletonData("hero/hero.json", atlas))
-skeleton = hero
+local atlas = spine.loadAtlas("spineboy/spineboy.atlas")
+spineboy = spine.create(spine.loadSkeletonData("spineboy/spineboy.json", atlas))
+skeleton = spineboy
 
 assert(loadfile(arg[1]))()
 for frame = 1, 120 do

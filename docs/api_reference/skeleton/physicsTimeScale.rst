@@ -29,12 +29,12 @@ Example:
 .. code-block:: lua
 
    local spine = require("@SPINE_PLUGIN@")
-   local atlas = spine.loadAtlas("hero.atlas")
-   local skeletonData = spine.loadSkeletonData("hero.skel", atlas)
-   local hero = spine.create(skeletonData)
+   local atlas = spine.loadAtlas("spineboy.atlas")
+   local skeletonData = spine.loadSkeletonData("spineboy.skel", atlas)
+   local spineboy = spine.create(skeletonData)
 
-   -- Pause the hero's physics (hair, cloth) while the animation keeps playing
-   hero.physicsTimeScale = 0
+   -- Pause spineboy's physics (hair, cloth) while the animation keeps playing
+   spineboy.physicsTimeScale = 0
 
    -- Resume it later, at half speed
-   hero.physicsTimeScale = 0.5
+   spineboy.physicsTimeScale = 0.5

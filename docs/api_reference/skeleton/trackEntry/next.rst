@@ -15,7 +15,7 @@ Example:
 
 .. code-block:: lua
 
-   local current = hero:getTrackEntry(1)
+   local current = spineboy:getTrackEntry(1)
    if current and current.next then
        print("Next animation:", current.next.animation)
    end

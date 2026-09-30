@@ -34,11 +34,11 @@ Example:
 
 .. code-block:: lua
 
-   local skin = skeleton:createSkin("redHand")
-   local hand = skeleton:findSkin("default"):getAttachment("hand1", "hand1")
+   local skin = skeleton:createSkin("redGun")
+   local gun = skeleton:findSkin("default"):getAttachment("gun", "gun")
 
-   local redHand = hand:copy()
-   redHand.color = {r = 1, g = 0, b = 0, a = 1}   -- the "default" skin's hand keeps its color
+   local redGun = gun:copy()
+   redGun.color = {r = 1, g = 0, b = 0, a = 1}   -- the "default" skin's gun keeps its color
 
-   skin:addSkin("default"):setAttachment("hand1", "hand1", redHand)
+   skin:addSkin("default"):setAttachment("gun", "gun", redGun)
    skeleton:setSkin(skin)

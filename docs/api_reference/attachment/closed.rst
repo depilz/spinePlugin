@@ -13,12 +13,17 @@ loop. When ``false``, the path has distinct start and end points.
 This affects how path constraints and path followers behave, particularly at the
 ends of the path.
 
+The examples use the mix-and-match example skeleton, whose arms and legs follow path attachments.
+
 Example
 -------
 
 .. code-block:: lua
 
-   local pathSlot = skeleton:findSlot("weapon-morningstar-path")
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+
+   local pathSlot = girl:findSlot("arm-front-path")
    local path = pathSlot.attachment
 
    if path and path.type == "path" then
@@ -38,7 +43,10 @@ Example
 
 .. code-block:: lua
 
-   local trackPath = skeleton:findSlot("weapon-morningstar-path").attachment
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+
+   local trackPath = girl:findSlot("arm-front-path").attachment
 
    if trackPath and trackPath.type == "path" then
        -- Make it a closed circuit

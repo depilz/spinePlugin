@@ -28,8 +28,8 @@ Example:
 
 .. code-block:: lua
 
-   local entry = hero:setAnimation(1, "attack", false)
+   local entry = spineboy:setAnimation(1, "shoot", false)
    entry.onComplete = function(event)
-       print("Attack completed on track", event.trackIndex)
-       hero:setAnimation(1, "idle", true)
+       print("Shoot completed on track", event.trackIndex)
+       spineboy:setAnimation(1, "idle", true)
    end

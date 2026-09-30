@@ -19,16 +19,16 @@ Example:
    local lastTime = system.getTimer()
 
    local spine = require("@SPINE_PLUGIN@")
-   local atlas = spine.loadAtlas("assets/characters/hero.atlas")
-   local skeletonData = spine.loadSkeletonData("assets/characters/hero.skel", atlas)
-   local hero = spine.create(skeletonData)
+   local atlas = spine.loadAtlas("assets/characters/spineboy.atlas")
+   local skeletonData = spine.loadSkeletonData("assets/characters/spineboy.skel", atlas)
+   local spineboy = spine.create(skeletonData)
 
-   -- Set the "crouch" animation on track 1, not looping
-   hero:setAnimation(1, "crouch", false)
+   -- Set the "jump" animation on track 1, not looping
+   spineboy:setAnimation(1, "jump", false)
 
    -- Retrieve the animation end time
-   local animationEndTime = hero.tracks[1].animationEnd
-   print("Slide Animation End Time (ms):", animationEndTime)
+   local animationEndTime = spineboy.tracks[1].animationEnd
+   print("Jump Animation End Time (ms):", animationEndTime)
 
    -- Update the animation state each frame and monitor animation end
    local function onEnterFrame(event)
@@ -36,14 +36,14 @@ Example:
        local dt = time - lastTime
        lastTime = time
 
-       hero:updateState(dt)
-       hero:draw()
+       spineboy:updateState(dt)
+       spineboy:draw()
 
        -- Check if the animation has reached its end time
-       if hero.tracks[1].trackTime >= hero.tracks[1].animationEnd then
-           print("Slide animation has ended.")
+       if spineboy.tracks[1].trackTime >= spineboy.tracks[1].animationEnd then
+           print("Jump animation has ended.")
            -- Transition to another animation or perform an action
-           hero:setAnimation(1, "idle", true)
+           spineboy:setAnimation(1, "idle", true)
        end
    end
 

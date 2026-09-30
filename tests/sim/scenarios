@@ -38,6 +38,7 @@ s2x_ik_drag.lua rotated
 s2x_hittest.lua
 s21_tint_black.lua pixels
 s21_tint_black.lua both
+4.2: s24_sibling_guard.lua legacy
 s22_example.lua Physics
 s22_example.lua InverseKinematics
 s22_example.lua Skins

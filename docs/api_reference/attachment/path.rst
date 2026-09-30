@@ -15,12 +15,12 @@ Example
 
 .. code-block:: lua
 
-   local slot = skeleton:findSlot("hand1")
+   local slot = skeleton:findSlot("gun")
    local attachment = slot.attachment
 
    if attachment and (attachment.type == "region" or attachment.type == "mesh") then
        print("Texture path:", attachment.path)
-       -- Output: hand1
+       -- Output: gun
    end
 
 Notes

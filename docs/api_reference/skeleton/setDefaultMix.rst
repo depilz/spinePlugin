@@ -27,4 +27,4 @@ Example:
 
 .. code-block:: lua
 
-   hero:setDefaultMix(300)  -- 0.3 second default transitions
+   spineboy:setDefaultMix(300)  -- 0.3 second default transitions

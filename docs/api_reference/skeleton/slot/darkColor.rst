@@ -28,7 +28,7 @@ Example:
 
 .. code-block:: lua
 
-   local dark = hero:getSlot("body").darkColor
+   local dark = spineboy:getSlot("torso").darkColor
    if dark then
       print(("Dark colour RGB: %f, %f, %f"):format(dark.r, dark.g, dark.b))
    else

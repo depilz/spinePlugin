@@ -428,7 +428,7 @@ int main(int argc, char **argv) {
     }
     // Sanity: every bundled skeleton, every animation (non-physics constraints: transform/path/IK), no user action
     if (getenv("YFLIP_ALL")) {
-        const char *names[] = {"alien", "chibi-stickers", "coin", "dragon", "goblins", "hero", "mix-and-match", "owl", "powerup", "raptor",
+        const char *names[] = {"alien", "chibi-stickers", "coin", "goblins", "mix-and-match", "owl", "powerup", "raptor",
                                "speedy", "spineboy", "stretchyman", "tank", "vine", "windmill"};
         for (const char *n : names) {
             Loaded L = load(n, n, std::string(n) + "/" + n + ".json");

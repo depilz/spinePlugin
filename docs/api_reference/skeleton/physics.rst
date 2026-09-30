@@ -22,4 +22,4 @@ Example:
    local circus = spine.create(data)
 
    print(circus.physics ~= nil)  -- true: this skeleton has physics constraints
-   print(hero.physics)           -- nil: the hero has none
+   print(spineboy.physics)       -- nil: spineboy has none

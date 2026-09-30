@@ -19,13 +19,13 @@ Example:
    local lastTime = system.getTimer()
 
    local spine = require("@SPINE_PLUGIN@")
-   local atlas = spine.loadAtlas("assets/characters/hero.atlas")
-   local skeletonData = spine.loadSkeletonData("assets/characters/hero.skel", atlas)
-   local hero = spine.create(skeletonData)
+   local atlas = spine.loadAtlas("assets/characters/spineboy.atlas")
+   local skeletonData = spine.loadSkeletonData("assets/characters/spineboy.skel", atlas)
+   local spineboy = spine.create(skeletonData)
 
-   -- Set the "attack" animation on track 1 to start at 1.5 seconds
-   hero:setAnimation(1, "attack", false)
-   hero.tracks[1].animationStart = 1500  -- 1.5 seconds in milliseconds
+   -- Set the "shoot" animation on track 1 to start at 0.3 seconds
+   spineboy:setAnimation(1, "shoot", false)
+   spineboy.tracks[1].animationStart = 300  -- 0.3 seconds in milliseconds
 
    -- Update the animation state each frame and monitor animation time
    local function onEnterFrame(event)
@@ -33,12 +33,12 @@ Example:
        local dt = time - lastTime
        lastTime = time
 
-       hero:updateState(dt)
-       hero:draw()
+       spineboy:updateState(dt)
+       spineboy:draw()
 
        -- Monitor animation playback
-       print("Animation Start Time (ms):", hero.tracks[1].animationStart)
-       print("Current Track Time (ms):", hero.tracks[1].trackTime)
+       print("Animation Start Time (ms):", spineboy.tracks[1].animationStart)
+       print("Current Track Time (ms):", spineboy.tracks[1].trackTime)
    end
 
    Runtime:addEventListener("enterFrame", onEnterFrame)

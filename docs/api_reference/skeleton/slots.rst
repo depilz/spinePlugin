@@ -16,11 +16,11 @@ Example:
 .. code-block:: lua
 
    local spine = require("@SPINE_PLUGIN@")
-   local atlas = spine.loadAtlas("hero.atlas")
-   local skeletonData = spine.loadSkeletonData("hero.skel", atlas)
-   local hero = spine.create(skeletonData)
+   local atlas = spine.loadAtlas("spineboy.atlas")
+   local skeletonData = spine.loadSkeletonData("spineboy.skel", atlas)
+   local spineboy = spine.create(skeletonData)
 
    -- Print out all slot names
-   for i, slot in ipairs(hero.slots) do
+   for i, slot in ipairs(spineboy.slots) do
        print("Slot:", i, "Name:", slot.name)
    end

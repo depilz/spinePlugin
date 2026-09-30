@@ -30,7 +30,7 @@ Example:
 
 .. code-block:: lua
 
-   -- the hero has no physics constraints; celestial-circus has
+   -- spineboy has no physics constraints; celestial-circus has
    local circus = spine.create(spine.loadSkeletonData("assets/characters/celestial-circus.json",
                                                       spine.loadAtlas("assets/characters/celestial-circus.atlas")))
 

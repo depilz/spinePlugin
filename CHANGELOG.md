@@ -2,262 +2,10 @@
 
 ## Unreleased
 
-### Both lines
-
-- **Breaking: the plugin is published once per Spine line.** `plugin.spine42` (version 2.0.0) runs Spine 4.2 and
-  `plugin.spine43` (version 3.0.0) runs Spine 4.3; both have the same Lua API. The `plugin.spine` 1.2.x releases
-  stay as they are. Moving from `plugin.spine` means renaming the plugin in `build.settings` and in every `require`;
-  the 4.3 line also needs skeletons exported with Spine 4.3. The migration page of the documentation lists every
-  change from 1.2.6 and from the 4.2 line to the 4.3 line.
-- **The documentation has one version per line.** The 4.2 and 4.3 documentation each name their own plugin in
-  every sample and link inside their own version; the 1.2 documentation stays for `plugin.spine`.
-- **Breaking: `ikConstraint.isActive` and `physics.isActive` are read-only.** Writing either now raises
-  `IK constraint isActive is read-only; set mix = 0 to stop it` or
-  `Physics constraint isActive is read-only; set mix = 0 to stop it`. Before, the write was accepted, but Spine
-  overwrote it the next time it rebuilt the skeleton's update order (on `setSkin`, for example), so it did not
-  reliably stop the constraint. Reading `isActive` is unchanged. To stop a constraint, set its `mix` to `0`, as the error says.
-- **Physics steps without an animation track.** `updateState` now advances the skeleton's physics time even when no
-  animation track exists, so a skeleton with physics and no animation simulates instead of standing still. Loops that
-  call `updateState` and `draw` only while `skeleton.isActive` is `true` still skip such skeletons: `isActive` only
-  tells whether a track has a current entry (see "`skeleton.isActive` is `true` only while a track has a current
-  entry" below).
-- **Added `skeleton.physicsTimeScale`.** It scales the time step of the skeleton's Spine physics constraints: `1` by
-  default, `0` pauses physics without a catch-up burst when it resumes. `timeScale` still does not affect physics.
-  Writing a negative or non-finite value raises `physicsTimeScale must be a finite number >= 0`.
-- **Removed skeletons are freed on the next frame, and objects you kept raise instead of reading freed memory.**
-  `removeSelf()`, `display.remove()` and removing a parent group or a composer scene all take the same path: the
-  skeleton stops updating, drawing and dispatching animation events at once, and a one-shot `Runtime` `enterFrame`
-  listener frees its native memory on the next frame, so memory measured in the same frame still includes it. Bones,
-  slots, constraints, fills, effects and track entries you kept keep working in the handler that removed the skeleton
-  and in its `finalize` listeners; after that frame's finalize they raise `<Type> belongs to a removed skeleton`, and a
-  skeleton method you stored raises `Skeleton belongs to a removed skeleton`. See the "Removing skeletons" page.
-- **A removed skeleton only answers its event-dispatcher keys.** After `removeSelf()`, `addEventListener`,
-  `removeEventListener`, `hasEventListener`, `dispatchEvent` and `respondsToEvent`, and the `getOrCreateTable`,
-  `didRemoveListener` and `_setHasListener` helpers Solar2D's listener calls use, keep working until the end of that
-  frame's finalize, inside `finalize` listeners too. Every other public key reads `nil`, including `removeSelf` and
-  `numChildren`, so `if skeleton.removeSelf then` tells a removed skeleton from a live one. See the "Removing
-  skeletons" page.
-- **Breaking: `event.target` in animation events is the skeleton display object.** `event.target == skeleton` now
-  holds; it used to be an internal userdata.
-- **Added `entry.isValid`.** A track entry that has finished or was returned to the pool now raises
-  `Track entry is no longer valid (finished or disposed); check entry.isValid` instead of reading pooled data or
-  aliasing another entry.
-- **Animation listener errors are reported.** An error in the listener passed to `spine.create()` used to vanish; it
-  now reaches the console and the `unhandledError` event like any other Solar2D listener error, and the call that
-  triggered it carries on.
-- **Injection listeners may inject, eject or remove the skeleton during `draw`** without corrupting memory.
-- **An IK target bone from another skeleton is rejected** with `target bone must belong to the same skeleton`.
-- **`spine.loadAtlas()` raises `Failed to load texture: <path>` when a page texture cannot be loaded**, and keeps
-  nothing in memory. `spine.create()` given an atlas instead of skeleton data raises an argument error instead of
-  misreading it, and bad arguments to `spine.loadSkeletonData()` and `skeleton:inject()` no longer leak.
-- **Leak fixes.** A texture shared by two atlases is released, reading `obj.fill` no longer leaks, and requiring the
-  plugin or using a fill inside a coroutine no longer keeps the dead coroutine's state.
-- **The split group belongs to you, and the skeleton cleans up after itself in it.** Removing a split skeleton now
-  takes the skeleton's meshes out of the group returned by `split()` and leaves the group where you put it; they used
-  to stay on screen. `removeSelf()` and `display.remove()` take them out at once; when the skeleton goes with its
-  parent group or scene, they leave when its memory is freed on the next frame. If you remove the
-  split group yourself, the skeleton draws unsplit from the next `draw` and a later `split()` returns a new group,
-  instead of every `draw` raising; `reassemble()` after that no longer raises. `reassemble()` keeps an object injected
-  into a split slot that is hidden at that moment, instead of destroying it with the group.
-- **Breaking: injection listeners are called once per frame with the real visibility.** The listener passed to
-  `skeleton:inject()` is now called once per `draw` with `isVisible = true` while its slot is drawn, once with
-  `isVisible = false` on the frame its slot stops being drawn, and not at all while the slot stays hidden. It used to
-  get an extra `isVisible = false` call before the `true` one on most frames, and in split mode on every frame. The
-  event fields are unchanged.
-- **A draw with an empty render command no longer aborts the Simulator, and `draw()` with extra arguments works.**
-  A skeleton whose frame produced a render command with no vertices used to abort the Simulator on `draw`; calling
-  `draw()` with extra arguments used to corrupt the Lua stack. Both now draw normally.
-- **Meshes land in the right group and draw order after split, re-split, reassemble or injection.** A mesh reused from
-  the skeleton group in the split group (or the other way round), or from another draw position, used to stay where it
-  was, so pieces showed in the wrong group or on top of the wrong slots. It is now moved to its group and draw position.
-- **A non-normal blend mode stays applied after a texture swap.** A slot drawn with `multiply`, `add` or `screen` used to
-  fall back to normal blending when its mesh switched to another atlas page texture.
-- **Mesh updates no longer create Lua garbage on every draw.** Updating a skeleton's meshes reuses one parameter table
-  and its vertex buffers instead of allocating new ones per mesh per draw: for 150 copies of the Spine raptor example,
-  Lua allocation drops from about 7.9 MB to about 0.27 MB per frame.
-- **Breaking: custom animation events have `name = "spine"` and `phase = "event"`.** Every animation event now has
-  `event.name == "spine"`. A custom event keyed in Spine has `event.phase == "event"` and its name in `event.event`,
-  plus `int`, `float`, `string`, `time`, `animation`, `trackIndex` and `target`, and `audioPath`, `volume` and
-  `balance` when it has audio. It used to arrive with its name in `event.name` and no `phase`, so a listener that
-  tells custom events apart with `event.name ~= "spine"` must check `event.phase == "event"` instead. A custom event
-  named `"spine"` no longer looks like a lifecycle event. Lifecycle events are unchanged.
-- **Breaking: custom events carry the values of the key that fired.** `event.int`, `event.float`, `event.string`,
-  `event.volume` and `event.balance` are the values set on that key in the animation; they used to be the event's
-  default values from the Spine editor for every key. The new `event.time` is the key's time in milliseconds.
-- **Breaking: `skeleton.isActive` is `true` only while a track has a current entry.** It becomes `false` after
-  `clearTrack` on the last track that had an entry, and once an empty animation that mixes a track out has ended on
-  every track. It used to stay `true` until `clearTracks`. Loops that call `updateState` and `draw` only while
-  `isActive` is `true` stop updating such a skeleton earlier than before.
-- **Breaking: physics steps in `updateState`, and `draw` only poses.** `updateState` now steps the physics
-  constraints and poses the skeleton, so bone and slot world values, `getBounds()` and `getSize()` are current after
-  every `updateState`, and right after `spine.create()`. `draw` poses without stepping physics, so bone changes made
-  from Lua between `updateState` and `draw` are drawn, and physics reacts at the next `updateState`. With one
-  `updateState` and one `draw` per frame nothing changes. Code that calls `draw` without `updateState`, `updateState`
-  several times per `draw`, or `updateState` without `draw` (for example for off-screen skeletons) now moves physics
-  once per `updateState` instead of once per `draw`.
-- **Breaking: `skeleton.tracks` is a plain table.** Each read builds a new table where `tracks[i]` is the current
-  track entry of track `i`, or `false` for an empty track, for every track up to the highest one used. `ipairs` and
-  `#` now work on it, and `if tracks[i] then` keeps working. It used to be a proxy object that `ipairs` and `pairs`
-  rejected.
-- **Breaking: writing an unknown or read-only track-entry key raises.** `entry.foo = 1` raises
-  `SpineTrackEntry: unknown property 'foo'`, and writing `index`, `animation`, `animationTime`, `isComplete`,
-  `isValid`, `trackComplete`, `next`, `mixingFrom` or `mixingTo` raises
-  `SpineTrackEntry: property '<key>' is read-only`. Both used to be ignored silently. Reading an unknown key still
-  returns `nil`.
-- **Breaking: `getSize().offsetY` is `getBounds().yMin`.** `(offsetX, offsetY)` is now the top-left corner of the bounds in
-  the skeleton's y-down coordinates; `offsetY` used to be `-yMin`. `width`, `height` and `offsetX` are unchanged.
-- **Added `skeleton:addEventListener("spine", listener)`.** The skeleton now dispatches every animation event to its
-  own `"spine"` listeners, after the listener passed to `spine.create()` or `setListener`: function listeners, then
-  table listeners, as Solar2D does for every event. All listeners get the same event table. Such listeners used to
-  never fire. `setListener(nil)` clears only the `spine.create()` listener.
-- **Added `entry.onComplete`.** A function set on a track entry is called with the `completed` event every time that
-  entry completes, before the other listeners. It never fires after the skeleton was removed, and an entry reused
-  from the pool starts without one.
-- **`addAnimationAt` no longer waits for the previous entry to complete when its time has already passed.** On a
-  track that is playing, a time at or before the start of the last queued entry now starts the new entry on the
-  update right after that entry starts. It used to start when that entry completed. Times after it are unchanged.
-- **`setEmptyAnimation` and `addEmptyAnimation` return their track entry.** They used to return nothing.
-  `setEmptyAnimations` still returns nothing.
-- **Track entries compare with `==`.** Two track-entry objects are equal when they stand for the same entry, for
-  example `skeleton:getTrackEntry(1) == skeleton.tracks[1]`. Comparing never raises.
-- **Breaking: added `spine.version` and `spine.runtimeVersion`, without the `v` the load banner prints.**
-  `spine.version` is the plugin version (`"2.0.0"` for `plugin.spine42`, `"3.0.0"` for `plugin.spine43`) and
-  `spine.runtimeVersion` the Spine runtime line (`"4.2"` or `"4.3"`). The load banner still prints `v2.0.0`, so
-  code that compares `spine.version` with the banner's form must drop the `v`.
-- **Load errors say why.** `spine.loadSkeletonData()` raises
-  `Failed to load skeleton data: <path>: <reason>` with the Spine runtime's reason, for example a version mismatch,
-  and `spine.loadAtlas()` adds the error `graphics.newTexture` raised to `Failed to load texture: <path>`. The message
-  prefixes are unchanged.
-- **Added `skeleton:hitTest(x, y[, listener])`.** It tells which bounding-box attachments contain a point given in
-  content coordinates, last drawn first. Without a listener it returns the top-most hit table (`slotName`,
-  `attachmentName`, `target`, `x`, `y`, `localX`, `localY`) or `nil`; with one it calls the listener for every hit
-  until it returns `true`, and returns whether one did. Visibility and alpha do not affect it.
-- **Added `bone:setWorldPosition`, `bone:translateWorld`, `bone:localToWorld` and `bone:worldToLocal`.** They move a
-  bone to a position, or by an offset, in skeleton space and convert points between a bone's space and skeleton
-  space. Skeleton space is the skeleton object's local coordinates, y down. A write shows in the world values after
-  the next `updateState` or `draw`, and an animation keying the bone overwrites it.
-- **Breaking: writing `bone.worldX` or `bone.worldY` raises.** The error is
-  `worldX is read-only; use bone:setWorldPosition(x, y)` (or `worldY`). Such writes used to be ignored silently.
-- **Tint black: art with dark colours now renders as in the Spine editor.** Slots with a dark colour (Spine's
-  "Tint black", two-colour tint) other than black are drawn with it; before, the plugin ignored the dark colour. This
-  is a visible change from 1.5.0 for such art; skeletons without dark colours render as before. The plugin defines
-  the Solar2D effect `filter.custom.plugin_spine_tintBlack` for this on first use; the name is reserved, so do not
-  define it in your app. While `skeleton.fill.effect` is set, the skeleton draws without its dark colours, so a hit
-  flash and tint black cannot combine; tint black is back on the next draw after the effect is cleared. Export
-  atlases with straight alpha. See the "skeleton.fill.effect and tint black" page.
-- **Breaking: added `slot.darkColor`, read-only.** It returns the slot's dark colour as a new `{ r, g, b }` table
-  (0 to 1), or `nil` for a slot without one. Writing it raises
-  `SpineSlot: property 'darkColor' is read-only; the skeleton data and its animations set it`; such a write used to
-  be ignored.
-- **Added `skeleton:findSkin(name)`.** It returns the named skin of the skeleton data as a Skin object, or `nil`,
-  without applying it.
-- **Breaking: `skeleton:registerSkin` is removed.** Apply a custom skin by passing the Skin object to `setSkin`; an
-  applied custom skin is retained automatically.
-- **Breaking: skin calls raise instead of warning and returning `false`.** A skin or slot that is not found, a wrong
-  argument type, a skin, slot or attachment of other skeleton data, and an unknown or read-only property write on a
-  Skin, Slot or Attachment (`SpineSkin: unknown property 'k'`, `SpineSlot: property 'name' is read-only`,
-  `SpineAttachment: unknown property 'k' on a mesh attachment`) now raise a Lua error; nothing is printed to stderr.
-  A slot argument is a slot name or a Slot object and a skin argument is a skin name or a Skin object; a string is
-  always a name and a Lua number raises, so zero-based slot indexes no longer work. `skeleton:getSkin()` with an
-  argument raises (use `findSkin`). Only the `find*` calls and a missing entry in `skin:getAttachment` return `nil`.
-- **Breaking: skin mutators return their receiver.** `addSkin`, `copySkin`, `setAttachment`, `removeAttachment`,
-  `clear` and `slot:setAttachmentFromSkin` return the skin or slot instead of `true`/`false`, so calls can be chained.
-- **Breaking: data skins are read-only.** On a skin loaded with the skeleton data, every mutator and every colour write
-  (`r`, `g`, `b`, `a`, `color`) raises `Skin '<name>' is read-only (a data skin); use skeleton:createSkin() for a
-  mutable skin`. Custom skins stay mutable. This also stops a crash on 4.3 when a data skin's mesh was removed while
-  an animation deformed it.
-- **Breaking: `skin:setAttachment` shares the attachment object instead of copying it.** Added `attachment:copy()` for
-  a separate object and `skin:clear()`, which empties a custom skin so it can be rebuilt in place.
-- **Breaking: entry records use `slotName` and `placeholder`.** `skin:getAttachments()` returns
-  `{slotName, placeholder, attachment}` and `slot:getAttachmentEntries()` returns
-  `{slotName, placeholder, skinName, attachment}`; the `slotIndex` and `name` fields are gone.
-- **Breaking: `slot:getAttachments()` and `slot:getSkinAttachments()` return Attachment objects.** They returned
-  attachment names in 1.2.6. `getSkinAttachments` takes a skin name or a Skin object, uses the applied skin (or
-  else the default skin) without one, and raises `Skin not found: <name>` for an unknown skin name, where 1.2.6
-  returned nothing.
-- **Breaking: `skeleton:findSlot(name)` returns the Slot or `nil`** instead of a boolean; `getSlot` still raises when
-  the slot does not exist.
-- **Added `setSkin(nil)` and `==` on skins, attachments and slots.** `skeleton:setSkin(nil)` clears the applied skin.
-  Two Skin or Attachment objects are equal when they wrap the same native object; two Slot objects are equal when they
-  are the same slot of the same skeleton.
-- **Breaking: comparing a slot of a removed skeleton raises.** `==` with a Slot whose skeleton was removed raises
-  `Slot belongs to a removed skeleton`. Comparing slots used to compare the wrapper objects and never raised.
-- **Breaking: `slot.attachmentLocked` is removed,** with its runtime change to Spine's `Slot` and `AnimationState` on
-  both lines. Reading it returns `nil` and writing it raises `SpineSlot: unknown property 'attachmentLocked'`.
-- **Region attachment geometry setters take effect.** Writing `x`, `y`, `rotation`, `scaleX`, `scaleY`, `width` or
-  `height` on a region attachment now moves its vertices on the next draw; it used to change only the stored value.
-- **Breaking: a slot with `slot.alpha = 0` draws no geometry.** Its attachment emits no vertices (a clipping
-  attachment still clips); an object injected into that slot is still placed every drawn frame. An injected object is
-  now also placed when the Spine slot colour's alpha or a mesh attachment's own alpha is 0; it used to be skipped.
-- **Tint-black dark colours round to the nearest byte** instead of truncating, so a dark channel keyed at 126/255
-  renders as 126, not 125.
-- **A slot on an inactive skin bone is skipped, not an error.** After `skeleton:setSkin`, and after
-  `skin:setAttachment` without a `sourceSkin`, a slot whose bone is a skin bone the applied skin does not enable raises
-  nothing: its attachment is not updated and not drawn. Pass the attachment's skin as `sourceSkin`, or apply that
-  skin, to draw it.
-- **Added naming aliases.** Each of these keys reads and writes the same value as the key it pairs with, on both lines,
-  with no warning, and neither name will be removed:
-  - bone `scaleX`/`scaleY` and `xScale`/`yScale`; region attachment `scaleX`/`scaleY` and `xScale`/`yScale`;
-  - `slot.a` and `slot.alpha`; `fill.color` (`{ r, g, b, a }`) and `fill.r/g/b/a`; `attachment.r/g/b/a` and
-    `attachment.color`;
-  - `entry.trackIndex` and `entry.index` (both read-only); `event.loop` and `event.looping` in animation events
-    (every phase except `"event"`);
-  - `skeleton:getIkConstraint(name)`/`getIkConstraintNames()` and `getIKConstraint`/`getIKConstraintNames`.
-- **Keys that did nothing or raised now work.** `bone.scaleX = v` and `fill.color = { … }` used to set nothing and
-  now take effect. `slot.a`, `attachment.r/g/b/a` and `attachment.xScale/yScale` used to raise an unknown-property
-  error and now work (`xScale`/`yScale` on a non-region attachment still raise it, naming the key you wrote).
-  `entry.trackIndex = x` raises `SpineTrackEntry: property 'trackIndex' is read-only` instead of an unknown-property
-  error.
-- **`spine.loadAtlas()` warns about premultiplied-alpha atlases.** The plugin draws straight alpha only. When any
-  page of the atlas declares `pma: true`, each `loadAtlas` call prints one line,
-  `WARNING: plugin.spine: <path>: premultiplied-alpha atlas (pma: true) is not supported; export with straight alpha`,
-  and the atlas still loads. Export the atlas with premultiplied alpha turned off to remove the warning.
-- **The example projects run every demo scene.** The menus of `Corona/` (4.2) and `Corona43/` (4.3) list all 15
-  scenes. "Attachment Object", "Attachment Properties" and "Attachment From Skin" now run on both lines and load
-  straight-alpha atlases, so no example prints the premultiplied-alpha warning. Every example skeleton folder carries
-  its artist's `license.txt`: Esoteric Software's, except `hero` (XDTech) and `dragon` (Thiago Brayner), whose
-  licences allow demonstration use only and forbid redistribution. The `spine-unity` art, the duplicate
-  `mix-and-match.zip`, the Spine export scripts in `Corona43/spines/export/` and the `.CoronaLiveBuild` files are removed.
-
-### plugin.spine42 (4.2 line)
-
-- **Physics gravity points down on screen.** The plugin now uses Spine's native Y-down mode (`Bone::setYDown(true)`)
-  instead of flipping the skeleton with `scaleY = -1`. Bone positions and `getBounds()` are unchanged (for
-  `getSize()`, see "`getSize().offsetY` is `getBounds().yMin`" under "Both lines"), but physics constraint gravity,
-  which pulled bones up on screen in 1.5.0, now pulls them down, as in the Spine editor. Content with non-zero
-  gravity moves the other way than before.
-- **Spine runtime refreshed to spine-cpp 4.2.120.** The vendored runtime moves from an October 2024 4.2 snapshot to the
-  4.2.120 release, bringing upstream's 4.2 fixes (JSON and binary loading, clipping-aware bounds, memory leaks). The
-  plugin's own runtime changes are kept.
-- **A queued animation after a zero-length or short one no longer skips time.** An animation queued with
-  `addAnimation` behind a zero-length or very short entry now starts at its delay instead of jumping ahead, and
-  `entry.delay` is never negative.
-- **With timeScale 0 (paused), a zero-mix `setAnimation` ends the old entry immediately.** Its `ended` and `disposed`
-  events fire at the new animation's start instead of waiting for time to advance.
-- **Breaking: sequence animations show the setup frame when mixed out** (matches the official 4.2.120 and 4.3
-  runtimes). While a sequence (flipbook) animation mixes out, for example after `setEmptyAnimation` with a mix, its
-  slot shows the setup frame and keeps it afterwards. It used to keep flipping frames during the mix-out and then stay
-  on a mid-sequence frame.
-- **Clipping masks match the Spine editor.** A clipping attachment on an inactive bone (a skin bone whose skin is not
-  set) no longer clips the slots after it. A clip whose end slot holds a bounding box, point or path attachment now
-  ends at that slot instead of clipping the rest of the draw order. On arm64 builds (iOS, Apple Silicon Mac, Android
-  arm64) masks no longer drop whole pieces of a masked attachment or draw triangles outside the mask for single
-  frames: the clipper and triangulator no longer use fused multiply-add, so their geometry is the editor's. A clipping
-  attachment with fewer than 3 vertices is ignored, as in the editor, instead of hiding everything up to its end slot.
-- **Physics no longer stops when the first physics constraint is inactive.** `draw` used to turn off every physics
-  constraint of the skeleton when the first one was inactive (for example a constraint that belongs to a skin that is
-  not set). Now only the inactive constraints are skipped.
-- **Split rendering no longer leaks on every draw.** The split renderer allocated a command pair per draw and never
-  freed it; it now returns the pair by value, as the 4.3 line already did.
-- **Consecutive compatible attachments are drawn as one mesh.** The 4.2 renderer now batches consecutive attachments
-  that share a texture and blend mode into one mesh, as the 4.3 line already did. A skeleton's `numChildren` and its
-  child list change: 150 copies of the Spine raptor example go from 5,157 meshes to about 450. Code that walks a
-  skeleton's children sees fewer, larger meshes.
-- **A custom event key in `.json` data without its own volume or balance reports `1` and `0`**, as the 4.2 runtime
-  reads it; the 4.3 line reports the event's default volume and balance.
-
 ### plugin.spine43 (4.3 line)
 
+- **The shared changes released under "Both lines" in plugin.spine42 2.0.0 below apply to `plugin.spine43` (version
+  3.0.0) too.** The 4.3 line reads only skeleton data exported by Spine 4.3: re-export your skeletons with Spine 4.3.
 - **Physics rotation follows gravity and forces the right way on screen.** The vendored runtime now includes upstream
   spine-cpp `d6e239975` ("Fix Y-down physics constraint forces"). Physics constraints that rotate, shear or scale a bone
   under gravity or wind bent it the wrong way on screen, because the plugin runs Spine in Y-down mode; they now bend it
@@ -280,6 +28,287 @@
   path, physics, slider) has a single active flag. Behaviour change: animation timelines no longer change a constraint
   that is inactive (skin-required and not in the current skin), as on the 4.2 line and in the Spine editor. Before,
   they still keyed its mix and other pose values, and a physics timeline could reset it.
+
+## plugin.spine42 2.0.0
+
+The Spine 4.2 line, published as `plugin.spine42`, after the public `plugin.spine` 1.2.6. Every entry is written for
+a project that uses 1.2.6: "Breaking" marks a change that code written for 1.2.6 may need to follow, and the
+migration page of the documentation shows each one with code before and after. The entries under "Both lines" are
+the shared Lua layer, which the 4.3 line (`plugin.spine43`, under "Unreleased" above) has too.
+
+### Both lines
+
+- **Breaking: the plugin is published once per Spine line.** `plugin.spine42` (version 2.0.0) runs Spine 4.2, the
+  runtime line 1.2.6 runs, so skeletons exported for 1.2.6 load without a new export; `plugin.spine43` runs Spine 4.3
+  with the same Lua API. The `plugin.spine` 1.2.x releases stay as they are. Moving from `plugin.spine` means renaming
+  the plugin in `build.settings` and in every `require`. The load banner prints `v2.0.0`.
+- **One Spine plugin per app.** Requiring `plugin.spine42` or `plugin.spine43` while the other line or the legacy
+  `plugin.spine` is already loaded in the app raises
+  `<plugin> cannot load: <other plugin> is already loaded in this app. Use only one Spine plugin per app.` before the
+  plugin changes anything; requiring the same plugin again is fine. A legacy `plugin.spine` required after a line
+  cannot check and is not caught.
+- **The documentation has one version per line.** The 4.2 and 4.3 documentation each name their own plugin in
+  every sample and link inside their own version; the 1.2 documentation stays for `plugin.spine`.
+- **Breaking: `ikConstraint.isActive` and `physics.isActive` are read-only.** Writing either now raises
+  `IK constraint isActive is read-only; set mix = 0 to stop it` or
+  `Physics constraint isActive is read-only; set mix = 0 to stop it`. Before, the write was accepted, but Spine
+  overwrote it the next time it rebuilt the skeleton's update order (on `setSkin`, for example), so it did not
+  reliably stop the constraint. Reading `isActive` is unchanged. To stop a constraint, set its `mix` to `0`, as the error says.
+- **Added `skeleton.physicsTimeScale`.** It scales the time step of the skeleton's Spine physics constraints: `1` by
+  default, `0` pauses physics without a catch-up burst when it resumes. `timeScale` still does not affect physics.
+  Writing a negative or non-finite value raises `physicsTimeScale must be a finite number >= 0`.
+- **Breaking: removed skeletons are freed on the next frame, and objects you kept raise instead of reading freed
+  memory.** `removeSelf()`, `display.remove()` and removing a parent group or a composer scene all take the same path:
+  the skeleton stops updating, drawing and dispatching animation events at once, and a one-shot `Runtime`
+  `enterFrame` listener frees its native memory on the next frame, so memory measured in the same frame still
+  includes it. Bones, slots, constraints, fills, effects and track entries you kept keep working in the handler that
+  removed the skeleton and in its `finalize` listeners; after that frame's finalize they raise
+  `<Type> belongs to a removed skeleton`, and a skeleton method you stored raises
+  `Skeleton belongs to a removed skeleton`. In 1.2.6 they kept returning the values the skeleton had when it was
+  removed. A removed skeleton answers only its event-dispatcher keys (`addEventListener`, `removeEventListener`,
+  `hasEventListener`, `dispatchEvent`, `respondsToEvent`, and the `getOrCreateTable`, `didRemoveListener` and
+  `_setHasListener` helpers Solar2D's listener calls use) until the end of that frame's finalize; every other public
+  key reads `nil`, including `removeSelf` and `numChildren`, so `if skeleton.removeSelf then` tells a removed skeleton
+  from a live one. See the "Removing skeletons" page.
+- **Breaking: `event.target` in animation events is the skeleton display object.** `event.target == skeleton` now
+  holds; it used to be an internal userdata.
+- **Added track-entry calls and keys.** `skeleton:addAnimationAt`, `skeleton:getTrackEntry`,
+  `skeleton:setEmptyAnimations` and `skeleton:setListener` are new, and track entries gain `mixDuration`,
+  `trackComplete`, `next`, `mixingFrom` and `mixingTo`. `addAnimationAt` on a playing track with a time at or before
+  the start of the last queued entry starts the new entry on the update right after that entry starts.
+- **Breaking: a finished track entry raises; added `entry.isValid`.** A track entry that has finished or was
+  returned to the pool now raises `Track entry is no longer valid (finished or disposed); check entry.isValid`
+  instead of reading pooled data or aliasing another entry. In 1.2.6 reading `.animation` from such an entry returned
+  `nil`.
+- **Animation listener errors are reported.** An error in the listener passed to `spine.create()` used to vanish; it
+  now reaches the console and the `unhandledError` event like any other Solar2D listener error, and the call that
+  triggered it carries on.
+- **An IK target bone from another skeleton is rejected** with `target bone must belong to the same skeleton`.
+- **Bad arguments raise instead of being misread.** `spine.create()` given an atlas instead of skeleton data raises
+  an argument error instead of misreading it, and bad arguments to `spine.loadSkeletonData()` and
+  `skeleton:inject()` no longer leak.
+- **A fill used inside a coroutine no longer keeps the dead coroutine's state.**
+- **The split group belongs to you, and the skeleton cleans up after itself in it.** Removing a split skeleton now
+  takes the skeleton's meshes out of the group returned by `split()` and leaves the group where you put it; they used
+  to stay on screen. `removeSelf()` and `display.remove()` take them out at once; when the skeleton goes with its
+  parent group or scene, they leave when its memory is freed on the next frame. If you remove the
+  split group yourself, the skeleton draws unsplit from the next `draw` and a later `split()` returns a new group;
+  `reassemble()` after that no longer raises. `reassemble()` keeps an object injected
+  into a split slot that is hidden at that moment, instead of destroying it with the group.
+- **Breaking: injection listeners are called once per frame with the real visibility.** The listener passed to
+  `skeleton:inject()` is now called once per `draw` with `isVisible = true` while its slot is drawn, once with
+  `isVisible = false` on the frame its slot stops being drawn, and not at all while the slot stays hidden. It used to
+  get an extra `isVisible = false` call before the `true` one on most frames, and in split mode on every frame. The
+  event fields are unchanged.
+- **`draw()` with extra arguments works.** It used to corrupt the Lua stack.
+- **Meshes land in the right group and draw order after split, re-split, reassemble or injection.** A mesh reused from
+  the skeleton group in the split group (or the other way round), or from another draw position, used to stay where it
+  was, so pieces showed in the wrong group or on top of the wrong slots. It is now moved to its group and draw position.
+- **A non-normal blend mode stays applied after a texture swap.** A slot drawn with `multiply`, `add` or `screen` used to
+  fall back to normal blending when its mesh switched to another atlas page texture.
+- **Mesh updates no longer create Lua garbage on every draw.** Updating a skeleton's meshes reuses one parameter table
+  and its vertex buffers instead of allocating new ones per mesh per draw: for 150 copies of the Spine raptor example,
+  Lua allocation drops from about 7.9 MB to about 0.27 MB per frame, together with batching (below; see "Performance on
+  Mac").
+- **Breaking: custom animation events have `name = "spine"` and `phase = "event"`, and carry the values of the key
+  that fired.** Every animation event now has `event.name == "spine"`. A custom event keyed in Spine has
+  `event.phase == "event"` and its name in `event.event`, plus `int`, `float`, `string`, `time`, `animation`,
+  `trackIndex` and `target`, and `audioPath`, `volume` and `balance` when it has audio. It used to arrive with its
+  name in `event.name` and no `phase`, so a listener that tells custom events apart with `event.name ~= "spine"` must
+  check `event.phase == "event"` instead. A custom event named `"spine"` no longer looks like a lifecycle event.
+  `event.int`, `event.float`, `event.string`, `event.volume` and `event.balance` are the values set on that key in
+  the animation; they used to be the event's default values from the Spine editor for every key. The new
+  `event.time` is the key's time in milliseconds. Lifecycle events are unchanged.
+- **Breaking: `skeleton.isActive` is `true` only while a track has a current entry.** It becomes `false` after
+  `clearTrack` on the last track that had an entry, and once an empty animation that mixes a track out has ended on
+  every track. It used to stay `true` until `clearTracks`. Loops that call `updateState` and `draw` only while
+  `isActive` is `true` stop updating such a skeleton earlier than before, and skip a skeleton with physics and no
+  animation track.
+- **Breaking: physics steps in `updateState`, and `draw` only poses.** `updateState` now steps the physics
+  constraints and poses the skeleton, so bone and slot world values, `getBounds()` and `getSize()` are current after
+  every `updateState`, and right after `spine.create()`. `updateState` advances physics even when no animation track
+  exists, so a skeleton with physics and no animation simulates instead of standing still. `draw` poses without
+  stepping physics, so bone changes made from Lua between `updateState` and `draw` are drawn, and physics reacts at
+  the next `updateState`. With one `updateState` and one `draw` per frame nothing changes. Code that calls `draw`
+  without `updateState`, `updateState` several times per `draw`, or `updateState` without `draw` (for example for
+  off-screen skeletons) now moves physics once per `updateState` instead of once per `draw`.
+- **Breaking: `skeleton.tracks` is a plain table.** Each read builds a new table where `tracks[i]` is the current
+  track entry of track `i`, or `false` for an empty track, for every track up to the highest one used. `ipairs` and
+  `#` now work on it, and `if tracks[i] then` keeps working. It used to be a proxy object that `ipairs` and `pairs`
+  rejected.
+- **Breaking: writing an unknown or read-only track-entry key raises.** `entry.foo = 1` raises
+  `SpineTrackEntry: unknown property 'foo'`, and writing `index`, `animation`, `animationTime`, `isComplete`,
+  `isValid`, `trackComplete`, `next`, `mixingFrom` or `mixingTo` raises
+  `SpineTrackEntry: property '<key>' is read-only`. Both used to be ignored silently. Reading an unknown key still
+  returns `nil`.
+- **Breaking: `getSize().offsetY` is `getBounds().yMin`.** `(offsetX, offsetY)` is now the top-left corner of the bounds in
+  the skeleton's y-down coordinates; `offsetY` used to be `-yMin`. `width`, `height` and `offsetX` are unchanged.
+- **Added `skeleton:addEventListener("spine", listener)`.** The skeleton now dispatches every animation event to its
+  own `"spine"` listeners, after the listener passed to `spine.create()` or `setListener`: function listeners, then
+  table listeners, as Solar2D does for every event. All listeners get the same event table. Such listeners used to
+  never fire. `setListener(nil)` clears only the `spine.create()` listener.
+- **Added `entry.onComplete`.** A function set on a track entry is called with the `completed` event every time that
+  entry completes, before the other listeners. It never fires after the skeleton was removed, and an entry reused
+  from the pool starts without one.
+- **`setEmptyAnimation` and `addEmptyAnimation` return their track entry.** They used to return nothing.
+  `setEmptyAnimations` returns nothing.
+- **Track entries compare with `==`.** Two track-entry objects are equal when they stand for the same entry, for
+  example `skeleton:getTrackEntry(1) == skeleton.tracks[1]`. Comparing never raises.
+- **Added `spine.version` and `spine.runtimeVersion`, without the `v` the load banner prints.**
+  `spine.version` is the plugin version (`"2.0.0"` for `plugin.spine42`, `"3.0.0"` for `plugin.spine43`) and
+  `spine.runtimeVersion` the Spine runtime line (`"4.2"` or `"4.3"`). The load banner prints `v2.0.0`, so
+  code that compares `spine.version` with the banner's form must drop the `v`.
+- **Load errors say why.** `spine.loadSkeletonData()` raises
+  `Failed to load skeleton data: <path>: <reason>` with the Spine runtime's reason, for example a version mismatch.
+  `spine.loadAtlas()` raises `Failed to load texture: <path>` with the error `graphics.newTexture` raised when a page
+  texture cannot be loaded, and keeps nothing in memory.
+- **Added `skeleton:hitTest(x, y[, listener])`.** It tells which bounding-box attachments contain a point given in
+  content coordinates, last drawn first. Without a listener it returns the top-most hit table (`slotName`,
+  `attachmentName`, `target`, `x`, `y`, `localX`, `localY`) or `nil`; with one it calls the listener for every hit
+  until it returns `true`, and returns whether one did. Visibility and alpha do not affect it.
+- **Added `bone:setWorldPosition`, `bone:translateWorld`, `bone:localToWorld` and `bone:worldToLocal`.** They move a
+  bone to a position, or by an offset, in skeleton space and convert points between a bone's space and skeleton
+  space. Skeleton space is the skeleton object's local coordinates, y down. A write shows in the world values after
+  the next `updateState` or `draw`, and an animation keying the bone overwrites it.
+- **Breaking: writing `bone.worldX` or `bone.worldY` raises.** The error is
+  `worldX is read-only; use bone:setWorldPosition(x, y)` (or `worldY`). Such writes used to be ignored silently.
+- **Tint black: art with dark colours now renders as in the Spine editor.** Slots with a dark colour (Spine's
+  "Tint black", two-colour tint) other than black are drawn with it; 1.2.6 ignored the dark colour. This is a visible
+  change for such art; skeletons without dark colours render as before. The plugin defines the Solar2D effect
+  `filter.custom.plugin_spine_tintBlack` for this on first use; the name is reserved, so do not define it in your
+  app. While `skeleton.fill.effect` is set, the skeleton draws without its dark colours, so a hit flash and tint black
+  cannot combine; tint black is back on the next draw after the effect is cleared. A write through an effect table
+  you kept from before `fill.effect = nil` sets an effect again and takes the place of tint black, like any effect.
+  Export atlases with straight alpha. See the "skeleton.fill.effect and tint black" page.
+- **Breaking: added `slot.darkColor`, read-only.** It returns the slot's dark colour as a new `{ r, g, b }` table
+  (0 to 1), or `nil` for a slot without one. Writing it raises
+  `SpineSlot: property 'darkColor' is read-only; the skeleton data and its animations set it`; such a write used to
+  be ignored.
+- **Added Skin and Attachment objects.** `skeleton:createSkin(name)` makes a custom skin, `skeleton:getSkin()` returns
+  the applied skin, and `skeleton:setSkin` takes a skin name, a Skin object or `nil` (which clears the applied skin);
+  an applied custom skin is retained automatically. A Skin has `name` and a colour (`r`, `g`, `b`, `a`, `color`), and
+  `addSkin`, `copySkin`, `setAttachment`, `getAttachment`, `getAttachments`, `removeAttachment`, `clear`,
+  `findAttachmentsForSlot`, `findNamesForSlot`, `getBones`, `getConstraints` and `getName`; slots gain
+  `slot:setAttachmentFromSkin` and `slot:getAttachmentEntries`. Skin mutators and `slot:setAttachmentFromSkin` return
+  their receiver, so calls can be chained. A skin loaded with the skeleton data is read-only: every mutator and every
+  colour write raises `Skin '<name>' is read-only (a data skin); use skeleton:createSkin() for a mutable skin`.
+  `skin:setAttachment` shares the attachment object; `attachment:copy()` makes a separate one. `skin:getAttachments()`
+  returns `{slotName, placeholder, attachment}` records and `slot:getAttachmentEntries()`
+  `{slotName, placeholder, skinName, attachment}` records. An Attachment exposes its type, name, colour and geometry
+  (`x`, `y`, `rotation`, `scaleX`, `scaleY`, `width`, `height`, `vertices`, `triangles`, `bones`, `hullLength`,
+  `worldVerticesLength`, and the path keys). Two Skin or Attachment objects are equal with `==` when they wrap the
+  same native object. See the "Attachments and skins" page.
+- **Added `skeleton:findSkin(name)`.** It returns the named skin of the skeleton data as a Skin object, or `nil`,
+  without applying it. Thanks to [kan6868](https://github.com/kan6868).
+- **Breaking: skin calls raise instead of warning and returning `false`.** A skin or slot that is not found, a wrong
+  argument type, a skin, slot or attachment of other skeleton data, and an unknown or read-only property write on a
+  Skin, Slot or Attachment (`SpineSkin: unknown property 'k'`, `SpineSlot: property 'name' is read-only`,
+  `SpineAttachment: unknown property 'k' on a mesh attachment`) now raise a Lua error; nothing is printed to stderr.
+  In 1.2.6 a slot property write was ignored and an unknown skin or attachment name printed a line and changed
+  nothing. A slot argument is a slot name or a Slot object and a skin argument is a skin name or a Skin object; a
+  string is always a name and a Lua number raises, so zero-based slot indexes no longer work. `skeleton:getSkin()`
+  with an argument raises (use `findSkin`). Only the `find*` calls and a missing entry in `skin:getAttachment` return
+  `nil`.
+- **Breaking: `slot:getAttachments()` and `slot:getSkinAttachments()` return Attachment objects.** They returned
+  attachment names in 1.2.6. `getSkinAttachments` takes a skin name or a Skin object, uses the applied skin (or
+  else the default skin) without one, and raises `Skin not found: <name>` for an unknown skin name, where 1.2.6
+  returned nothing.
+- **Breaking: `skeleton:findSlot(name)` returns the Slot or `nil`** instead of a boolean; `getSlot` still raises when
+  the slot does not exist.
+- **Slots compare with `==`.** Two Slot objects are equal when they are the same slot of the same skeleton; in 1.2.6
+  each read made a new object, so `==` was `false` even for the same slot.
+- **Breaking: comparing a slot of a removed skeleton raises.** `==` with a Slot whose skeleton was removed raises
+  `Slot belongs to a removed skeleton`.
+- **Region attachment geometry setters take effect.** Writing `x`, `y`, `rotation`, `scaleX`, `scaleY`, `width` or
+  `height` on a region attachment moves its vertices on the next draw.
+- **Breaking: a slot with `slot.alpha = 0` draws no geometry.** Its attachment emits no vertices (a clipping
+  attachment still clips); an object injected into that slot is still placed every drawn frame. An injected object is
+  now also placed when the Spine slot colour's alpha or a mesh attachment's own alpha is 0; it used to be skipped.
+- **A slot on an inactive skin bone is skipped, not an error.** After `skeleton:setSkin`, and after
+  `skin:setAttachment` without a `sourceSkin`, a slot whose bone is a skin bone the applied skin does not enable raises
+  nothing: its attachment is not updated and not drawn. Pass the attachment's skin as `sourceSkin`, or apply that
+  skin, to draw it.
+- **Added naming aliases, and keys that did nothing or raised now work.** Each of these keys reads and writes the
+  same value as the key it pairs with, on both lines, with no warning, and neither name will be removed:
+  - bone `scaleX`/`scaleY` and `xScale`/`yScale`; region attachment `scaleX`/`scaleY` and `xScale`/`yScale`;
+  - `slot.a` and `slot.alpha`; `fill.color` (`{ r, g, b, a }`) and `fill.r/g/b/a`; `attachment.r/g/b/a` and
+    `attachment.color`;
+  - `entry.trackIndex` and `entry.index` (both read-only); `event.loop` and `event.looping` in animation events
+    (every phase except `"event"`);
+  - `skeleton:getIkConstraint(name)`/`getIkConstraintNames()` and `getIKConstraint`/`getIKConstraintNames`.
+
+  `bone.scaleX = v`, `slot.a = v` and `fill.color = { … }` set nothing in 1.2.6 and now take effect. `xScale` and
+  `yScale` on a non-region attachment raise an unknown-property error naming the key you wrote, and
+  `entry.trackIndex = x` raises `SpineTrackEntry: property 'trackIndex' is read-only`.
+- **`spine.loadAtlas()` warns about premultiplied-alpha atlases.** The plugin draws straight alpha only. When any
+  page of the atlas declares `pma: true`, each `loadAtlas` call prints one line,
+  `WARNING: plugin.spine: <path>: premultiplied-alpha atlas (pma: true) is not supported; export with straight alpha`,
+  and the atlas still loads. Export the atlas with premultiplied alpha turned off to remove the warning.
+- **The example projects run every demo scene.** The menus of `Corona/` (4.2) and `Corona43/` (4.3) list all 15
+  scenes. "Attachment Object", "Attachment Properties" and "Attachment From Skin" now run on both lines and load
+  straight-alpha atlases, so no example prints the premultiplied-alpha warning. Every example skeleton is Esoteric
+  Software's Spine example art and its folder carries Esoteric Software's `license.txt`; the `hero` and `dragon`
+  skeletons, whose licences allowed demonstration use only and forbade redistribution, are removed. The
+  `spine-unity` art, the duplicate `mix-and-match.zip`, the Spine export scripts in `Corona43/spines/export/` and the
+  `.CoronaLiveBuild` files are removed.
+
+### plugin.spine42 (4.2 line)
+
+- **Physics gravity points down on screen.** The plugin now uses Spine's native Y-down mode (`Bone::setYDown(true)`)
+  instead of flipping the skeleton with `scaleY = -1`. Bone positions and `getBounds()` are unchanged (for
+  `getSize()`, see "`getSize().offsetY` is `getBounds().yMin`" under "Both lines"), but physics constraint gravity,
+  which pulled bones up on screen in 1.2.6, now pulls them down, as in the Spine editor. Content with non-zero
+  gravity moves the other way than before.
+- **Spine runtime refreshed to spine-cpp 4.2.120.** The vendored runtime moves to the 4.2.120 release, bringing
+  upstream's 4.2 fixes (JSON and binary loading, clipping-aware bounds, memory leaks). The plugin's own runtime
+  changes are kept.
+- **A queued animation after a zero-length or short one no longer skips time.** An animation queued with
+  `addAnimation` behind a zero-length or very short entry now starts at its delay instead of jumping ahead, and
+  `entry.delay` is never negative.
+- **With timeScale 0 (paused), a zero-mix `setAnimation` ends the old entry immediately.** Its `ended` and `disposed`
+  events fire at the new animation's start instead of waiting for time to advance.
+- **Breaking: sequence animations show the setup frame when mixed out** (matches the official 4.2.120 and 4.3
+  runtimes). While a sequence (flipbook) animation mixes out, for example after `setEmptyAnimation` with a mix, its
+  slot shows the setup frame and keeps it afterwards. It used to keep flipping frames during the mix-out and then stay
+  on a mid-sequence frame.
+- **Clipping masks match the Spine editor.** A clipping attachment on an inactive bone (a skin bone whose skin is not
+  set) no longer clips the slots after it. A clip whose end slot holds a bounding box, point or path attachment now
+  ends at that slot instead of clipping the rest of the draw order. On arm64 builds (iOS, Apple Silicon Mac, Android
+  arm64) masks no longer drop whole pieces of a masked attachment or draw triangles outside the mask for single
+  frames: the clipper and triangulator no longer use fused multiply-add, so their geometry is the editor's. A clipping
+  attachment with fewer than 3 vertices is ignored, as in the editor, instead of hiding everything up to its end slot.
+- **Physics no longer stops when the first physics constraint is inactive.** `draw` used to turn off every physics
+  constraint of the skeleton when the first one was inactive (for example a constraint that belongs to a skin that is
+  not set). Now only the inactive constraints are skipped.
+- **Consecutive compatible attachments are drawn as one mesh.** The 4.2 renderer now batches consecutive attachments
+  that share a texture and blend mode into one mesh, as the 4.3 line already did. A skeleton's `numChildren` and its
+  child list change: 150 copies of the Spine raptor example go from 5,100 meshes to 450. Code that walks a
+  skeleton's children sees fewer, larger meshes.
+- **A custom event key in `.json` data without its own volume or balance reports `1` and `0`**, as the 4.2 runtime
+  reads it; the 4.3 line reports the event's default volume and balance.
+
+### Performance on Mac
+
+Measured on Mac (Solar2D Simulator); devices may differ. Mac17,8 (Apple M5 Pro), macOS 27.0, Solar2D Simulator
+2026.3731; `plugin.spine42` built Release (arm64 and x86_64) by Xcode from the 2.0.0 source, the 1.2.6 plugin from its
+published Mac Simulator archive. Each plugin ran from its own plugins folder; 6 rounds interleaved, the first dropped,
+so N = 5 per plugin; median (min–max).
+
+Simulator, 150 copies of the Spine raptor example at scale 0.3, 30 warm-up and 300 measured frames
+(`tests/sim/s6_perf.lua` driven by `tools/perf/sim-perf.sh`):
+
+| per frame | `plugin.spine` 1.2.6 | `plugin.spine42` 2.0.0 |
+|---|---|---|
+| `updateState` and `draw` of all 150, ms | 14.59 (14.43–14.78) | 5.63 (5.60–5.65) |
+| `enterFrame` interval, ms | 29.1 (27.9–29.4) | 16.0 (16.0–16.0) |
+| Solar2D meshes | 5100 | 450 |
+| Lua allocation with the collector stopped, KB | 7865.7 | 272.2 |
+
+"ms" is the CPU time of the Lua calls, including the plugin's native work, not engine render or GPU time. The
+Simulator process footprint at the end of the run is 303.4 MB (303.3–303.6) with 1.2.6 and 308.8 MB (308.1–309.7)
+with 2.0.0. Batching itself costs CPU: in a headless build of the 4.2 renderer (`-O1`, `tools/perf/bench-ref.sh`, 18
+example skeletons, 300 frames each), the batching renderer takes 0.00 to 1.92 µs more per frame than the same renderer
+without batching (raptor 3.83 against 2.80 µs); the draw calls and meshes it saves are what the Simulator numbers show.
 
 ## 1.2.6 (Solar2D Free Plugin Directory release v21)
 

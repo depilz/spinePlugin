@@ -160,7 +160,7 @@ Example Usage
 
 .. code-block:: lua
 
-   local slot = skeleton:findSlot("hand1")
+   local slot = skeleton:findSlot("gun")
    local attachment = slot.attachment
 
    if attachment and attachment.type == "region" then
@@ -210,7 +210,7 @@ Example Usage
 
 .. code-block:: lua
 
-   local meshSlot = skeleton:findSlot("cape")
+   local meshSlot = skeleton:findSlot("torso")
    local mesh = meshSlot.attachment
 
    if mesh and mesh.type == "mesh" then
@@ -225,7 +225,10 @@ Example Usage
 
 .. code-block:: lua
 
-   local pathSlot = skeleton:findSlot("weapon-morningstar-path")
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+
+   local pathSlot = girl:findSlot("arm-front-path")
    local path = pathSlot.attachment
 
    if path and path.type == "path" then

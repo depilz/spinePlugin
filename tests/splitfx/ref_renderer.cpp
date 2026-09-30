@@ -48,3 +48,10 @@ void refRender(Skeleton &sk, const std::vector<int> *splitSlots, std::vector<Ref
         for (RenderCommand *c = r->render(sk, all); c; c = c->next) out.push_back({c->injectionSlotIndex, c->numIndices, 1});
     }
 }
+
+// refRenderCommands: the pass-through command list for sk, as SkeletonRenderer::render(sk, injectionSlots) gives the
+// batched one (tests/render/bench.cpp ref times the two)
+RenderCommand *refRenderCommands(Skeleton &sk, const std::vector<int> &injectionSlots) {
+    static RefSkeletonRenderer *r = new RefSkeletonRenderer();
+    return r->render(sk, injectionSlots);
+}

@@ -29,7 +29,7 @@ animation	t11_misc
 animation	t12_c34 gravity
 animation	t12_c34 queued
 animation	t12_c34 paused
-animation	t12_c34 dragon
+animation	t12_c34 sequence
 animation	t13_empty_returns returns
 animation	t13_empty_returns dispose
 animation	t14_listener_life nil_in_callback
@@ -100,6 +100,7 @@ docs-samples	samples spine
 docs-samples	samples trackEntry
 docs-samples	keys have pages
 docs-samples	pages name keys
+docs-samples	spineline line and base url
 docs-samples	firing: a failing sample fails its family
 docs-samples	firing: a fragment that runs fails its family
 docs-samples	firing: a fragment without a reason fails its family
@@ -141,15 +142,18 @@ lifecycle	t14_injection_reentrancy inject
 lifecycle	t14_injection_reentrancy remove
 lifecycle	t16_double_remove
 lifecycle	t20_load_unload goblins json 5 skins
-lifecycle	t20b_load_unload_gc dragon json 5 skins
+lifecycle	t20b_load_unload_gc chibi-stickers json 5 skins
 lifecycle	t21_remove_data_attachments
 lifecycle	t22_cross_skeleton_ik
 lifecycle	t23_split_lifetime removeSelf
 lifecycle	t23_split_lifetime removeSplit
+lifecycle	t23b_split_reentry draw
+lifecycle	t23b_split_reentry split
+lifecycle	t23b_split_reentry reassemble
 lifecycle	t24_close_kitchen_sink
 lifecycle	t25_setlistener_in_callback
 lifecycle	t25b_setlistener_ended
-lifecycle	t26_missing_texture
+lifecycle	t26_missing_texture chibi-partial/chibi-stickers.atlas
 lifecycle	t27_shared_custom_skin
 lifecycle	t28_longjmp_sharedptr create-bad-listener
 lifecycle	t28_longjmp_sharedptr load-missing
@@ -210,6 +214,12 @@ lifecycle	t39_pma_warning print
 lifecycle	t40_write_after_remove removed
 lifecycle	t40_write_after_remove parent
 lifecycle	t40_write_after_remove finalized
+lifecycle	t42_sibling_guard alone
+lifecycle	t42_sibling_guard other
+lifecycle	t42_sibling_guard legacy
+lifecycle	t42_sibling_guard legacy_underscore
+lifecycle	t42_sibling_guard versioned
+lifecycle	t42_sibling_guard reopen
 lifecycle	g1_create_args
 lifecycle	g3_events_after_remove ended
 lifecycle	g3_events_after_remove interrupted
@@ -218,6 +228,7 @@ lifecycle	g6_orphan_timing read
 lifecycle	g6_orphan_timing write
 lifecycle	g6_orphan_timing timescale
 lifecycle	g6_orphan_timing listener_then_draw
+lifecycle	t41_frame_error host exit
 masks	example 1-weight-and-mass-balls
 masks	example 1-weight-and-mass-drop
 masks	example 2-the-12-principles
@@ -233,13 +244,11 @@ masks	example chibi-stickers
 masks	example cloud-pot
 masks	example coin
 masks	example diamond
-masks	example dragon
 masks	example food-app-cooking
 masks	example food-app-delivery
 masks	example food-app-ready
 masks	example food-app-search
 masks	example goblins
-masks	example hero
 masks	example mix-and-match
 masks	example owl
 masks	example powerup
@@ -305,11 +314,10 @@ render	t19_tint_black swap
 render	t19_tint_black hide
 render	t19_tint_black split
 render	t19_tint_black usereffect
+render	t19_tint_black usereffect stale
 render	t19_tint_black nodefine
 render	t19_tint_black definefail
 render	t19_tint_black duplicate
-render	t19_tint_black sharedkey
-render	t19_tint_black sharedkey failed
 render	t19_tint_black alpha
 render	t19_tint_black alpha inject
 render	t18_alpha_zero vertices
@@ -317,7 +325,12 @@ render	t18_alpha_zero solar region
 render	t18_alpha_zero solar mesh
 render	t18_alpha_zero slot-color
 render	t18_alpha_zero mesh-color
+render	t18_alpha_zero mesh-color region
 render	t19_dark_round
+render	t20_dispose_bail visible
+render	t20_dispose_bail unsplit
+render	t20_dispose_bail split-first
+render	t20_dispose_bail split-second
 render	h1_stale_world
 render	bench 5
 skins	s1_api_contract
@@ -492,10 +505,7 @@ yflip	matrix alien 0 sanity: all anims x120 (no physics)
 yflip	matrix chibi-stickers 0 sanity: all anims x120 (no physics)
 yflip	matrix chibi-stickers ik all targets +20,+20 (anim0)
 yflip	matrix coin 0 sanity: all anims x120 (no physics)
-yflip	matrix dragon 0 sanity: all anims x120 (no physics)
 yflip	matrix goblins 0 sanity: all anims x120 (no physics)
-yflip	matrix hero 0 sanity: all anims x120 (no physics)
-yflip	matrix hero ik all targets +20,+20 (anim0)
 yflip	matrix mix-and-match 0 sanity: all anims x120 (no physics)
 yflip	matrix mix-and-match ik all targets +20,+20 (anim0)
 yflip	matrix owl 0 sanity: all anims x120 (no physics)
@@ -807,6 +817,7 @@ sim	s21_tint_black both define
 sim	s21_tint_black both line
 sim	s21_tint_black both sampling
 sim	s21_tint_black both log
+sim	s21_tint_black both guard
 sim	s22_example Physics
 sim	s22_example Physics identity
 sim	s22_example Physics cpath

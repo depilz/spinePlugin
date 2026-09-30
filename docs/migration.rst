@@ -78,7 +78,8 @@ name in ``event.event``.
       skeleton:setAnimation(1, "walk", true)
 
 - **What to change:** test ``event.phase == "event"`` and read the custom event's name from ``event.event``.
-- **CHANGELOG:** `both lines`_, "Breaking: custom animation events have name = "spine" and phase = "event"".
+- **CHANGELOG:** `both lines`_, "Breaking: custom animation events have name = "spine" and phase = "event", and carry the
+  values of the key that fired".
 
 Custom events carry the values of the key that fired
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -106,7 +107,8 @@ The new ``event.time`` is the key's time in milliseconds.
       skeleton:setAnimation(1, "walk", true)
 
 - **What to change:** nothing, unless the code expected every key to report the defaults.
-- **CHANGELOG:** `both lines`_, "Breaking: custom events carry the values of the key that fired".
+- **CHANGELOG:** `both lines`_, "Breaking: custom animation events have name = "spine" and phase = "event", and carry the
+  values of the key that fired".
 
 ``event.target`` is the skeleton
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -216,7 +218,7 @@ until ``clearTracks``. ``updateState`` also advances physics now when no track e
 - **What to change:** update and draw every skeleton that is on screen, or gate the loop on your own flag; a
   skeleton with physics and no animation needs ``updateState`` to simulate.
 - **CHANGELOG:** `both lines`_, "Breaking: skeleton.isActive is true only while a track has a current entry" and
-  "Physics steps without an animation track".
+  "Breaking: physics steps in updateState, and draw only poses".
 
 Physics steps in ``updateState``, and ``draw`` only poses
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -359,7 +361,7 @@ read ``nil`` then.
 
 - **Error:** ``Track entry is no longer valid (finished or disposed); check entry.isValid``.
 - **What to change:** check ``entry.isValid`` before reading an entry you kept.
-- **CHANGELOG:** `both lines`_, "Added entry.isValid".
+- **CHANGELOG:** `both lines`_, "Breaking: a finished track entry raises; added entry.isValid".
 
 Bones and constraints
 ---------------------
@@ -404,7 +406,7 @@ did not reliably stop the constraint.
 
   .. code-block:: lua
 
-      skeleton:getIkConstraint("left-leg").mix = 0
+      skeleton:getIkConstraint("front-leg-ik").mix = 0
 
 - **Error:** ``IK constraint isActive is read-only; set mix = 0 to stop it`` and
   ``Physics constraint isActive is read-only; set mix = 0 to stop it``.
@@ -518,7 +520,8 @@ new object, so ``==`` was ``false`` even for the same slot. Comparing a slot of 
 
 - **Error:** ``Slot belongs to a removed skeleton``.
 - **What to change:** compare slots with ``==`` directly, and not after their skeleton was removed.
-- **CHANGELOG:** `both lines`_, "Breaking: comparing a slot of a removed skeleton raises".
+- **CHANGELOG:** `both lines`_, "Slots compare with ==" and "Breaking: comparing a slot of a removed skeleton
+  raises".
 
 A slot with ``alpha = 0`` draws no geometry
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -618,8 +621,8 @@ keep working in the handler that removed it and in its ``finalize`` listeners; a
   skeleton method you stored.
 - **What to change:** drop the objects you keep when you remove the skeleton, or test ``skeleton.removeSelf``
   first.
-- **CHANGELOG:** `both lines`_, "Removed skeletons are freed on the next frame, and objects you kept raise instead
-  of reading freed memory".
+- **CHANGELOG:** `both lines`_, "Breaking: removed skeletons are freed on the next frame, and objects you kept raise
+  instead of reading freed memory".
 
 New names
 ---------
@@ -656,7 +659,7 @@ not change.
 
 - **Error:** none; old code keeps working.
 - **What to change:** nothing.
-- **CHANGELOG:** `both lines`_, "Added naming aliases" and "Keys that did nothing or raised now work".
+- **CHANGELOG:** `both lines`_, "Added naming aliases, and keys that did nothing or raised now work".
 
 From plugin.spine42 to plugin.spine43
 =====================================
@@ -709,12 +712,12 @@ The same mesh reads twice the value on 4.3. See :doc:`api_reference/attachment/h
 
   .. code-block:: lua
 
-      local attachment = skeleton:findSlot("cape").attachment
+      local attachment = skeleton:findSlot("torso").attachment
       local hullNumbers = attachment.hullLength
 
   on the 4.3 line.
 - **What to change:** drop the ``* 2`` where you turn ``hullLength`` into a count of numbers.
-- **CHANGELOG:** `4.3 line`_.
+- **CHANGELOG:** `4.3 line`_, "attachment.hullLength counts numbers, not vertices".
 
 Volume and balance of custom events in ``.json`` data
 -----------------------------------------------------
@@ -753,4 +756,4 @@ Version strings
       print(spine.version, spine.runtimeVersion)
 
 - **What to change:** update any check that compares these strings.
-- **CHANGELOG:** `both lines`_, "Breaking: added spine.version and spine.runtimeVersion".
+- **CHANGELOG:** `both lines`_, "Added spine.version and spine.runtimeVersion, without the v the load banner prints".

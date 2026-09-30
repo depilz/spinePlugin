@@ -21,6 +21,6 @@ Example:
 
 .. code-block:: lua
 
-   local slot = hero.slots[1]
+   local slot = spineboy.slots[1]
    slot.a = 0.8  -- 80% opacity
    print("Slot alpha:", slot.a)

@@ -1,7 +1,8 @@
 #!/bin/bash
 # guard: tests/guard/runtime_guard.sh (D10) over SPINE_GUARD_RANGE (default origin/main..HEAD); that its counterpart map
 # lists every file tracked under one runtime line only and nothing that is missing; and that it flags exactly the
-# unmatched files of a synthetic history (a directory-level guard would pass its "cross" commit).
+# unmatched files of a synthetic history (a directory-level guard would pass its "cross" commit); and that no two
+# tracked paths differ only in case (they collide on a case-insensitive checkout).
 set -euo pipefail
 W="$(cd "$(dirname "$0")" && pwd)"
 source "$W/../lib.sh"
@@ -64,12 +65,36 @@ lone: runtime/spine-4.2/spine/Log.h, counterpart unchanged: none"
   (( rc == 1 )) && [[ "$(sed 's/^FLAG [0-9a-f]* //' <<<"$actual" | sort)" == "$expected" ]]
 }
 
-# range_check: the guard over RANGE; the id stays "range" whatever SPINE_GUARD_RANGE is, the range goes to the log
+# commit rev: the commit rev names in SPINE_REPO, or "unresolved"
+commit() { git -C "$SPINE_REPO" rev-parse -q --verify "$1^{commit}" || echo unresolved; }
+
+# range_check: the guard over RANGE; the id stays "range" whatever SPINE_GUARD_RANGE is, the range and the commits
+# it resolves to go to the log on stderr (a range base like origin/main differs between clones)
 range_check() {
-  echo "range: $RANGE"
+  local base=${RANGE%%..*} tip=${RANGE##*..}
+  echo "range: $RANGE, base $(commit "${base:-HEAD}"), tip $(commit "${tip:-HEAD}")" >&2
   "$GUARD" --repo "$SPINE_REPO" "$RANGE"
+}
+
+# case_unique: reads paths on stdin and prints each group of paths that differ only in case; fails when there is one
+case_unique() {
+  local dups
+  dups=$(LC_ALL=C sort -f | LC_ALL=C uniq -i -D) || return 2
+  [[ -z "$dups" ]] || { printf 'paths that differ only in case:\n%s\n' "$dups"; return 1; }
+}
+
+case_check() { git -C "$SPINE_REPO" -c core.quotePath=off ls-files | case_unique; }
+
+# case_firing: case_unique fails on a synthetic list with two paths that differ only in case, and names both
+case_firing() {
+  local out
+  out=$(printf 'a/B.rst\na/c.rst\na/b.rst\n' | case_unique) && return 1
+  echo "$out"
+  grep -qx 'a/B.rst' <<<"$out" && grep -qx 'a/b.rst' <<<"$out" && ! grep -q 'a/c.rst' <<<"$out"
 }
 
 run_test "counterparts.tsv lists every one-sided runtime file" check_map
 run_test "selftest flags exactly the unmatched files" selftest
 run_test "range" range_check
+run_test "case-insensitive-unique tracked paths" case_check
+run_test "firing: two paths differing in case fail" case_firing

@@ -17,8 +17,8 @@ Example:
 
 .. code-block:: lua
 
-   hero.fill.effect = "filter.desaturate"
-   print(hero.fill.effect.name)  -- filter.desaturate
+   spineboy.fill.effect = "filter.desaturate"
+   print(spineboy.fill.effect.name)  -- filter.desaturate
 
-   hero.fill.effect.name = "filter.blur"
-   print(hero.fill.effect.name)  -- filter.blur
+   spineboy.fill.effect.name = "filter.blur"
+   print(spineboy.fill.effect.name)  -- filter.blur

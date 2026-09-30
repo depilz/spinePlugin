@@ -20,13 +20,13 @@ Example:
    local lastTime = system.getTimer()
 
    local spine = require("@SPINE_PLUGIN@")
-   local atlas = spine.loadAtlas("assets/characters/hero.atlas")
-   local skeletonData = spine.loadSkeletonData("assets/characters/hero.skel", atlas)
-   local hero = spine.create(skeletonData)
+   local atlas = spine.loadAtlas("assets/characters/spineboy.atlas")
+   local skeletonData = spine.loadSkeletonData("assets/characters/spineboy.skel", atlas)
+   local spineboy = spine.create(skeletonData)
 
-   -- Set the "attack" animation on track 1
-   hero:setAnimation(1, "attack", false)
-   hero.tracks[1].trackEnd = 3000  -- Schedule the animation to end at 3 seconds
+   -- Set the "shoot" animation on track 1
+   spineboy:setAnimation(1, "shoot", false)
+   spineboy.tracks[1].trackEnd = 3000  -- Schedule the animation to end at 3 seconds
 
    -- Update the animation state each frame and monitor animation end
    local function onEnterFrame(event)
@@ -34,14 +34,14 @@ Example:
        local dt = time - lastTime
        lastTime = time
 
-       hero:updateState(dt)
-       hero:draw()
+       spineboy:updateState(dt)
+       spineboy:draw()
 
        -- Check if the animation has reached its end time
-       if hero.tracks[1].trackTime >= hero.tracks[1].trackEnd then
-           print("Spell cast animation has ended.")
+       if spineboy.tracks[1].trackTime >= spineboy.tracks[1].trackEnd then
+           print("Shoot animation has ended.")
            -- Transition to another animation or perform an action
-           hero:setAnimation(1, "idle", true)
+           spineboy:setAnimation(1, "idle", true)
        end
    end
 

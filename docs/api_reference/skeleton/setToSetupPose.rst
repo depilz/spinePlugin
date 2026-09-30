@@ -24,13 +24,13 @@ Example:
 .. code-block:: lua
 
    local spine = require("@SPINE_PLUGIN@")
-   local atlas = spine.loadAtlas("hero.atlas")
-   local skeletonData = spine.loadSkeletonData("hero.skel", atlas)
-   local hero = spine.create(skeletonData)
+   local atlas = spine.loadAtlas("spineboy.atlas")
+   local skeletonData = spine.loadSkeletonData("spineboy.skel", atlas)
+   local spineboy = spine.create(skeletonData)
 
    -- Apply some animations, then later reset to setup pose
-   hero:setAnimation(1, "walk", true)
+   spineboy:setAnimation(1, "walk", true)
 
    -- Revert to the default pose
-   hero:setToSetupPose()
-   hero:draw()
+   spineboy:setToSetupPose()
+   spineboy:draw()

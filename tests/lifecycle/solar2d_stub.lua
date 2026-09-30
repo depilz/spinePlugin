@@ -290,8 +290,8 @@ function S.endFrame()
 end
 -- the engine dispatches "enterFrame" under a protected call (librtt/Rtt_Event.cpp:65-80, LuaContext::DoCall): a
 -- listener error ends that dispatch and is reported, not raised; S.frame() returns the pcall's results and
--- S.frameErrors counts the reports. The report fails the scenario (tests/lifecycle/run.sh) unless the scenario set
--- S.expectFrameErrors = true before it, which reports as "S.frame: enterFrame (expected): " instead.
+-- S.frameErrors counts the reports. The report fails the scenario (tests/lifecycle/run.sh, and the host's exit code)
+-- unless the scenario set S.expectFrameErrors = true before it, which reports as "S.frame: enterFrame (expected): ".
 S.frameErrors = 0
 function S.frame()
   S.endFrame()

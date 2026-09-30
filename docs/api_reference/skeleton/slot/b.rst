@@ -16,6 +16,6 @@ Example:
 
 .. code-block:: lua
 
-   local slot = hero.slots[2]
+   local slot = spineboy.slots[2]
    slot.b = 0.2
    print("Slot blue:", slot.b)

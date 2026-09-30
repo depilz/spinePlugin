@@ -24,4 +24,4 @@ Example:
 .. code-block:: lua
 
    -- Restore default slot attachments
-   hero:setSlotsToSetupPose()
+   spineboy:setSlotsToSetupPose()

@@ -21,11 +21,11 @@ Example
 
 .. code-block:: lua
 
-   local slot = skeleton:findSlot("hand1")
+   local slot = skeleton:findSlot("gun")
    local attachment = slot.attachment
 
    if attachment and attachment.type == "region" then
-       -- Move the hand 5 units along its bone's Y axis
+       -- Move the gun 5 units along its bone's Y axis
        attachment.y = attachment.y + 5
    end
 

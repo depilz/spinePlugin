@@ -5,9 +5,9 @@
 --   pixels: setup; a brightness hit flash and its clear; the app's desaturate + intensity pattern and its clear; the
 --           rgba2 pulse mid-key, at black and back; a page swap on a normal and an additive slot and back; hide and
 --           unhide; split and reassemble.
---   both:   plugin.spine42 and plugin.spine43 loaded in one Lua state, the line's plugin drawing its fixture. Only
---           the first plugin loaded can draw: both register the same metatable names, so the second's objects get
---           the first's methods and crash (pre-existing, out of I9's scope).
+--   both:   the line's plugin loaded, then the other line's refused by the sibling guard (one Spine plugin per app,
+--           D191: two lines in one Lua state are guarded, not supported); the line's plugin draws its fixture.
+-- CHECK guard: requiring the other line's plugin failed with the guard's message naming both plugins.
 -- CHECK define: graphics.defineEffect ran exactly once in the Lua state.
 -- A capture is logged as "CAPTURE name file bgW bgH ox oy": content units, (ox, oy) the skeleton origin relative to
 -- the background's top left; display.save's image of that background is bgW x bgH scaled by the display's pixel scale.
@@ -20,6 +20,7 @@ local STEPS = {
   both = { "line" },
 }
 L.expect("define", "sampling", "log", unpack(STEPS[L.arg]))
+if L.arg == "both" then L.expect("guard") end
 if L.arg == "pixels" then L.expect("discriminates", "nodark") end
 
 local defines = 0
@@ -102,7 +103,11 @@ if L.arg == "pixels" then
   end
 else
   local spine = L.loadPlugin()
-  L.loadPlugin(L.plugin == "plugin.spine42" and "plugin.spine43" or "plugin.spine42")
+  local other = L.plugin == "plugin.spine42" and "plugin.spine43" or "plugin.spine42"
+  local ok, err = pcall(require, other)
+  local want = ("%s cannot load: %s is already loaded in this app. Use only one Spine plugin per app."):format(other,
+    L.plugin)
+  L.check("guard", not ok and tostring(err):find(want, 1, true) ~= nil, "require('" .. other .. "')", ok, tostring(err))
   local g = stage(spine, lineOf(L.plugin))
   jobs[1] = function() capture(g, "line") end
 end

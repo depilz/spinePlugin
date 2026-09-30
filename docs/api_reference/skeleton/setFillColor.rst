@@ -28,4 +28,4 @@ Example:
 
 .. code-block:: lua
 
-   hero:setFillColor(1, 0, 0, 0.5) -- A red tint at 50% opacity
+   spineboy:setFillColor(1, 0, 0, 0.5) -- A red tint at 50% opacity

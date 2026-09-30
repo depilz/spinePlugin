@@ -36,15 +36,18 @@ t14_injection_reentrancy.lua inject
 t14_injection_reentrancy.lua remove
 t16_double_remove.lua
 t20_load_unload.lua goblins json 5 skins
-t20b_load_unload_gc.lua dragon json 5 skins
+t20b_load_unload_gc.lua chibi-stickers json 5 skins
 t21_remove_data_attachments.lua
 t22_cross_skeleton_ik.lua
 t23_split_lifetime.lua removeSelf
 t23_split_lifetime.lua removeSplit
+t23b_split_reentry.lua draw
+t23b_split_reentry.lua split
+t23b_split_reentry.lua reassemble
 t24_close_kitchen_sink.lua
 t25_setlistener_in_callback.lua
 t25b_setlistener_ended.lua
-t26_missing_texture.lua
+t26_missing_texture.lua chibi-partial/chibi-stickers.atlas
 t27_shared_custom_skin.lua
 t28_longjmp_sharedptr.lua create-bad-listener
 t28_longjmp_sharedptr.lua load-missing
@@ -105,6 +108,12 @@ t39_pma_warning.lua print
 t40_write_after_remove.lua removed
 t40_write_after_remove.lua parent
 t40_write_after_remove.lua finalized
+t42_sibling_guard.lua alone
+t42_sibling_guard.lua other
+t42_sibling_guard.lua legacy
+t42_sibling_guard.lua legacy_underscore
+t42_sibling_guard.lua versioned
+t42_sibling_guard.lua reopen
 g1_create_args.lua
 g3_events_after_remove.lua ended
 g3_events_after_remove.lua interrupted

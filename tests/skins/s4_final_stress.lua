@@ -9,7 +9,7 @@ math.randomseed(tonumber(arg and arg[1]) or 7)
 local ASSETS = dofile(debug.getinfo(1, "S").source:sub(2):match("^(.*/)") .. "assets.lua")
 local sets = {
   { fx.loadData(ASSETS.goblins[1], ASSETS.goblins[2]), "walk" },
-  { fx.loadData(ASSETS.dragon[1], ASSETS.dragon[2]), "flying" },
+  { fx.loadData(ASSETS.sequence[1], ASSETS.sequence[2]), ASSETS.sequence.anim },
   { fx.loadData(ASSETS.mix[1], ASSETS.mix[2]), "walk" },
 }
 local keep, nOps, nRaised, nUnexpected = {}, 0, 0, 0

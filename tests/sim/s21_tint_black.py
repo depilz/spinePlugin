@@ -102,7 +102,7 @@ def main(results, stdout):
     captures = {f[1]: (Path(results).parent / f[2], *map(float, f[3:7])) for f in lines if f[0] == "CAPTURE"}
     expected = [f[1] for f in lines if f[0] == "EXPECT"]
     images, spread_worst, discriminates, nodark = {}, (0, ""), (0.0, ""), (0.0, "")
-    for capture in [e for e in expected if e not in ("define", "sampling", "log", "discriminates", "nodark")]:
+    for capture in [e for e in expected if e not in ("define", "sampling", "log", "discriminates", "nodark", "guard")]:
         if capture not in captures or not captures[capture][0].exists():
             check(capture, False, "no capture")
             continue

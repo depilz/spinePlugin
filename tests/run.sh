@@ -16,6 +16,8 @@ XCODE_SDK_EXAMPLE="/Applications/Xcode_26.4.app/Contents/Developer/Platforms/Mac
 # Suites that run on the 4.2 line only: gate (checks the tracked archives, not a line), guard (checks the history
 # of both lines at once) and docs (builds the one docs tree for each plugin line).
 ONLY_42="gate guard docs"
+# Suites that read SPINE_REPO's git history, so they need it to be a git checkout (not a git archive export)
+GIT_SUITES="api gate guard sim"
 # flat_spines, line_spines and spines_check
 source "$TESTS_DIR/host/spines.sh"
 
@@ -45,6 +47,17 @@ set_env_defaults() {
   export SPINE_REPO="${SPINE_REPO:-$(cd "$TESTS_DIR/.." && pwd)}"
   export LUA51_SRC="${LUA51_SRC:-$TESTS_DIR/third_party/lua-5.1.3/src}"
   export CORONA_NATIVE="${CORONA_NATIVE:-$TESTS_DIR/third_party/solar2d}"
+}
+
+# check_checkout suite...: dies when a selected suite needs git and SPINE_REPO is not the top of a git checkout (a
+# worktree's .git is a file, and an export nested in another checkout has a .git above it)
+check_checkout() {
+  local s need="" top
+  for s; do [[ " $GIT_SUITES " == *" $s "* ]] && need="$need $s"; done
+  [[ -n "$need" ]] || return 0
+  top=$(git -C "$SPINE_REPO" rev-parse --show-toplevel 2>/dev/null) &&
+    [[ "$(physical_path "$top")" == "$(physical_path "$SPINE_REPO")" ]] ||
+    die "SPINE_REPO=$SPINE_REPO needs a git checkout for the suites$need (not a git archive export); run from a clone or name only other suites"
 }
 
 # runtime_lines: the SPINE_VERSION_STRING of every runtime/spine-*/spine/Version.h, one per line
@@ -205,6 +218,7 @@ main() {
     lines=$line
   fi
   resolve_sdk
+  check_checkout ${selected[@]+"${selected[@]}"}
   resolve_test_out
   for line in $lines; do
     xfail=$(SPINE_RUNTIME=$line xfail_file)

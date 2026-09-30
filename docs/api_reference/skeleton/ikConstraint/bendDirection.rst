@@ -16,5 +16,5 @@ Example:
 
 .. code-block:: lua
 
-   local legIK = hero.ikConstraints[1]
+   local legIK = spineboy.ikConstraints[1]
    legIK.bendDirection = -1  -- Force the leg to bend the other way

@@ -1,0 +1,25 @@
+sequence.png
+	size: 160, 32
+	filter: Linear, Linear
+seq01
+	bounds: 0, 0, 32, 32
+seq02
+	bounds: 32, 0, 32, 32
+seq03
+	bounds: 64, 0, 32, 32
+seq04
+	bounds: 96, 0, 32, 32
+seq05
+	bounds: 128, 0, 32, 32
+
+sequence_2.png
+	size: 128, 32
+	filter: Linear, Linear
+seq06
+	bounds: 0, 0, 32, 32
+seq07
+	bounds: 32, 0, 32, 32
+seq08
+	bounds: 64, 0, 32, 32
+seq09
+	bounds: 96, 0, 32, 32

@@ -34,5 +34,5 @@ Example:
 .. code-block:: lua
 
    -- The content position of a point 50 units along the hand bone
-   local bone = skeleton:findSlot("hand1").bone
+   local bone = skeleton:findSlot("front-fist").bone
    local x, y = skeleton:localToContent(bone:localToWorld(50, 0))

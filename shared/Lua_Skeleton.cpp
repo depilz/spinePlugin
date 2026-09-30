@@ -9,6 +9,7 @@
 #include "SpineRenderer.h"
 #include <cfloat>
 #include <cmath>
+#include <utility>
 
 static SpineSkeleton *luaL_getSkeletonUserdata(lua_State *L)
 {
@@ -83,7 +84,9 @@ void SpineSkeleton::onEffectUpdated(const char *key, lua_State *L_in, int valueI
 
     for (auto &meshData : meshes)
     {
-        // every user effect change replaces or clears the mesh's effect, so the tint-black state is stale
+        // every user effect change replaces or clears the mesh's effect, so the tint-black state is stale; a key write
+        // through a proxy held across fill.effect = nil lands on tinted meshes, whose tint shader is no user effect
+        bool tinted = meshData.tintOn;
         meshData.resetTint();
         if (meshData.mesh.isValid())
         {
@@ -100,8 +103,15 @@ void SpineSkeleton::onEffectUpdated(const char *key, lua_State *L_in, int valueI
             } 
             else
             {
-                lua_pushstring(L_in, "effect");
-                lua_gettable(L_in, -2); // get the effect table
+                if (tinted)
+                {
+                    lua_pushnil(L_in); // replace the tint-black effect like a missing one
+                }
+                else
+                {
+                    lua_pushstring(L_in, "effect");
+                    lua_gettable(L_in, -2); // get the effect table
+                }
 
                 if (lua_isnil(L_in, -1))
                 {
@@ -1096,8 +1106,10 @@ void SpineSkeleton::removeSplitMeshes(lua_State *L_in)
         lua_settop(L_in, top + 1);
         if (inSplitGroup)
         {
-            engine_removeMesh(L_in, &mesh);
+            // out of the pool before the mesh's removeSelf runs: it is Lua (a caller may override it) and may re-enter
+            LuaTableHolder removed(std::move(mesh));
             meshes.removeMesh(index);
+            engine_removeMesh(L_in, &removed);
         }
     }
     lua_settop(L_in, top);
@@ -1176,7 +1188,7 @@ static int skeletonRenderCall(lua_State *L)
 static int skeletonDraw(lua_State *L)
 {
     SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
-    if (!skeletonUserdata)
+    if (!skeletonUserdata || skeletonUserdata->disposeRequested)
     {
         return 0;
     }
@@ -1824,7 +1836,7 @@ static int clearTrack(lua_State *L)
 static int split(lua_State *L)
 {
     SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
-    if (!skeletonUserdata)
+    if (!skeletonUserdata || skeletonUserdata->disposeRequested)
     {
         return 0;
     }
@@ -1892,7 +1904,7 @@ static int split(lua_State *L)
 static int reassemble(lua_State *L)
 {
     SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
-    if (!skeletonUserdata)
+    if (!skeletonUserdata || skeletonUserdata->disposeRequested)
     {
         return 0;
     }

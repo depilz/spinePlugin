@@ -17,4 +17,4 @@ Example:
 
 .. code-block:: lua
 
-   print(hero.numChildren)  -- nil
+   print(spineboy.numChildren)  -- nil

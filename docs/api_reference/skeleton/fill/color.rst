@@ -21,7 +21,7 @@ Example:
 
 .. code-block:: lua
 
-   local c = hero.fill.color
+   local c = spineboy.fill.color
    print(c.r, c.g, c.b, c.a)  -- 1  1  1  1
 
-   hero.fill.color = { g = 0.5, b = 0.5 }  -- a red tint; r and a keep their value
+   spineboy.fill.color = { g = 0.5, b = 0.5 }  -- a red tint; r and a keep their value

@@ -30,7 +30,7 @@ Example:
 
 .. code-block:: lua
 
-   local fill = hero.fill
+   local fill = spineboy.fill
    fill.color = { r = 1, g = 0.5, b = 0.5 }
    fill.effect = "filter.desaturate"
    print(fill.r, fill.effect.name)  -- 1  filter.desaturate

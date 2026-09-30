@@ -106,7 +106,13 @@ elseif (SPLIT or mode) == "remove_in_group" then
   local s
   s = spine.create(data, logger("A"))
   addGroupListeners(s, logger("F1", function(ev) if ev.phase == "completed" then remove(s) end end))
-  step(s, jump(s))
+  if SPLIT then
+    -- one updateState from 1.248 s to 2.548 s drains the removing completed and the next loop's footstep together,
+    -- so only the listener's removal check keeps that footstep out (a dt over the 1.33 s loop would skip it)
+    jump(s); step(s, 1248); s:updateState(1300)
+  else
+    step(s, jump(s))
+  end
   C.expect(seen():match("A:completed F1:completed F2:completed T:completed$") ~= nil,
     "a removal inside a group listener stopped the rest of its dispatch")
   __stub.frame(); __stub.gcfull()

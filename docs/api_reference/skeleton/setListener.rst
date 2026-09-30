@@ -29,11 +29,11 @@ Example:
 
 .. code-block:: lua
 
-   hero:setListener(function(event)
+   spineboy:setListener(function(event)
        if event.phase == "completed" then
            print("Completed:", event.animation)
        end
    end)
 
    -- Later, remove listener:
-   hero:setListener(nil)
+   spineboy:setListener(nil)

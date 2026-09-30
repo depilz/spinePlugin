@@ -28,7 +28,7 @@ Example:
 
 .. code-block:: lua
 
-   local slotNames = hero:getSlotNames()
+   local slotNames = spineboy:getSlotNames()
    for i, name in ipairs(slotNames) do
        print("Slot name:", name)
    end

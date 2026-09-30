@@ -30,6 +30,6 @@ Example:
 
 .. code-block:: lua
 
-   hero:removeSelf()
-   print(hero.removeSelf)  -- nil: the skeleton is removed
-   display.remove(hero)    -- does nothing on a removed object
+   spineboy:removeSelf()
+   print(spineboy.removeSelf)  -- nil: the skeleton is removed
+   display.remove(spineboy)    -- does nothing on a removed object

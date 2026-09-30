@@ -1,12 +1,26 @@
 -- S6: Corona/tests/Performance.lua workload (150 raptors @0.3) timed in the real Simulator. Mac Simulator, not device.
 -- CHECK meshes: <= 460 real children for the 150 raptors (batched). CHECK alloc: <= 1000 KB of Lua allocation per
 -- frame with the collector stopped.
+-- Argument (optional, words in any order): a plugin require name to load instead of build.settings' (tools/perf loads
+-- plugin.spine for the 1.x baselines, whose unbatched meshes fail CHECK meshes by design), and "sample": at each
+-- "MARK <name>" line (created, warm, end) the scenario then waits for <results dir>/<name>.ack, which tools/perf
+-- writes once it has sampled the Simulator's footprint.
 local L = require("simlib")
 L.watchdogMs = 240000
 L.open("s6_perf")
 L.expect("meshes", "alloc")
 L.log("(Mac Simulator, not device)")
-local spine = L.loadPlugin()
+local plugin, sample
+for w in L.arg:gmatch("%S+") do if w == "sample" then sample = true else plugin = w end end
+local spine = L.loadPlugin(plugin)
+local phase = "warm"
+local ack -- sample mode: the ack file the "hold" phase waits on before it resumes ackPhase
+local ackPhase
+local function mark(name, nextPhase)
+  L.log("MARK", name, ("lua %.0f KB"):format(collectgarbage("count")))
+  phase = nextPhase
+  if sample then ack, ackPhase, phase = L.dir .. "/" .. name .. ".ack", nextPhase, "hold" end
+end
 math.randomseed(1)
 local atlas = spine.loadAtlas("spines/raptor/raptor.atlas")
 local data = spine.loadSkeletonData("spines/raptor/raptor.skel", atlas, 0.3)
@@ -25,6 +39,7 @@ for i = 1, 150 do
   objs[i] = o
 end
 L.log(("create x150: %.1f ms, animation '%s'"):format(system.getTimer() - tc, animations[1]))
+mark("created", "warm")
 local gidx = getmetatable(display.newGroup()).__index
 local function meshCount()
   local n = 0
@@ -35,16 +50,24 @@ local DT = 1000 / 60
 local WARM, MEASURE, GCPROBE = 30, 300, 60
 local frame, work, gcDelta, intervals = 0, {}, {}, {}
 local lastT
-local phase = "warm"
 local function step()
   for i = 1, #objs do local o = objs[i]; o:updateState(DT); o:draw() end
 end
 Runtime:addEventListener("enterFrame", function()
+  if phase == "hold" then
+    local f = io.open(ack)
+    if f then f:close(); phase = ackPhase end
+    return
+  end
+  if phase == "finish" then return L.finish(0) end
   local now = system.getTimer()
   frame = frame + 1
   if phase == "warm" then
     step()
-    if frame >= WARM then phase = "measure"; frame = 0; L.log("meshes (real Solar2D children) after warm-up:", meshCount()) end
+    if frame >= WARM then
+      frame = 0; L.log("meshes (real Solar2D children) after warm-up:", meshCount())
+      mark("warm", "measure")
+    end
   elseif phase == "measure" then
     if lastT then intervals[#intervals + 1] = now - lastT end
     lastT = now
@@ -82,7 +105,7 @@ Runtime:addEventListener("enterFrame", function()
       L.log("meshes at end:", meshes)
       L.check("meshes", meshes <= 460, meshes)
       L.check("alloc", alloc <= 1000, ("%.1f KB"):format(alloc))
-      L.finish(0)
+      mark("end", "finish")
     end
   end
 end)

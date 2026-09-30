@@ -1,5 +1,6 @@
 #!/bin/sh
 # usage: android/build.sh [4.2|4.3]  (the Spine line, default 4.2: libplugin.spine42 or libplugin.spine43)
+# ANDROID_NDK in the environment overrides the per-host default NDK path below.
 
 # This option is used to exit the script as
 # soon as a command returns a non-zero value.
@@ -16,18 +17,18 @@ BUILD_TYPE=clean
 # // windows mac and linux
 if [ $OS == Windows_NT ]
 then
-	ANDROID_NDK="D:/android-ndk-r29c"
+	ANDROID_NDK="${ANDROID_NDK:-D:/android-ndk-r29c}"
 	LIBS_SRC_DIR="$CORONA_ROOT/Corona/android/lib/gradle/Corona.aar"
 	CMD="cmd //c "
 
 elif [ "$(uname)" == "Linux" ]
 then
-    ANDROID_NDK="/Applications/android-ndk-r29c"
+    ANDROID_NDK="${ANDROID_NDK:-/Applications/android-ndk-r29c}"
     LIBS_SRC_DIR="$HOME/Library/Application Support/Corona/Native/Corona/android/lib/gradle/Corona.aar"
     CMD=
 
 else
-	ANDROID_NDK="/Applications/android-ndk-r29c.app/Contents/NDK"
+	ANDROID_NDK="${ANDROID_NDK:-/Applications/android-ndk-r29c.app/Contents/NDK}"
 	LIBS_SRC_DIR="$HOME/Library/Application Support/Corona/Native/Corona/android/lib/gradle/Corona.aar"
 	CMD=
 
@@ -131,5 +132,7 @@ OUTPUT_DIR=$BUILD_DIR
 # Do not include a duplicate top-level libplugin.$TARGET_NAME.so to avoid
 # triggering ELF alignment checks for 32-bit copies.
 cp "$path/metadata-$SPINE_LINE.lua" "$BUILD_DIR/metadata.lua"
-tar -czvf $OUTPUT_DIR/data.tgz -C $BUILD_DIR metadata.lua jniLibs
+# Every entry's mtime is the committer time of the last commit outside plugin/, so the archive is reproducible
+MTIME=$(git -C "$path/.." log -1 --format=%ct HEAD -- . ':(exclude)plugin')
+"$path/../tools/release/pack.sh" --mtime "$MTIME" "$BUILD_DIR" "$OUTPUT_DIR/data.tgz" metadata.lua jniLibs
 echo $OUTPUT_DIR/data.tgz

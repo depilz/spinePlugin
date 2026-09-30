@@ -34,7 +34,7 @@ Example:
        local dt = now - lastTime
        lastTime = now
 
-       hero:updateState(dt)
-       hero:draw()  -- Render changes
+       spineboy:updateState(dt)
+       spineboy:draw()  -- Render changes
    end
    Runtime:addEventListener("enterFrame", onEnterFrame)

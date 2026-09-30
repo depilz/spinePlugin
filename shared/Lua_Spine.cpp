@@ -6,6 +6,7 @@
 #include "SpineTexture.h"
 #include "LuaTableHolder.h"
 #include "CoronaLibrary.h"
+#include <cstring>
 
 template class DataHolder<Atlas>;
 
@@ -300,7 +301,58 @@ SpineExtension *spine::getDefaultExtension()
     return new Solar2dExtension();
 }
 
+// The line's module name, "plugin.spine42" / "plugin.spine43"
+#define SPC_STR2(x) #x
+#define SPC_STR(x) SPC_STR2(x)
+static const char *const kPluginName = "plugin.spine" SPC_STR(SPINE_MAJOR_VERSION) SPC_STR(SPINE_MINOR_VERSION);
+
+// Registry key naming the Spine line opened in this Lua state. Per lua_State, not a static: a Simulator relaunch
+// starts a new state with no line.
+static const char *const kLineRegistryKey = "plugin_spine_line";
+
+// The package.loaded keys a legacy plugin.spine 1.x sits under: Solar2D's require stores a plugin under its
+// underscored name, a plain Lua require under the dotted one.
+static const char *const kLegacyLoadedKeys[] = {"plugin_spine", "plugin.spine"};
+
+// One Spine plugin per app (D191): raises when a sibling Spine plugin is already loaded in this Lua state, the other
+// line (the registry key) or a legacy plugin.spine 1.x (a loaded module table without version and runtimeVersion;
+// require's sentinel while a loader runs is no table). Re-opening the same line passes. Runs before any side effect.
+// A legacy plugin.spine opened after a line cannot be caught: its binary does not check.
+static void guardSiblingPlugins(lua_State *L)
+{
+    lua_getfield(L, LUA_REGISTRYINDEX, kLineRegistryKey);
+    const char *line = lua_tostring(L, -1);
+    if (line && strcmp(line, kPluginName) == 0) { lua_pop(L, 1); return; }
+    const char *sibling = line;
+    if (!sibling)
+    {
+        lua_getfield(L, LUA_REGISTRYINDEX, "_LOADED");
+        for (const char *key : kLegacyLoadedKeys)
+        {
+            if (sibling || !lua_istable(L, -1)) break; // found, or no _LOADED table
+            lua_getfield(L, -1, key);
+            if (lua_istable(L, -1))
+            {
+                lua_getfield(L, -1, "version");
+                lua_getfield(L, -2, "runtimeVersion");
+                if (lua_isnil(L, -1) && lua_isnil(L, -2)) sibling = "plugin.spine";
+                lua_pop(L, 2);
+            }
+            lua_pop(L, 1);
+        }
+        lua_pop(L, 1);
+    }
+    if (sibling)
+        luaL_error(L, "%s cannot load: %s is already loaded in this app. Use only one Spine plugin per app.", kPluginName,
+                   sibling);
+    lua_pop(L, 1);
+    lua_pushstring(L, kPluginName);
+    lua_setfield(L, LUA_REGISTRYINDEX, kLineRegistryKey);
+}
+
 CORONA_EXPORT int SPINE_PLUGIN_LUAOPEN(lua_State *L) {
+
+    guardSiblingPlugins(L);
 
     Bone::setYDown(true); // Solar2D is y-down; the 4.3 runtime's default already is
 

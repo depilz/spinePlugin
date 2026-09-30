@@ -91,7 +91,8 @@ static inline void setTintBlackParams(lua_State *L, uint32_t rgb)
 
 // Brings the mesh's tint-black effect (mesh on top of the stack) in line with its command's dark colour (AARRGGBB).
 // The mesh carries the effect iff dark rgb != black, the effect is defined and the skeleton has no user effect (the
-// user effect wins; onEffectUpdated forgets every mesh's tint when it replaces the effects, so tint never clears one).
+// user effect wins; onEffectUpdated forgets every mesh's tint when it replaces the effects, so tint never clears one,
+// and replaces the tint-black effect of tinted meshes on a key write).
 // The effect is assigned only on transitions (every assignment makes a new Shader) and its params only on change.
 // paintReplaced: set_texture gave the mesh a new Paint this draw, which dropped the effect.
 static inline void updateTintBlack(lua_State *L, MeshData &meshData, uint32_t dark, bool userEffect, bool paintReplaced)
@@ -100,7 +101,8 @@ static inline void updateTintBlack(lua_State *L, MeshData &meshData, uint32_t da
         meshData.resetTint();
 
     uint32_t rgb = dark & 0x00ffffff;
-    if (rgb == 0 || userEffect || !tintBlackDefined(L))
+    // tintOn implies defined (the registry result is sticky), so a tinted mesh skips the registry lookup
+    if (rgb == 0 || userEffect || (!meshData.tintOn && !tintBlackDefined(L)))
     {
         if (meshData.tintOn)
         {

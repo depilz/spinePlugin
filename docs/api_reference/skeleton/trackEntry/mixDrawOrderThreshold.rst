@@ -22,16 +22,16 @@ Example:
    local lastTime = system.getTimer()
 
    local spine = require("@SPINE_PLUGIN@")
-   local atlas = spine.loadAtlas("assets/characters/hero.atlas")
-   local skeletonData = spine.loadSkeletonData("assets/characters/hero.skel", atlas)
-   local hero = spine.create(skeletonData)
+   local atlas = spine.loadAtlas("assets/characters/spineboy.atlas")
+   local skeletonData = spine.loadSkeletonData("assets/characters/spineboy.skel", atlas)
+   local spineboy = spine.create(skeletonData)
 
-   -- Set the "attack" animation on track 1 with a mix draw order threshold of 0.15
-   hero:setAnimation(1, "attack", false)
-   hero.tracks[1].mixDrawOrderThreshold = 0.15
+   -- Set the "shoot" animation on track 1 with a mix draw order threshold of 0.15
+   spineboy:setAnimation(1, "shoot", false)
+   spineboy.tracks[1].mixDrawOrderThreshold = 0.15
 
    -- Transition to the "idle" animation with controlled draw order mixing
-   hero:addAnimation(1, "idle", true, 400)
+   spineboy:addAnimation(1, "idle", true, 400)
 
    -- Update the animation state each frame
    local function onEnterFrame(event)
@@ -39,8 +39,8 @@ Example:
        local dt = time - lastTime
        lastTime = time
 
-       hero:updateState(dt)
-       hero:draw()
+       spineboy:updateState(dt)
+       spineboy:draw()
    end
 
    Runtime:addEventListener("enterFrame", onEnterFrame)

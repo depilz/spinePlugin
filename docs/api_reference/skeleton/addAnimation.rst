@@ -47,5 +47,5 @@ Example:
 .. code-block:: lua
 
    -- Start "walk" now, queue "run" afterward, delayed by 200ms
-   hero:setAnimation(1, "walk", true)
-   hero:addAnimation(1, "run", true, 200)
+   spineboy:setAnimation(1, "walk", true)
+   spineboy:addAnimation(1, "run", true, 200)

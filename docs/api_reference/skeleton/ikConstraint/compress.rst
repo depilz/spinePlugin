@@ -16,5 +16,5 @@ Example:
 
 .. code-block:: lua
 
-   local ik = hero.ikConstraints[3]
+   local ik = spineboy.ikConstraints[3]
    ik.compress = true

@@ -186,6 +186,9 @@
 		9261E9892CF401300044A3E3 /* LuaAnimationStateListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 9261E97A2CF401300044A3E3 /* LuaAnimationStateListener.h */; };
 		9261E98A2CF401300044A3E3 /* SpineRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9261E9822CF401300044A3E3 /* SpineRenderer.h */; };
 		9261E98B2CF401300044A3E3 /* SpineTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 9261E9842CF401300044A3E3 /* SpineTexture.h */; };
+		4D642B67C184A68D3B50D0AA /* SkeletonLife.h in Headers */ = {isa = PBXBuildFile; fileRef = EC8A7CCBE578709643268156 /* SkeletonLife.h */; };
+		6CD59C7E5B69BAF866DBD93B /* SpineCompat.h in Headers */ = {isa = PBXBuildFile; fileRef = F451AA9274FF61FB647C838C /* SpineCompat.h */; };
+		F58B0E2E1E30C934289EF3BB /* SpineTintBlack.h in Headers */ = {isa = PBXBuildFile; fileRef = AE794E8189211D17B64E0A65 /* SpineTintBlack.h */; };
 		9261E98C2CF401300044A3E3 /* LuaTableHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = 9261E97B2CF401300044A3E3 /* LuaTableHolder.h */; };
 		9261E98D2CF401300044A3E3 /* SkeletonDataHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = 9261E9802CF401300044A3E3 /* SkeletonDataHolder.h */; };
 		9261E98F2CF401300044A3E3 /* Lua_Spine.h in Headers */ = {isa = PBXBuildFile; fileRef = 9261E9782CF401300044A3E3 /* Lua_Spine.h */; };
@@ -412,6 +415,9 @@
 		9261E9822CF401300044A3E3 /* SpineRenderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpineRenderer.h; sourceTree = "<group>"; };
 		9261E9832CF401300044A3E3 /* SpineRenderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SpineRenderer.cpp; sourceTree = "<group>"; };
 		9261E9842CF401300044A3E3 /* SpineTexture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpineTexture.h; sourceTree = "<group>"; };
+		EC8A7CCBE578709643268156 /* SkeletonLife.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SkeletonLife.h; sourceTree = "<group>"; };
+		F451AA9274FF61FB647C838C /* SpineCompat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpineCompat.h; sourceTree = "<group>"; };
+		AE794E8189211D17B64E0A65 /* SpineTintBlack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpineTintBlack.h; sourceTree = "<group>"; };
 		9261E9852CF401300044A3E3 /* SpineTexture.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SpineTexture.cpp; sourceTree = "<group>"; };
 		92863A742D3F28B100A7CED9 /* SplitData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SplitData.h; sourceTree = "<group>"; };
 		92EAEFC52D146BAB005CF5C6 /* Lua_Physics.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Lua_Physics.h; sourceTree = "<group>"; };
@@ -621,6 +627,9 @@
 				9261E9822CF401300044A3E3 /* SpineRenderer.h */,
 				9261E9832CF401300044A3E3 /* SpineRenderer.cpp */,
 				9261E9842CF401300044A3E3 /* SpineTexture.h */,
+				EC8A7CCBE578709643268156 /* SkeletonLife.h */,
+				F451AA9274FF61FB647C838C /* SpineCompat.h */,
+				AE794E8189211D17B64E0A65 /* SpineTintBlack.h */,
 				9261E9852CF401300044A3E3 /* SpineTexture.cpp */,
 				924F5FAAD2CF7CC2900B83E0F /* Lua_Attachment.h */,
 				924F5FAC2CF7CC2900B83E0F /* Lua_Attachment.cpp */,
@@ -703,6 +712,9 @@
 				9261E9892CF401300044A3E3 /* LuaAnimationStateListener.h in Headers */,
 				9261E98A2CF401300044A3E3 /* SpineRenderer.h in Headers */,
 				9261E98B2CF401300044A3E3 /* SpineTexture.h in Headers */,
+				4D642B67C184A68D3B50D0AA /* SkeletonLife.h in Headers */,
+				6CD59C7E5B69BAF866DBD93B /* SpineCompat.h in Headers */,
+				F58B0E2E1E30C934289EF3BB /* SpineTintBlack.h in Headers */,
 				9261E98C2CF401300044A3E3 /* LuaTableHolder.h in Headers */,
 				9261E98D2CF401300044A3E3 /* SkeletonDataHolder.h in Headers */,
 				9261E98F2CF401300044A3E3 /* Lua_Spine.h in Headers */,
@@ -1050,6 +1062,11 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				OTHER_CFLAGS = (
+					"-ffile-prefix-map=$(SRCROOT:dir)=",
+					"-ffile-compilation-dir=.",
+					"\"-ffile-prefix-map=$(CORONA_ROOT)=CoronaNative\"",
+				);
 				SDKROOT = macosx;
 			};
 			name = Release;

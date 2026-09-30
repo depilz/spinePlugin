@@ -21,16 +21,16 @@ Example:
    local lastTime = system.getTimer()
 
    local spine = require("@SPINE_PLUGIN@")
-   local atlas = spine.loadAtlas("assets/characters/hero.atlas")
-   local skeletonData = spine.loadSkeletonData("assets/characters/hero.skel", atlas)
-   local hero = spine.create(skeletonData)
+   local atlas = spine.loadAtlas("assets/characters/spineboy.atlas")
+   local skeletonData = spine.loadSkeletonData("assets/characters/spineboy.skel", atlas)
+   local spineboy = spine.create(skeletonData)
 
    -- Set the "idle" animation on track 1 with a 50% mix
-   hero:setAnimation(1, "idle", true)
-   hero.tracks[1].alpha = 0.5
+   spineboy:setAnimation(1, "idle", true)
+   spineboy.tracks[1].alpha = 0.5
 
    -- Transition to the "walk" animation with a 75% mix
-   hero:addAnimation(1, "walk", true, 1000)
+   spineboy:addAnimation(1, "walk", true, 1000)
 
    -- Update the animation state each frame
    local function onEnterFrame(event)
@@ -38,8 +38,8 @@ Example:
        local dt = time - lastTime
        lastTime = time
 
-       hero:updateState(dt)
-       hero:draw()
+       spineboy:updateState(dt)
+       spineboy:draw()
    end
 
    Runtime:addEventListener("enterFrame", onEnterFrame)

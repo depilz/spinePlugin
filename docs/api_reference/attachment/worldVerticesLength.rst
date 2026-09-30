@@ -17,7 +17,7 @@ Example
 
 .. code-block:: lua
 
-   local slot = skeleton:findSlot("body")
+   local slot = skeleton:findSlot("front-shin")
    local attachment = slot.attachment
 
    if attachment and attachment.type == "mesh" then
@@ -36,7 +36,7 @@ Example
 
 .. code-block:: lua
 
-   local meshSlot = skeleton:findSlot("cape")
+   local meshSlot = skeleton:findSlot("torso")
    local mesh = meshSlot.attachment
    if mesh and mesh.type == "mesh" then
        -- Know how many coordinates to expect

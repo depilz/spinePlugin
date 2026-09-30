@@ -10,16 +10,27 @@ local mock, spine, fx = C.mock, C.spine, C.fx
 
 local function exists(p) local f = io.open(p, "rb"); if f then f:close(); return true end return false end
 local cache = {}
+-- C.data(name, scale): the skeleton data of <name>/<file>.skel (else .json) with <name>/<file>.atlas, where <file> is
+-- the last path component of name (an example name, or a rig directory path such as C.SEQUENCE's)
 function C.data(name, scale)
   local key = name .. "@" .. (scale or 1)
   if cache[key] then return cache[key] end
-  local atlasPath, skelPath = ("%s/%s.atlas"):format(name, name), ("%s/%s.skel"):format(name, name)
-  if not exists(skelPath) then skelPath = ("%s/%s.json"):format(name, name) end
+  local base = ("%s/%s"):format(name, name:match("[^/]+$"))
+  local atlasPath, skelPath = base .. ".atlas", base .. ".skel"
+  if not exists(skelPath) then skelPath = base .. ".json" end
   local atlas = spine.loadAtlas(atlasPath)
   local d = spine.loadSkeletonData(skelPath, atlas, scale or 1)
   cache[key] = d
   return d
 end
+
+-- the line's sequence rig as a rig-list entry { name, exts = its exports }: 4.2 has no Esoteric sequence rig, so the
+-- generated fixture (JSON only), loaded by its directory path; 4.3 the diamond example
+C.SEQUENCE = ({
+  ["4.2"] = { W .. "/../lifecycle/assets/4.2/sequence", exts = { "json" } },
+  ["4.3"] = { "diamond", exts = { "skel", "json" } },
+})[os.getenv("SPINE_RUNTIME")]
+assert(C.SEQUENCE, "no sequence rig for SPINE_RUNTIME " .. tostring(os.getenv("SPINE_RUNTIME")))
 
 local function append(a, b) for _, e in ipairs(b) do a[#a + 1] = e end end
 

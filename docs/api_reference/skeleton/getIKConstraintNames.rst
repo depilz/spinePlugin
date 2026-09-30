@@ -24,7 +24,7 @@ Example:
 
 .. code-block:: lua
 
-   local ikNames = hero:getIkConstraintNames()
+   local ikNames = spineboy:getIkConstraintNames()
    for i, name in ipairs(ikNames) do
        print("IK Constraint name:", name)
    end

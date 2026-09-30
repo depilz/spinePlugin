@@ -32,4 +32,4 @@ Example:
 
 .. code-block:: lua
 
-   print("Track #1 animation:", hero:getCurrentAnimation(1))
+   print("Track #1 animation:", spineboy:getCurrentAnimation(1))

@@ -32,7 +32,7 @@ Example:
 
 .. code-block:: lua
 
-   local canDance = hero:findAnimation("dance")
+   local canDance = spineboy:findAnimation("dance")
    if canDance then
-       hero:setAnimation(1, "dance", true)
+       spineboy:setAnimation(1, "dance", true)
    end

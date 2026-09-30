@@ -18,12 +18,12 @@ Example:
 .. code-block:: lua
 
    local spine = require("@SPINE_PLUGIN@")
-   local atlas = spine.loadAtlas("assets/characters/hero.atlas")
-   local skeletonData = spine.loadSkeletonData("assets/characters/hero.skel", atlas)
-   local hero = spine.create(skeletonData)
+   local atlas = spine.loadAtlas("assets/characters/spineboy.atlas")
+   local skeletonData = spine.loadSkeletonData("assets/characters/spineboy.skel", atlas)
+   local spineboy = spine.create(skeletonData)
 
-   -- Set the "attack" animation on track 1 to play once
-   hero:setAnimation(1, "attack", false)
+   -- Set the "shoot" animation on track 1 to play once
+   spineboy:setAnimation(1, "shoot", false)
 
    -- Update the animation state and check completion
    local lastTime = system.getTimer()
@@ -32,13 +32,13 @@ Example:
        local dt = time - lastTime
        lastTime = time
 
-       hero:updateState(dt)
-       hero:draw()
+       spineboy:updateState(dt)
+       spineboy:draw()
 
-       if hero.tracks[1].isComplete then
-           print("Attack animation has finished.")
+       if spineboy.tracks[1].isComplete then
+           print("Shoot animation has finished.")
            -- Transition to another animation or perform an action
-           hero:setAnimation(1, "idle", true)
+           spineboy:setAnimation(1, "idle", true)
        end
    end
 

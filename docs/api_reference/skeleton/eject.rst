@@ -27,7 +27,7 @@ Example:
    local myHatObject = display.newRect(0, 0, 40, 20)
 
    -- Inject an object
-   hero:inject(myHatObject, "head")
+   spineboy:inject(myHatObject, "head")
 
    -- Later, remove that object
-   hero:eject(myHatObject)
+   spineboy:eject(myHatObject)

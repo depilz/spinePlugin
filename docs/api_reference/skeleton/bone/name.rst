@@ -15,5 +15,5 @@ Example:
 
 .. code-block:: lua
 
-   local bone = hero.bones[1]
+   local bone = spineboy.bones[1]
    print("Bone name:", bone.name)

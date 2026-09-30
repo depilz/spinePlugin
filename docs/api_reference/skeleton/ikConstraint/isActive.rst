@@ -30,7 +30,7 @@ Example:
 
 .. code-block:: lua
 
-   local ik = hero.ikConstraints[1]
+   local ik = spineboy.ikConstraints[1]
    print("IK active:", ik.isActive)
 
    ik.mix = 0  -- Stop the IK

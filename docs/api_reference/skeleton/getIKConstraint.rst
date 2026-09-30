@@ -34,9 +34,9 @@ Example:
 
 .. code-block:: lua
 
-   local lookIK = hero:getIkConstraint("look-constraint")
-   print("Found IK constraint:", lookIK.name)
+   local legIK = spineboy:getIkConstraint("front-leg-ik")
+   print("Found IK constraint:", legIK.name)
 
    -- An unknown name raises: check the names first, or catch the error
-   local ok = pcall(hero.getIkConstraint, hero, "armIK")
+   local ok = pcall(spineboy.getIkConstraint, spineboy, "armIK")
    print("armIK exists:", ok)

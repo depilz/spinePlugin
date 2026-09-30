@@ -12,7 +12,7 @@ local function mk(filter)
 end
 local function run(s, ms) for i = 1, ms / 10 do s:updateState(10); clock = clock + 10 end end
 
-print("A) docs: 'hero:addAnimation(1, \"run\", true, 200) -- queue run afterward, delayed by 200ms' (walk is 1067ms)")
+print("A) docs: 'spineboy:addAnimation(1, \"run\", true, 200) -- queue run afterward, delayed by 200ms' (walk is 1067ms)")
 local s = mk({began = true})
 s:setAnimation(1, "walk", true)
 s:addAnimation(1, "run", true, 200)

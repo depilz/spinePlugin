@@ -1,17 +1,24 @@
 -- T12: the 4.2.120 behaviour changes the plugin ships (CHANGELOG, plugin.spine42), one mode each; the same on 4.3.
--- t12_c34.lua gravity|queued|paused|dragon
+-- t12_c34.lua gravity|queued|paused|sequence
 --   gravity  translation physics gravity pulls a bone down on screen (Bone::setYDown, upstream eca4b9e4c)
 --   queued   an entry queued behind a zero-length one starts at its delay; entry.delay is never negative (ec3231f86)
 --   paused   with timeScale 0, a zero-mix setAnimation ends the old entry at once (23233222f)
---   dragon   a sequence slot shows its setup frame (-1) while its animation mixes out and after (90f6bfe49)
+--   sequence a sequence slot shows its setup frame (-1) while its animation mixes out and after (90f6bfe49)
 local spine = require("plugin.spine")
 local C = dofile(arg[0]:match("^(.*)/") .. "/../check.lua")
 local mode = arg[1]
 
--- load(name) -> the skeleton data of <name>/<name>.json with its atlas
-local function load(name)
-  return spine.loadSkeletonData(name .. "/" .. name .. ".json", spine.loadAtlas(name .. "/" .. name .. ".atlas"))
-end
+-- loadBase(base) -> the skeleton data of <base>.json with <base>.atlas; load(name) -> the example <name>/<name>
+local function loadBase(base) return spine.loadSkeletonData(base .. ".json", spine.loadAtlas(base .. ".atlas")) end
+local function load(name) return loadBase(name .. "/" .. name) end
+
+-- each line's sequence rig: the slot whose sequence the animation keys, and the 70 ms loop steps that leave it on a
+-- frame other than the setup one when the mix-out starts. 4.2 has no Esoteric sequence rig: the generated fixture.
+local SEQUENCE_RIGS = {
+  ["4.2"] = {base = arg[0]:match("^(.*)/") .. "/../lifecycle/assets/4.2/sequence/sequence", slot = "seq",
+    animation = "flip", steps = 12},
+  ["4.3"] = {base = "diamond/diamond", slot = "top-shine", animation = "idle-still", steps = 40},
+}
 
 if mode == "gravity" then
   -- rain-blue: x/y physics, strength 0, gravity 70; the empty track keeps updateState stepping the skeleton clock
@@ -56,26 +63,26 @@ elseif mode == "paused" then
   run(30)
   C.expect(phases.ended ~= nil, "walk 'ended' did not fire while paused after the zero-mix setAnimation")
   C.expect(phases.disposed ~= nil, "walk 'disposed' did not fire while paused after the zero-mix setAnimation")
-elseif mode == "dragon" then
-  -- flying keys the left-wing slot's sequence; the 4.3 line reads its sequence-timeline export (dragon-ess) here
-  local s = spine.create(load("dragon"))
+elseif mode == "sequence" then
+  local rig = assert(SEQUENCE_RIGS[os.getenv("SPINE_RUNTIME")], "no sequence rig for SPINE_RUNTIME")
+  local s = spine.create(loadBase(rig.base))
   local function steps(ms, n, label)
     local seen = {}
-    for i = 1, n do s:updateState(ms); seen[i] = __native.sequenceIndex(s, "left-wing") end
+    for i = 1, n do s:updateState(ms); seen[i] = __native.sequenceIndex(s, rig.slot) end
     print(label, table.concat(seen, ","))
     return seen
   end
   local function all(seen, v) for _, x in ipairs(seen) do if x ~= v then return false end end return true end
-  s:setAnimation(1, "flying", true)
-  local loop = steps(70, 12, "flying loop, 70 ms steps        ")
+  s:setAnimation(1, rig.animation, true)
+  local loop = steps(70, rig.steps, rig.animation .. " loop, 70 ms steps")
   s:setEmptyAnimation(1, 500)
   local mixOut = steps(50, 12, "setEmptyAnimation(1, 500), 50 ms")
   local after = steps(50, 6, "after the mix-out, 50 ms        ")
-  C.expect(not all(loop, -1), "the flying loop never sets a sequence frame on left-wing")
-  C.expect(all(mixOut, -1), "left-wing does not show the setup frame (-1) through the mix-out")
-  C.expect(all(after, -1), "left-wing does not stay on the setup frame (-1) after the mix-out")
+  C.expect(loop[#loop] ~= -1, ("the %s loop leaves %s on the setup frame when the mix-out starts"):format(rig.animation, rig.slot))
+  C.expect(all(mixOut, -1), rig.slot .. " does not show the setup frame (-1) through the mix-out")
+  C.expect(all(after, -1), rig.slot .. " does not stay on the setup frame (-1) after the mix-out")
 else
-  error("usage: t12_c34.lua gravity|queued|paused|dragon")
+  error("usage: t12_c34.lua gravity|queued|paused|sequence")
 end
 print("done")
 C.done()

@@ -26,20 +26,20 @@ Example:
    local lastTime = system.getTimer()
 
    local spine = require("@SPINE_PLUGIN@")
-   local atlas = spine.loadAtlas("hero.atlas")
-   local skeletonData = spine.loadSkeletonData("hero.skel", atlas)
-   local hero = spine.create(skeletonData)
+   local atlas = spine.loadAtlas("spineboy.atlas")
+   local skeletonData = spine.loadSkeletonData("spineboy.skel", atlas)
+   local spineboy = spine.create(skeletonData)
 
    -- Set the skeleton to half-speed
-   hero.timeScale = 0.5
+   spineboy.timeScale = 0.5
 
    local function onEnterFrame(event)
        local now = system.getTimer()
        local dt = now - lastTime
        lastTime = now
 
-       hero:updateState(dt)
-       hero:draw()
+       spineboy:updateState(dt)
+       spineboy:draw()
    end
 
    Runtime:addEventListener("enterFrame", onEnterFrame)

@@ -16,8 +16,8 @@ local SPLIT = arg[1] == "split" or os.getenv("PB_SPLIT") == "1"
 local MAXA = tonumber(os.getenv("PB_MAXA") or "4")
 local ONLY = os.getenv("PB_ONLY")
 
-local skels = { { "alien" }, { "celestial-circus" }, { "chibi-stickers", "erikari" }, { "cloud-pot" }, { "coin" }, { "dragon" },
-  { "goblins", "goblin" }, { "hero", "weapon/sword" }, { "mix-and-match", "full-skins/girl" }, { "owl" }, { "powerup" },
+local skels = { { "alien" }, { "celestial-circus" }, { "chibi-stickers", "erikari" }, { "cloud-pot" }, { "coin" }, C.SEQUENCE,
+  { "goblins", "goblin" }, { "mix-and-match", "full-skins/girl" }, { "owl" }, { "powerup" },
   { "raptor" }, { "sack" }, { "snowglobe" }, { "speedy" }, { "spineboy" }, { "stretchyman" }, { "tank" }, { "vine" }, { "windmill" } }
 
 local T = { checks = 0, P = 0, R = 0, Q = 0, G = 0, F = 0, X = 0, placements = 0, hidden = 0 }

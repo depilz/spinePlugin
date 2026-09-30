@@ -123,7 +123,11 @@ local n = 0
 Runtime:addEventListener("enterFrame", function()
   n = n + 1
   if pending and not meshes then remove() end
-  if obj.updateState then obj:updateState(1000 / 60); if obj.draw then obj:draw() end end
+  -- remove_group_split: one updateState from 1.25 s to 2.55 s drains the removing completed and the next loop's
+  -- footstep together, so only the listener's removal check keeps that footstep out (a dt over the 1.33 s loop
+  -- would skip it)
+  local dt = (SPLIT == "remove_group" and n == 76) and 1300 or 1000 / 60
+  if obj.updateState then obj:updateState(dt); if obj.draw then obj:draw() end end
   if ctl then ctl:updateState(1000 / 60); ctl:draw() end
   if n == (SPLIT and 180 or 120) then finish() end
 end)

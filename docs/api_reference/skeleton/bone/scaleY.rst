@@ -16,5 +16,5 @@ Example:
 
 .. code-block:: lua
 
-   local bone = hero.bones[5]
+   local bone = spineboy.bones[5]
    bone.scaleY = 0.5  -- half height

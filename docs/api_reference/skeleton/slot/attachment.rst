@@ -63,7 +63,7 @@ Example:
 
 .. code-block:: lua
 
-   local slot = hero:getSlot("weapon-sword")
+   local slot = spineboy:getSlot("gun")
    local attachment = slot.attachment
 
    if attachment then
@@ -77,13 +77,13 @@ Example:
 
 .. code-block:: lua
 
-   local slot = hero:getSlot("weapon-sword")
+   local slot = spineboy:getSlot("gun")
 
    -- Clear it
    slot.attachment = nil
 
    -- Set it again from the current/default skin
-   slot.attachment = "sword"
+   slot.attachment = "gun"
 
 **Setting by Object:**
 
@@ -91,10 +91,10 @@ Example:
 
    -- Get an attachment from a specific skin
    local skin = skeleton:findSkin("default")
-   local attachment = skin:getAttachment("weapon-sword", "sword")
+   local attachment = skin:getAttachment("gun", "gun")
 
    -- Set it directly
-   skeleton:findSlot("weapon-sword").attachment = attachment
+   skeleton:findSlot("gun").attachment = attachment
 
 **Using with Different Skins:**
 

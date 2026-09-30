@@ -26,5 +26,5 @@ Example:
 
 .. code-block:: lua
 
-   local ik = hero.ikConstraints[2]
+   local ik = spineboy.ikConstraints[2]
    ik.mix = 0.5  -- Half IK influence

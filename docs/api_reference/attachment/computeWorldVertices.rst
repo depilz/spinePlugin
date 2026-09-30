@@ -42,7 +42,7 @@ Example
 
 .. code-block:: lua
 
-   local slot = skeleton:findSlot("hand1")
+   local slot = skeleton:findSlot("gun")
    local attachment = slot.attachment
 
    if attachment and attachment.type == "region" then
@@ -103,7 +103,7 @@ Example
 
 .. code-block:: lua
 
-   local meshSlot = skeleton:findSlot("cape")
+   local meshSlot = skeleton:findSlot("torso")
    local mesh = meshSlot.attachment
 
    if mesh and mesh.type == "mesh" then
@@ -125,18 +125,17 @@ Example
            -- Use the triangle, here to sum the area the mesh covers
            area = area + math.abs((x2 - x1) * (y3 - y1) - (x3 - x1) * (y2 - y1)) / 2
        end
-       print("Cape covers", area, "square units")
+       print("Torso covers", area, "square units")
    end
 
 **Path outline** (the control points, including the Bezier handles):
 
 .. code-block:: lua
 
-   -- the hero's morningstar path follows bones that only the "weapon/morningstar" skin activates
-   skeleton:setSkin("weapon/morningstar")
-   skeleton:updateState(0)
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
 
-   local pathSlot = skeleton:findSlot("weapon-morningstar-path")
+   local pathSlot = girl:findSlot("arm-front-path")
    local path = pathSlot.attachment
 
    if path and path.type == "path" then

@@ -56,10 +56,10 @@ Example:
    local spine = require("@SPINE_PLUGIN@")
 
    -- Load the atlas
-   local atlas = spine.loadAtlas("assets/characters/hero.atlas")
+   local atlas = spine.loadAtlas("assets/characters/spineboy.atlas")
 
    -- Load skeleton data with a scale factor of 1.0
-   local skeletonData = spine.loadSkeletonData("assets/characters/hero.skel", atlas, 1.0)
+   local skeletonData = spine.loadSkeletonData("assets/characters/spineboy.skel", atlas, 1.0)
 
    -- Define a listener function to handle animation events
    local function listener(event)
@@ -73,14 +73,14 @@ Example:
    end
 
    -- Create the skeleton with the listener
-   local hero = spine.create(skeletonData, listener)
+   local spineboy = spine.create(skeletonData, listener)
 
    -- Position the skeleton in the scene
-   hero.x = display.contentCenterX
-   hero.y = display.contentCenterY
+   spineboy.x = display.contentCenterX
+   spineboy.y = display.contentCenterY
 
    -- Set an initial animation
-   hero:setAnimation(1, "idle", true)
+   spineboy:setAnimation(1, "idle", true)
 
    -- Update the skeleton each frame
    local lastTime = system.getTimer()
@@ -88,8 +88,8 @@ Example:
        local now = system.getTimer()
        local deltaTime = now - lastTime -- milliseconds
        lastTime = now
-       hero:updateState(deltaTime)
-       hero:draw()
+       spineboy:updateState(deltaTime)
+       spineboy:draw()
    end
 
    Runtime:addEventListener("enterFrame", onEnterFrame)

@@ -15,7 +15,7 @@ Example:
 
 .. code-block:: lua
 
-   local entry = hero:getTrackEntry(1)
+   local entry = spineboy:getTrackEntry(1)
    if entry and entry.mixingTo then
        print("Mixing to:", entry.mixingTo.animation)
    end

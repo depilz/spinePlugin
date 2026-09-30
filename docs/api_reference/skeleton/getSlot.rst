@@ -27,5 +27,5 @@ Example:
 
 .. code-block:: lua
 
-   local swordSlot = hero:getSlot("weapon-sword")
-   print("Got slot:", swordSlot.name)
+   local gunSlot = spineboy:getSlot("gun")
+   print("Got slot:", gunSlot.name)

@@ -16,6 +16,6 @@ Example:
 
 .. code-block:: lua
 
-   local bone = hero.bones[1]
+   local bone = spineboy.bones[1]
    bone.b = 0.2
    print("Matrix b:", bone.b)

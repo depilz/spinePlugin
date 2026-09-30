@@ -1,0 +1,74 @@
+{
+ "skeleton": {
+  "hash": "sequence",
+  "spine": "4.2.22",
+  "x": -16,
+  "y": -16,
+  "width": 32,
+  "height": 32
+ },
+ "bones": [
+  {
+   "name": "root"
+  },
+  {
+   "name": "b_seq",
+   "parent": "root"
+  }
+ ],
+ "slots": [
+  {
+   "name": "seq",
+   "bone": "b_seq",
+   "attachment": "seq"
+  }
+ ],
+ "skins": [
+  {
+   "name": "default",
+   "attachments": {
+    "seq": {
+     "seq": {
+      "width": 32,
+      "height": 32,
+      "sequence": {
+       "count": 9,
+       "digits": 2
+      }
+     }
+    }
+   }
+  }
+ ],
+ "animations": {
+  "flip": {
+   "bones": {
+    "b_seq": {
+     "rotate": [
+      {
+       "time": 0
+      },
+      {
+       "time": 1,
+       "value": 90
+      }
+     ]
+    }
+   },
+   "attachments": {
+    "default": {
+     "seq": {
+      "seq": {
+       "sequence": [
+        {
+         "mode": "loop",
+         "delay": 0.1
+        }
+       ]
+      }
+     }
+    }
+   }
+  }
+ }
+}

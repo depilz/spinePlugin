@@ -61,5 +61,5 @@ Example:
         event.target.isVisible = event.isVisible
     end
 
-    skeleton:inject(displayObject, "hand1", listener)
+    skeleton:inject(displayObject, "gun", listener)
     skeleton:draw()

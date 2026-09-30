@@ -3,13 +3,13 @@
 # expansion of docs/_ext/spineline.py, `.. only::` on the line's tag), each run in its own process on the plain
 # lifecycle host (tests/lifecycle build.sh/run.sh --plain: the real plugin over solar2d_stub.lua) under prelude.lua.
 # The cwd is a view of the line's exports in which a sample finds name.* in name/, in the root, under assets/ and
-# under assets/characters/ (so "assets/characters/hero.atlas" is the line's hero). One test per page family
+# under assets/characters/ (so "assets/characters/spineboy.atlas" is the line's spineboy). One test per page family
 # (extract.py FAMILIES): PASS iff every "run" sample exits 0, every "fragment" sample fails (a sample that runs under
 # the prelude is not a fragment) and no marker is bad; "simulator" samples are only counted here; a Simulator
 # sample needs its own sim-suite row (A6). Then keys vs pages (keys_pages.py) against the line's tests/api surface,
-# in both directions, and the firing proofs: an injected failing sample, a fragment that runs, a fragment without a
-# reason, a key without a page and a page without a key each fail their check. The counts go to
-# $SUITE_OUT/counts.tsv and the fragments to $SUITE_OUT/fragments.tsv.
+# in both directions, spineline_test.py's line and base-URL mappings, and the firing proofs: an injected failing
+# sample, a fragment that runs, a fragment without a reason, a key without a page and a page without a key each fail
+# their check. The counts go to $SUITE_OUT/counts.tsv and the fragments to $SUITE_OUT/fragments.tsv.
 set -euo pipefail
 W="$(cd "$(dirname "$0")" && pwd)"
 source "$W/../lib.sh"
@@ -116,11 +116,12 @@ surface
 API="$DOCS/api_reference"
 run_test "keys have pages" check keys "$SUITE_OUT/surface.tsv" "$API"
 run_test "pages name keys" check pages "$SUITE_OUT/surface.tsv" "$API"
+run_test "spineline line and base url" python3 -B "$W/spineline_test.py" "$DOCS/_ext"
 
 run_test "firing: a failing sample fails its family" proof sample quickstart.rst "quickstart.rst:4 (a run sample raised" \
   "$(printf '%s\n' Proof ===== '' '.. code-block:: lua' '' "   error(\"$PROOF\")")"
 run_test "firing: a fragment that runs fails its family" proof fragment quickstart.rst "quickstart.rst:4 (a fragment that runs" \
-  "$(printf '%s\n' Proof ===== ".. fragment: $PROOF" '.. code-block:: lua' '' '   print(hero.timeScale)')"
+  "$(printf '%s\n' Proof ===== ".. fragment: $PROOF" '.. code-block:: lua' '' '   print(spineboy.timeScale)')"
 run_test "firing: a fragment without a reason fails its family" proof reason quickstart.rst "has no one-line reason" \
   "$(printf '%s\n' Proof ===== '.. fragment' '.. code-block:: lua' '' '   local x = y.z')"
 cp "$SUITE_OUT/surface.tsv" "$SUITE_OUT/surface-proof.tsv"

@@ -1,14 +1,14 @@
 -- v3: split with 2 injections per skeleton, the oracle after every frame (C4, rewritten from the recorded verify-split-3
 -- definition: 3,000 frames; it fails where an injected object is placed before a newly created mesh, which the group-only
 -- S2 form misses). 10 skeletons x 3 rounds x 2 phases x 50 frames. Each round is a new object: inject 2 objects into 2
--- drawn slots and split a seeded random half of the slots plus both injected slots before the first draw (p1), then
--- re-split another random half plus the first injected slot (p2), then remove the object. Also prints the group:insert
--- calls.
+-- drawn slots (1 into the only slot of the 4.2 sequence fixture) and split a seeded random half of the slots plus both
+-- injected slots before the first draw (p1), then re-split another random half plus the first injected slot (p2), then
+-- remove the object. Also prints the group:insert calls.
 local C = dofile(arg[0]:match("^(.*)/") .. "/../splitfx/common.lua")
 local mock, fx = C.mock, C.fx
 io.stdout:setvbuf("no")
 local ROUNDS, FRAMES = 3, 50
-local skels = { { "alien" }, { "dragon" }, { "goblins", "goblin" }, { "hero", "weapon/sword" }, { "mix-and-match", "full-skins/girl" },
+local skels = { { "alien" }, C.SEQUENCE, { "goblins", "goblin" }, { "chibi-stickers", "erikari" }, { "mix-and-match", "full-skins/girl" },
   { "owl" }, { "raptor" }, { "speedy" }, { "stretchyman" }, { "tank" } }
 
 local T = { frames = 0, bad = 0 }
@@ -24,7 +24,7 @@ for si, sk in ipairs(skels) do
     obj:updateState(0)
     local drawn, injs = {}, {}
     for _, e in ipairs(fx.reference(obj)) do drawn[#drawn + 1] = e.name end
-    for k = 1, 2 do
+    for k = 1, math.min(2, #drawn) do
       local slot = table.remove(drawn, math.random(#drawn))
       local o = display.newRect(0, 0, 10, 10)
       obj:inject(o, slot)
@@ -33,7 +33,7 @@ for si, sk in ipairs(skels) do
     local slots = C.slotNames(obj)
     local sg
     for p = 1, 2 do
-      local set = { injs[1].slot, p == 1 and injs[2].slot or nil }
+      local set = { injs[1].slot, p == 1 and injs[2] and injs[2].slot or nil }
       for _, n in ipairs(slots) do if math.random() < 0.5 then set[#set + 1] = n end end
       local ok, g = pcall(obj.split, obj, set)
       if ok then sg = g; scene:insert(sg) end

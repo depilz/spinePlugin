@@ -28,6 +28,11 @@ local function newAllRefs()
   obj:updateState(16); obj:draw()
   return obj
 end
+-- all three refs are still held just before the dispose under test, so allReleased cannot pass vacuously
+local function allLive()
+  S.gcfull()
+  return weak.create ~= nil and weak.group ~= nil and weak.onComplete ~= nil
+end
 local function allReleased()
   S.gcfull()
   print("still referenced: create", weak.create, "group", weak.group, "onComplete", weak.onComplete)
@@ -156,10 +161,11 @@ elseif mode == "all-refs-busy" then
   local obj = newAllRefs()
   local splitGroup = obj:split({ "head", "eye", "mouth" })
   display.newGroup():insert(splitGroup)
-  local armed, fired, heldInDraw = false, false, false
+  local armed, fired, liveBefore, heldInDraw = false, false, false, false
   obj:inject(display.newGroup(), "torso", function()
     if armed and not fired then
       fired = true
+      liveBefore = allLive()
       obj:removeSelf(); S.endFrame()
       heldInDraw = not disposed("create")
     end
@@ -172,6 +178,7 @@ elseif mode == "all-refs-busy" then
   Runtime = runtime
   print("draw with a removing injection listener ->", ok, err, "listener fired", fired, "held in draw", heldInDraw)
   assert(ok and fired, "draw did not survive a finalize from its injection listener")
+  assert(liveBefore, "a Lua ref was released before removeSelf")
   assert(heldInDraw, "finalize freed the skeleton inside draw")
   assert(#S.children(splitGroup) == 0, "the skeleton's meshes stayed in the caller's split group")
   obj = nil
@@ -181,6 +188,7 @@ elseif mode == "all-refs-no-runtime" then
   local obj = newAllRefs()
   local runtime = Runtime
   Runtime = nil
+  assert(allLive(), "a Lua ref was released before removeSelf")
   obj:removeSelf(); obj = nil
   S.endFrame()
   Runtime = runtime
@@ -188,6 +196,7 @@ elseif mode == "all-refs-no-runtime" then
 elseif mode == "all-refs-hook" then
   -- with a Runtime, the next-frame hook's dispose releases all three refs
   local obj = newAllRefs()
+  assert(allLive(), "a Lua ref was released before removeSelf")
   obj:removeSelf(); obj = nil
   S.endFrame()
   assert(not disposed("create"), "the skeleton was freed before the next frame")

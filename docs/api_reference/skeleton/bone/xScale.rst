@@ -16,6 +16,6 @@ Example:
 
 .. code-block:: lua
 
-   local bone = hero.bones[2]
+   local bone = spineboy.bones[2]
    bone.xScale = 1.5
    print(bone.xScale, bone.scaleX)  -- 1.5  1.5

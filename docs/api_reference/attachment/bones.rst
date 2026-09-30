@@ -19,7 +19,7 @@ Example
 
 .. code-block:: lua
 
-   local slot = skeleton:findSlot("cape")
+   local slot = skeleton:findSlot("torso")
    local attachment = slot.attachment
 
    if attachment and attachment.type == "mesh" then
@@ -47,7 +47,7 @@ Example
        return false
    end
 
-   local slot = skeleton:findSlot("body")
+   local slot = skeleton:findSlot("front-shin")
    local attachment = slot.attachment
    if attachment and attachment.type == "mesh" then
        if isWeighted(attachment) then

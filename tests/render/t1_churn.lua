@@ -2,8 +2,8 @@
 local C = dofile(arg[0]:match("^(.*)/") .. "/common.lua")
 local mock, fx = C.mock, C.fx
 local list = {
-  {"spineboy"}, {"raptor"}, {"hero"}, {"alien"}, {"tank"}, {"celestial-circus"}, {"snowglobe"}, {"windmill"},
-  {"goblins", skin = "goblin"}, {"mix-and-match", skin = "full-skins/girl"}, {"dragon"}, {"cloud-pot"},
+  {"spineboy"}, {"raptor"}, {"alien"}, {"tank"}, {"celestial-circus"}, {"snowglobe"}, {"windmill"},
+  {"goblins", skin = "goblin"}, {"mix-and-match", skin = "full-skins/girl"}, {"cloud-pot"},
 }
 local FR = tonumber(arg and arg[1]) or 120
 local keys = {"newMesh", "meshRemoveSelf", "pathUpdate", "insert", "fillSet", "blendSet", "setFillColor", "effectSet", "xySet"}

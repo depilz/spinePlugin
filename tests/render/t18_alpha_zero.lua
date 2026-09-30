@@ -1,7 +1,7 @@
 -- Alpha-0 paths in the vendored renderer (D11): a slot hidden with slot.alpha = 0 emits no geometry, and an injection
--- slot on any alpha-0 path (slot.alpha, Spine slot colour, mesh attachment colour) still gets its placeholder command,
--- so the injected object is placed and its listener sees isVisible = true every frame (D114).
--- arg[1]: "vertices" | "solar" (arg[2] region|mesh) | "slot-color" | "mesh-color"
+-- slot on any alpha-0 path (slot.alpha, Spine slot colour, region or mesh attachment colour) still gets its placeholder
+-- command, so the injected object is placed and its listener sees isVisible = true every frame (D114).
+-- arg[1]: "vertices" | "solar" (arg[2] region|mesh) | "slot-color" | "mesh-color" (arg[2] region|mesh, default mesh)
 local C = dofile(arg[0]:match("^(.*)/") .. "/common.lua")
 local fx, mock = C.fx, C.mock
 
@@ -50,7 +50,7 @@ if arg[1] == "vertices" then
 end
 
 local mode = arg[1]
-local slot = firstSlot(mode == "mesh-color" and "mesh" or arg[2] or "region")
+local slot = firstSlot(arg[2] or mode == "mesh-color" and "mesh" or "region")
 local hide = ({
   solar = function(a) slot.alpha = a end,
   ["slot-color"] = function(a) fx.slotColorAlpha(obj, slot.name, a) end,

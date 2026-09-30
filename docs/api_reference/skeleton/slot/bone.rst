@@ -16,6 +16,6 @@ Example:
 
 .. code-block:: lua
 
-   local slot = hero.slots[2]
+   local slot = spineboy.slots[2]
    local parentBone = slot.bone
    print("Slot belongs to bone:", parentBone.name)

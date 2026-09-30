@@ -26,7 +26,7 @@ t11_misc.lua
 t12_c34.lua gravity
 t12_c34.lua queued
 t12_c34.lua paused
-t12_c34.lua dragon
+t12_c34.lua sequence
 t13_empty_returns.lua returns
 t13_empty_returns.lua dispose
 t14_listener_life.lua nil_in_callback

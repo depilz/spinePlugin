@@ -6,8 +6,8 @@ local mock, fx = C.mock, C.fx
 io.stdout:setvbuf("no")
 local FR = tonumber(os.getenv("PB_FRAMES") or "60")
 local list = {}
-for _, s in ipairs({ { "alien" }, { "celestial-circus" }, { "chibi-stickers", "erikari" }, { "cloud-pot" }, { "coin" }, { "dragon" },
-  { "goblins", "goblin" }, { "hero", "weapon/sword" }, { "mix-and-match", "full-skins/girl" }, { "owl" }, { "powerup" },
+for _, s in ipairs({ { "alien" }, { "celestial-circus" }, { "chibi-stickers", "erikari" }, { "cloud-pot" }, { "coin" }, C.SEQUENCE,
+  { "goblins", "goblin" }, { "mix-and-match", "full-skins/girl" }, { "owl" }, { "powerup" },
   { "raptor" }, { "sack" }, { "snowglobe" }, { "speedy" }, { "spineboy" }, { "stretchyman" }, { "tank" }, { "vine" }, { "windmill" } }) do
   list[#list + 1] = { label = s[1], load = function() return C.data(s[1], 0.5) end, skin = s[2] }
 end

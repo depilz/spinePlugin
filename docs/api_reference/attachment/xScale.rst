@@ -16,6 +16,6 @@ Example:
 
 .. code-block:: lua
 
-   local attachment = hero:findSlot("hand1").attachment
+   local attachment = spineboy:findSlot("gun").attachment
    attachment.xScale = 1.5
    print(attachment.xScale, attachment.scaleX)  -- 1.5  1.5

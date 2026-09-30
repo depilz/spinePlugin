@@ -15,11 +15,11 @@ Example
 
 .. code-block:: lua
 
-   local slot = skeleton:findSlot("hand1")
+   local slot = skeleton:findSlot("gun")
    local attachment = slot.attachment
 
    if attachment then
        print("Current attachment:", attachment.name)
-       -- Output: hand1
+       -- Output: gun
    end
 

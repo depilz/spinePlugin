@@ -16,5 +16,5 @@ Example:
 
 .. code-block:: lua
 
-   local bone = hero.bones[2]
+   local bone = spineboy.bones[2]
    print("World X scale:", bone.worldScaleX)

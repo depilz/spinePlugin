@@ -38,5 +38,5 @@ Example:
 .. code-block:: lua
 
    -- Move the hip bone 20 units right and 10 units down
-   local bone = skeleton:findSlot("body").bone.parent
+   local bone = skeleton:findSlot("torso").bone.parent
    bone:translateWorld(20, 10)

@@ -16,6 +16,6 @@ Example:
 
 .. code-block:: lua
 
-   local bone = hero.bones[3]
+   local bone = spineboy.bones[3]
    bone.shearX = 10
    print("Shear X:", bone.shearX)

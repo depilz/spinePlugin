@@ -27,24 +27,24 @@ Example:
    local lastTime = system.getTimer()
 
    local spine = require("@SPINE_PLUGIN@")
-   local atlas = spine.loadAtlas("hero.atlas")
-   local skeletonData = spine.loadSkeletonData("hero.skel", atlas)
-   local hero = spine.create(skeletonData)
+   local atlas = spine.loadAtlas("spineboy.atlas")
+   local skeletonData = spine.loadSkeletonData("spineboy.skel", atlas)
+   local spineboy = spine.create(skeletonData)
 
-   print("Has an animation?", hero.isActive) -- false
-   hero:setAnimation(1, "run", false)
-   print("Has an animation?", hero.isActive) -- true
-   hero:clearTrack(1)
-   print("Has an animation?", hero.isActive) -- false
+   print("Has an animation?", spineboy.isActive) -- false
+   spineboy:setAnimation(1, "run", false)
+   print("Has an animation?", spineboy.isActive) -- true
+   spineboy:clearTrack(1)
+   print("Has an animation?", spineboy.isActive) -- false
 
    local function onEnterFrame(event)
        local now = system.getTimer()
        local dt = now - lastTime
        lastTime = now
 
-       if hero.parent then
-          hero:updateState(dt)
-          hero:draw()
+       if spineboy.parent then
+          spineboy:updateState(dt)
+          spineboy:draw()
        end
    end
 

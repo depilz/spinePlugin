@@ -43,11 +43,11 @@ Example:
 
 .. code-block:: lua
 
-   -- Drag the hero's look-at target with the finger: the head follows through the IK constraint
-   local lookTarget = skeleton:getIkConstraint("look-constraint").target
+   -- Drag spineboy's front leg target with the finger: the leg follows through the IK constraint
+   local legTarget = skeleton:getIkConstraint("front-leg-ik").target
 
    local function onTouch(event)
-       lookTarget:setWorldPosition(skeleton:contentToLocal(event.x, event.y))
+       legTarget:setWorldPosition(skeleton:contentToLocal(event.x, event.y))
        return true
    end
    skeleton:addEventListener("touch", onTouch)

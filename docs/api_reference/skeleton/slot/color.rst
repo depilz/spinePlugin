@@ -19,7 +19,7 @@ Example:
 
 .. code-block:: lua
 
-   local c = hero.slots[2].color
+   local c = spineboy.slots[2].color
    print(("Slot color RGBA: %f, %f, %f, %f"):format(c.r, c.g, c.b, c.a))
 
-   hero.slots[2].color = { r = 1, g = 0.5, b = 0.5 }  -- a red tint; alpha keeps its value
+   spineboy.slots[2].color = { r = 1, g = 0.5, b = 0.5 }  -- a red tint; alpha keeps its value

@@ -26,7 +26,7 @@ Example:
 
 .. code-block:: lua
 
-   local entry = hero:addAnimation(1, "run", true, 0)
+   local entry = spineboy:addAnimation(1, "run", true, 0)
    if entry then
        entry:setMixDuration(120, 0)
    end

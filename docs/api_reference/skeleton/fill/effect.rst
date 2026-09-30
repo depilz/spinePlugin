@@ -14,11 +14,11 @@ display object. Effect attributes written on the skeleton reach every mesh, and 
 
 .. code-block:: lua
 
-   hero.fill.effect = "filter.desaturate"
-   hero.fill.effect.intensity = 0.5
+   spineboy.fill.effect = "filter.desaturate"
+   spineboy.fill.effect.intensity = 0.5
 
    -- later
-   hero.fill.effect = nil
+   spineboy.fill.effect = nil
 
 Reading ``skeleton.fill.effect`` returns ``nil`` while no effect is set, and otherwise an effect object. Its
 :doc:`effect/name` is the effect's name, and every other key is an effect attribute:

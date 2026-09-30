@@ -6,24 +6,28 @@
 -- Geometry comparison: nv, su, sv and every non-sum token (e.g. the injection event history) must match exactly. The
 -- position sums sx, sy, sw may differ by float32 rounding, because the per-mesh vertex offset depends on how the
 -- vertices are batched into meshes: |d| <= nv * 2^-23 * m (sw: times 3 * 96, its largest vertex weight), where m is the
--- largest |x| or |y| of the spine42 digest, plus 1e-4 for the %.4f print rounding. A geometry change larger than the
--- case's float32 bound fails the case (moving the first vertex of every batched mesh by 0.01 fails 21/24 cases, as
--- does a dropped clipping or masks patch).
+-- largest |x| or |y| of the spine42 digest, plus 1e-4 for the %.4f print rounding. Those whole-group bounds grow with
+-- nv, so the tuple also carries blocked sums: bx by per BLOCK consecutive vertices of the group's running vertex index
+-- (like sw, independent of the batching), each within BLOCK * 2^-23 * m + 1e-4. Moving one vertex by 0.01 fails every
+-- case that draws geometry, as does a dropped clipping or masks patch.
 local L = require("simlib")
 L.watchdogMs = 240000
 L.open("s17_digest " .. L.arg)
 local spine = L.loadPlugin(L.arg == "base" and "plugin.spine" or nil)
 local gidx = getmetatable(display.newGroup()).__index
-local EXAMPLES = { "alien","celestial-circus","chibi-stickers","cloud-pot","coin","dragon","goblins","hero","mix-and-match",
+local EXAMPLES = { "alien","celestial-circus","chibi-stickers","cloud-pot","coin","goblins","mix-and-match",
   "owl","powerup","raptor","sack","snowglobe","speedy","spineboy","stretchyman","tank","vine","windmill" }
 local FRAMES = 40
+local BLOCK = 16 -- vertices per blocked sum
 
--- digest(group) -> geometry "nv sx sy sw su sv", layout "n sa nb", largest |x| or |y|. getVertex returns the positions the plugin wrote,
--- not re-centred on mesh.x/y, so the geometry sums depend on the grouping only through float32 rounding of the positions
--- (see the header); sw weights each vertex by its running index over the whole group, so it holds while the draw order does.
+-- digest(group) -> geometry "nv sx sy sw su sv bx1 by1 bx2 by2 ...", layout "n sa nb", largest |x| or |y|. getVertex
+-- returns the positions the plugin wrote, not re-centred on mesh.x/y, so the geometry sums depend on the grouping only
+-- through float32 rounding of the positions (see the header); sw and the block sums follow each vertex's running index
+-- over the whole group, so they hold while the draw order does.
 local function digest(group)
   local n = gidx(group, "numChildren")
   local nv, sx, sy, sw, su, sv, sa, nb, m = 0, 0, 0, 0, 0, 0, 0, 0, 0
+  local bx, by = {}, {}
   for i = 1, n do
     local c = gidx(group, i)
     sa = sa + (c.alpha or 0) * i
@@ -36,13 +40,17 @@ local function digest(group)
         if not ok or x == nil then break end
         local ok2, u, v = pcall(p.getUV, p, k)
         nv = nv + 1; sx = sx + x; sy = sy + y; sw = sw + (nv % 97) * (x + 2 * y)
+        local b = math.floor((nv - 1) / BLOCK) + 1
+        bx[b], by[b] = (bx[b] or 0) + x, (by[b] or 0) + y
         m = math.max(m, math.abs(x), math.abs(y))
         if ok2 and u then su = su + u; sv = sv + v end
         k = k + 1
       end
     end
   end
-  return ("%d %.4f %.4f %.4f %.5f %.5f"):format(nv, sx, sy, sw, su, sv), ("%d %.4f %d"):format(n, sa, nb), m
+  local geometry = { ("%d %.4f %.4f %.4f %.5f %.5f"):format(nv, sx, sy, sw, su, sv) }
+  for b = 1, #bx do geometry[b + 1] = ("%.4f %.4f"):format(bx[b], by[b]) end
+  return table.concat(geometry, " "), ("%d %.4f %d"):format(n, sa, nb), m
 end
 
 local datas = {}
@@ -161,6 +169,13 @@ end
 local EPS = 2 ^ -23
 local SUM_WEIGHT = { [2] = 1, [3] = 1, [4] = 3 * 96 } -- position of sx, sy, sw in a "nv sx sy sw su sv" tuple
 
+-- sumBound(at, nv, m): the float32 rounding bound of the tuple's token at position at, nil for a token compared exactly;
+-- the block sums follow sv, two tokens per BLOCK vertices
+local function sumBound(at, nv, m)
+  if SUM_WEIGHT[at] then return nv * EPS * m * SUM_WEIGHT[at] + 1e-4 end
+  if at > 6 and at <= 6 + 2 * math.ceil(nv / BLOCK) then return BLOCK * EPS * m + 1e-4 end
+end
+
 local function words(s)
   local t = {}
   for w in s:gmatch("%S+") do t[#t + 1] = w end
@@ -179,9 +194,9 @@ local function sameGeometry(a, b, m)
   for i = 1, #wa do
     at = wa[i] == "|" and 0 or at + 1
     if at == 1 then nv = tonumber(wa[i]) or 0 end
-    local weight, x, y = SUM_WEIGHT[at], tonumber(wa[i]), tonumber(wb[i])
-    if weight and x and y then
-      if math.abs(x - y) > nv * EPS * m * weight + 1e-4 then return false end
+    local bound, x, y = sumBound(at, nv, m), tonumber(wa[i]), tonumber(wb[i])
+    if bound and x and y then
+      if math.abs(x - y) > bound then return false end
     elseif wa[i] ~= wb[i] then return false end
   end
   return true

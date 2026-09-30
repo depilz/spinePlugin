@@ -15,5 +15,5 @@ Example:
 
 .. code-block:: lua
 
-   local ik = hero.ikConstraints[1]
+   local ik = spineboy.ikConstraints[1]
    print("IK Constraint name:", ik.name)

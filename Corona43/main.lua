@@ -8,7 +8,7 @@ w, h = display.actualContentWidth, display.actualContentHeight
 
 _G.Spine = require('Spine')
 
-_G.allSpines = {"chibi-stickers", "snowglobe", "dragon", "alien", "celestial-circus", "cloud-pot", "coin", "goblins", "hero", "mix-and-match", "owl", "powerup", "raptor", "sack", "speedy", "spineboy", "stretchyman",  "vine", "tank", "windmill" }
+_G.allSpines = {"chibi-stickers", "snowglobe", "alien", "celestial-circus", "cloud-pot", "coin", "goblins", "mix-and-match", "owl", "powerup", "raptor", "sack", "speedy", "spineboy", "stretchyman",  "vine", "tank", "windmill" }
 
 
 local tests = {

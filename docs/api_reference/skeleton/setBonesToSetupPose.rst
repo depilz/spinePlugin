@@ -25,4 +25,4 @@ Example:
 .. code-block:: lua
 
    -- Reset just the bones, preserving the slot attachments
-   hero:setBonesToSetupPose()
+   spineboy:setBonesToSetupPose()

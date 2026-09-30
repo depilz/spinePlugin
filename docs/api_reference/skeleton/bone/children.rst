@@ -16,7 +16,7 @@ Example:
 
 .. code-block:: lua
 
-   local root = hero.bones[1]
+   local root = spineboy.bones[1]
    for i, child in ipairs(root.children) do
        print(i, child.name, child.parent.name)
    end

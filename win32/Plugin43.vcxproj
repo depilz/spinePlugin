@@ -137,8 +137,11 @@
     <ClInclude Include="..\shared\Lua_TrackEntry.h" />
     <ClInclude Include="..\shared\MeshManager.h" />
     <ClInclude Include="..\shared\SkeletonDataHolder.h" />
+    <ClInclude Include="..\shared\SkeletonLife.h" />
+    <ClInclude Include="..\shared\SpineCompat.h" />
     <ClInclude Include="..\shared\SpineRenderer.h" />
     <ClInclude Include="..\shared\SpineTexture.h" />
+    <ClInclude Include="..\shared\SpineTintBlack.h" />
     <ClInclude Include="..\runtime\spine-4.3\spine\Animation.h" />
     <ClInclude Include="..\runtime\spine-4.3\spine\AnimationState.h" />
     <ClInclude Include="..\runtime\spine-4.3\spine\AnimationStateData.h" />
@@ -342,6 +345,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalOptions>"/pathmap:$([MSBuild]::NormalizeDirectory('$(MSBuildProjectDirectory)', '..'))=" /experimental:deterministic /Brepro %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>$(CORONA_ROOT)\Corona\win\lib\*.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -350,6 +354,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalOptions>/Brepro /PDBALTPATH:%_PDB% %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent Condition="'$(CopyToSimulator)'=='true'">
       <Command>xcopy "$(TargetPath)" "%APPDATA%\Corona Labs\Corona Simulator\Plugins" /Y /I /E</Command>

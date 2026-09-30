@@ -27,7 +27,7 @@ Each entry contains:
 
 .. code-block:: lua
 
-   local slot = hero:getSlot("hand1")
+   local slot = spineboy:getSlot("front-fist")
    for _, entry in ipairs(slot:getAttachmentEntries()) do
        print(entry.placeholder, entry.attachment.name, entry.skinName)
    end

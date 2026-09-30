@@ -41,4 +41,4 @@ Example:
 
 .. code-block:: lua
 
-   hero:setAnimation(1, "run", true)
+   spineboy:setAnimation(1, "run", true)

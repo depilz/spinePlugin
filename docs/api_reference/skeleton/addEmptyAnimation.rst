@@ -37,5 +37,5 @@ Example:
 
 .. code-block:: lua
 
-   hero:setAnimation(1, "attack", false)
-   hero:addEmptyAnimation(1, 300, 100)  -- fade out 0.3s, start after 0.1s
+   spineboy:setAnimation(1, "shoot", false)
+   spineboy:addEmptyAnimation(1, 300, 100)  -- fade out 0.3s, start after 0.1s

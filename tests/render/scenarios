@@ -35,11 +35,10 @@ t19_tint_black.lua swap
 t19_tint_black.lua hide
 t19_tint_black.lua split
 t19_tint_black.lua usereffect
+t19_tint_black.lua usereffect stale
 t19_tint_black.lua nodefine
 t19_tint_black.lua definefail
 t19_tint_black.lua duplicate
-t19_tint_black.lua sharedkey
-t19_tint_black.lua sharedkey failed
 t19_tint_black.lua alpha
 t19_tint_black.lua alpha inject
 t18_alpha_zero.lua vertices
@@ -47,4 +46,9 @@ t18_alpha_zero.lua solar region
 t18_alpha_zero.lua solar mesh
 t18_alpha_zero.lua slot-color
 t18_alpha_zero.lua mesh-color
+t18_alpha_zero.lua mesh-color region
 t19_dark_round.lua
+t20_dispose_bail.lua visible
+t20_dispose_bail.lua unsplit
+t20_dispose_bail.lua split-first
+t20_dispose_bail.lua split-second

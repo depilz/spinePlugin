@@ -21,13 +21,13 @@ Example:
    local lastTime = system.getTimer()
 
    local spine = require("@SPINE_PLUGIN@")
-   local atlas = spine.loadAtlas("assets/characters/hero.atlas")
-   local skeletonData = spine.loadSkeletonData("assets/characters/hero.skel", atlas)
-   local hero = spine.create(skeletonData)
+   local atlas = spine.loadAtlas("assets/characters/spineboy.atlas")
+   local skeletonData = spine.loadSkeletonData("assets/characters/spineboy.skel", atlas)
+   local spineboy = spine.create(skeletonData)
 
    -- Walk, then transition to "run" after 500 milliseconds with a 300-millisecond mix
-   hero:setAnimation(1, "walk", true)
-   local run = hero:addAnimation(1, "run", true, 500)
+   spineboy:setAnimation(1, "walk", true)
+   local run = spineboy:addAnimation(1, "run", true, 500)
    run.mixDuration = 300
 
    -- Update the animation state each frame and report the mix progress
@@ -36,10 +36,10 @@ Example:
        local dt = time - lastTime
        lastTime = time
 
-       hero:updateState(dt)
-       hero:draw()
+       spineboy:updateState(dt)
+       spineboy:draw()
 
-       local entry = hero.tracks[1]
+       local entry = spineboy.tracks[1]
        if entry.mixingFrom then
            print(("Mix %d%% done"):format(100 * entry.mixTime / entry.mixDuration))
        end

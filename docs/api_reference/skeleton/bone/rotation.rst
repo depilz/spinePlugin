@@ -16,6 +16,6 @@ Example:
 
 .. code-block:: lua
 
-   local armBone = hero.bones[4]
+   local armBone = spineboy.bones[4]
    armBone.rotation = armBone.rotation + 15
    print("Arm rotation:", armBone.rotation)

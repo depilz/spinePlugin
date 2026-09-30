@@ -18,6 +18,6 @@ Example
 
 .. code-block:: lua
 
-   local attachment = hero:findSlot("hand1").attachment
+   local attachment = spineboy:findSlot("gun").attachment
    attachment.g = 0.5
    print(attachment.g, attachment.color.g)  -- 0.5  0.5

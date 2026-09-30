@@ -1,6 +1,7 @@
 -- s1: FINAL skins/attachments API contract (skinsapi). Every row prints what the call did, then PASS/FAIL
 -- against the FINAL spec, so on the 1.5.0 bindings most rows FAIL until I7 lands (tests/xfail/<runtime>.tsv lists them).
--- Assets: goblins.json (skins goblin/goblingirl, linked meshes), hero.json (skin bones), the line's exports.
+-- Assets: goblins.json (skins goblin/goblingirl, linked meshes), mix-and-match.json (skin bones, skin constraints),
+-- the line's exports.
 local fx = require("realdata_fixture")
 local P = require("skins_probe")
 local function gc() for _ = 1, 6 do collectgarbage("collect") end end
@@ -131,9 +132,13 @@ returns("H3", "setSkin(nil) releases the applied custom skin", function()
   do local s = o:createSkin("tmp"); s:addSkin("goblin"); o:setSkin(s) end
   gc(); local before = P.appliedOwner(o); o:setSkin(nil); gc(); local after = P.appliedOwner(o)
   return tostring(before) .. " -> " .. tostring(after) end, function(v) return v:find("-> nil", 1, true) ~= nil end)
-local hero = fx.create(fx.loadData(ASSETS.hero[1], ASSETS.hero[2]))
-returns("H4", "hero: setSkin('weapon/sword') then setSkin(nil) deactivates skin bone", function()
-  hero:setSkin("weapon/sword"); local a = fx.activeBones(hero)["weapon-sword"]; hero:setSkin(nil); local b = fx.activeBones(hero)["weapon-sword"]
+-- mix-and-match skins with distinct skin bones: ZIP carries bone zip-boy (region zip-boy on its slot), HAT bone hat and
+-- the skin constraint hat-control
+local ZIP, HAT = "clothes/hoodie-orange", "accessories/hat-red-yellow"
+local mixData = fx.loadData(ASSETS.mix[1], ASSETS.mix[2])
+local mix = fx.create(mixData)
+returns("H4", "mix: setSkin(ZIP) then setSkin(nil) deactivates skin bone", function()
+  mix:setSkin(ZIP); local a = fx.activeBones(mix)["zip-boy"]; mix:setSkin(nil); local b = fx.activeBones(mix)["zip-boy"]
   return tostring(a) .. "," .. tostring(b) end, function(v) return v == "true,false" end)
 raises("H5", "setSkin() (no argument)", function() return o:setSkin() end)
 
@@ -170,35 +175,34 @@ returns("L1", "dagger copy .x += 100 moves world vertices", function()
 
 print("== M skin:clear() (in-place refill)")
 returns("M1", "clear() empties entries, bones, constraints and returns the skin", function()
-  local h = hero:createSkin("h"):addSkin("weapon/sword"):addSkin("weapon/morningstar")
-  local before = #h:getBones(); local r = h:clear()
-  return rawequal(r, h) and before > 0 and #h:getBones() == 0 and #h:getConstraints() == 0 and #h:getAttachments() == 0 end, function(v) return v == true end)
+  local h = mix:createSkin("h"):addSkin(ZIP):addSkin(HAT)
+  local before = #h:getBones(); local beforeConstraints = #h:getConstraints(); local r = h:clear()
+  return rawequal(r, h) and before > 0 and beforeConstraints > 0 and #h:getBones() == 0 and #h:getConstraints() == 0 and #h:getAttachments() == 0 end, function(v) return v == true end)
 returns("M2", "clear()+refill of the APPLIED skin + setSkin(same) = fresh build", function()
-  local s = hero:createSkin("h2"):addSkin("weapon/morningstar"); hero:setSkin(s)
-  s:clear():addSkin("weapon/sword"); hero:setSkin(s)
-  local b = fx.activeBones(hero); return tostring(b["weapon-sword"]) .. "," .. tostring(b["weapon-morningstar"]) end, function(v) return v == "true,false" end)
+  local s = mix:createSkin("h2"):addSkin(HAT); mix:setSkin(s)
+  s:clear():addSkin(ZIP); mix:setSkin(s)
+  local b = fx.activeBones(mix); return tostring(b["zip-boy"]) .. "," .. tostring(b["hat"]) end, function(v) return v == "true,false" end)
 raises("M3", "findSkin('goblin'):clear()", function() return o:findSkin("goblin"):clear() end, "read-only")
 print("== N attachment on an inactive skin bone (D4: not drawn, no raise)")
-local heroData = fx.loadData(ASSETS.hero[1], ASSETS.hero[2])
--- vertices the weapon-sword slot's sword region adds once apply(h, sword) has put it on the slot
-local function swordVertices(apply)
-  local h = fx.create(heroData)
-  apply(h, h:findSkin("default"):getAttachment("weapon-sword", "sword")); fx.worldTransform(h)
-  local _, drawn = fx.renderStats2(h); h:getSlot("weapon-sword").attachment = nil; local _, without = fx.renderStats2(h)
+-- vertices the zip-boy slot's zip-boy region adds once apply(h, zip) has put it on the slot
+local function zipVertices(apply)
+  local h = fx.create(mixData)
+  apply(h, h:findSkin(ZIP):getAttachment("zip-boy", "zip-boy")); fx.worldTransform(h)
+  local _, drawn = fx.renderStats2(h); h:getSlot("zip-boy").attachment = nil; local _, without = fx.renderStats2(h)
   fx.dispose(h)
   return drawn - without
 end
 local function viaSetAttachment(sourceSkin)
-  return function(h, sword) h:setSkin(h:createSkin("d4"):setAttachment("weapon-sword", "sword", sword, sourceSkin)) end
+  return function(h, zip) h:setSkin(h:createSkin("d4"):setAttachment("zip-boy", "zip-boy", zip, sourceSkin)) end
 end
 local function viaSetSkin(skin)
-  return function(h) h:setSkin("weapon/sword"); h:setSkin(skin, false) end
+  return function(h) h:setSkin(ZIP); h:setSkin(skin, false) end
 end
 returns("N1", "skin:setAttachment on a skin bone: 0 vertices without sourceSkin, drawn with it", function()
-  return swordVertices(viaSetAttachment(nil)) .. "," .. swordVertices(viaSetAttachment("weapon/sword")) end, function(v) return v == "0,4" end)
+  return zipVertices(viaSetAttachment(nil)) .. "," .. zipVertices(viaSetAttachment(ZIP)) end, function(v) return v == "0,4" end)
 returns("N2", "setSkin on a skin bone: 0 vertices after setSkin(<other skin>), drawn after setSkin(<bone's skin>)", function()
-  return swordVertices(viaSetSkin("weapon/morningstar")) .. "," .. swordVertices(viaSetSkin("weapon/sword")) end, function(v) return v == "0,4" end)
+  return zipVertices(viaSetSkin(HAT)) .. "," .. zipVertices(viaSetSkin(ZIP)) end, function(v) return v == "0,4" end)
 print(("== s1 summary: %d PASS, %d FAIL"):format(passes, fails))
-fx.dispose(o); fx.dispose(o2); fx.dispose(foreign); fx.dispose(hero)
+fx.dispose(o); fx.dispose(o2); fx.dispose(foreign); fx.dispose(mix)
 custom, gear, dagger = nil, nil, nil
 gc()

@@ -11,12 +11,17 @@ Each value represents the length (in the setup pose) from the start of the path
 to the end of each curve segment. This data is used for constant speed path
 following and path positioning calculations.
 
+The examples use the mix-and-match example skeleton, whose arms and legs follow path attachments.
+
 Example
 -------
 
 .. code-block:: lua
 
-   local pathSlot = skeleton:findSlot("weapon-morningstar-path")
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+
+   local pathSlot = girl:findSlot("arm-front-path")
    local path = pathSlot.attachment
 
    if path and path.type == "path" then
@@ -40,7 +45,10 @@ Example
 
 .. code-block:: lua
 
-   local trackPath = skeleton:findSlot("weapon-morningstar-path").attachment
+   local girl = spine.create(spine.loadSkeletonData("assets/characters/mix-and-match.json",
+                                                    spine.loadAtlas("assets/characters/mix-and-match.atlas")))
+
+   local trackPath = girl:findSlot("arm-front-path").attachment
 
    if trackPath and trackPath.type == "path" then
        if trackPath.constantSpeed then

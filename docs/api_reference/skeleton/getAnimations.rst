@@ -28,7 +28,7 @@ Example:
 
 .. code-block:: lua
 
-   local animations = hero:getAnimations()
+   local animations = spineboy:getAnimations()
    for i, anim in ipairs(animations) do
        print("Animation:", anim)
    end

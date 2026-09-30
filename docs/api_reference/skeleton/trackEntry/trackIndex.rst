@@ -20,5 +20,5 @@ Example:
 
 .. code-block:: lua
 
-   local entry = hero:setAnimation(1, "idle", true)
+   local entry = spineboy:setAnimation(1, "idle", true)
    print(entry.trackIndex, entry.index)  -- 1  1

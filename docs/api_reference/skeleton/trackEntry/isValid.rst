@@ -20,7 +20,7 @@ Example:
 
 .. code-block:: lua
 
-   local entry = hero:setAnimation(1, "attack", false)
+   local entry = spineboy:setAnimation(1, "shoot", false)
 
    -- later, maybe several frames after the animation ended
    if entry.isValid then

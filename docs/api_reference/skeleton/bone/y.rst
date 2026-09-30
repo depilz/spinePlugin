@@ -18,5 +18,5 @@ Example:
 .. code-block:: lua
 
    local spine = require("@SPINE_PLUGIN@")
-   local bone = hero.bones[3]
+   local bone = spineboy.bones[3]
    bone.y = bone.y + 20  -- Moves the bone 20 units up

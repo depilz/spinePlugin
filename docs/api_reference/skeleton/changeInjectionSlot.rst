@@ -36,7 +36,7 @@ Example:
     end
 
     -- Inject an object
-    hero:inject(myHatObject, "head", onUpdateHat)
+    spineboy:inject(myHatObject, "head", onUpdateHat)
 
     -- Later, change the slot of that object
-    hero:changeInjectionSlot(myHatObject, "hand1")
+    spineboy:changeInjectionSlot(myHatObject, "gun")

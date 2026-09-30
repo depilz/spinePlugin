@@ -64,24 +64,24 @@ Example:
    local spine = require("@SPINE_PLUGIN@")
 
    -- Load the atlas
-   local atlas = spine.loadAtlas("assets/characters/hero.atlas")
+   local atlas = spine.loadAtlas("assets/characters/spineboy.atlas")
 
    -- Load skeleton data with a scale factor of 0.75
-   local skeletonData = spine.loadSkeletonData("assets/characters/hero.skel", atlas, 0.75)
+   local skeletonData = spine.loadSkeletonData("assets/characters/spineboy.skel", atlas, 0.75)
 
    -- Create the skeleton
-   local hero = spine.create(skeletonData)
+   local spineboy = spine.create(skeletonData)
 
    -- Set an animation
-   hero:setAnimation(1, "walk", true)
+   spineboy:setAnimation(1, "walk", true)
 
    -- Update the skeleton each frame
    local lastTime = system.getTimer()
    local function onEnterFrame(event)
        local deltaTime = event.time - lastTime  -- milliseconds since the last frame
        lastTime = event.time
-       hero:updateState(deltaTime)
-       hero:draw()
+       spineboy:updateState(deltaTime)
+       spineboy:draw()
    end
 
    Runtime:addEventListener("enterFrame", onEnterFrame)

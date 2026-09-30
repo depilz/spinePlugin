@@ -61,4 +61,4 @@ Example:
 .. code-block:: lua
 
    local spine = require("@SPINE_PLUGIN@")
-   local atlas = spine.loadAtlas("assets/characters/hero.atlas")
+   local atlas = spine.loadAtlas("assets/characters/spineboy.atlas")

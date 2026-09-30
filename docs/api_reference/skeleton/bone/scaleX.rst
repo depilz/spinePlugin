@@ -16,5 +16,5 @@ Example:
 
 .. code-block:: lua
 
-   local bone = hero.bones[2]
+   local bone = spineboy.bones[2]
    bone.scaleX = 2.0  -- double width

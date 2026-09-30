@@ -16,5 +16,5 @@ Example:
 
 .. code-block:: lua
 
-   local customSkin = hero:createSkin("myAvatar")
+   local customSkin = spineboy:createSkin("myAvatar")
    print(customSkin:getName(), customSkin.name)  -- myAvatar  myAvatar

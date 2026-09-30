@@ -27,9 +27,9 @@ Example:
 
 .. code-block:: lua
 
-   hero:setAnimation(1, "walk", true)
-   hero:setAnimation(2, "attack", true)
+   spineboy:setAnimation(1, "walk", true)
+   spineboy:setAnimation(2, "shoot", true)
 
-   -- Clear the "attack" animation
-   hero:clearTrack(2)
-   hero:draw()
+   -- Clear the "shoot" animation
+   spineboy:clearTrack(2)
+   spineboy:draw()

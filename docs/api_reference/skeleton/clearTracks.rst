@@ -24,7 +24,7 @@ Example:
 .. code-block:: lua
 
    -- Clear all running animations
-   print("is animation playing?", hero.isActive)
-   hero:clearTracks()
-   hero:draw()
-   print("track cleared, is animation playing?", hero.isActive)
+   print("is animation playing?", spineboy.isActive)
+   spineboy:clearTracks()
+   spineboy:draw()
+   print("track cleared, is animation playing?", spineboy.isActive)

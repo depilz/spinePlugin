@@ -49,6 +49,6 @@ Example:
 
 .. code-block:: lua
 
-   hero:setAnimation(1, "idle", true)
-   hero:addAnimationAt(1, "talk_open", false, 120)
-   hero:addAnimationAt(1, "talk_closed", false, 180)
+   spineboy:setAnimation(1, "idle", true)
+   spineboy:addAnimationAt(1, "talk_open", false, 120)
+   spineboy:addAnimationAt(1, "talk_closed", false, 180)

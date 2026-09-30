@@ -17,5 +17,5 @@ Example:
 
 .. code-block:: lua
 
-   local armIK = hero.ikConstraints[1]
+   local armIK = spineboy.ikConstraints[1]
    armIK.stretch = true

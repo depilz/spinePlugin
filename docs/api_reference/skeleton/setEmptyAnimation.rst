@@ -47,4 +47,4 @@ Example:
 
 .. code-block:: lua
 
-   hero:setEmptyAnimation(1, 500)  -- fade out track #1 over 0.5s
+   spineboy:setEmptyAnimation(1, 500)  -- fade out track #1 over 0.5s

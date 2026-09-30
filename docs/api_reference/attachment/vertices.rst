@@ -20,7 +20,7 @@ Example
 
 .. code-block:: lua
 
-   local slot = skeleton:findSlot("body")
+   local slot = skeleton:findSlot("front-shin")
    local attachment = slot.attachment
 
    if attachment and attachment.type == "mesh" then
@@ -50,12 +50,12 @@ Example
 
 .. code-block:: lua
 
-   local meshSlot = skeleton:findSlot("cape")
+   local meshSlot = skeleton:findSlot("torso")
    local mesh = meshSlot.attachment
 
    if mesh and mesh.type == "mesh" then
        print("Mesh has", mesh.worldVerticesLength / 2, "vertices")
-       print("Its vertex data holds", #mesh.vertices, "numbers")  -- more than 2 per vertex: the cape is weighted
+       print("Its vertex data holds", #mesh.vertices, "numbers")  -- more than 2 per vertex: the torso is weighted
 
        -- For collision or physics, use world vertices
        local worldVerts = mesh:computeWorldVertices(meshSlot)

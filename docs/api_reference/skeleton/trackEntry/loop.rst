@@ -17,16 +17,16 @@ Example:
 .. code-block:: lua
 
    local spine = require("@SPINE_PLUGIN@")
-   local atlas = spine.loadAtlas("assets/characters/hero.atlas")
-   local skeletonData = spine.loadSkeletonData("assets/characters/hero.skel", atlas)
-   local hero = spine.create(skeletonData)
+   local atlas = spine.loadAtlas("assets/characters/spineboy.atlas")
+   local skeletonData = spine.loadSkeletonData("assets/characters/spineboy.skel", atlas)
+   local spineboy = spine.create(skeletonData)
 
-   -- Set the "attack" animation on track 2 to play once
-   hero:setAnimation(1, "attack", false)
+   -- Set the "shoot" animation on track 2 to play once
+   spineboy:setAnimation(1, "shoot", false)
 
-   -- Check if the "attack" animation is set to loop
-   local isLooping = hero.tracks[1].loop
-   print("Attack Animation Looping:", isLooping)
+   -- Check if the "shoot" animation is set to loop
+   local isLooping = spineboy.tracks[1].loop
+   print("Shoot Animation Looping:", isLooping)
 
-   -- Enable looping for the "attack" animation
-   hero.tracks[1].loop = true
+   -- Enable looping for the "shoot" animation
+   spineboy.tracks[1].loop = true

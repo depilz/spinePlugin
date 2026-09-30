@@ -15,7 +15,7 @@ Example:
 
 .. code-block:: lua
 
-   local ik = hero.ikConstraints[2]
+   local ik = spineboy.ikConstraints[2]
    for i, bone in ipairs(ik.bones) do
        print("Bone in IK chain:", bone.name)
    end

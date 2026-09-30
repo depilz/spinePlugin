@@ -17,6 +17,6 @@ Example:
 
 .. code-block:: lua
 
-   local armIK = hero.ikConstraints[1]
-   local handBone = hero.bones[10]
+   local armIK = spineboy.ikConstraints[1]
+   local handBone = spineboy.bones[10]
    armIK.target = handBone
