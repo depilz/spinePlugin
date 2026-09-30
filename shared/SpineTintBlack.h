@@ -10,8 +10,7 @@
 // The reserved effect's full name, as assigned to mesh.fill.effect
 static const char *const kTintBlackEffect = "filter.custom.plugin_spine_tintBlack";
 
-// Registry key of the per-lua_State define result (true = defined, false = raised or unavailable). A string, not a
-// static address, so plugin.spine42 and plugin.spine43 loaded in one Lua state share it and define the effect once.
+// Registry key of the define result (true = defined, false = raised or unavailable); one Spine plugin per Lua state.
 static const char *const kTintBlackRegistryKey = "plugin_spine_tintBlack";
 
 // Defines the effect and returns true, or returns false: silently when graphics.defineEffect is missing (headless

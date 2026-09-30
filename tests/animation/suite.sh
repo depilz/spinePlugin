@@ -6,8 +6,13 @@ set -euo pipefail
 W="$(cd "$(dirname "$0")" && pwd)"
 source "$W/../lib.sh"
 "$W/build.sh" asan
+# a scenario line "<runtime>: script args" runs on that line only
 while read -r script args; do
   [[ -z "$script" || "$script" == \#* ]] && continue
+  if [[ "$script" == *: ]]; then
+    [[ "${script%:}" == "$SPINE_RUNTIME" ]] || continue
+    read -r script args <<<"$args"
+  fi
   run_test "${script%.lua}${args:+ $args}" "$W/run.sh" "$W/$script" $args
 done <"$W/scenarios"
 

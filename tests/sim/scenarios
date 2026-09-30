@@ -2,7 +2,8 @@
 # without .lua, then the argument. s9_error_propagation a is the engine-only control (pcall(rect.removeSelf, {})
 # aborts the Simulator with no plugin involved) and is run by hand.
 # A line "<runtime>: script arg" runs on that runtime line only. s17_digest spine42 checks each case's geometry, not its
-# layout, against the s17_digest base run (shipped 1.5.0 plugin.spine) or its s17_moved.lua entry + cause (s17_digest.lua).
+# layout, against the s17_digest base run (shipped 1.5.0 plugin.spine) or its s17_moved.lua entry + cause (s17_digest.lua);
+# s17_digest spine43 against its s17_golden43.lua entry + cause, the 4.3 line's committed reference.
 # s22_example <Scene> opens that menu scene of the line's example project and runs it 10 s (s22_example.lua).
 s0_smoke.lua
 s1_lifecycle.lua
@@ -26,6 +27,7 @@ s19_removed_skeleton.lua removed
 s19_removed_skeleton.lua late
 4.2: s17_digest.lua base
 4.2: s17_digest.lua spine42
+4.3: s17_digest.lua spine43
 s20_group_dispatch.lua order
 s20_group_dispatch.lua remove_create
 s20_group_dispatch.lua remove_group
@@ -39,6 +41,9 @@ s2x_hittest.lua
 s21_tint_black.lua pixels
 s21_tint_black.lua both
 4.2: s24_sibling_guard.lua legacy
+4.3: s25_additive.lua
+4.3: s26_region.lua
+4.3: s27_slider.lua
 s22_example.lua Physics
 s22_example.lua InverseKinematics
 s22_example.lua Skins
@@ -54,3 +59,4 @@ s22_example.lua Splits
 s22_example.lua AttachmentObject
 s22_example.lua AttachmentProperties
 s22_example.lua SlotAttachmentFromSkin
+4.3: s22_example.lua Slider

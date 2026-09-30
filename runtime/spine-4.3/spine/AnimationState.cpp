@@ -133,14 +133,6 @@ void TrackEntry::setShortestRotation(bool inValue) {
 	_shortestRotation = inValue;
 }
 
-bool TrackEntry::getHoldPrevious() {
-	return _keepHold;
-}
-
-void TrackEntry::setHoldPrevious(bool inValue) {
-	_keepHold = inValue;
-}
-
 float TrackEntry::getDelay() {
 	return _delay;
 }

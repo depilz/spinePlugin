@@ -1,11 +1,35 @@
 # Changelog
 
-## Unreleased
+## plugin.spine43 3.0.0
 
-### plugin.spine43 (4.3 line)
+The Spine 4.3 line, published as `plugin.spine43`. Every entry is written for a project that uses `plugin.spine42`
+2.0.0: "Breaking" marks a change that code written for 2.0.0 may need to follow, and the migration page of the
+documentation shows each one.
 
 - **The shared changes released under "Both lines" in plugin.spine42 2.0.0 below apply to `plugin.spine43` (version
   3.0.0) too.** The 4.3 line reads only skeleton data exported by Spine 4.3: re-export your skeletons with Spine 4.3.
+- **The Spine runtime is frozen at spine-ts-4.3.13; export with Spine 4.3.75-beta or older.** The vendored runtime is
+  spine-cpp as of upstream tag `spine-ts-4.3.13` (`b7beb2ccb`), with the plugin's own runtime changes. Every example
+  the line is tested with was exported by Spine 4.3.75-beta; data from a newer 4.3 editor is not tested.
+- **Breaking: `trackEntry.holdPrevious` is removed.** Spine 4.3 has no hold-previous flag. Reading or writing it
+  raises `SpineTrackEntry: property 'holdPrevious' was removed in Spine 4.3; use additive or mixInterpolation`. Use
+  `trackEntry.additive` or `trackEntry.mixInterpolation` (below) instead. The 4.2 line keeps `holdPrevious`.
+- **Added `trackEntry.additive` and `trackEntry.mixInterpolation`.** `additive = true` makes an entry add its
+  animation to the pose of the tracks below it instead of replacing it (`false` by default; no effect on track 1 at
+  alpha 1). `mixInterpolation` is how the mix from the previous entry progresses: `"linear"` (the default),
+  `"smooth"`, `"slowFast"`, `"fastSlow"` or `"circle"`; any other value raises
+  `SpineTrackEntry: mixInterpolation must be one of 'linear', 'smooth', 'slowFast', 'fastSlow', 'circle'`.
+- **Added `slot.appliedAttachment`.** The attachment the renderer draws for the slot, read-only. A slider constraint
+  whose animation keys the slot's attachment changes only what is drawn, so it can differ from `slot.attachment`.
+- **Added `skeleton.sliders`.** A read-only table of the skeleton's slider constraints by name. A slider's `time` and
+  `mix` read and write; `duration`, `name`, `animation`, `loop` and `boneDriven` are read-only. Writing `time` on a
+  bone-driven slider detaches it from its bone for good. A slider kept after its skeleton is removed raises
+  `Slider belongs to a removed skeleton`. The 4.3 example project has a Sliders scene.
+- **Added `attachment.region`, `attachment:copy{ region = … }` and `skeleton:createAttachment{ … }`.**
+  `attachment.region` is the atlas region a region or mesh attachment shows, read-only. `copy{ region = "<name>" }`
+  returns a copy that shows another region of the skeleton's own atlas. `createAttachment{ region = …, name = … }`
+  creates a region attachment from it. A region the atlas does not have raises
+  `Region not found in the skeleton's atlas: <name>`.
 - **Physics rotation follows gravity and forces the right way on screen.** The vendored runtime now includes upstream
   spine-cpp `d6e239975` ("Fix Y-down physics constraint forces"). Physics constraints that rotate, shear or scale a bone
   under gravity or wind bent it the wrong way on screen, because the plugin runs Spine in Y-down mode; they now bend it
@@ -29,12 +53,25 @@
   that is inactive (skin-required and not in the current skin), as on the 4.2 line and in the Spine editor. Before,
   they still keyed its mix and other pose values, and a physics timeline could reset it.
 
+### Shared changes that reach plugin.spine42 in a later 2.0.x
+
+These are in the tree both lines build from. `plugin.spine42` 2.0.0 does not have them; a later 2.0.x release will.
+
+- **A split mesh whose `removeSelf` raises no longer leaks.** When a skeleton is removed, it removes its split
+  meshes. If a `removeSelf` you gave a split mesh raised there, the error reached the caller but the plugin kept a
+  reference to the mesh forever; it now releases the mesh first.
+- **The tint-black source comment states the one-Spine-plugin-per-app rule.** Comment only; no behaviour change.
+- **A skeleton's data keeps a pointer to the atlas it was loaded with.** Internal, for `copy{ region }` and
+  `createAttachment` on the 4.3 line; no behaviour change on the 4.2 line.
+- **Android builds are the same bytes from any checkout path.** The Android native build compiles with
+  `-ffile-compilation-dir=.`, so the `.so` no longer records the path of the checkout it was built in.
+
 ## plugin.spine42 2.0.0
 
 The Spine 4.2 line, published as `plugin.spine42`, after the public `plugin.spine` 1.2.6. Every entry is written for
 a project that uses 1.2.6: "Breaking" marks a change that code written for 1.2.6 may need to follow, and the
 migration page of the documentation shows each one with code before and after. The entries under "Both lines" are
-the shared Lua layer, which the 4.3 line (`plugin.spine43`, under "Unreleased" above) has too.
+the shared Lua layer, which the 4.3 line (`plugin.spine43` 3.0.0, above) has too.
 
 ### Both lines
 

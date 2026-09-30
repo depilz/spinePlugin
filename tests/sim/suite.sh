@@ -74,6 +74,7 @@ trap guard_user_plugins EXIT
 # DYLIB_CACHE sits next to the line's SPINE_TEST_OUT, so the lines of one tests/run.sh run share it and the second
 # line reports a cache hit. The project's "Copy to Simulator's Plugin Directory" phase is pointed at
 # <product>/<commit>/copied (and HOME at a fake home) before building.
+# Contract (tools/release/build.sh reads it): the dylib's dir keeps build.log and dd/Build/Products/Release/<product>.*
 DYLIB_CACHE=$(dirname "$SPINE_TEST_OUT")/sim-dylib
 DYLIBS=()
 build_dylib() {

@@ -42,6 +42,7 @@ Properties
    slots
    bones
    ikConstraints
+   sliders
    physics
    physics/index
    tracks
@@ -62,6 +63,7 @@ Skin Management
    findSkin
    getSkins
    createSkin
+   createAttachment
 
 Setup Pose
 .............

@@ -7,6 +7,9 @@
 #include "Lua_Skin.h"
 #include "Lua_TrackEntry.h"
 #include "SpineRenderer.h"
+#if SPINE_43()
+#include "Lua_Attachment.h"
+#endif
 #include <cfloat>
 #include <cmath>
 #include <utility>
@@ -161,6 +164,161 @@ static int checkTrackIndex(lua_State *L, int argIndex)
     return trackIndex;
 }
 
+#if SPINE_43()
+static void getSliderMt(lua_State *L);
+
+// A slider constraint of obj.sliders: plays its animation at its pose's time and mix, or at a time its bone drives.
+struct LuaSlider
+{
+    lua_State *L;
+    Slider *slider;
+    Skeleton *skeleton; // the owner, for updateCache() once a time write detached the bone
+    std::shared_ptr<SkeletonLife> alive;
+
+    LuaSlider(lua_State *L, Slider *slider, Skeleton *skeleton, std::shared_ptr<SkeletonLife> alive)
+        : L(L), slider(slider), skeleton(skeleton), alive(alive)
+    {
+        getSliderMt(L);
+        lua_setmetatable(L, -2);
+    }
+
+    void checkAlive(lua_State *state) const
+    {
+        if (!slider || (alive && !*alive))
+            luaL_error(state, "Slider belongs to a removed skeleton");
+    }
+
+    ~LuaSlider()
+    {
+        slider = nullptr;
+        L = nullptr;
+    }
+};
+
+static int slider_index(lua_State *L)
+{
+    LuaSlider *sliderUserdata = (LuaSlider *)luaL_checkudata(L, 1, "SpineSlider");
+    sliderUserdata->checkAlive(L);
+
+    Slider *slider = sliderUserdata->slider;
+    SliderData &data = slider->getData();
+    const char *key = luaL_checkstring(L, 2);
+
+    if (strcmp(key, "time") == 0)
+    {
+        lua_pushnumber(L, slider->getPose().getTime());
+        return 1;
+    }
+    else if (strcmp(key, "mix") == 0)
+    {
+        lua_pushnumber(L, slider->getPose().getMix());
+        return 1;
+    }
+    else if (strcmp(key, "duration") == 0)
+    {
+        lua_pushnumber(L, data.getAnimation().getDuration());
+        return 1;
+    }
+    else if (strcmp(key, "name") == 0)
+    {
+        lua_pushstring(L, data.getName().buffer());
+        return 1;
+    }
+    else if (strcmp(key, "animation") == 0)
+    {
+        lua_pushstring(L, data.getAnimation().getName().buffer());
+        return 1;
+    }
+    else if (strcmp(key, "loop") == 0)
+    {
+        lua_pushboolean(L, data.getLoop());
+        return 1;
+    }
+    else if (strcmp(key, "boneDriven") == 0)
+    {
+        lua_pushboolean(L, slider->hasBone());
+        return 1;
+    }
+
+    return 0;
+}
+
+// Readable keys that slider_newindex does not write.
+static const char *const sliderReadOnlyKeys[] = {"duration", "name", "animation", "loop", "boneDriven", NULL};
+
+static int slider_newindex(lua_State *L)
+{
+    LuaSlider *sliderUserdata = (LuaSlider *)luaL_checkudata(L, 1, "SpineSlider");
+    sliderUserdata->checkAlive(L);
+
+    Slider *slider = sliderUserdata->slider;
+    const char *key = luaL_checkstring(L, 2);
+
+    if (strcmp(key, "time") == 0)
+    {
+        float time = luaL_checknumber(L, 3);
+        if (slider->hasBone())
+        {
+            // a time set from Lua takes the slider from its bone for good: there is no re-attach
+            slider->clearBone();
+            sliderUserdata->skeleton->updateCache();
+        }
+        slider->getPose().setTime(time);
+        return 0;
+    }
+    else if (strcmp(key, "mix") == 0)
+    {
+        slider->getPose().setMix(luaL_checknumber(L, 3));
+        return 0;
+    }
+
+    for (const char *const *readOnly = sliderReadOnlyKeys; *readOnly; readOnly++)
+    {
+        if (strcmp(key, *readOnly) == 0)
+            return luaL_error(L, "SpineSlider: property '%s' is read-only", key);
+    }
+    return luaL_error(L, "SpineSlider: unknown property '%s'", key);
+}
+
+static int slider_gc(lua_State *L)
+{
+    LuaSlider *sliderUserdata = (LuaSlider *)luaL_checkudata(L, 1, "SpineSlider");
+
+    sliderUserdata->~LuaSlider();
+
+    return 0;
+}
+
+// Same native slider of the same skeleton instance; raises if either skeleton was removed (D7).
+static int slider_eq(lua_State *L)
+{
+    LuaSlider *a = (LuaSlider *)luaL_checkudata(L, 1, "SpineSlider");
+    LuaSlider *b = (LuaSlider *)luaL_checkudata(L, 2, "SpineSlider");
+    a->checkAlive(L);
+    b->checkAlive(L);
+    lua_pushboolean(L, a->slider == b->slider && a->alive == b->alive);
+    return 1;
+}
+
+static void getSliderMt(lua_State *L)
+{
+    if (luaL_newmetatable(L, "SpineSlider"))
+    {
+        lua_pushcfunction(L, slider_index);
+        lua_setfield(L, -2, "__index");
+
+        lua_pushcfunction(L, slider_newindex);
+        lua_setfield(L, -2, "__newindex");
+
+        lua_pushcfunction(L, slider_gc);
+        lua_setfield(L, -2, "__gc");
+
+        lua_pushcfunction(L, slider_eq);
+        lua_setfield(L, -2, "__eq");
+    }
+}
+#endif
+
 static int skeleton_index(lua_State *L)
 {
     const char *key = luaL_checkstring(L, 2);
@@ -254,6 +412,27 @@ static int skeleton_index(lua_State *L)
 
         return 1;
     }
+#if SPINE_43()
+    else if (strcmp(key, "sliders") == 0)
+    {
+        // a fresh name-keyed table per read; a wrapper stays valid until the skeleton is removed
+        Array<Constraint *> &constraints = skeletonUserdata->skeleton->getConstraints();
+        lua_newtable(L);
+
+        for (size_t i = 0; i < constraints.size(); i++)
+        {
+            if (!constraints[i]->getRTTI().instanceOf(Slider::rtti)) continue;
+            Slider *slider = static_cast<Slider *>(constraints[i]);
+
+            LuaSlider *sliderUserdata = (LuaSlider *)lua_newuserdata(L, sizeof(LuaSlider));
+            new (sliderUserdata) LuaSlider(L, slider, skeletonUserdata->skeleton, skeletonUserdata->alive);
+
+            lua_setfield(L, -2, slider->getData().getName().buffer());
+        }
+
+        return 1;
+    }
+#endif
     else if (strcmp(key, "tracks") == 0)
     {
         pushTracks(L, skeletonUserdata->state->getTracks(), skeletonUserdata->alive);
@@ -546,6 +725,21 @@ static int createSkin(lua_State *L)
 
     return 1;
 }
+
+#if SPINE_43()
+// skeleton:createAttachment{ region = "<atlas region>", name = "<name>", width?, height?, x?, y?, rotation?, scaleX?,
+// scaleY? } -> a new region attachment showing that region of the skeleton's atlas, for skin:setAttachment or
+// slot.attachment; width/height default to the region's original size
+static int createAttachment(lua_State *L)
+{
+    SpineSkeleton *skeletonUserdata = luaL_getSkeletonUserdata(L);
+    if (!skeletonUserdata)
+    {
+        return 0;
+    }
+    return createRegionAttachment(L, 2, skeletonUserdata->dataOwner);
+}
+#endif
 
 // skeleton:getSkin()
 static int getSkin(lua_State *L)
@@ -1106,10 +1300,13 @@ void SpineSkeleton::removeSplitMeshes(lua_State *L_in)
         lua_settop(L_in, top + 1);
         if (inSplitGroup)
         {
-            // out of the pool before the mesh's removeSelf runs: it is Lua (a caller may override it) and may re-enter
-            LuaTableHolder removed(std::move(mesh));
+            // out of the pool before the mesh's removeSelf runs: it is Lua (a caller may override it) and may re-enter.
+            // Only the stack holds the mesh during the call: a raising removeSelf longjmps over any holder's unref.
+            mesh.pushTable(L_in);
             meshes.removeMesh(index);
-            engine_removeMesh(L_in, &removed);
+            lua_getfield(L_in, -1, "removeSelf");
+            lua_insert(L_in, -2);
+            lua_call(L_in, 1, 0);
         }
     }
     lua_settop(L_in, top);
@@ -2050,6 +2247,9 @@ void getSpineObjectMt(lua_State *L)
             {"getSkins", getSkins},
             {"setSkin", setSkin},
             {"createSkin", createSkin},
+#if SPINE_43()
+            {"createAttachment", createAttachment},
+#endif
             {"getSkin", getSkin},
             {"findSkin", findSkin},
 

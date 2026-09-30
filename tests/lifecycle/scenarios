@@ -44,6 +44,7 @@ t23_split_lifetime.lua removeSplit
 t23b_split_reentry.lua draw
 t23b_split_reentry.lua split
 t23b_split_reentry.lua reassemble
+t23c_split_raise.lua
 t24_close_kitchen_sink.lua
 t25_setlistener_in_callback.lua
 t25b_setlistener_ended.lua

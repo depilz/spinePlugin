@@ -8,6 +8,11 @@ using namespace spine;
 
 void getAttachmentMt(lua_State* L);
 
+#if SPINE_43()
+// skeleton:createAttachment's body: the attachment the table at index describes, on dataOwner's atlas, pushed.
+int createRegionAttachment(lua_State *L, int table, const std::shared_ptr<DataHolder<SkeletonData>> &dataOwner);
+#endif
+
 struct LuaAttachment
 {
     lua_State *L;

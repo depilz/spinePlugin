@@ -132,10 +132,6 @@ namespace spine {
 
 		void setShortestRotation(bool inValue);
 
-		bool getHoldPrevious();
-
-		void setHoldPrevious(bool inValue);
-
 		/// Seconds to postpone playing the animation. Must be >= 0. When this track entry is the current track entry,
 		/// delay postpones incrementing the track time. When this track entry is queued, delay is the time from the start of the
 		/// previous animation to when this track entry will become the current track entry (ie when the previous track entry's track

@@ -84,7 +84,7 @@ its entry to the plugins table of ``build.settings`` and read that line's docume
       }
 
 Moving a project from ``plugin.spine`` 1.2 to a line, or from 4.2 to 4.3? See the :doc:`migration guide <migration>`
-and the CHANGELOG's `plugin.spine42 2.0.0`_ release and unreleased `4.3 line`_ changes.
+and the CHANGELOG's `plugin.spine42 2.0.0`_ and `plugin.spine43 3.0.0`_ releases.
 
 How to Get Started
 ------------------
@@ -262,4 +262,4 @@ We hope you find this documentation helpful and comprehensive.
 Let’s get animating with Spine for Solar2D!
 
 .. _plugin.spine42 2.0.0: https://github.com/depilz/spinePlugin/blob/main/CHANGELOG.md#pluginspine42-200
-.. _4.3 line: https://github.com/depilz/spinePlugin/blob/main/CHANGELOG.md#pluginspine43-43-line
+.. _plugin.spine43 3.0.0: https://github.com/depilz/spinePlugin/blob/main/CHANGELOG.md#pluginspine43-300

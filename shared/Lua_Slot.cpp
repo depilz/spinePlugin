@@ -65,6 +65,23 @@ static int slot_index(lua_State *L)
         }
         return 1;
     }
+#if SPINE_43()
+    else if (strcmp(key, "appliedAttachment") == 0)
+    {
+        // the applied pose's attachment, the one the renderer draws: a slider can key it apart from slot.attachment
+        Attachment *attachment = spc::applied(slot).getAttachment();
+        if (!attachment)
+        {
+            lua_pushnil(L);
+        }
+        else
+        {
+            LuaAttachment *attachmentUserdata = (LuaAttachment *)lua_newuserdata(L, sizeof(LuaAttachment));
+            new (attachmentUserdata) LuaAttachment(L, attachment, slotUserdata->dataOwner);
+        }
+        return 1;
+    }
+#endif
     else if (strcmp(key, "color") == 0)
     {
         lua_createtable(L, 0, 4);
@@ -277,6 +294,12 @@ static int slot_newindex(lua_State *L)
     {
         return luaL_error(L, "SpineSlot: property 'darkColor' is read-only; the skeleton data and its animations set it");
     }
+#if SPINE_43()
+    else if (strcmp(key, "appliedAttachment") == 0)
+    {
+        return luaL_error(L, "SpineSlot: property 'appliedAttachment' is read-only; it is the attachment the renderer draws — set slot.attachment");
+    }
+#endif
 
     for (const char *const *readOnly = readOnlyKeys; *readOnly; readOnly++)
     {

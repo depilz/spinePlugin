@@ -673,10 +673,11 @@ not change.
 From plugin.spine42 to plugin.spine43
 =====================================
 
-The two lines have the same Lua API. What differs is the Spine runtime, so skeletons need a new export, and a few
-values that come from the runtime.
+The two lines share their Lua API, except where Spine 4.3 itself differs: skeletons need a new export,
+``trackEntry.holdPrevious`` is gone, the 4.3 line adds keys for what is new in Spine 4.3, and a few values that come
+from the runtime change.
 
-.. _4.3 line: https://github.com/depilz/spinePlugin/blob/main/CHANGELOG.md#pluginspine43-43-line
+.. _4.3 line: https://github.com/depilz/spinePlugin/blob/main/CHANGELOG.md#pluginspine43-300
 
 Plugin name
 -----------
@@ -695,14 +696,74 @@ Plugin name
 Re-export your skeletons with Spine 4.3
 ---------------------------------------
 
-The 4.3 line reads only skeleton data exported by Spine 4.3.
+The 4.3 line reads only skeleton data exported by Spine 4.3. Export with Spine **4.3.75-beta or older**: the
+line's Spine runtime is spine-cpp as of upstream ``spine-ts-4.3.13``, and the examples it is tested with were exported
+by 4.3.75-beta. Data from a newer 4.3 editor is not tested.
 
 - **Before:** ``.json`` and ``.skel`` files exported with Spine 4.2.
-- **After:** the same skeletons exported again with the Spine 4.3 editor, with their atlases.
+- **After:** the same skeletons exported again with the Spine 4.3.75-beta editor or older, with their atlases.
 - **Error:** ``Failed to load skeleton data: <path>: Skeleton version 4.2.<patch> does not match runtime version
   4.3``.
-- **What to change:** open each project in Spine 4.3 and export the skeleton and its atlas again.
-- **CHANGELOG:** `both lines`_, "Load errors say why".
+- **What to change:** open each project in Spine 4.3.75-beta or older and export the skeleton and its atlas again.
+- **CHANGELOG:** `4.3 line`_, "The Spine runtime is frozen at spine-ts-4.3.13; export with Spine 4.3.75-beta or older".
+
+``trackEntry.holdPrevious`` is removed
+--------------------------------------
+
+Spine 4.3 has no hold-previous flag on a track entry. On the 4.3 line reading or writing ``holdPrevious`` raises; the
+4.2 line keeps it. To keep a lower track from showing through a mix on a higher track, make the higher track's entry
+``additive``, or change how its mix progresses with ``mixInterpolation``; both are on the track entry page of the 4.3
+documentation.
+
+- **Before:**
+
+  .. fragment: 4.2 code; entry is a track entry the app holds
+  .. code-block:: lua
+
+      entry.holdPrevious = true
+
+- **After:**
+
+  .. only:: spine43
+
+     .. code-block:: lua
+
+         spineboy:setAnimation(1, "walk", true)
+         local aim = spineboy:setAnimation(2, "aim", true)
+         aim.additive = true
+
+  .. only:: spine42
+
+     .. fragment: 4.3 code; the 4.2 line has no additive key
+     .. code-block:: lua
+
+         spineboy:setAnimation(1, "walk", true)
+         local aim = spineboy:setAnimation(2, "aim", true)
+         aim.additive = true
+
+- **Error:** ``SpineTrackEntry: property 'holdPrevious' was removed in Spine 4.3; use additive or mixInterpolation``.
+- **What to change:** drop ``holdPrevious``; use ``additive`` or ``mixInterpolation`` where the mix needs it.
+- **CHANGELOG:** `4.3 line`_, "Breaking: trackEntry.holdPrevious is removed".
+
+New keys
+--------
+
+The 4.3 line adds keys for what is new in Spine 4.3. Each has its page in the API reference of the 4.3
+documentation; the 4.2 line does not have them.
+
+- ``trackEntry.additive`` (``true``/``false``) and ``trackEntry.mixInterpolation`` (``"linear"``, ``"smooth"``,
+  ``"slowFast"``, ``"fastSlow"`` or ``"circle"``).
+- ``slot.appliedAttachment``, read-only: the attachment the renderer draws, which a slider constraint can make differ
+  from ``slot.attachment``.
+- ``skeleton.sliders``, read-only: the skeleton's slider constraints by name, with ``time`` and ``mix`` to read and
+  write and ``duration``, ``name``, ``animation``, ``loop`` and ``boneDriven`` to read.
+- ``attachment.region``, read-only: the atlas region a region or mesh attachment shows;
+  ``attachment:copy{ region = … }``: a copy that shows another region of the skeleton's atlas;
+  ``skeleton:createAttachment{ region = …, name = … }``: a new region attachment.
+
+- **Error:** none; code written for the 4.2 line does not use them.
+- **What to change:** nothing.
+- **CHANGELOG:** `4.3 line`_, the "Added" entries.
 
 ``attachment.hullLength`` counts numbers
 ----------------------------------------

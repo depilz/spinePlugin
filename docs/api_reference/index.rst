@@ -15,6 +15,7 @@ on an object name below to explore its docs.
    skeleton/slot/index
    skeleton/bone/index
    skeleton/ikConstraint/index
+   skeleton/slider/index
    skeleton/trackEntry/index
    skin/index
    attachment/index

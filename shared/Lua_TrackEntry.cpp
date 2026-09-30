@@ -1,5 +1,64 @@
 #include "Lua_TrackEntry.h"
 
+#if SPINE_43()
+// trackEntry.mixInterpolation: the Lua name of each of spine-cpp's five built-in Interpolations
+static const struct
+{
+    const char *name;
+    Interpolation &(*get)();
+} mixInterpolations[] = {{"linear", Interpolation::linear},
+                         {"smooth", Interpolation::smooth},
+                         {"slowFast", Interpolation::slowFast},
+                         {"fastSlow", Interpolation::fastSlow},
+                         {"circle", Interpolation::circle}};
+
+// pushMixInterpolation: the name of the built-in the entry stores (Lua can store no other)
+static void pushMixInterpolation(lua_State *L, TrackEntry &entry)
+{
+    for (const auto &interpolation : mixInterpolations)
+    {
+        if (&interpolation.get() == &entry.getMixInterpolation())
+        {
+            lua_pushstring(L, interpolation.name);
+            return;
+        }
+    }
+    lua_pushnil(L);
+}
+
+// setMixInterpolation: stores the built-in value (stack index) names; raises on anything else
+static void setMixInterpolation(lua_State *L, TrackEntry &entry, int value)
+{
+    const char *name = lua_type(L, value) == LUA_TSTRING ? lua_tostring(L, value) : "";
+    for (const auto &interpolation : mixInterpolations)
+    {
+        if (strcmp(name, interpolation.name) == 0)
+        {
+            entry.setMixInterpolation(interpolation.get());
+            return;
+        }
+    }
+    luaL_error(L, "SpineTrackEntry: mixInterpolation must be one of 'linear', 'smooth', 'slowFast', 'fastSlow', 'circle'");
+}
+
+// The keys Spine 4.3 removed, each with what replaces it. A table, not strcmp literals: the key leaves the 4.3 surface.
+static const struct
+{
+    const char *key;
+    const char *replacement;
+} removedKeys[] = {{"holdPrevious", "additive or mixInterpolation"}};
+
+// checkRemoved: raises when key is a removed key; called after checkAlive, so a stale entry raises that first
+static void checkRemoved(lua_State *L, const char *key)
+{
+    for (const auto &removed : removedKeys)
+    {
+        if (strcmp(key, removed.key) == 0)
+            luaL_error(L, "SpineTrackEntry: property '%s' was removed in Spine 4.3; use %s", key, removed.replacement);
+    }
+}
+#endif
+
 // trackEntry:setMixDuration(mixDurationMs [, delayMs])
 static int entry_setMixDuration(lua_State *L)
 {
@@ -34,6 +93,9 @@ static int entry_index(lua_State *L)
         return 1;
     }
     entryUserdata->checkAlive(L);
+#if SPINE_43()
+    checkRemoved(L, key);
+#endif
 
     TrackEntry &entry = *entryUserdata->entry;
 
@@ -109,14 +171,28 @@ static int entry_index(lua_State *L)
         lua_pushboolean(L, entry.isComplete());
         return 1;
     }
+#if !SPINE_43()
     else if (strcmp(key, "holdPrevious") == 0) {
         lua_pushboolean(L, entry.getHoldPrevious());
         return 1;
     }
+#endif
     else if (strcmp(key, "reverse") == 0) {
         lua_pushboolean(L, entry.getReverse());
         return 1;
     }
+#if SPINE_43()
+    else if (strcmp(key, "additive") == 0)
+    {
+        lua_pushboolean(L, entry.getAdditive());
+        return 1;
+    }
+    else if (strcmp(key, "mixInterpolation") == 0)
+    {
+        pushMixInterpolation(L, entry);
+        return 1;
+    }
+#endif
     else if (strcmp(key, "delay") == 0) {
         lua_pushnumber(L, entry.getDelay() * 1000);
         return 1;
@@ -210,6 +286,9 @@ static int entry_newindex(lua_State *L)
     entryUserdata->checkAlive(L);
 
     const char *key = luaL_checkstring(L, 2);
+#if SPINE_43()
+    checkRemoved(L, key);
+#endif
 
     TrackEntry &entry = *entryUserdata->entry;
 
@@ -249,16 +328,30 @@ static int entry_newindex(lua_State *L)
         entry.setLoop(loop);
         return 0;
     }
+#if !SPINE_43()
     else if (strcmp(key, "holdPrevious") == 0) {
         bool holdPrevious = lua_toboolean(L, 3);
         entry.setHoldPrevious(holdPrevious);
         return 0;
     }
+#endif
     else if (strcmp(key, "reverse") == 0) {
         bool reverse = lua_toboolean(L, 3);
         entry.setReverse(reverse);
         return 0;
     }
+#if SPINE_43()
+    else if (strcmp(key, "additive") == 0)
+    {
+        entry.setAdditive(lua_toboolean(L, 3));
+        return 0;
+    }
+    else if (strcmp(key, "mixInterpolation") == 0)
+    {
+        setMixInterpolation(L, entry, 3);
+        return 0;
+    }
+#endif
     else if (strcmp(key, "delay") == 0) {
         float delay = luaL_checknumber(L, 3) / 1000;
         entry.setDelay(delay);

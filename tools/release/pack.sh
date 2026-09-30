@@ -2,7 +2,8 @@
 # Deterministic data.tgz packer: the same tree and epoch give the same bytes on any host.
 # usage: tools/release/pack.sh --mtime EPOCH TREE OUT.tgz [MEMBER...]
 # Packs the MEMBERs (paths relative to TREE, a directory recursing) or, with none, everything under TREE, into OUT.tgz,
-# which must lie outside the packed members. Skips every `._*` entry; only regular files and directories are allowed.
+# which must lie outside the packed members (an OUT equal to or under one exits 2). Skips every `._*` entry; only
+# regular files and directories are allowed.
 # Output: POSIX ustar without pax records, entries sorted by path with no leading ./, directories as entries, every
 # mtime EPOCH, uid/gid 0, empty uname/gname; gzip level 9 with MTIME 0 and no file name.
 # Modes: directories 0755; every file 0755 when the packed set holds a directory (the android layout: metadata.lua
@@ -10,7 +11,7 @@
 # Exit 0 = OUT.tgz written, 2 = usage or input error (nothing written).
 set -uo pipefail
 
-usage() { sed -n '3,10s/^# //p' "$0"; }
+usage() { sed -n '3,11s/^# //p' "$0"; }
 die() { echo "pack.sh: $*" >&2; exit 2; }
 
 [[ "${1:-}" == --help || "${1:-}" == -h ]] && { usage; exit 0; }
@@ -43,9 +44,13 @@ def walk(rel):
         fail(f"{rel} is neither a regular file nor a directory")
 
 roots = [os.path.normpath(m) for m in members] or os.listdir(tree)
+out_real = os.path.realpath(out)
 for root in roots:
     if root in (".", "..") or root.startswith("../") or os.path.isabs(root) or not os.path.lexists(os.path.join(tree, root)):
         fail(f"no member {root} in {tree}")
+    member = os.path.realpath(os.path.join(tree, root))
+    if out_real == member or out_real.startswith(member + os.sep):
+        fail(f"{out} lies in the packed member {root}")
 entries = dict(e for root in roots for e in walk(root))
 if not entries:
     fail(f"nothing to pack in {tree}")

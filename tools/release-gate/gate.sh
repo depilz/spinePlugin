@@ -13,8 +13,8 @@
 # win32, win32-sim: PE32). The literals of a Mach-O binary (.a, .dylib) are read from a `strip -S` copy, so debug info
 # cannot supply one. linux-sim ships no binary: its Lua stub <entry>.lua must carry exactly the version literal.
 # local-path: no build-machine path (/Users/, /private/, /tmp/, /var/folders, /Volumes/, a Windows drive or UNC path)
-# in the raw bytes of any original binary, metadata.lua or stub, nor in the archive (raw and gunzipped), except where a
-# LOCAL_PATH_ALLOW prefix starts at the hit. tar-meta: every archive member has uid/gid 0, empty uname/gname, no pax
+# in the raw bytes of any original binary, metadata.lua or stub, nor in the archive (its gzip header and gunzipped tar
+# stream), except where a LOCAL_PATH_ALLOW prefix starts at the hit. tar-meta: every archive member has uid/gid 0, empty uname/gname, no pax
 # record and no ._* name. --allow-legacy-metadata waives both, for archives released before them.
 # Prints OK|FAIL per binary and per archive; exit 0 = every archive passed, 1 = a check failed, 2 = usage error.
 set -uo pipefail

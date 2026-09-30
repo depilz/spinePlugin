@@ -8,6 +8,10 @@
 #include "spine/AttachmentType.h"
 #include "spine/Slot.h"
 #include "Lua_Slot.h"
+#if SPINE_43()
+#include "SkeletonDataHolder.h"
+#include "Texture.h"
+#endif
 
 static const char* getAttachmentTypeName(Attachment *attachment)
 {
@@ -73,6 +77,163 @@ static Color *attachmentColor(Attachment *attachment)
     }
     return nullptr;
 }
+
+#if SPINE_43()
+// Region remap and create (4.3): regions come only from the skeleton's own atlas, which lives as long as the dataOwner
+// (SkeletonDataHolder refs its userdata); the renderer does not check for a missing region, so a miss raises first.
+
+// the region or mesh attachment's sequence (its regions), nullptr for an attachment type without regions
+static Sequence *attachmentSequence(Attachment *attachment)
+{
+    if (attachment->getRTTI().instanceOf(RegionAttachment::rtti))
+    {
+        return &static_cast<RegionAttachment *>(attachment)->getSequence();
+    }
+    else if (attachment->getRTTI().instanceOf(MeshAttachment::rtti))
+    {
+        return &static_cast<MeshAttachment *>(attachment)->getSequence();
+    }
+    return nullptr;
+}
+
+// Shows region in the attachment's single-frame sequence and recomputes its UVs (and a region's offsets).
+static void setRegion(Attachment *attachment, TextureRegion *region)
+{
+    attachmentSequence(attachment)->getRegions()[0] = region;
+    if (attachment->getRTTI().instanceOf(RegionAttachment::rtti))
+    {
+        static_cast<RegionAttachment *>(attachment)->updateSequence();
+    }
+    else
+    {
+        static_cast<MeshAttachment *>(attachment)->updateSequence();
+    }
+}
+
+// The atlas region the table's `region` field names, from the dataOwner's atlas; raises when there is none.
+static AtlasRegion *checkAtlasRegion(lua_State *L, int table, const std::shared_ptr<DataHolder<SkeletonData>> &dataOwner)
+{
+    lua_getfield(L, table, "region");
+    if (lua_type(L, -1) != LUA_TSTRING) luaL_error(L, "region (an atlas region name) expected");
+    const char *name = lua_tostring(L, -1);
+    Atlas *atlas = SkeletonDataHolder::atlasOf(dataOwner);
+    AtlasRegion *region = atlas ? atlas->findRegion(name) : nullptr;
+    if (!region) luaL_error(L, "Region not found in the skeleton's atlas: %s", name);
+    lua_pop(L, 1);
+    return region;
+}
+
+// The table's number field key, fallback when it is nil; raises for any other type.
+static float optNumberField(lua_State *L, int table, const char *key, float fallback)
+{
+    lua_getfield(L, table, key);
+    if (!lua_isnil(L, -1) && lua_type(L, -1) != LUA_TNUMBER) luaL_error(L, "createAttachment: %s must be a number", key);
+    float value = lua_isnil(L, -1) ? fallback : (float)lua_tonumber(L, -1);
+    lua_pop(L, 1);
+    return value;
+}
+
+// attachment.region: the setup frame's atlas region as a table, nil for an attachment without one
+static void pushRegion(lua_State *L, Attachment *attachment)
+{
+    Sequence *sequence = attachmentSequence(attachment);
+    TextureRegion *textureRegion = nullptr;
+    if (sequence)
+    {
+        int last = (int)sequence->getRegions().size() - 1;
+        textureRegion = sequence->getRegion(sequence->getSetupIndex() < last ? sequence->getSetupIndex() : last);
+    }
+    if (!textureRegion || !textureRegion->getRTTI().instanceOf(AtlasRegion::rtti))
+    {
+        lua_pushnil(L);
+        return;
+    }
+    AtlasRegion *region = static_cast<AtlasRegion *>(textureRegion);
+    lua_createtable(L, 0, 13);
+    lua_pushstring(L, region->getName().buffer());
+    lua_setfield(L, -2, "name");
+    // the page texture's filename and baseDir, as graphics.newTexture loaded it (none when it failed to load)
+    Texture *texture = (Texture *)region->getPage()->texture;
+    if (texture)
+    {
+        texture->textureTable->pushTable(L);
+        lua_getfield(L, -1, "filename");
+        lua_setfield(L, -3, "filename");
+        lua_getfield(L, -1, "baseDir");
+        lua_setfield(L, -3, "baseDir");
+        lua_pop(L, 1);
+    }
+    lua_pushnumber(L, region->getX());
+    lua_setfield(L, -2, "x");
+    lua_pushnumber(L, region->getY());
+    lua_setfield(L, -2, "y");
+    lua_pushnumber(L, region->getPackedWidth());
+    lua_setfield(L, -2, "width");
+    lua_pushnumber(L, region->getPackedHeight());
+    lua_setfield(L, -2, "height");
+    lua_pushnumber(L, region->getOriginalWidth());
+    lua_setfield(L, -2, "originalWidth");
+    lua_pushnumber(L, region->getOriginalHeight());
+    lua_setfield(L, -2, "originalHeight");
+    lua_pushnumber(L, region->getOffsetX());
+    lua_setfield(L, -2, "offsetX");
+    lua_pushnumber(L, region->getOffsetY());
+    lua_setfield(L, -2, "offsetY");
+    lua_pushboolean(L, region->getRotate());
+    lua_setfield(L, -2, "rotated");
+    lua_pushnumber(L, region->getDegrees());
+    lua_setfield(L, -2, "degrees");
+}
+
+// copy{ region = "<name>" }'s region: only a single-frame region or mesh attachment is remapped, and the region is
+// found before anything is copied.
+static TextureRegion *checkCopyRegion(lua_State *L, LuaAttachment *source)
+{
+    luaL_checktype(L, 2, LUA_TTABLE);
+    Attachment *attachment = source->attachment;
+    Sequence *sequence = attachmentSequence(attachment);
+    if (!sequence)
+        luaL_error(L, "SpineAttachment: copy{ region } needs a region or mesh attachment, not a %s attachment",
+                   getAttachmentTypeName(attachment));
+    if (sequence->getRegions().size() > 1)
+        luaL_error(L, "SpineAttachment: copy{ region } needs a single-frame attachment; '%s' has a %d-frame sequence",
+                   attachment->getName().buffer(), (int)sequence->getRegions().size());
+    return checkAtlasRegion(L, 2, source->dataOwner);
+}
+
+int createRegionAttachment(lua_State *L, int table, const std::shared_ptr<DataHolder<SkeletonData>> &dataOwner)
+{
+    luaL_checktype(L, table, LUA_TTABLE);
+    AtlasRegion *region = checkAtlasRegion(L, table, dataOwner);
+    float width = optNumberField(L, table, "width", region->getOriginalWidth());
+    float height = optNumberField(L, table, "height", region->getOriginalHeight());
+    float x = optNumberField(L, table, "x", 0);
+    float y = optNumberField(L, table, "y", 0);
+    float rotation = optNumberField(L, table, "rotation", 0);
+    float scaleX = optNumberField(L, table, "scaleX", 1);
+    float scaleY = optNumberField(L, table, "scaleY", 1);
+    lua_getfield(L, table, "name");
+    if (lua_type(L, -1) != LUA_TSTRING || !*lua_tostring(L, -1))
+        luaL_error(L, "createAttachment: name (a non-empty string) expected");
+
+    // every raise is above: nothing is allocated until the arguments are checked
+    RegionAttachment *attachment = new RegionAttachment(lua_tostring(L, -1), new Sequence(1, false));
+    lua_pop(L, 1);
+    attachment->setPath(region->getName());
+    attachment->setWidth(width);
+    attachment->setHeight(height);
+    attachment->setX(x);
+    attachment->setY(y);
+    attachment->setRotation(rotation);
+    attachment->setScaleX(scaleX);
+    attachment->setScaleY(scaleY);
+    setRegion(attachment, region);
+
+    LuaAttachment *attachmentUserdata = (LuaAttachment *)lua_newuserdata(L, sizeof(LuaAttachment));
+    new (attachmentUserdata) LuaAttachment(L, attachment, dataOwner);
+    return 1;
+}
+#endif
 
 // the component of color that key ("r", "g", "b" or "a") names
 static float &colorComponent(Color &color, const char *key)
@@ -198,6 +359,13 @@ static int attachment_index(lua_State *L)
         lua_pushnil(L);
         return 1;
     }
+#if SPINE_43()
+    else if (strcmp(key, "region") == 0)
+    {
+        pushRegion(L, attachment);
+        return 1;
+    }
+#endif
     // RegionAttachment properties
     else if (strcmp(key, "x") == 0)
     {
@@ -667,6 +835,13 @@ static int attachment_newindex(lua_State *L)
         }
         return 0;
     }
+#if SPINE_43()
+    else if (strcmp(key, "region") == 0)
+    {
+        // data attachments are never remapped in place: shared by every skin and skeleton of the data
+        return luaL_error(L, "SpineAttachment: property 'region' is read-only; use attachment:copy{ region = … }");
+    }
+#endif
 
     for (const char *const *readOnly = readOnlyKeys; *readOnly; readOnly++)
     {
@@ -742,12 +917,19 @@ static int attachment_computeWorldVertices(lua_State *L)
 
 // attachment:copy()
 // Returns a new attachment with this one's properties, for per-instance changes (skins share attachments)
+// 4.3: attachment:copy{ region = "<atlas region>" } shows that region of the skeleton's atlas in the copy
 static int attachment_copy(lua_State *L)
 {
     LuaAttachment *attachmentUserdata = (LuaAttachment *)luaL_checkudata(L, 1, "SpineAttachment");
     if (!attachmentUserdata->attachment) return luaL_argerror(L, 1, "Invalid attachment");
+#if SPINE_43()
+    TextureRegion *region = lua_isnoneornil(L, 2) ? nullptr : checkCopyRegion(L, attachmentUserdata);
+#endif
 
     Attachment *copy = spc::copy(attachmentUserdata->attachment);
+#if SPINE_43()
+    if (region) setRegion(copy, region);
+#endif
     LuaAttachment *copyUserdata = (LuaAttachment *)lua_newuserdata(L, sizeof(LuaAttachment));
     new (copyUserdata) LuaAttachment(L, copy, attachmentUserdata->dataOwner);
     return 1;

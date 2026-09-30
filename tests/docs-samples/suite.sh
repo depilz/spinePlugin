@@ -88,8 +88,8 @@ surface() {
   python3 -B "$W/../api/surface.py" "$SPINE_REPO/shared" "$SUITE_OUT/surface"/*.i >"$SUITE_OUT/surface.tsv"
 }
 
-# check mode surface api: keys_pages.py
-check() { python3 -B "$W/keys_pages.py" "$@"; }
+# check mode surface api: keys_pages.py on the line's pages
+check() { python3 -B "$W/keys_pages.py" "$1" "$SPINE_RUNTIME" "${@:2}"; }
 
 # check_fires mode surface api expected: the check fails and names expected
 check_fires() {

@@ -11,8 +11,11 @@ _G.Spine = require('Spine')
 _G.allSpines = {"chibi-stickers", "snowglobe", "alien", "celestial-circus", "cloud-pot", "coin", "goblins", "mix-and-match", "owl", "powerup", "raptor", "sack", "speedy", "spineboy", "stretchyman",  "vine", "tank", "windmill" }
 
 
+-- The menu scenes are Corona/tests' plus the 4.3-only "Sliders" (tests/Slider.lua): Corona43/tests is no longer a
+-- strict mirror of Corona/tests.
 local tests = {
     {"Physics", "Physics"},
+    {"Sliders", "Slider"},
     {"Inverse Kinematics", "InverseKinematics"},
     {"Skins", "Skins"},
     {"Animations", "PlayAnimations"},

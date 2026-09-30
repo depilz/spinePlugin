@@ -24,6 +24,13 @@ Reading a key the entry does not have returns ``nil``. Writing to it raises
 ``SpineTrackEntry: property '<key>' is read-only``. On an entry that is no longer valid, the
 :doc:`isValid` error comes first.
 
+.. only:: spine43
+
+   ``holdPrevious`` was removed in Spine 4.3: reading or writing it raises
+   ``SpineTrackEntry: property 'holdPrevious' was removed in Spine 4.3; use additive or mixInterpolation``
+   (after the :doc:`isValid` error on an entry that is no longer valid). Use ``additive`` or ``mixInterpolation``
+   (listed below) instead.
+
 
 Properties
 ----------
@@ -51,6 +58,7 @@ Properties
    :maxdepth: 1
 
    alpha
+   additive
    holdPrevious
    animationTime
    animationStart
@@ -60,6 +68,7 @@ Properties
    eventThreshold
    mixTime
    mixDuration
+   mixInterpolation
    trackComplete
    next
    mixingFrom

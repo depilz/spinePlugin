@@ -5,16 +5,15 @@
 repo: https://github.com/EsotericSoftware/spine-runtimes
 branch: 4.3
 layout: spine-cpp/{include,src}/spine (refresh-tool option --cpp spine-cpp)
-base: 560d2ff26e6c1a92dd774810da25d97e271c1a7f  [cpp] Fix SliderData leaking its FromProperty (2026-07-09)
-base-evidence: probe-verified (git hash-object of the 201 runtime files vs the flat-mapped upstream blobs, re-measured 2026-09-29 against 37b4d7cdd, which is base 560d2ff26 plus the two imported commits and no other spine-cpp source change: 181 byte-identical, the 20 differing files are exactly the local-changes files below; against 560d2ff26 or d6e239975 alone 180/21, the extra file being the imported IkConstraint.cpp); base recorded from a best match of 182/201 tied between 560d2ff26 and d6e239975, which differ only in PhysicsConstraint.cpp, a local-change file; the tie resolves to 560d2ff26 because d6e239975 applies forward and not in reverse
+base: b7beb2ccbbce667a12c02f44d070644f59b04968  [ts] Release 4.3.13 (2026-07-24), tag spine-ts-4.3.13
+base-reason: upstream has no spine-cpp 4.3.x tag; spine-ts-4.3.13 is the latest 4.3 release tag by date, and its spine-cpp/{include,src}/spine trees equal those of 37b4d7cdd and of the 4.3 tip dc862cfbf (2026-09-29)
+base-evidence: probe-verified (git hash-object of the 201 runtime files vs the flat-mapped b7beb2ccb blobs, re-measured 2026-09-30: 183 byte-identical, the 18 differing files are exactly the local-changes files below); refresh.sh from 560d2ff26 to b7beb2ccb changed no runtime byte and left 0 conflicts
+editor: exports from Spine 4.3.75-beta or older (the editor version of every upstream example and sampled Corona43 export)
 refresh-tool: tools/runtime-refresh/refresh.sh --cpp spine-cpp <upstream-clone> <base> <new> runtime/spine-4.3/spine
 
 imported:
-- d6e239975 [cpp][godot] Fix Y-down physics constraint forces (2026-07-16), PhysicsConstraint.cpp, applied on top of base 560d2ff26 with the local changes kept
-- 37b4d7cdd [cpp] Fix Y-down IK inheritance (2026-07-16), IkConstraint.cpp, applied on top of base 560d2ff26 (no local changes in this file)
 
 local-changes:
-- AnimationState.cpp, AnimationState.h: _keepHold (30ccd93, imported in merge 58dc216)
 - Slot.cpp, Slot.h: getSkeleton, solarColor (30ccd93)
 - Constraint.cpp, Constraint.h, Skeleton.cpp: _order / getOrder (30ccd93)
 - BonePose.cpp, BonePose.h: getBone (30ccd93)
@@ -42,3 +41,5 @@ history:
 - 2026-09-29: the tint-black dark color bytes in SkeletonRenderer.cpp round instead of truncating (D12); base unchanged
 - 2026-09-29: routed the region attachment color alpha 0 injection placeholder in SkeletonRenderer.cpp through addInjectionPlaceholder (C67-A3); behaviour unchanged, base unchanged
 - 2026-09-29: restated base-evidence against 37b4d7cdd (base 560d2ff26 + both imports): 181/201 byte-identical, the 20 differing files = local-changes (C64); runtime files unchanged, base unchanged
+- 2026-09-30: froze base at b7beb2ccb (tag spine-ts-4.3.13, no spine-cpp 4.3.x tag upstream) from 560d2ff26 with refresh.sh, no runtime byte changed and 0 conflicts; folded the imported d6e239975 and 37b4d7cdd, both ancestors of b7beb2ccb, into the base, so imported is empty; added the editor line (4.3.75-beta or older); base-evidence re-measured against b7beb2ccb: 181/201 byte-identical, the 20 differing files = local-changes
+- 2026-09-30: removed the _keepHold local change (AnimationState.cpp, AnimationState.h: the TrackEntry get/setHoldPrevious accessors; 30ccd93) with trackEntry.holdPrevious on 4.3 by owner decision D177; upstream's _keepHold field stays; both files now equal b7beb2ccb; base-evidence re-measured against b7beb2ccb: 183/201 byte-identical, the 18 differing files = local-changes; base unchanged

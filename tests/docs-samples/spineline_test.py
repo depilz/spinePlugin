@@ -1,8 +1,10 @@
-"""select_line and base_url of docs/_ext/spineline.py against the Read the Docs environments they must map.
+"""select_line and base_url of docs/_ext/spineline.py against the Read the Docs environments they must map, and hidden
+and exclude_patterns against a sample LINE_ONLY table.
 
 Usage: python3 -B tests/docs-samples/spineline_test.py <docs/_ext dir>
 One case per mapping: moving tags, unrenamed and renamed release tags, a contradiction, latest,
-stable, PR builds, a dashboard SPINE_DOCS_LINE, freeze branches, look-alikes, 1.2 and the base URLs. Prints one
+stable, PR builds, a dashboard SPINE_DOCS_LINE, freeze branches, look-alikes, 1.2, the base URLs and the per-line
+pages (a page, a directory, a name that only starts like one, the empty table). Prints one
 problem per line and exits 1 when there is any.
 """
 import sys
@@ -66,6 +68,28 @@ BASE_URLS = [
     ("local build, line 4.2", "4.2", {}, "https://spineplugin.readthedocs.io/en/4.2"),
 ]
 
+# a sample LINE_ONLY: a 4.2-only page and a 4.3-only directory
+TABLE = {"api/trackEntry/hold": "4.2", "api/slider": "4.3"}
+
+# (case, docname, line, table, hidden)
+HIDDEN = [
+    ("4.2-only page on 4.3", "api/trackEntry/hold", "4.3", TABLE, True),
+    ("4.2-only page on 4.2", "api/trackEntry/hold", "4.2", TABLE, False),
+    ("page under a 4.3-only directory on 4.2", "api/slider/time", "4.2", TABLE, True),
+    ("4.3-only directory's index on 4.2", "api/slider/index", "4.2", TABLE, True),
+    ("page under a 4.3-only directory on 4.3", "api/slider/time", "4.3", TABLE, False),
+    ("name starting like a 4.2-only page on 4.3", "api/trackEntry/holdMix", "4.3", TABLE, False),
+    ("name starting like a 4.3-only directory on 4.2", "api/sliders", "4.2", TABLE, False),
+    ("empty table on 4.3", "api/trackEntry/hold", "4.3", {}, False),
+]
+
+# (case, line, table, exclude_patterns)
+EXCLUDES = [
+    ("4.2 excludes the 4.3 entries", "4.2", TABLE, ["api/slider.rst", "api/slider/**"]),
+    ("4.3 excludes the 4.2 entries", "4.3", TABLE, ["api/trackEntry/hold.rst", "api/trackEntry/hold/**"]),
+    ("empty table", "4.3", {}, []),
+]
+
 
 def problems():
     for case, environ, want in SELECT:
@@ -85,8 +109,17 @@ def problems():
         got = spineline.base_url(line, environ)
         if got != want:
             yield f"base_url {case}: {got}, want {want}"
+    for case, docname, line, table, want in HIDDEN:
+        got = spineline.hidden(docname, line, table)
+        if got != want:
+            yield f"hidden {case}: {got}, want {want}"
+    for case, line, table, want in EXCLUDES:
+        got = spineline.exclude_patterns(line, table)
+        if got != want:
+            yield f"exclude_patterns {case}: {got}, want {want}"
 
 
 found = list(problems())
-print("\n".join(found) or f"{len(SELECT) + len(CONTRADICTIONS) + len(BASE_URLS)} cases pass")
+cases = len(SELECT) + len(CONTRADICTIONS) + len(BASE_URLS) + len(HIDDEN) + len(EXCLUDES)
+print("\n".join(found) or f"{cases} cases pass")
 sys.exit(1 if found else 0)

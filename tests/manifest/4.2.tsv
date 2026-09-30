@@ -64,6 +64,7 @@ animation	t18_entry_keys readonly
 animation	t18_entry_keys stale
 animation	t18_entry_keys eq
 animation	t18_entry_keys recycled
+animation	t20_hold_previous readwrite
 api	extracted a27bde4
 api	extracted line
 api	expected-diff
@@ -119,6 +120,12 @@ gate	iphone-sim/data.tgz
 gate	mac-sim/data.tgz
 gate	win32-sim/data.tgz
 gate	linux-sim/data.tgz
+gate	spine43 android/data.tgz
+gate	spine43 iphone/data.tgz
+gate	spine43 iphone-sim/data.tgz
+gate	spine43 mac-sim/data.tgz
+gate	spine43 win32-sim/data.tgz
+gate	spine43 linux-sim/data.tgz
 gate	defaults 4.2 are v2.0.0/4.2/plugin_spine42
 gate	defaults 4.3 are v3.0.0/4.3/plugin_spine43
 gate	1.5.0:android/data.tgz passes as v1.5.0/4.2
@@ -161,11 +168,17 @@ gate	linux-sim: stub declaring v1.4.0 fails on version
 gate	linux-sim: stub named for another line fails on stub
 gate	linux-sim: stub naming /private/tmp/x fails on local-path
 gate	packer: stub tree and a copy with another mtime, an xattr and a ._ sibling pack alike and pass as v2.0.0
+gate	packer: OUT equal to or under a packed member exits 2 and writes nothing; OUT beside the members packs
+gate	mutant gate.sh: LOCAL_PATH_ALLOW entry /Users/runner/ fails on local-path (allowlist overlap)
+gate	no platform argument gates the six default platforms, each passing
+gate	no platform argument on a copy without win32-sim fails on missing
 guard	counterparts.tsv lists every one-sided runtime file
 guard	selftest flags exactly the unmatched files
 guard	range
 guard	case-insensitive-unique tracked paths
 guard	firing: two paths differing in case fail
+guard	runtime-refresh selftest passes
+guard	firing: a refresh.sh keeping the vendored license comment fails the runtime-refresh selftest
 lifecycle	t00_smoke
 lifecycle	t01_parent_removal parent
 lifecycle	t01_parent_removal explicit
@@ -210,6 +223,7 @@ lifecycle	t23_split_lifetime removeSplit
 lifecycle	t23b_split_reentry draw
 lifecycle	t23b_split_reentry split
 lifecycle	t23b_split_reentry reassemble
+lifecycle	t23c_split_raise
 lifecycle	t24_close_kitchen_sink
 lifecycle	t25_setlistener_in_callback
 lifecycle	t25b_setlistener_ended

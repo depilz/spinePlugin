@@ -1,15 +1,22 @@
 """Keys vs pages: the plugin's public Lua keys against the API reference pages, in one direction per call.
 
-Usage: python3 -B tests/docs-samples/keys_pages.py keys|pages <surface tsv> <api_reference dir>
+Usage: python3 -B tests/docs-samples/keys_pages.py keys|pages <line> <surface tsv> <api_reference dir>
 The surface is tests/api/surface.py's output for the line (owner, kind, key); a public key is one not starting with
 "__". Each owner's pages are the <key>.rst files of its OWNER_DIRS directory, so an alias key has its own page like
 any other key, except that keys differing only in letter case share one page. keys: every public key has its page,
 or, failing an exact-case page, exactly one page of its directory matching it ignoring case. pages: every page names
 a public key of its directory's owner, except index.rst and the NOT_KEYS pages, and no page sits in a directory no
-owner has. Prints one problem per line and exits 1 when there is any.
+owner has. Both directions see only the pages the line's docs build shows (docs/_ext/spineline.py LINE_ONLY). Prints
+one problem per line and exits 1 when there is any.
 """
 import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "docs" / "_ext"))
+import spineline
+
+# the api_reference dir's path under docs/, the root of LINE_ONLY's docnames
+API = "api_reference"
 
 OWNER_DIRS = {
     "module": "spine",
@@ -23,6 +30,7 @@ OWNER_DIRS = {
     "SpineEffectData": "skeleton/fill/effect",
     "SpineSkin": "skin",
     "SpineAttachment": "attachment",
+    "SpineSlider": "skeleton/slider",
 }
 # pages that document a table the plugin builds, not a key of a registry
 NOT_KEYS = {
@@ -40,11 +48,12 @@ def public_keys(surface):
     return keys
 
 
-def pages(api):
-    """Every page as "dir/name" (no .rst), from the directory listing, so letter case is exact on any filesystem (keys
-    fall back to a case-insensitive match only when no exact-case page exists)."""
+def pages(api, line):
+    """Every page the line shows as "dir/name" (no .rst), from the directory listing, so letter case is exact on any
+    filesystem (keys fall back to a case-insensitive match only when no exact-case page exists)."""
     api = Path(api)
-    return {p.relative_to(api).with_suffix("").as_posix() for p in api.rglob("*.rst")}
+    found = (p.relative_to(api).with_suffix("").as_posix() for p in api.rglob("*.rst"))
+    return {page for page in found if not spineline.hidden(f"{API}/{page}", line)}
 
 
 def keys_without_page(keys, have):
@@ -70,9 +79,9 @@ def pages_without_key(keys, have):
             yield f"{page}.rst: {owners[folder]} has no public key {name}"
 
 
-def main(mode, surface, api):
+def main(mode, line, surface, api):
     check = {"keys": keys_without_page, "pages": pages_without_key}[mode]
-    problems = list(check(public_keys(surface), pages(api)))
+    problems = list(check(public_keys(surface), pages(api, line)))
     print("\n".join(problems) if problems else f"{mode}: none missing")
     return 1 if problems else 0
 

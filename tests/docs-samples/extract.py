@@ -10,7 +10,8 @@ the code-block, at its indent:
   .. fragment: <one-line reason>    not standalone code (a syntax line, a partial snippet); must not run headless
   .. simulator: <one-line reason>   needs the real engine; run in the Simulator, not here
 A marker with no reason, or one that is not followed by a Lua code-block, is a row of kind "bad" (its family fails).
-The family of a page is the first FAMILIES prefix its path under the docs dir starts with, else "guides".
+The family of a page is the first FAMILIES prefix its path under the docs dir starts with, else "guides". A page the
+line's build does not show (spineline.LINE_ONLY) yields no sample.
 """
 import re
 import sys
@@ -119,6 +120,8 @@ def main(docs, line, out):
     rows, count = [], {}
     for page in sorted(docs.rglob("*.rst")):
         rel = page.relative_to(docs).as_posix()
+        if spineline.hidden(rel.removesuffix(".rst"), line):
+            continue
         fam = family(rel)
         for kind, number, code, reason in samples(rel, spineline.expand(page.read_text(), line), tags):
             count[fam] = count.get(fam, 0) + 1

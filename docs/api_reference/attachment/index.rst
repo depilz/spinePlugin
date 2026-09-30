@@ -76,6 +76,7 @@ Available when ``type == "region"``:
    width
    height
    path
+   region
 
 MeshAttachment Properties
 --------------------------
@@ -88,6 +89,7 @@ Available when ``type == "mesh"``:
    width
    height
    path
+   region
    triangles
    hullLength
    vertices

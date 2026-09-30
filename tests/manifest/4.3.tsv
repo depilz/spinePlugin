@@ -64,6 +64,25 @@ animation	t18_entry_keys readonly
 animation	t18_entry_keys stale
 animation	t18_entry_keys eq
 animation	t18_entry_keys recycled
+animation	t19_entry_43 additive
+animation	t19_entry_43 interpolation
+animation	t19_entry_43 badvalue
+animation	t20_hold_previous removed
+animation	t20_hold_previous stale
+animation	t21_applied_attachment applied
+animation	t21_applied_attachment readonly
+animation	t22_region read
+animation	t22_region copy
+animation	t22_region create
+animation	t22_region dispose
+animation	t22_region outlive
+animation	t22_region cross
+animation	t23_slider read
+animation	t23_slider write
+animation	t23_slider detach
+animation	t23_slider removed
+animation	t23_slider bone
+animation	t23_slider sequence
 api	extracted a27bde4
 api	extracted line
 api	expected-diff
@@ -79,6 +98,7 @@ api	surface SpineObject
 api	surface SpinePhysics
 api	surface SpineSkeleton
 api	surface SpineSkin
+api	surface SpineSlider
 api	surface SpineSlot
 api	surface SpineTrack
 api	surface SpineTrackEntry
@@ -150,6 +170,7 @@ lifecycle	t23_split_lifetime removeSplit
 lifecycle	t23b_split_reentry draw
 lifecycle	t23b_split_reentry split
 lifecycle	t23b_split_reentry reassemble
+lifecycle	t23c_split_raise
 lifecycle	t24_close_kitchen_sink
 lifecycle	t25_setlistener_in_callback
 lifecycle	t25b_setlistener_ended
@@ -586,7 +607,8 @@ worldspace	w2_hittest listener skin
 worldspace	w2_hittest listener attachment
 worldspace	w2_hittest listener error
 worldspace	gen_fixture check
-# sim s17_digest runs on the 4.2 line only: its base is the shipped 1.5.0 plugin.spine, a 4.2 build
+# sim s17_digest base and spine42 run on the 4.2 line only (their base is the shipped 1.5.0 plugin.spine, a 4.2 build);
+# s17_digest spine43 checks against tests/sim/s17_golden43.lua
 sim	s0_smoke
 sim	s0_smoke identity
 sim	s0_smoke cpath
@@ -715,6 +737,32 @@ sim	s19_removed_skeleton late b bone
 sim	s19_removed_skeleton late b removeSelf
 sim	s19_removed_skeleton late b removeSelf cached
 sim	s19_removed_skeleton late b display.remove
+sim	s17_digest spine43
+sim	s17_digest spine43 identity
+sim	s17_digest spine43 cpath
+sim	s17_digest spine43 golden
+sim	s17_digest spine43 alien
+sim	s17_digest spine43 celestial-circus
+sim	s17_digest spine43 chibi-stickers
+sim	s17_digest spine43 cloud-pot
+sim	s17_digest spine43 coin
+sim	s17_digest spine43 goblins
+sim	s17_digest spine43 mix-and-match
+sim	s17_digest spine43 owl
+sim	s17_digest spine43 powerup
+sim	s17_digest spine43 raptor
+sim	s17_digest spine43 sack
+sim	s17_digest spine43 snowglobe
+sim	s17_digest spine43 speedy
+sim	s17_digest spine43 spineboy
+sim	s17_digest spine43 stretchyman
+sim	s17_digest spine43 tank
+sim	s17_digest spine43 vine
+sim	s17_digest spine43 windmill
+sim	s17_digest spine43 skins goblins
+sim	s17_digest spine43 skins mix-and-match
+sim	s17_digest spine43 injections raptor
+sim	s17_digest spine43 split raptor
 sim	user Plugins spine entries unchanged
 sim	s20_group_dispatch order
 sim	s20_group_dispatch order identity
@@ -818,6 +866,23 @@ sim	s21_tint_black both line
 sim	s21_tint_black both sampling
 sim	s21_tint_black both log
 sim	s21_tint_black both guard
+sim	s25_additive
+sim	s25_additive identity
+sim	s25_additive cpath
+sim	s25_additive control
+sim	s25_additive additive
+sim	s26_region
+sim	s26_region identity
+sim	s26_region cpath
+sim	s26_region control
+sim	s26_region remap
+sim	s26_region create
+sim	s26_region mesh
+sim	s27_slider
+sim	s27_slider identity
+sim	s27_slider cpath
+sim	s27_slider control
+sim	s27_slider time
 sim	s22_example Physics
 sim	s22_example Physics identity
 sim	s22_example Physics cpath
@@ -893,3 +958,8 @@ sim	s22_example SlotAttachmentFromSkin identity
 sim	s22_example SlotAttachmentFromSkin cpath
 sim	s22_example SlotAttachmentFromSkin menu
 sim	s22_example SlotAttachmentFromSkin log
+sim	s22_example Slider
+sim	s22_example Slider identity
+sim	s22_example Slider cpath
+sim	s22_example Slider menu
+sim	s22_example Slider log

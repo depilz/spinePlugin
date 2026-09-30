@@ -71,13 +71,15 @@ LOCAL_C_INCLUDES := \
 
 LOCAL_LDLIBS := -llog
 
-# ndk-build passes physical absolute paths, so the map derives from LOCAL_PATH, never from $PWD or realpath
+# ndk-build passes physical absolute paths, so the map derives from LOCAL_PATH, never from $PWD or realpath;
+# the DWARF comp_dir is ".", so the build-id (hashed over it) is the same from any clone path
 LOCAL_CFLAGS := \
 	-DANDROID_NDK \
 	-DNDEBUG \
 	-D_REENTRANT \
 	-DRtt_ANDROID_ENV \
-	-ffile-prefix-map=$(LOCAL_PATH)/../..=.
+	-ffile-prefix-map=$(LOCAL_PATH)/../..=. \
+	-ffile-compilation-dir=.
 
 LOCAL_LDLIBS := -llog
 

@@ -1,6 +1,7 @@
 #!/bin/bash
 # gate: tools/release-gate/gate.sh --line 4.2 on each tracked plugin.spine42 archive (the gate's default plugin dir,
-# identity from the tree's Version.h), one test per platform; then the per-line defaults the gate reads from the tree.
+# identity from the tree's Version.h), one test per platform, and --line 4.3 on each plugin.spine43 archive (ids
+# prefixed spine43); then the per-line defaults the gate reads from the tree.
 # Then the gate itself against legacy plugin.spine archives of released tags (git show): 1.5.0's
 # win32 archive (a 4.3 DLL) must fail on version, runtime and 4.3 markers as v1.5.0/4.2 and pass as v2.0.0/4.3,
 # 1.5.0's mac-sim archive must fail as 4.3 for lacking the 4.3 markers, 1.3.0's and 1.2.5's (toolchain 4.4/4.5 strings
@@ -15,7 +16,9 @@
 # debug info spells another runtime passes, while one with that literal in its data fails. Last, the sim-only
 # platforms on plugin dirs built under $SUITE_OUT/sims: an iphone-sim copy of the tracked iphone archive, a linux-sim
 # Lua stub and a stub packed twice from differently stamped copies pass, and a rebuilt iphone-sim library, a stub with
-# another version, a stub named for another line and a stub naming a temporary path fail.
+# another version, a stub named for another line and a stub naming a temporary path fail. Finally, the tools' own
+# guards: pack.sh refuses an OUT inside a packed member, a gate.sh copy whose LOCAL_PATH_ALLOW overlaps a user path
+# fails, and the gate with no platform argument checks exactly the six default platforms and fails a copy missing one.
 set -euo pipefail
 W="$(cd "$(dirname "$0")" && pwd)"
 source "$W/../lib.sh"
@@ -28,6 +31,9 @@ LEGACY_ENTRY=plugin_spine
 
 for plat in android iphone iphone-sim mac-sim win32-sim linux-sim; do
   run_test "$plat/data.tgz" "$GATE" --repo "$SPINE_REPO" --line 4.2 "$plat"
+done
+for plat in android iphone iphone-sim mac-sim win32-sim linux-sim; do
+  run_test "spine43 $plat/data.tgz" "$GATE" --repo "$SPINE_REPO" --line 4.3 "$plat"
 done
 
 # defaults line expected: the gate's "expect" line for the line's tree defaults
@@ -273,3 +279,57 @@ run_test "linux-sim: stub declaring v1.4.0 fails on version" rejects sim_gate li
 run_test "linux-sim: stub named for another line fails on stub" rejects sim_gate linux_stub_other_line linux-sim v2.0.0 4.2 stub
 run_test "linux-sim: stub naming /private/tmp/x fails on local-path" rejects sim_gate linux_stub_tmp_path linux-sim v2.0.0 4.2 local-path
 run_test "packer: stub tree and a copy with another mtime, an xattr and a ._ sibling pack alike and pass as v2.0.0" sim_gate packed_twice linux-sim v2.0.0 4.2
+
+# pack_refuses tree out [member...]: pack.sh exits 2 on the arguments
+pack_refuses() {
+  local rc=0
+  "$PACK" --mtime 0 "$@" || rc=$?
+  (( rc == 2 ))
+}
+
+# self_pack: pack.sh exits 2 and writes nothing when OUT is a packed member, lies under one, or is a stale OUT inside a
+# TREE packed without MEMBERs; an OUT beside the members (android/build.sh's shape) packs
+self_pack() {
+  local t="$SUITE_OUT/self-pack"
+  rm -rf "$t" && mkdir -p "$t/jniLibs" && printf x >"$t/metadata.lua" && printf y >"$t/jniLibs/lib.so" || return 2
+  "$PACK" --mtime 0 "$t" "$t/data.tgz" metadata.lua jniLibs && [[ -f "$t/data.tgz" ]] || return 1
+  pack_refuses "$t" "$t/jniLibs/data.tgz" metadata.lua jniLibs && [[ ! -e "$t/jniLibs/data.tgz" ]] &&
+    pack_refuses "$t" "$t/metadata.lua" metadata.lua && [[ "$(cat "$t/metadata.lua")" == x ]] &&
+    cp "$t/data.tgz" "$t/stale.tgz" && pack_refuses "$t" "$t/data.tgz" && cmp "$t/data.tgz" "$t/stale.tgz"
+}
+
+# overlap_gate entry platform: a copy of gate.sh whose LOCAL_PATH_ALLOW also holds the entry, run on the tracked archive;
+# the allowlist guard must fail it (exit 1) on local-path, the scan naming the overlap
+overlap_gate() {
+  local copy="$SUITE_OUT/overlap/gate.sh" out rc=0
+  mkdir -p "$SUITE_OUT/overlap"
+  awk -v e="$1" '{ print } /^LOCAL_PATH_ALLOW=\(/ { print "  " e }' "$GATE" >"$copy" && ! cmp -s "$GATE" "$copy" || return 2
+  out=$(bash "$copy" --repo "$SPINE_REPO" --line 4.2 "$2") || rc=$?
+  printf '%s\n' "$out"
+  (( rc == 1 )) && grep -qE '^FAIL .*local-path=\[scan failed: LOCAL_PATH_ALLOW overlaps a user path\].*:: *local-path( |$)' <<<"$out"
+}
+
+# default_platforms [plugin-dir]: the gate with no platform argument on the tracked spine42 package (or the plugin dir):
+# one archive line for each of the six default platforms, in order, and the gate's exit status
+DEFAULT_ARCHIVES="android iphone iphone-sim mac-sim win32-sim linux-sim"
+default_platforms() {
+  local out rc=0
+  out=$("$GATE" --repo "$SPINE_REPO" --line 4.2 ${1:+--plugin-dir "$1"}) || rc=$?
+  printf '%s\n' "$out"
+  [[ "$(sed -nE 's#^(OK  |FAIL) ([a-z0-9-]+)/data\.tgz( .*)?$#\2#p' <<<"$out" | tr '\n' ' ')" == "$DEFAULT_ARCHIVES " ]] || return 3
+  return $rc
+}
+# without_win32_sim: default_platforms on a copy of the spine42 package without its win32-sim archive, which must fail
+# (exit 1) on missing
+without_win32_sim() {
+  local dir="$SUITE_OUT/defaults/plugin" out rc=0
+  rm -rf "$dir" && mkdir -p "$dir" && cp -R "$SPINE_REPO/$PACKAGE/" "$dir/" && rm -r "$dir/win32-sim" || return 2
+  out=$(default_platforms "$dir") || rc=$?
+  printf '%s\n' "$out"
+  (( rc == 1 )) && grep -qE '^FAIL win32-sim/data\.tgz :: *missing$' <<<"$out"
+}
+
+run_test "packer: OUT equal to or under a packed member exits 2 and writes nothing; OUT beside the members packs" self_pack
+run_test "mutant gate.sh: LOCAL_PATH_ALLOW entry /Users/runner/ fails on local-path (allowlist overlap)" overlap_gate /Users/runner/ linux-sim
+run_test "no platform argument gates the six default platforms, each passing" default_platforms
+run_test "no platform argument on a copy without win32-sim fails on missing" without_win32_sim

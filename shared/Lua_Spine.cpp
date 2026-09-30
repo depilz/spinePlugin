@@ -205,6 +205,7 @@ int loadSkeletonData(lua_State *L)
         return lua_error(L); // the message readSkeletonData pushed
 
     auto skeletonDataUserdata = std::make_shared<SkeletonDataHolder>(skeletonData, L, 2);
+    skeletonDataUserdata->setAtlas(atlas);
 
     DataHolder<SkeletonData>::push(L, skeletonDataUserdata);
 

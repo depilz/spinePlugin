@@ -12,13 +12,15 @@ tools/release/pack.sh --mtime EPOCH TREE OUT.tgz [MEMBER...]
 
 Packs TREE (or its MEMBERs) into a plain ustar archive: entries sorted, every mtime EPOCH, uid/gid 0, empty user and
 group names, no pax records, no `._*` members, gzip MTIME 0 without a file name. Modes depend only on path and type.
-`android/build.sh` packs through it with the epoch of the last commit outside `plugin/`.
+OUT must lie outside the packed members: an OUT equal to or under one (a stale OUT inside a TREE packed without
+MEMBERs included) exits 2 with nothing written. `android/build.sh` packs through it with the epoch of the last commit
+outside `plugin/`, naming its members, so its OUT beside them in the build dir packs.
 
 ## build.sh
 
 ```
-<clone>/tools/release/build.sh <line> --commit REV --out DIR --symbols DIR \
-    --dll FILE --dll-sha256 HEX --dll-log FILE [platform...]
+<clone>/tools/release/build.sh <line> --commit REV --out DIR [--symbols DIR] \
+    [--dll FILE --dll-sha256 HEX --dll-log FILE] [platform...]
 ```
 
 Runs from a clean git clone whose `HEAD^{tree}` equals `REV^{tree}`, with DIR and the symbols dir outside the clone.
@@ -26,6 +28,8 @@ It builds android (`android/build.sh`), iphone (`xcodebuild`, Release, `ZERO_AR_
 `build_dylib`, never touching the user's Simulator plugins dir) and linux-sim (the Lua stub), takes the win32 DLL
 built in the Windows VM as an input checked against its sha256, and packs all six with `pack.sh` into
 `DIR/plugin.spine<NN>/`. `DIR/pack.log` records the commit, tree, epoch, toolchains and every sha256.
+mac-sim reads `build_dylib`'s output contract, stated where it is defined in `tests/sim/suite.sh`: the dylib's
+directory keeps `build.log` and `dd/Build/Products/Release/<product>.dylib` with its `.dSYM`.
 `tools/release-gate/gate.sh --line <line> --plugin-dir DIR/plugin.spine<NN>` must then print 18 OK lines.
 
 ## Pinned toolchains

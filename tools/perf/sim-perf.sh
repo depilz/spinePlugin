@@ -24,9 +24,16 @@ OUT=$1 ROUNDS=$2
 shift 2
 : "${SDKROOT:?set SDKROOT as for tests/run.sh}"
 pmset -g batt | grep -q "'AC Power'" || die "not on AC power"
+# the sim lock: an atomic mkdir holding an owner file, retried every 30 s up to 30 min; a held lock is never broken
 LOCK=/tmp/spine-sim.lock
-(set -o noclobber; echo $$ >"$LOCK") 2>/dev/null || die "$LOCK is held (pid $(cat "$LOCK" 2>/dev/null))"
-trap 'rm -f "$LOCK"' EXIT
+for ((try = 1; ; try++)); do
+  mkdir "$LOCK" 2>/dev/null && break
+  (( try <= 60 )) || die "$LOCK still held after 30 min (owner: $(cat "$LOCK/owner" 2>/dev/null))"
+  echo "sim-perf: $LOCK held (owner: $(cat "$LOCK/owner" 2>/dev/null)), retry $try/60 in 30 s" >&2
+  sleep 30
+done
+trap 'rm -rf "$LOCK"' EXIT
+echo "sim-perf pid $$" >"$LOCK/owner"
 mkdir -p "$OUT/raw"
 OUT=$(cd "$OUT" && pwd)
 export SPINE_REPO=${SPINE_REPO:-$(cd "$TOOLS/../.." && pwd)} SPINE_RUNTIME=${SPINE_RUNTIME:-4.2}
@@ -35,7 +42,7 @@ source "$TOOLS/../../tests/host/spines.sh"
 SPINE_SPINES=$(line_spines "$SPINE_RUNTIME")
 export SPINE_SPINES
 source "$TOOLS/../../tests/sim/suite.sh"
-trap 'guard_user_plugins; rm -f "$LOCK"' EXIT
+trap 'guard_user_plugins; rm -rf "$LOCK"' EXIT
 SCENARIO=${SCENARIO:-s6_perf.lua}
 XCODEPROJ=mac/Plugin.xcodeproj
 [[ "$SPINE_RUNTIME" == 4.2 ]] || XCODEPROJ=mac/Plugin${SPINE_RUNTIME//./}.xcodeproj

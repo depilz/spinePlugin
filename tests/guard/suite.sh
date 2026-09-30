@@ -3,11 +3,12 @@
 # and the checkout has no origin/main); that its counterpart map lists every file tracked under one runtime line only
 # and nothing that is missing; and that it flags exactly the unmatched files of a synthetic history (a directory-level
 # guard would pass its "cross" commit); and that no two tracked paths differ only in case (they collide on a
-# case-insensitive checkout).
+# case-insensitive checkout). Also tools/runtime-refresh/selftest.sh passes, and fails against a broken refresh.sh.
 set -euo pipefail
 W="$(cd "$(dirname "$0")" && pwd)"
 source "$W/../lib.sh"
 GUARD="$W/runtime_guard.sh"
+REFRESH_DIR="$W/../../tools/runtime-refresh"
 RANGE=${SPINE_GUARD_RANGE:-origin/main..HEAD}
 
 # check_map: prints each one-sided runtime file the map lacks and each mapped file that is not tracked
@@ -94,6 +95,20 @@ case_firing() {
   grep -qx 'a/B.rst' <<<"$out" && grep -qx 'a/b.rst' <<<"$out" && ! grep -q 'a/c.rst' <<<"$out"
 }
 
+# refresh_mutant: selftest.sh, run beside a refresh.sh that keeps the vendored license comment on a license conflict,
+# fails and names that check
+refresh_mutant() {
+  local dir="$SUITE_OUT/refresh-mutant" out
+  rm -rf "$dir" && mkdir -p "$dir"
+  cp "$REFRESH_DIR/selftest.sh" "$dir/"
+  sed 's|cp "$T/new.lic" "$T/ours.lic"|:|' "$REFRESH_DIR/refresh.sh" >"$dir/refresh.sh"
+  chmod +x "$dir/refresh.sh"
+  ! cmp -s "$REFRESH_DIR/refresh.sh" "$dir/refresh.sh" || { echo "mutation not applied"; return 1; }
+  out=$("$dir/selftest.sh") && { echo "$out"; return 1; }
+  echo "$out"
+  grep -q "^FAIL .*license conflict takes upstream's text" <<<"$out"
+}
+
 run_test "counterparts.tsv lists every one-sided runtime file" check_map
 run_test "selftest flags exactly the unmatched files" selftest
 if [[ -z ${SPINE_GUARD_RANGE:-} && $(commit origin/main) == unresolved ]]; then
@@ -103,3 +118,5 @@ else
 fi
 run_test "case-insensitive-unique tracked paths" case_check
 run_test "firing: two paths differing in case fail" case_firing
+run_test "runtime-refresh selftest passes" "$REFRESH_DIR/selftest.sh"
+run_test "firing: a refresh.sh keeping the vendored license comment fails the runtime-refresh selftest" refresh_mutant

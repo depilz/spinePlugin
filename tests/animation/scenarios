@@ -1,5 +1,5 @@
 # One animation scenario per line: test script, then its arguments. Read by suite.sh; the test id is the script name
-# without .lua, then the arguments.
+# without .lua, then the arguments. A line "<runtime>: script args" runs on that runtime line only.
 t1_surface.lua
 t2_events.lua payload
 t2_events.lua target
@@ -58,3 +58,23 @@ t18_entry_keys.lua readonly
 t18_entry_keys.lua stale
 t18_entry_keys.lua eq
 t18_entry_keys.lua recycled
+4.3: t19_entry_43.lua additive
+4.3: t19_entry_43.lua interpolation
+4.3: t19_entry_43.lua badvalue
+4.2: t20_hold_previous.lua readwrite
+4.3: t20_hold_previous.lua removed
+4.3: t20_hold_previous.lua stale
+4.3: t21_applied_attachment.lua applied
+4.3: t21_applied_attachment.lua readonly
+4.3: t22_region.lua read
+4.3: t22_region.lua copy
+4.3: t22_region.lua create
+4.3: t22_region.lua dispose
+4.3: t22_region.lua outlive
+4.3: t22_region.lua cross
+4.3: t23_slider.lua read
+4.3: t23_slider.lua write
+4.3: t23_slider.lua detach
+4.3: t23_slider.lua removed
+4.3: t23_slider.lua bone
+4.3: t23_slider.lua sequence

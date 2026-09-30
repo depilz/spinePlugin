@@ -18,6 +18,11 @@ Below is a list of the Slot’s properties. Most can be **read or written**, exc
 name and bone reference: writing those raises ``SpineSlot: property '<key>' is read-only``, and writing
 a key that is not listed raises ``SpineSlot: unknown property '<key>'``.
 
+.. only:: spine43
+
+   ``appliedAttachment`` (listed below) is read-only too; writing it raises
+   ``SpineSlot: property 'appliedAttachment' is read-only; it is the attachment the renderer draws — set slot.attachment``.
+
 Two Slot objects compare equal with ``==`` when they are the same slot of the same skeleton instance.
 Comparing a slot of a removed skeleton raises ``Slot belongs to a removed skeleton``.
 
@@ -30,6 +35,7 @@ Properties:
    name
    bone
    attachment
+   appliedAttachment
    r
    g
    b

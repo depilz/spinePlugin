@@ -210,7 +210,23 @@ local function firstDifference(a, b, source, m)
   end
 end
 
-if L.arg ~= "base" then
+-- spine43 (the 4.3 line, which has no 1.5.0 base) checks each case against its s17_golden43.lua entry instead, the 4.3
+-- reference captured before any shared/ change; check golden fails when an entry pins an error instead of geometry
+if L.arg == "spine43" then
+  local golden, pinned = require("s17_golden43"), {}
+  for label, entry in pairs(golden) do
+    for _, e in ipairs(entry) do if e:match("^error\t") then pinned[#pinned + 1] = label; break end end
+  end
+  table.sort(pinned)
+  L.check("golden", #pinned == 0, #pinned == 0 and "s17_golden43 has no error entry" or table.concat(pinned, ", "))
+  for _, case in ipairs(CASES) do
+    local label = case[1]
+    local diff, cause = "no golden digests", golden[label] and golden[label].cause
+    if golden[label] and (type(cause) ~= "string" or cause == "") then diff = "s17_golden43 entry without a cause"
+    elseif golden[label] then diff = firstDifference(golden[label], mine[label], "s17_golden43", largest[label]) end
+    L.check(label, diff == nil, diff or (#mine[label] .. " digests equal"))
+  end
+elseif L.arg ~= "base" then
   local base, moved = readBase(), require("s17_moved")
   L.check("baseline", base ~= nil, "results of s17_digest base")
   for _, case in ipairs(CASES) do
