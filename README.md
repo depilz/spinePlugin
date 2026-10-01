@@ -42,6 +42,34 @@ settings =
 
 Then load it with `local spine = require("plugin.spine42")`. The [4.2 documentation](https://spineplugin.readthedocs.io/en/4.2/) covers the rest.
 
+### 📦 Installing plugin.spine43
+
+For skeletons exported with Spine 4.3, add this entry instead. The Simulator and the build download the plugin from this repository's `spine43-3.0.0` release, one archive per platform:
+
+```lua
+settings =
+{
+    plugins =
+    {
+        ["plugin.spine43"] =
+        {
+            publisherId = "com.studycat",
+            supportedPlatforms =
+            {
+                android        = { url = "https://github.com/depilz/spinePlugin/releases/download/spine43-3.0.0/plugin.spine43-3.0.0-android.tgz" },
+                iphone         = { url = "https://github.com/depilz/spinePlugin/releases/download/spine43-3.0.0/plugin.spine43-3.0.0-iphone.tgz" },
+                ["iphone-sim"] = { url = "https://github.com/depilz/spinePlugin/releases/download/spine43-3.0.0/plugin.spine43-3.0.0-iphone-sim.tgz" },
+                ["mac-sim"]    = { url = "https://github.com/depilz/spinePlugin/releases/download/spine43-3.0.0/plugin.spine43-3.0.0-mac-sim.tgz" },
+                ["win32-sim"]  = { url = "https://github.com/depilz/spinePlugin/releases/download/spine43-3.0.0/plugin.spine43-3.0.0-win32-sim.tgz" },
+                ["linux-sim"]  = { url = "https://github.com/depilz/spinePlugin/releases/download/spine43-3.0.0/plugin.spine43-3.0.0-linux-sim.tgz" },
+            },
+        },
+    },
+}
+```
+
+Then load it with `local spine = require("plugin.spine43")`. The [4.3 documentation](https://spineplugin.readthedocs.io/en/4.3/) covers the rest, and its [migration page](https://spineplugin.readthedocs.io/en/4.3/migration.html) lists what changes from 4.2.
+
 
 ### 🤝 Contributing
 

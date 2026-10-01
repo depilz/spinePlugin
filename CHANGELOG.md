@@ -11,9 +11,11 @@ documentation shows each one.
 - **The Spine runtime is frozen at spine-ts-4.3.13; export with Spine 4.3.75-beta or older.** The vendored runtime is
   spine-cpp as of upstream tag `spine-ts-4.3.13` (`b7beb2ccb`), with the plugin's own runtime changes. Every example
   the line is tested with was exported by Spine 4.3.75-beta; data from a newer 4.3 editor is not tested.
-- **Breaking: `trackEntry.holdPrevious` is removed.** Spine 4.3 has no hold-previous flag. Reading or writing it
-  raises `SpineTrackEntry: property 'holdPrevious' was removed in Spine 4.3; use additive or mixInterpolation`. Use
-  `trackEntry.additive` or `trackEntry.mixInterpolation` (below) instead. The 4.2 line keeps `holdPrevious`.
+- **Breaking: `trackEntry.holdPrevious` is removed.** Spine 4.3 has no hold-previous flag: its runtime always holds
+  the previous entry during a mix, as `holdPrevious = true` did. Reading or writing it raises
+  `SpineTrackEntry: property 'holdPrevious' was removed in Spine 4.3; use additive or mixInterpolation`. Drop it;
+  neither `trackEntry.additive` nor `trackEntry.mixInterpolation` (below) replaces it. The 4.2 line keeps
+  `holdPrevious`.
 - **Added `trackEntry.additive` and `trackEntry.mixInterpolation`.** `additive = true` makes an entry add its
   animation to the pose of the tracks below it instead of replacing it (`false` by default; no effect on track 1 at
   alpha 1). `mixInterpolation` is how the mix from the previous entry progresses: `"linear"` (the default),

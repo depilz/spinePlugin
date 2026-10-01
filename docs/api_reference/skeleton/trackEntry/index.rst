@@ -28,8 +28,9 @@ Reading a key the entry does not have returns ``nil``. Writing to it raises
 
    ``holdPrevious`` was removed in Spine 4.3: reading or writing it raises
    ``SpineTrackEntry: property 'holdPrevious' was removed in Spine 4.3; use additive or mixInterpolation``
-   (after the :doc:`isValid` error on an entry that is no longer valid). Use ``additive`` or ``mixInterpolation``
-   (listed below) instead.
+   (after the :doc:`isValid` error on an entry that is no longer valid). Nothing replaces it: the 4.3 runtime
+   always holds the previous entry during a mix, as ``holdPrevious = true`` did on the 4.2 line, and neither
+   ``additive`` nor ``mixInterpolation`` (listed below) does that (see :doc:`/migration`).
 
 
 Properties

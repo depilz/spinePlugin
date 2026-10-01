@@ -710,10 +710,16 @@ by 4.3.75-beta. Data from a newer 4.3 editor is not tested.
 ``trackEntry.holdPrevious`` is removed
 --------------------------------------
 
-Spine 4.3 has no hold-previous flag on a track entry. On the 4.3 line reading or writing ``holdPrevious`` raises; the
-4.2 line keeps it. To keep a lower track from showing through a mix on a higher track, make the higher track's entry
-``additive``, or change how its mix progresses with ``mixInterpolation``; both are on the track entry page of the 4.3
-documentation.
+Spine 4.3 has no hold-previous flag on a track entry, because its runtime always holds: while an entry mixes in,
+the previous entry on the track keeps covering every property the new animation also keys, including one a lower
+track keys, so the lower track does not show through the mix. That is what ``holdPrevious = true`` did on the 4.2
+line. Properties the new animation does not key fade out over the mix, as do the ones an ``additive`` entry adds to.
+On the 4.3 line reading or writing ``holdPrevious`` raises; the 4.2 line keeps it.
+
+The error names ``additive`` and ``mixInterpolation``, the new track-entry keys, but neither takes the place of
+``holdPrevious``. An ``additive`` entry adds its animation to the pose of the tracks below it instead of covering
+them, so they show through more, not less. ``mixInterpolation`` changes only how the mix progresses over its
+``mixDuration``. Both are on the track entry page of the 4.3 documentation.
 
 - **Before:**
 
@@ -722,27 +728,17 @@ documentation.
 
       entry.holdPrevious = true
 
-- **After:**
+- **After:** the entries alone, with no flag, for example:
 
-  .. only:: spine43
+  .. code-block:: lua
 
-     .. code-block:: lua
-
-         spineboy:setAnimation(1, "walk", true)
-         local aim = spineboy:setAnimation(2, "aim", true)
-         aim.additive = true
-
-  .. only:: spine42
-
-     .. fragment: 4.3 code; the 4.2 line has no additive key
-     .. code-block:: lua
-
-         spineboy:setAnimation(1, "walk", true)
-         local aim = spineboy:setAnimation(2, "aim", true)
-         aim.additive = true
+      spineboy:setAnimation(1, "run", true)
+      spineboy:setAnimation(2, "aim", false)
+      spineboy:addAnimation(2, "shoot", false, 500)
 
 - **Error:** ``SpineTrackEntry: property 'holdPrevious' was removed in Spine 4.3; use additive or mixInterpolation``.
-- **What to change:** drop ``holdPrevious``; use ``additive`` or ``mixInterpolation`` where the mix needs it.
+- **What to change:** drop ``holdPrevious``; nothing replaces it. Don't set ``additive`` in its place: it changes
+  the pose, not the mix.
 - **CHANGELOG:** `4.3 line`_, "Breaking: trackEntry.holdPrevious is removed".
 
 New keys
