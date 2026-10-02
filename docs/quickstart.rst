@@ -9,18 +9,17 @@ the simulator or on a device.
 
 1. Installation & Requirements
 ------------------------------
-- **Solar2D**: Use the latest Solar2D release. The plugin's tests run on
-  Solar2D (Corona) build 3731.
+- **Solar2D**: Use the latest Solar2D release. The Directory serves the
+  plugin to Solar2D 2026.3731 and newer; the plugin's tests run on build 3731.
 - **Spine License**: You need a valid Spine runtime license to use this
   plugin. Confirm you have the necessary permissions to use the runtime.
 
 .. only:: spine42
 
    - **Spine Plugin**: Include it in your project’s ``build.settings``. The
-     Simulator and the build download the plugin from its GitHub release, one
-     archive per platform, from the URLs in the entry. The entry below is for
-     the line these docs describe; :ref:`pick-your-line` lists the entry of
-     every line.
+     Simulator and the build download the plugin from the Solar2D Free Plugin
+     Directory. The entry below is for the line these docs describe;
+     :ref:`pick-your-line` lists the entry of every line.
 
    .. code-block:: lua
 
@@ -31,15 +30,6 @@ the simulator or on a device.
               ["plugin.spine42"] =
               {
                   publisherId = "com.studycat",
-                  supportedPlatforms =
-                  {
-                      android        = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-android.tgz" },
-                      iphone         = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-iphone.tgz" },
-                      ["iphone-sim"] = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-iphone-sim.tgz" },
-                      ["mac-sim"]    = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-mac-sim.tgz" },
-                      ["win32-sim"]  = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-win32-sim.tgz" },
-                      ["linux-sim"]  = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-linux-sim.tgz" },
-                  },
               },
           },
       }
@@ -47,10 +37,9 @@ the simulator or on a device.
 .. only:: spine43
 
    - **Spine Plugin**: Include it in your project’s ``build.settings``. The
-     Simulator and the build download the plugin from its GitHub release, one
-     archive per platform, from the URLs in the entry. The entry below is for
-     the line these docs describe; :ref:`pick-your-line` lists the entry of
-     every line.
+     Simulator and the build download the plugin from the Solar2D Free Plugin
+     Directory. The entry below is for the line these docs describe;
+     :ref:`pick-your-line` lists the entry of every line.
 
    .. code-block:: lua
 
@@ -61,18 +50,13 @@ the simulator or on a device.
               ["plugin.spine43"] =
               {
                   publisherId = "com.studycat",
-                  supportedPlatforms =
-                  {
-                      android        = { url = "https://github.com/depilz/spinePlugin/releases/download/spine43-3.0.0/plugin.spine43-3.0.0-android.tgz" },
-                      iphone         = { url = "https://github.com/depilz/spinePlugin/releases/download/spine43-3.0.0/plugin.spine43-3.0.0-iphone.tgz" },
-                      ["iphone-sim"] = { url = "https://github.com/depilz/spinePlugin/releases/download/spine43-3.0.0/plugin.spine43-3.0.0-iphone-sim.tgz" },
-                      ["mac-sim"]    = { url = "https://github.com/depilz/spinePlugin/releases/download/spine43-3.0.0/plugin.spine43-3.0.0-mac-sim.tgz" },
-                      ["win32-sim"]  = { url = "https://github.com/depilz/spinePlugin/releases/download/spine43-3.0.0/plugin.spine43-3.0.0-win32-sim.tgz" },
-                      ["linux-sim"]  = { url = "https://github.com/depilz/spinePlugin/releases/download/spine43-3.0.0/plugin.spine43-3.0.0-linux-sim.tgz" },
-                  },
               },
           },
       }
+
+- **Pinning**: to stay on one release, add ``version = "v1"`` to the entry;
+  :ref:`pick-your-line` says which release that is and where the GitHub
+  release archives are kept as a fallback.
 
 2. Require the Plugin
 ---------------------

@@ -37,15 +37,6 @@ The plugin is published once per Spine line, and the 4.2 line is ``plugin.spine4
               ["plugin.spine42"] =
               {
                   publisherId = "com.studycat",
-                  supportedPlatforms =
-                  {
-                      android        = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-android.tgz" },
-                      iphone         = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-iphone.tgz" },
-                      ["iphone-sim"] = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-iphone-sim.tgz" },
-                      ["mac-sim"]    = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-mac-sim.tgz" },
-                      ["win32-sim"]  = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-win32-sim.tgz" },
-                      ["linux-sim"]  = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-linux-sim.tgz" },
-                  },
               },
           },
       }

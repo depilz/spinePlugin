@@ -40,15 +40,6 @@ its entry to the plugins table of ``build.settings`` and read that line's docume
               ["plugin.spine42"] =
               {
                   publisherId = "com.studycat",
-                  supportedPlatforms =
-                  {
-                      android        = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-android.tgz" },
-                      iphone         = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-iphone.tgz" },
-                      ["iphone-sim"] = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-iphone-sim.tgz" },
-                      ["mac-sim"]    = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-mac-sim.tgz" },
-                      ["win32-sim"]  = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-win32-sim.tgz" },
-                      ["linux-sim"]  = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-linux-sim.tgz" },
-                  },
               },
           },
       }
@@ -64,15 +55,6 @@ its entry to the plugins table of ``build.settings`` and read that line's docume
               ["plugin.spine43"] =
               {
                   publisherId = "com.studycat",
-                  supportedPlatforms =
-                  {
-                      android        = { url = "https://github.com/depilz/spinePlugin/releases/download/spine43-3.0.0/plugin.spine43-3.0.0-android.tgz" },
-                      iphone         = { url = "https://github.com/depilz/spinePlugin/releases/download/spine43-3.0.0/plugin.spine43-3.0.0-iphone.tgz" },
-                      ["iphone-sim"] = { url = "https://github.com/depilz/spinePlugin/releases/download/spine43-3.0.0/plugin.spine43-3.0.0-iphone-sim.tgz" },
-                      ["mac-sim"]    = { url = "https://github.com/depilz/spinePlugin/releases/download/spine43-3.0.0/plugin.spine43-3.0.0-mac-sim.tgz" },
-                      ["win32-sim"]  = { url = "https://github.com/depilz/spinePlugin/releases/download/spine43-3.0.0/plugin.spine43-3.0.0-win32-sim.tgz" },
-                      ["linux-sim"]  = { url = "https://github.com/depilz/spinePlugin/releases/download/spine43-3.0.0/plugin.spine43-3.0.0-linux-sim.tgz" },
-                  },
               },
           },
       }
@@ -92,6 +74,13 @@ its entry to the plugins table of ``build.settings`` and read that line's docume
           },
       }
 
+The Simulator and the build download each plugin from the `Solar2D Free Plugin Directory <https://plugins.solar2d.com/>`__.
+To stay on one release, add ``version = "v1"`` to the entry: ``v1`` is ``plugin.spine42`` 2.0.0 and ``plugin.spine43``
+3.0.0. The same archives stay attached to the GitHub releases
+`spine42-2.0.0 <https://github.com/depilz/spinePlugin/releases/tag/spine42-2.0.0>`__ and
+`spine43-3.0.0 <https://github.com/depilz/spinePlugin/releases/tag/spine43-3.0.0>`__ as a fallback: list their URLs in
+the entry's ``supportedPlatforms`` to install from there instead.
+
 Moving a project from ``plugin.spine`` 1.2 to a line, or from 4.2 to 4.3? See the :doc:`migration guide <migration>`
 and the CHANGELOG's `plugin.spine42 2.0.0`_ and `plugin.spine43 3.0.0`_ releases.
 
@@ -109,7 +98,7 @@ How to Get Started
    .. only:: spine42
 
       To use this plugin, add this entry into the plugins table of build.settings. The Simulator and the build download
-      the plugin from its GitHub release, one archive per platform, from the URLs in the entry.
+      the plugin from the Solar2D Free Plugin Directory.
       This is the entry for the line these docs describe; :ref:`pick-your-line` lists the entry of every line.
 
       .. code-block:: lua
@@ -121,15 +110,6 @@ How to Get Started
                   ["plugin.spine42"] =
                   {
                       publisherId = "com.studycat",
-                      supportedPlatforms =
-                      {
-                          android        = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-android.tgz" },
-                          iphone         = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-iphone.tgz" },
-                          ["iphone-sim"] = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-iphone-sim.tgz" },
-                          ["mac-sim"]    = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-mac-sim.tgz" },
-                          ["win32-sim"]  = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-win32-sim.tgz" },
-                          ["linux-sim"]  = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-linux-sim.tgz" },
-                      },
                   },
               },
           }
@@ -137,7 +117,7 @@ How to Get Started
    .. only:: spine43
 
       To use this plugin, add this entry into the plugins table of build.settings. The Simulator and the build download
-      the plugin from its GitHub release, one archive per platform, from the URLs in the entry.
+      the plugin from the Solar2D Free Plugin Directory.
       This is the entry for the line these docs describe; :ref:`pick-your-line` lists the entry of every line.
 
       .. code-block:: lua
@@ -149,15 +129,6 @@ How to Get Started
                   ["plugin.spine43"] =
                   {
                       publisherId = "com.studycat",
-                      supportedPlatforms =
-                      {
-                          android        = { url = "https://github.com/depilz/spinePlugin/releases/download/spine43-3.0.0/plugin.spine43-3.0.0-android.tgz" },
-                          iphone         = { url = "https://github.com/depilz/spinePlugin/releases/download/spine43-3.0.0/plugin.spine43-3.0.0-iphone.tgz" },
-                          ["iphone-sim"] = { url = "https://github.com/depilz/spinePlugin/releases/download/spine43-3.0.0/plugin.spine43-3.0.0-iphone-sim.tgz" },
-                          ["mac-sim"]    = { url = "https://github.com/depilz/spinePlugin/releases/download/spine43-3.0.0/plugin.spine43-3.0.0-mac-sim.tgz" },
-                          ["win32-sim"]  = { url = "https://github.com/depilz/spinePlugin/releases/download/spine43-3.0.0/plugin.spine43-3.0.0-win32-sim.tgz" },
-                          ["linux-sim"]  = { url = "https://github.com/depilz/spinePlugin/releases/download/spine43-3.0.0/plugin.spine43-3.0.0-linux-sim.tgz" },
-                      },
                   },
               },
           }

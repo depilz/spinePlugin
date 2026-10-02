@@ -16,7 +16,7 @@ For detailed information on the plugin's API, please refer to the [plugin's docu
 
 ### 📦 Installing plugin.spine42
 
-Add this entry to the plugins table of your project's `build.settings`. The Simulator and the build download the plugin from this repository's `spine42-2.0.0` release, one archive per platform:
+Add this entry to the plugins table of your project's `build.settings`. The Simulator and the build download the plugin from the [Solar2D Free Plugin Directory](https://plugins.solar2d.com/):
 
 ```lua
 settings =
@@ -26,15 +26,6 @@ settings =
         ["plugin.spine42"] =
         {
             publisherId = "com.studycat",
-            supportedPlatforms =
-            {
-                android        = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-android.tgz" },
-                iphone         = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-iphone.tgz" },
-                ["iphone-sim"] = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-iphone-sim.tgz" },
-                ["mac-sim"]    = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-mac-sim.tgz" },
-                ["win32-sim"]  = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-win32-sim.tgz" },
-                ["linux-sim"]  = { url = "https://github.com/depilz/spinePlugin/releases/download/spine42-2.0.0/plugin.spine42-2.0.0-linux-sim.tgz" },
-            },
         },
     },
 }
@@ -44,7 +35,7 @@ Then load it with `local spine = require("plugin.spine42")`. The [4.2 documentat
 
 ### 📦 Installing plugin.spine43
 
-For skeletons exported with Spine 4.3, add this entry instead. The Simulator and the build download the plugin from this repository's `spine43-3.0.0` release, one archive per platform:
+For skeletons exported with Spine 4.3, add this entry instead. The Simulator and the build download the plugin from the Solar2D Free Plugin Directory:
 
 ```lua
 settings =
@@ -54,21 +45,14 @@ settings =
         ["plugin.spine43"] =
         {
             publisherId = "com.studycat",
-            supportedPlatforms =
-            {
-                android        = { url = "https://github.com/depilz/spinePlugin/releases/download/spine43-3.0.0/plugin.spine43-3.0.0-android.tgz" },
-                iphone         = { url = "https://github.com/depilz/spinePlugin/releases/download/spine43-3.0.0/plugin.spine43-3.0.0-iphone.tgz" },
-                ["iphone-sim"] = { url = "https://github.com/depilz/spinePlugin/releases/download/spine43-3.0.0/plugin.spine43-3.0.0-iphone-sim.tgz" },
-                ["mac-sim"]    = { url = "https://github.com/depilz/spinePlugin/releases/download/spine43-3.0.0/plugin.spine43-3.0.0-mac-sim.tgz" },
-                ["win32-sim"]  = { url = "https://github.com/depilz/spinePlugin/releases/download/spine43-3.0.0/plugin.spine43-3.0.0-win32-sim.tgz" },
-                ["linux-sim"]  = { url = "https://github.com/depilz/spinePlugin/releases/download/spine43-3.0.0/plugin.spine43-3.0.0-linux-sim.tgz" },
-            },
         },
     },
 }
 ```
 
 Then load it with `local spine = require("plugin.spine43")`. The [4.3 documentation](https://spineplugin.readthedocs.io/en/4.3/) covers the rest, and its [migration page](https://spineplugin.readthedocs.io/en/4.3/migration.html) lists what changes from 4.2.
+
+To stay on one release, add `version = "v1"` to the entry: `v1` is plugin.spine42 2.0.0 and plugin.spine43 3.0.0. The same archives stay attached to this repository's [spine42-2.0.0](https://github.com/depilz/spinePlugin/releases/tag/spine42-2.0.0) and [spine43-3.0.0](https://github.com/depilz/spinePlugin/releases/tag/spine43-3.0.0) releases as a fallback: list their URLs in the entry's `supportedPlatforms` to install from there instead.
 
 
 ### 🤝 Contributing
