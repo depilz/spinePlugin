@@ -27,14 +27,19 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 html_theme = 'sphinx_wagtail_theme'
 html_static_path = ['_static']
-html_css_files = ['spine-docs.css']
+html_css_files = ['spine-docs.css', 'legacy-notice.css']
 html_sidebars = { '**': ['globaltoc.html', 'relations.html', 'sourcelink.html', 'searchbox.html'] }
 
 html_baseurl = "https://spineplugin.readthedocs.io/en/1.2"
 
-# Every page of the legacy 1.2 docs points readers to the current plugin lines.
+# Every page of the legacy 1.2 docs points readers to the current plugin lines. Not a ``.. warning::``: Read the Docs
+# strips an "admonition warning" box that opens the page when it serves it. legacy-notice.css draws it like one.
 rst_prolog = """
-.. warning::
+.. container:: legacy-notice
+
+   .. rst-class:: legacy-notice-title
+
+   Warning
 
    These are the docs of the legacy ``plugin.spine`` 1.2. New projects use ``plugin.spine42`` for Spine 4.2
    (`4.2 documentation <https://spineplugin.readthedocs.io/en/4.2/>`__) or ``plugin.spine43`` for Spine 4.3

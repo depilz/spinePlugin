@@ -1,0 +1,36 @@
+/* The legacy box on every 1.2 page (rst_prolog in conf.py), drawn like the theme's warning admonition. */
+.legacy-notice {
+  background-color: #e6e3f1;
+  margin: 1rem 0;
+  padding: 1rem;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .2);
+  border-radius: .25rem;
+  overflow: hidden;
+}
+
+.legacy-notice-title {
+  display: block;
+  padding: .5rem 1rem;
+  margin: -1rem;
+  margin-bottom: 1rem;
+  color: #fff;
+  background-color: #2f128d;
+  font-weight: 700;
+}
+
+.legacy-notice-title:before {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  line-height: 1;
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  margin-right: .5rem;
+  content: "\f071";
+}
+
+body.theme-dark .legacy-notice {
+  background-color: #14083c;
+}
