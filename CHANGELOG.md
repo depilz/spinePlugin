@@ -1,5 +1,49 @@
 # Changelog
 
+## plugin.spine43 3.0.1
+
+A patch release of the Spine 4.3 line: `plugin.spine43` 3.0.0 plus the fix below. Tested on the Mac Simulator only;
+other platforms are assumed to behave the same.
+
+### Fixed
+
+- **A skeleton draws in the same place whatever default anchor the app sets.** The plugin draws a skeleton with
+  meshes, and each new mesh took the app's `display.setDefault("anchorX", …)` and `display.setDefault("anchorY", …)`,
+  so with any default other than 0.5 the skeleton drew shifted (with defaults of 0, right and down by half its size).
+  Each mesh now gets anchor 0.5 when the plugin creates it, so a skeleton, its split groups and the attachments it
+  draws after a default change stay in place. If your app moved its skeletons to make up for the shift, remove that
+  offset. Setting the default anchor back to 0.5 around `draw()` stays harmless, so that workaround can stay or go.
+  `plugin.spine` 1.2.6 gets no fix (there is no 1.2.7): use that workaround there.
+
+## plugin.spine42 2.0.1
+
+A patch release of the Spine 4.2 line: `plugin.spine42` 2.0.0 plus the fix below and the shared changes
+`plugin.spine43` 3.0.0 already has. Tested on the Mac Simulator only; other platforms are assumed to behave the same.
+
+### Fixed
+
+- **A skeleton draws in the same place whatever default anchor the app sets.** The plugin draws a skeleton with
+  meshes, and each new mesh took the app's `display.setDefault("anchorX", …)` and `display.setDefault("anchorY", …)`,
+  so with any default other than 0.5 the skeleton drew shifted (with defaults of 0, right and down by half its size).
+  Each mesh now gets anchor 0.5 when the plugin creates it, so a skeleton, its split groups and the attachments it
+  draws after a default change stay in place. If your app moved its skeletons to make up for the shift, remove that
+  offset. Setting the default anchor back to 0.5 around `draw()` stays harmless, so that workaround can stay or go.
+  `plugin.spine` 1.2.6 gets no fix (there is no 1.2.7): use that workaround there.
+
+### Shared changes from plugin.spine43 3.0.0
+
+These were in the tree both lines build from when `plugin.spine43` 3.0.0 was released, after `plugin.spine42` 2.0.0.
+`plugin.spine42` ships them from 2.0.1.
+
+- **A split mesh whose `removeSelf` raises no longer leaks.** When a skeleton is removed, it removes its split
+  meshes. If a `removeSelf` you gave a split mesh raised there, the error reached the caller but the plugin kept a
+  reference to the mesh forever; it now releases the mesh first.
+- **The tint-black source comment states the one-Spine-plugin-per-app rule.** Comment only; no behaviour change.
+- **A skeleton's data keeps a pointer to the atlas it was loaded with.** Internal, for `copy{ region }` and
+  `createAttachment` on the 4.3 line; no behaviour change on the 4.2 line.
+- **Android builds are the same bytes from any checkout path.** The Android native build compiles with
+  `-ffile-compilation-dir=.`, so the `.so` no longer records the path of the checkout it was built in.
+
 ## plugin.spine43 3.0.0
 
 The Spine 4.3 line, published as `plugin.spine43`. Every entry is written for a project that uses `plugin.spine42`
@@ -54,19 +98,6 @@ documentation shows each one.
   path, physics, slider) has a single active flag. Behaviour change: animation timelines no longer change a constraint
   that is inactive (skin-required and not in the current skin), as on the 4.2 line and in the Spine editor. Before,
   they still keyed its mix and other pose values, and a physics timeline could reset it.
-
-### Shared changes that reach plugin.spine42 in a later 2.0.x
-
-These are in the tree both lines build from. `plugin.spine42` 2.0.0 does not have them; a later 2.0.x release will.
-
-- **A split mesh whose `removeSelf` raises no longer leaks.** When a skeleton is removed, it removes its split
-  meshes. If a `removeSelf` you gave a split mesh raised there, the error reached the caller but the plugin kept a
-  reference to the mesh forever; it now releases the mesh first.
-- **The tint-black source comment states the one-Spine-plugin-per-app rule.** Comment only; no behaviour change.
-- **A skeleton's data keeps a pointer to the atlas it was loaded with.** Internal, for `copy{ region }` and
-  `createAttachment` on the 4.3 line; no behaviour change on the 4.2 line.
-- **Android builds are the same bytes from any checkout path.** The Android native build compiles with
-  `-ffile-compilation-dir=.`, so the `.so` no longer records the path of the checkout it was built in.
 
 ## plugin.spine42 2.0.0
 

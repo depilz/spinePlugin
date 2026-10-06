@@ -5,6 +5,8 @@
 --  * object.fill = {...} creates a NEW Paint (Rtt_LuaProxyVTable.cpp:1919 setFill -> LuaNewPaint -> ShapeObject::SetFill);
 --    blend mode and color live in the Paint (Rtt_ShapeObject.cpp:405 SetBlend -> paint->SetBlend; Paint ctor defaults).
 --  * removed display objects behave like plain tables (properties nil).
+--  * display.setDefault/getDefault: a new display object gets the default anchorX/anchorY (0.5 until set) at creation
+--    (Rtt_LuaLibDisplay.cpp AssignParentAndPushResult); display.newMesh reads no anchor param.
 local M = { stats = {}, live = { meshes = 0, textures = 0 }, warnings = {} }
 local stats = M.stats
 local function bump(k, n) stats[k] = (stats[k] or 0) + (n or 1) end
@@ -136,6 +138,9 @@ local function pathUpdate(path, params)
 end
 
 display = {}
+local defaults = { anchorX = 0.5, anchorY = 0.5 }
+function display.setDefault(k, v) defaults[k] = v end
+function display.getDefault(k) return defaults[k] end
 function display.newGroup()
   bump("newGroup")
   local g = setmetatable({}, groupMt)
@@ -148,7 +153,7 @@ function display.getCurrentStage() return stage end
 function display.newMesh(params)
   bump("newMesh")
   local o = setmetatable({}, meshMt)
-  local p = P(o); p.kind = "mesh"; p.fields = { x = params.x, y = params.y }
+  local p = P(o); p.kind = "mesh"; p.fields = { x = params.x, y = params.y, anchorX = defaults.anchorX, anchorY = defaults.anchorY }
   p.paint = newPaint(nil); p.fillProxy = fillProxy(p.paint)
   p.path = { update = pathUpdate, owner = o }
   p.vertexCount = params.vertices and params.vertices.count

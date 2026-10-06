@@ -52,3 +52,4 @@ t20_dispose_bail.lua visible
 t20_dispose_bail.lua unsplit
 t20_dispose_bail.lua split-first
 t20_dispose_bail.lua split-second
+t21_default_anchor.lua

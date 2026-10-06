@@ -126,8 +126,8 @@ gate	spine43 iphone-sim/data.tgz
 gate	spine43 mac-sim/data.tgz
 gate	spine43 win32-sim/data.tgz
 gate	spine43 linux-sim/data.tgz
-gate	defaults 4.2 are v2.0.0/4.2/plugin_spine42
-gate	defaults 4.3 are v3.0.0/4.3/plugin_spine43
+gate	defaults 4.2 are v2.0.1/4.2/plugin_spine42
+gate	defaults 4.3 are v3.0.1/4.3/plugin_spine43
 gate	1.5.0:android/data.tgz passes as v1.5.0/4.2
 gate	1.5.0:iphone/data.tgz passes as v1.5.0/4.2
 gate	1.5.0:mac-sim/data.tgz passes as v1.5.0/4.2
@@ -161,7 +161,7 @@ gate	mutant iphone: allowlisted path after /Users/x/ fails on local-path
 gate	iphone: library holding drive-letter look-alikes and the NDK build path passes as v2.0.0/4.2
 gate	iphone: unstripped library whose debug info holds 4.1 passes as v2.0.0/4.2
 gate	mutant iphone: unstripped library with 4.1 in its data fails on runtime
-gate	iphone-sim: copy of the iphone archive passes as v2.0.0/4.2
+gate	iphone-sim: copy of the iphone archive passes as v2.0.1/4.2
 gate	iphone-sim: rebuilt simulator library fails on not-a-device-slice and not-iphone-copy
 gate	linux-sim: stub declaring v2.0.0 passes as v2.0.0
 gate	linux-sim: stub declaring v1.4.0 fails on version
@@ -406,6 +406,7 @@ render	t20_dispose_bail visible
 render	t20_dispose_bail unsplit
 render	t20_dispose_bail split-first
 render	t20_dispose_bail split-second
+render	t21_default_anchor
 render	h1_stale_world
 render	bench 5
 skins	s1_api_contract
@@ -927,6 +928,14 @@ sim	s21_tint_black both line
 sim	s21_tint_black both sampling
 sim	s21_tint_black both log
 sim	s21_tint_black both guard
+sim	s28_default_anchor
+sim	s28_default_anchor identity
+sim	s28_default_anchor cpath
+sim	s28_default_anchor creation
+sim	s28_default_anchor reuse
+sim	s28_default_anchor split
+sim	s28_default_anchor default_change
+sim	s28_default_anchor control
 sim	s24_sibling_guard legacy
 sim	s24_sibling_guard legacy identity
 sim	s24_sibling_guard legacy cpath

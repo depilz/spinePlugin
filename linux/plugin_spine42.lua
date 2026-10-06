@@ -5,7 +5,7 @@ local Library = require "CoronaLibrary"
 
 -- Create library
 local lib = Library:new{ name='plugin.spine42', publisherId='com.studycat' }
-lib.version = 'v2.0.0'
+lib.version = 'v2.0.1'
 
 lib.create = function(...)
     print("spine.create()")

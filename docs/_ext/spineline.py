@@ -12,8 +12,8 @@ TOKEN = "@SPINE_PLUGIN@"
 DEFAULT_LINE = "4.2"
 
 LINES = {
-    "4.2": {"plugin": "plugin.spine42", "release": "2.0.0", "tag": "spine42"},
-    "4.3": {"plugin": "plugin.spine43", "release": "3.0.0", "tag": "spine43"},
+    "4.2": {"plugin": "plugin.spine42", "release": "2.0.1", "tag": "spine42"},
+    "4.3": {"plugin": "plugin.spine43", "release": "3.0.1", "tag": "spine43"},
 }
 
 # The pages only one line shows: a docname (a page's path under docs/ without .rst) or a directory under docs/ -> its

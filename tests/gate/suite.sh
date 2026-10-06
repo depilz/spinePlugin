@@ -43,8 +43,8 @@ defaults() {
   printf '%s\n' "$out"
   [[ "$(head -1 <<<"$out")" == "expect $2 in $SUITE_OUT/no-archives" ]]
 }
-run_test "defaults 4.2 are v2.0.0/4.2/plugin_spine42" defaults 4.2 "v2.0.0 runtime 4.2 entry luaopen_plugin_spine42"
-run_test "defaults 4.3 are v3.0.0/4.3/plugin_spine43" defaults 4.3 "v3.0.0 runtime 4.3 entry luaopen_plugin_spine43"
+run_test "defaults 4.2 are v2.0.1/4.2/plugin_spine42" defaults 4.2 "v2.0.1 runtime 4.2 entry luaopen_plugin_spine42"
+run_test "defaults 4.3 are v3.0.1/4.3/plugin_spine43" defaults 4.3 "v3.0.1 runtime 4.3 entry luaopen_plugin_spine43"
 
 # tag_gate tag platform version runtime: the gate with the legacy opt-out on the tag's archive: released archives
 # predate local-path and tar-meta
@@ -272,7 +272,7 @@ linux_stub_old() { stub v1.4.0 "$ENTRY"; }
 linux_stub_other_line() { stub v2.0.0 plugin_spine43; }
 linux_stub_tmp_path() { stub v2.0.0 "$ENTRY" '-- built in /private/tmp/x'; }
 
-run_test "iphone-sim: copy of the iphone archive passes as v2.0.0/4.2" sim_gate iphone_sim_copy iphone-sim v2.0.0 4.2
+run_test "iphone-sim: copy of the iphone archive passes as v2.0.1/4.2" sim_gate iphone_sim_copy iphone-sim v2.0.1 4.2
 run_test "iphone-sim: rebuilt simulator library fails on not-a-device-slice and not-iphone-copy" rejects sim_gate iphone_sim_rebuilt iphone-sim v2.0.0 4.2 not-a-device-slice not-iphone-copy
 run_test "linux-sim: stub declaring v2.0.0 passes as v2.0.0" sim_gate linux_stub linux-sim v2.0.0 4.2
 run_test "linux-sim: stub declaring v1.4.0 fails on version" rejects sim_gate linux_stub_old linux-sim v2.0.0 4.2 version

@@ -40,6 +40,7 @@ s2x_ik_drag.lua rotated
 s2x_hittest.lua
 s21_tint_black.lua pixels
 s21_tint_black.lua both
+s28_default_anchor.lua
 4.2: s24_sibling_guard.lua legacy
 4.3: s25_additive.lua
 4.3: s26_region.lua

@@ -10,11 +10,11 @@ Overview:
 
 .. only:: spine42
 
-   The plugin version, for example ``"2.0.0"`` for ``plugin.spine42``.
+   The plugin version, for example ``"2.0.1"`` for ``plugin.spine42``.
 
 .. only:: spine43
 
-   The plugin version, for example ``"3.0.0"`` for ``plugin.spine43``.
+   The plugin version, for example ``"3.0.1"`` for ``plugin.spine43``.
 
 Example:
 --------

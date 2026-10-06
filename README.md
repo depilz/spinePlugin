@@ -6,8 +6,8 @@ The plugin ships one plugin per Spine line; pick the one that matches the Spine 
 
 | Spine line | Plugin | Version | Documentation |
 |---|---|---|---|
-| 4.2 | `plugin.spine42` | 2.0.0 | [spineplugin.readthedocs.io/en/4.2](https://spineplugin.readthedocs.io/en/4.2/) |
-| 4.3 | `plugin.spine43` | 3.0.0 | [spineplugin.readthedocs.io/en/4.3](https://spineplugin.readthedocs.io/en/4.3/) |
+| 4.2 | `plugin.spine42` | 2.0.1 | [spineplugin.readthedocs.io/en/4.2](https://spineplugin.readthedocs.io/en/4.2/) |
+| 4.3 | `plugin.spine43` | 3.0.1 | [spineplugin.readthedocs.io/en/4.3](https://spineplugin.readthedocs.io/en/4.3/) |
 | legacy | `plugin.spine` | 1.2 | [spineplugin.readthedocs.io/en/1.2](https://spineplugin.readthedocs.io/en/1.2/) |
 
 The plugin works on Android, iOS, macOS, and Windows platforms, supporting both Spine JSON and binary formats.

@@ -205,7 +205,7 @@ end
 local function firstDifference(a, b, source, m)
   for i = 1, math.max(#a, #b) do
     if not (a[i] and b[i] and sameGeometry(a[i], b[i], m[i] or 0)) then
-      return ("#%d %s %s spine42 %s"):format(i, source, tostring(a[i]), tostring(b[i]))
+      return ("#%d %s %s %s %s"):format(i, source, tostring(a[i]), L.arg, tostring(b[i]))
     end
   end
 end

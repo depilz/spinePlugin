@@ -137,6 +137,12 @@ void engine_drawMesh(lua_State *L, LuaTableHolder *newMesh, size_t numIndices, u
     lua_setfield(L, -2, "y");
 
     lua_call(L, 1, 1); // Call newMesh
+
+    // x/y above is the vertex-bounds center, so pin the anchor to it whatever the app's display default is
+    lua_pushnumber(L, 0.5);
+    lua_setfield(L, -2, "anchorX");
+    lua_pushnumber(L, 0.5);
+    lua_setfield(L, -2, "anchorY");
 }
 
 // Registry key of the per-lua_State mesh-update params table { vertices = { buffer, count }, uvs = { buffer, count } }.

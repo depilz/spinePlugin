@@ -29,7 +29,7 @@ its entry to the plugins table of ``build.settings`` and read that line's docume
 ``plugin.spine42`` and ``plugin.spine43`` raise an error naming both plugins when the other line or the legacy
 ``plugin.spine`` is already loaded, but a legacy ``plugin.spine`` required after them cannot check and is not caught.
 
-- **Spine 4.2**: ``plugin.spine42`` (version 2.0.0), `documentation for 4.2 <https://spineplugin.readthedocs.io/en/4.2/>`_.
+- **Spine 4.2**: ``plugin.spine42`` (version 2.0.1), `documentation for 4.2 <https://spineplugin.readthedocs.io/en/4.2/>`_.
 
   .. code-block:: lua
 
@@ -44,7 +44,7 @@ its entry to the plugins table of ``build.settings`` and read that line's docume
           },
       }
 
-- **Spine 4.3**: ``plugin.spine43`` (version 3.0.0), `documentation for 4.3 <https://spineplugin.readthedocs.io/en/4.3/>`_.
+- **Spine 4.3**: ``plugin.spine43`` (version 3.0.1), `documentation for 4.3 <https://spineplugin.readthedocs.io/en/4.3/>`_.
 
   .. code-block:: lua
 

@@ -796,7 +796,7 @@ line, as the 4.2 runtime reads it, and the event's default volume and balance on
 Version strings
 ---------------
 
-``spine.version`` is ``"3.0.0"`` and ``spine.runtimeVersion`` is ``"4.3"`` on the 4.3 line (``"2.0.0"`` and
+``spine.version`` is ``"3.0.1"`` and ``spine.runtimeVersion`` is ``"4.3"`` on the 4.3 line (``"2.0.1"`` and
 ``"4.2"`` on the 4.2 line).
 
 - **Before:**
