@@ -5,8 +5,8 @@ skeleton.sliders
 | **Type:** ``table`` (read-only)
 | **See also:** :doc:`index`, :doc:`slider/index`, :doc:`/naming`
 
-Overview:
-.........
+Overview
+--------
 
 A table of the skeleton's :doc:`slider/index` objects, keyed by slider name. A slider is a Spine 4.3 constraint that
 plays an animation at a time set from Lua or driven by a bone. A skeleton with no slider reads an empty table.
@@ -14,8 +14,8 @@ plays an animation at a time set from Lua or driven by a bone. A skeleton with n
 Each read builds a new table with new Slider objects. Keep the Slider you need instead of reading ``sliders`` every
 frame: it stays valid until the skeleton is removed. :doc:`ikConstraints` never lists a slider.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

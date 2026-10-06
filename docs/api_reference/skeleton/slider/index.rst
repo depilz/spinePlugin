@@ -5,8 +5,8 @@ slider
 | **Type:** ``userdata``
 | **See also:** :doc:`../sliders`, :doc:`../index`
 
-Overview:
-..........
+Overview
+--------
 
 A **Slider** object is a Spine 4.3 slider constraint of a skeleton. A slider applies one animation of the skeleton
 at a time of its own instead of a track's time: set :doc:`time` from Lua to scrub the animation, or let a bone drive
@@ -20,16 +20,16 @@ Two Slider objects compare equal with ``==`` when they are the same slider of th
 Reading, writing or comparing a slider of a removed skeleton raises ``Slider belongs to a removed skeleton``
 (see :doc:`/lifecycle`).
 
-Properties:
------------
+Properties
+----------
 
 .. toctree::
    :maxdepth: 1
 
-   name
-   animation
-   time
-   mix
-   duration
-   loop
-   boneDriven
+   name <name>
+   animation <animation>
+   time <time>
+   mix <mix>
+   duration <duration>
+   loop <loop>
+   boneDriven <boneDriven>

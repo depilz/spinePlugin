@@ -5,37 +5,40 @@ skin:getAttachment()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`setAttachment`, :doc:`removeAttachment`
 
-Overview:
-.........
+Overview
+--------
 
 Returns a specific attachment from the skin by slot and attachment name.
 
-Syntax:
---------
+Syntax
+------
 
 .. fragment: syntax line; skin, slot and attachmentName are placeholders
 .. code-block:: lua
 
    local attachment = skin:getAttachment(slot, attachmentName)
 
-Parameters:
------------
+Parameters
+----------
 
-- ``slot`` (string or Slot) – The slot name, or a Slot object of the same skeleton data. A number raises.
-- ``attachmentName`` (string) – The name of the attachment to retrieve
+- ``slot`` *(required)*:
+    ``string`` or ``Slot`` – The slot name, or a Slot object of the same skeleton data. A number raises.
+    A Slot of a removed skeleton raises.
+- ``attachmentName`` *(required)*:
+    ``string`` – The name of the attachment to retrieve.
 
-Returns:
---------
+Return value
+------------
 
 ``attachment`` – The attachment object, or ``nil`` if not found.
 
-Example:
---------
+Example
+-------
 
 The examples use the mix-and-match example skeleton, whose skins each dress part of the character.
 
 Get Specific Attachment
-.......................
+~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: lua
 
@@ -54,7 +57,7 @@ Get Specific Attachment
    end
 
 Copy Specific Attachments
-.........................
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: lua
 
@@ -70,8 +73,8 @@ Copy Specific Attachments
        targetSkin:setAttachment("mouth", "mouth-smile", smile)
    end
 
-Notes:
---------
+Notes
+-----
 
 - Returns ``nil`` if the attachment is not found in the skin
 - The slot is a slot name or a Slot object; a string is always a slot name, and a number raises

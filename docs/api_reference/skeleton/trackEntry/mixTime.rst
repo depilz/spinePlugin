@@ -5,16 +5,16 @@ trackEntry.mixTime
 | **Type:** ``number``
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
 
 The `mixTime` attribute is the time in **milliseconds** this entry has been mixing in from the previous entry:
 ``0`` when the mix starts, growing each :doc:`../updateState` until it reaches :doc:`mixDuration`, the length of the
 mix. ``mixTime / mixDuration`` is how far the transition has progressed. Writing ``mixTime`` moves the mix to that
 point.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

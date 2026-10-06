@@ -5,30 +5,33 @@ skeleton:findAnimation()
 | **Type:** ``function``
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
 
 Checks if an animation with the given name exists in the skeleton’s data.
 
-Syntax:
---------
+Syntax
+------
 
 .. fragment: syntax line; animationName is a placeholder
 .. code-block:: lua
 
    local exists = skeleton:findAnimation(animationName)
 
+Parameters
+----------
+
 - ``animationName`` *(required)*:
     ``string`` – Name of the animation to check.
 
 
-Return value:
--------------
+Return value
+------------
 
 - ``boolean`` – `true` if animation is found, `false` otherwise.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

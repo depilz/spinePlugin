@@ -5,14 +5,14 @@ trackEntry.reverse
 | **Type:** ``boolean``
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
 
 The `reverse` attribute determines whether the animation should play in reverse. Setting `reverse` to `true`
 will play the animation backward from its end to its start, creating a mirrored effect of the original animation.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

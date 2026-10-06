@@ -5,14 +5,14 @@ bone.c
 | **Type:** ``number`` (read/write)
 | **See also:** :doc:`index`, :doc:`/naming`
 
-Overview:
-.........
+Overview
+--------
 
 Represents the *c* component in the local transform matrix. Typically used in advanced
 transform or shear manipulations.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

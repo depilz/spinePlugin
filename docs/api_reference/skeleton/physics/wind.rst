@@ -5,14 +5,14 @@ physics.wind
 | **Type:** ``number``
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
 
 The **wind** force applied to all physics constraints. This is commonly used to simulate wind
 or directional forces on bones in a skeleton.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

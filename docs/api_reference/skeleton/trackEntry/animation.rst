@@ -5,15 +5,15 @@ trackEntry.animation
 | **Type:** ``string``
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
 
 The `animation` attribute provides the name of the animation currently assigned to the specified track.
 This allows you to retrieve or verify which animation is playing on a particular track, facilitating dynamic
 animation management and debugging.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

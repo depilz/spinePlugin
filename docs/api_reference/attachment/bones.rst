@@ -3,7 +3,10 @@ attachment.bones
 =======================================
 
 | **Type:** ``table`` (read-only)
-| **Attachment Types:** mesh, path, boundingbox, clipping
+| **Attachment types:** mesh, path, boundingbox, clipping
+
+Overview
+--------
 
 An array of bone indices for weighted vertex attachments.
 
@@ -66,7 +69,7 @@ Notes
 - Read-only - cannot be modified at runtime
 - Weighted vertices enable more natural deformation across bones
 
-See Also
+See also
 --------
 
 - :doc:`vertices` - The vertex coordinate data

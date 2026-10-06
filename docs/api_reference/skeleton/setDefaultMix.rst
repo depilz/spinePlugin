@@ -5,25 +5,28 @@ skeleton:setDefaultMix()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`setMix`
 
-Overview:
-.........
+Overview
+--------
 
 Sets the **default** mix duration (in milliseconds) for transitions between animations
 that don’t have a specific mix time configured.
 
-Syntax:
---------
+Syntax
+------
 
 .. fragment: syntax line; mix is a placeholder
 .. code-block:: lua
 
    skeleton:setDefaultMix(mix)
 
+Parameters
+----------
+
 - ``mix`` *(required)*:
     ``number`` – The default mix duration in milliseconds.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

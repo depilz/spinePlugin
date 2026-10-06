@@ -5,15 +5,16 @@ trackEntry.delay
 | **Type:** ``number``
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
+
 The `delay` attribute specifies the time in **milliseconds** before the animation starts playing on the track,
 counted from the start of the previous entry in the track's queue (see :doc:`../addAnimation`).
 This allows you to schedule animations to begin after a certain delay, enabling coordinated animation
 sequences or timed events.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

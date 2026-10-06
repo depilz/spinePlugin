@@ -5,8 +5,8 @@ physics.mix
 | **Type:** ``number``
 | **See also:** :doc:`index`, :doc:`isActive`
 
-Overview:
-.........
+Overview
+--------
 
 Adjusts the **mix** factor for the physics constraints, determining how much
 physics influences the bones versus their original animation or transforms.
@@ -28,8 +28,8 @@ again. This is the way to turn physics off; :doc:`isActive` is read-only.
    catches up the whole time it was stopped in a single step, which can make the bones jump. To pause
    physics without that catch-up, set the skeleton's :doc:`../physicsTimeScale` to ``0`` instead.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

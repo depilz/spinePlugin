@@ -5,8 +5,8 @@ skeleton:createSkin()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`setSkin`, :doc:`getSkin`, :doc:`../skin/index`
 
-Overview:
-.........
+Overview
+--------
 
 Creates a new custom Skin object that can be used to combine attachments from multiple existing skins. This enables mix-and-match character customization where different body parts can use different skins.
 
@@ -14,27 +14,30 @@ The created skin is initially empty and must have attachments added to it using 
 
 The examples use the mix-and-match example skeleton, whose skins each dress part of the character.
 
-Syntax:
---------
+Syntax
+------
 
 .. fragment: syntax line; skinName is a placeholder
 .. code-block:: lua
 
    local customSkin = skeleton:createSkin(skinName)
 
+Parameters
+----------
+
 - ``skinName`` *(required)*:
     ``string`` – The name for the new custom skin.
 
-Returns:
---------
+Return value
+------------
 
 ``Skin`` – A new Skin object that can be customized with attachments from other skins.
 
-Example:
---------
+Example
+-------
 
 Basic Usage
-...........
+~~~~~~~~~~~
 
 .. code-block:: lua
 
@@ -52,7 +55,7 @@ Basic Usage
    girl:setSkin(customSkin)
 
 Mix and Match Character Parts
-..............................
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: lua
 
@@ -71,8 +74,8 @@ Mix and Match Character Parts
    -- Apply the combined skin
    girl:setSkin(avatar)
 
-Notes:
---------
+Notes
+-----
 
 - The custom skin is owned by the Lua side; an applied custom skin is retained automatically
 - Custom skins can combine any number of existing skins

@@ -5,26 +5,26 @@ skeleton:getAnimations()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`findAnimation`
 
-Overview:
-.........
+Overview
+--------
 
 Returns a table of all animation names defined in the skeleton’s data.
 
-Syntax:
---------
+Syntax
+------
 
 .. code-block:: lua
 
    local animations = skeleton:getAnimations()
 
-Return value:
--------------
+Return value
+------------
 
 - ``table`` – A table of strings, each representing an animation name.
 
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

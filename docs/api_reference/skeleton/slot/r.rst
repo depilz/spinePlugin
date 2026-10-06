@@ -5,15 +5,15 @@ slot.r
 | **Type:** ``number``
 | **See also:** :doc:`index`, :doc:`color`, :doc:`../setFillColor`, :doc:`/naming`
 
-Overview:
-.........
+Overview
+--------
 
 The **red** (R) component of this slot’s color (0–1 range).
 Adjusting `r`, `g`, `b`, or `a` individually modifies the overall tint
 of the slot’s attachment.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

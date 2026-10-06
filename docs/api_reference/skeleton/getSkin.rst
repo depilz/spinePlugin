@@ -5,31 +5,31 @@ skeleton:getSkin()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`setSkin`, :doc:`createSkin`, :doc:`../skin/index`, :doc:`/naming`
 
-Overview:
-.........
+Overview
+--------
 
 Returns the skeleton's currently active Skin object. This allows you to inspect the current skin. A data
 skin is read-only; the applied custom skin can be modified (see :doc:`../skin/index`).
 
 ``getSkin`` takes no argument: passing one raises. To look a skin up by name, use :doc:`findSkin`.
 
-Syntax:
---------
+Syntax
+------
 
 .. code-block:: lua
 
    local currentSkin = skeleton:getSkin()
 
-Returns:
---------
+Return value
+------------
 
 ``Skin`` or ``nil`` – The currently active Skin object, or nil if no skin is set.
 
-Example:
---------
+Example
+-------
 
 Get Current Skin
-................
+~~~~~~~~~~~~~~~~
 
 .. code-block:: lua
 
@@ -45,7 +45,7 @@ Get Current Skin
    end
 
 Clone Current Skin
-..................
+~~~~~~~~~~~~~~~~~~
 
 .. code-block:: lua
 

@@ -5,22 +5,22 @@ skeleton:getIkConstraintNames()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`getIKConstraint`, :doc:`/naming`
 
-Overview:
-.........
+Overview
+--------
 
 Returns an array of all IK constraint names in this skeleton's data. The :doc:`ikConstraints` property returns the
 IK constraint objects instead. ``skeleton:getIKConstraintNames()`` is an alias of this method: it is the same
 function, and both names stay supported (see :doc:`/naming`).
 
-Syntax:
---------
+Syntax
+------
 
 .. code-block:: lua
 
    local names = skeleton:getIkConstraintNames()
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

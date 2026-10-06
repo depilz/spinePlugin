@@ -7,9 +7,12 @@
 # (extract.py FAMILIES): PASS iff every "run" sample exits 0, every "fragment" sample fails (a sample that runs under
 # the prelude is not a fragment) and no marker is bad; "simulator" samples are only counted here; a Simulator
 # sample needs its own sim-suite row (A6). Then keys vs pages (keys_pages.py) against the line's tests/api surface,
-# in both directions, spineline_test.py's line and base-URL mappings, and the firing proofs: an injected failing
-# sample, a fragment that runs, a fragment without a reason, a key without a page and a page without a key each fail
-# their check. The counts go to $SUITE_OUT/counts.tsv and the fragments to $SUITE_OUT/fragments.tsv.
+# in both directions, spineline_test.py's line and base-URL mappings, the API page section contract C-1
+# (sections.py), the API toctrees the sidebar shows (sidebar.py), and the firing proofs: an injected failing sample, a
+# fragment that runs, a fragment without a reason, a key without a page, a page without a key, a nested section, an
+# unknown section name, sections out of order, a sub-section under Overview, a bad header line, a long sidebar label
+# and a page listed twice each fail their check. The counts go to $SUITE_OUT/counts.tsv and
+# the fragments to $SUITE_OUT/fragments.tsv.
 set -euo pipefail
 W="$(cd "$(dirname "$0")" && pwd)"
 source "$W/../lib.sh"
@@ -99,6 +102,23 @@ check_fires() {
   grep -qF "$4" <<<"$out"
 }
 
+# api_fires check name page old new expected: check.py (sections or sidebar) fails on a scratch copy of $API whose page
+# has its first old replaced by new, and names the page with expected
+api_fires() {
+  local api="$SUITE_OUT/$1-$2" out
+  rm -rf "$api" && cp -R "$API" "$api"
+  python3 -B -c 'import sys, pathlib
+page, old, new = pathlib.Path(sys.argv[1]), sys.argv[2], sys.argv[3]
+text = page.read_text(encoding="utf-8")
+assert old in text, f"{page}: no {old!r} to replace"
+page.write_text(text.replace(old, new, 1), encoding="utf-8")' "$api/$3" "$4" "$5"
+  if out=$(python3 -B "$W/$1.py" "$SPINE_RUNTIME" "$api"); then printf '%s\n' "$out"; echo "the check passed"; return 1; fi
+  printf '%s\n' "$out"
+  grep -F "$3: " <<<"$out" | grep -qF "$6"
+}
+sections_fires() { api_fires sections "$@"; }
+sidebar_fires() { api_fires sidebar "$@"; }
+
 view
 export SPINE_SPINES=$VIEW
 source "$W/../host/host.sh"
@@ -117,6 +137,8 @@ API="$DOCS/api_reference"
 run_test "keys have pages" check keys "$SUITE_OUT/surface.tsv" "$API"
 run_test "pages name keys" check pages "$SUITE_OUT/surface.tsv" "$API"
 run_test "spineline line and base url" python3 -B "$W/spineline_test.py" "$DOCS/_ext"
+run_test "sections: api pages follow C-1" python3 -B "$W/sections.py" "$SPINE_RUNTIME" "$API"
+run_test "sidebar: api toctrees use short labels, each page once" python3 -B "$W/sidebar.py" "$SPINE_RUNTIME" "$API"
 
 run_test "firing: a failing sample fails its family" proof sample quickstart.rst "quickstart.rst:4 (a run sample raised" \
   "$(printf '%s\n' Proof ===== '' '.. code-block:: lua' '' "   error(\"$PROOF\")")"
@@ -132,3 +154,20 @@ rm -rf "$SUITE_OUT/api-proof" && cp -R "$API" "$SUITE_OUT/api-proof"
 : >"$SUITE_OUT/api-proof/skeleton/bone/$PROOF.rst"
 run_test "firing: a page without a key fails" check_fires pages "$SUITE_OUT/surface.tsv" "$SUITE_OUT/api-proof" \
   "skeleton/bone/$PROOF.rst: SpineBone has no public key"
+SECTIONS_PAGE=skeleton/clearTrack.rst
+run_test "firing: sections catches a nested section" sections_fires nested "$SECTIONS_PAGE" \
+  $'Example\n-------\n' $'Example\n.......\n' "heading 'Example' is neither a section"
+run_test "firing: sections catches an unknown section name" sections_fires unknown "$SECTIONS_PAGE" \
+  $'Example\n-------\n' $'Examples\n--------\n' "unknown section 'Examples'"
+run_test "firing: sections catches sections out of order" sections_fires order "$SECTIONS_PAGE" \
+  $'Syntax\n------\n' $'Notes\n-----\n' "section 'Parameters' out of order"
+run_test "firing: sections catches a sub-section under Overview" sections_fires overview "$SECTIONS_PAGE" \
+  $'Overview\n--------\n' $'Overview\n--------\n\nProof\n~~~~~\n' "sub-section 'Proof' under Overview"
+run_test "firing: sections catches a bad header line" sections_fires header "$SECTIONS_PAGE" \
+  '| **Type:** ' '| **Type**: ' "header line is not"
+run_test "firing: sidebar catches a long label" sidebar_fires label skeleton/index.rst \
+  'setAnimation() <setAnimation>' 'skeleton:setAnimation() <setAnimation>' \
+  "entry 'skeleton:setAnimation() <setAnimation>' is not 'setAnimation() <setAnimation>'"
+run_test "firing: sidebar catches a page listed twice" sidebar_fires twice skin/index.rst \
+  $'   :maxdepth: 1\n\n' $'   :maxdepth: 1\n\n   setAnimation() <../skeleton/setAnimation>\n' \
+  "skeleton/setAnimation is already listed at skeleton/index.rst"

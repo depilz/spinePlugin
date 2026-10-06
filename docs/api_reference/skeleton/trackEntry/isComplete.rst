@@ -5,15 +5,15 @@ trackEntry.isComplete
 | **Type:** ``boolean`` (read-only)
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
 
 The `isComplete` attribute indicates whether the animation on a specific track has finished
 playing. It returns `true` if the animation has completed (i.e., played through once without
 looping or has finished its current loop iteration) and ``false`` otherwise.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

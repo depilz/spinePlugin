@@ -5,20 +5,23 @@ skeleton:addEmptyAnimation()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`setEmptyAnimation`
 
-Overview:
-.........
+Overview
+--------
 
 Queues an empty animation after the current one, fading out over
 `mixDuration` (ms) and starting after `delay` (ms).
 
 
-Syntax:
---------
+Syntax
+------
 
 .. fragment: syntax line; trackIndex, mixDuration and delay are placeholders
 .. code-block:: lua
 
    local trackEntry = skeleton:addEmptyAnimation(trackIndex, mixDuration, delay)
+
+Parameters
+----------
 
 - ``trackIndex`` *(required)*:
     ``number`` – The track index to queue the empty animation.
@@ -27,13 +30,13 @@ Syntax:
 - ``delay`` *(required)*:
     ``number`` – The delay in milliseconds before starting, as for :doc:`addAnimation`. Omitting it raises.
 
-Return value:
--------------
+Return value
+------------
 
 - ``trackEntry`` – The :doc:`trackEntry/index` of the queued empty animation.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

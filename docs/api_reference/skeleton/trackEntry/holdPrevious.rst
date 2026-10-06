@@ -5,8 +5,8 @@ trackEntry.holdPrevious
 | **Type:** ``boolean``
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
 
 The `holdPrevious` attribute is Spine's ``TrackEntry`` flag of the same name, read and written as is. When it is
 ``true``, the previous entry on the track is applied fully (not faded out) while this entry mixes in over it.
@@ -16,8 +16,8 @@ without it the value dips briefly toward the lower track's value during the mix;
 keeps covering the lower track until the mix ends. It does not hold any pose after the mix, and a property the new
 animation does not key snaps when the mix ends.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

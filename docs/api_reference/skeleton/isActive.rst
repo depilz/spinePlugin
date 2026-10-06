@@ -5,8 +5,8 @@ skeleton.isActive
 | **Type:** ``boolean`` (read-only)
 | **See also:** :doc:`index`, :doc:`tracks`, :doc:`/naming`
 
-Overview:
-.........
+Overview
+--------
 
 The **isActive** attribute is ``true`` when at least one track has a current entry: an animation (or an empty
 animation) that was set, or a queued one that has started. A non-looping animation that has completed stays the
@@ -19,8 +19,8 @@ Do not use it to decide whether to call :doc:`updateState` and :doc:`draw`: phys
 even when the skeleton has no track, and skipping those calls freezes them. Call both every frame
 while the skeleton is on screen.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

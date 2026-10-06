@@ -5,14 +5,14 @@ bone.yScale
 | **Type:** ``number``
 | **See also:** :doc:`index`, :doc:`scaleY`, :doc:`/naming`
 
-Overview:
-.........
+Overview
+--------
 
 ``bone.yScale`` is an alias of :doc:`scaleY` (``bone.scaleY``): it reads and writes the same local scale. Both names work on both plugin lines and
 stay supported; :doc:`/naming` explains which name is canonical. The full description is on :doc:`scaleY`.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

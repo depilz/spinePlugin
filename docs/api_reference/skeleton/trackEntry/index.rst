@@ -5,8 +5,8 @@ trackEntry
 | **Type:** ``userdata``
 | **See also:** :doc:`../index`, :doc:`../tracks`
 
-Overview:
-..........
+Overview
+--------
 
 A **trackEntry** object represents an individual animation track within a Spine skeleton.
 It manages the playback state of a specific animation, including its timing, looping behavior,
@@ -36,47 +36,49 @@ Reading a key the entry does not have returns ``nil``. Writing to it raises
 Properties
 ----------
 
-**Common**
+Common
+~~~~~~
 
 .. toctree::
    :maxdepth: 1
 
-   trackIndex
-   animation
-   timeScale
-   loop
-   delay
-   reverse
-   isComplete
-   isValid
-   trackTime
-   trackEnd
-   onComplete
+   trackIndex <trackIndex>
+   animation <animation>
+   timeScale <timeScale>
+   loop <loop>
+   delay <delay>
+   reverse <reverse>
+   isComplete <isComplete>
+   isValid <isValid>
+   trackTime <trackTime>
+   trackEnd <trackEnd>
+   onComplete <onComplete>
 
-**Advanced**
+Advanced
+~~~~~~~~
 
 .. toctree::
    :maxdepth: 1
 
-   alpha
-   additive
-   holdPrevious
-   animationTime
-   animationStart
-   animationEnd
-   animationLast
-   shortestRotation
-   eventThreshold
-   mixTime
-   mixDuration
-   mixInterpolation
-   trackComplete
-   next
-   mixingFrom
-   mixingTo
-   mixAttachmentThreshold
-   alphaAttachmentThreshold
-   mixDrawOrderThreshold
+   alpha <alpha>
+   additive <additive>
+   holdPrevious <holdPrevious>
+   animationTime <animationTime>
+   animationStart <animationStart>
+   animationEnd <animationEnd>
+   animationLast <animationLast>
+   shortestRotation <shortestRotation>
+   eventThreshold <eventThreshold>
+   mixTime <mixTime>
+   mixDuration <mixDuration>
+   mixInterpolation <mixInterpolation>
+   trackComplete <trackComplete>
+   next <next>
+   mixingFrom <mixingFrom>
+   mixingTo <mixingTo>
+   mixAttachmentThreshold <mixAttachmentThreshold>
+   alphaAttachmentThreshold <alphaAttachmentThreshold>
+   mixDrawOrderThreshold <mixDrawOrderThreshold>
 
 Methods
 -------
@@ -84,4 +86,4 @@ Methods
 .. toctree::
    :maxdepth: 1
 
-   setMixDuration
+   setMixDuration() <setMixDuration>

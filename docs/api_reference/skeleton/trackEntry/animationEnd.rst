@@ -5,14 +5,15 @@ trackEntry.animationEnd
 | **Type:** ``number``
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
+
 The `animationEnd` attribute specifies the end time position of the animation on the specified track,
 measured in **milliseconds**. It represents the point at which the animation is scheduled to conclude,
 considering any delays or mixing durations.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

@@ -5,13 +5,13 @@ bone.parent
 | **Type:** :doc:`bone <index>` | ``nil`` (read-only)
 | **See also:** :doc:`../bones`
 
-Overview:
-.........
+Overview
+--------
 
 Returns the **parent** bone, or ``nil`` if this bone has no parent (i.e., it's a root bone).
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

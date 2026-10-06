@@ -3,7 +3,10 @@ attachment.worldVerticesLength
 =======================================
 
 | **Type:** ``number`` (read-only)
-| **Attachment Types:** mesh, path, boundingbox, clipping
+| **Attachment types:** mesh, path, boundingbox, clipping
+
+Overview
+--------
 
 The expected number of float values in the world vertices array.
 
@@ -59,7 +62,7 @@ Notes
 - Matches the length of the array returned by ``computeWorldVertices()``
 - Useful for validation and pre-allocation
 
-See Also
+See also
 --------
 
 - :doc:`vertices` - The local vertex data

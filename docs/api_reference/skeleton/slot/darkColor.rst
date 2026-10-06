@@ -5,8 +5,8 @@ slot.darkColor
 | **Type:** ``table`` or ``nil`` (read-only)
 | **See also:** :doc:`index`, :doc:`color`, :doc:`../fill/effect`
 
-Overview:
-.........
+Overview
+--------
 
 The slot's dark colour, the second colour of Spine's **tint black** (two-colour tint), as a new table
 ``{ r = 0–1, g = 0–1, b = 0–1 }``, or ``nil`` when the slot has no dark colour. A slot has one when its
@@ -23,8 +23,8 @@ is still reported while a skeleton :doc:`fill effect <../fill/effect>` turns tin
 Reading or writing it on a slot of a removed skeleton raises ``Slot belongs to a removed skeleton``
 (see :doc:`/lifecycle`).
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

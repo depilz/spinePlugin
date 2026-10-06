@@ -5,8 +5,8 @@ skeleton:inject()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`injectionEvent`, :doc:`eject`
 
-Overview:
-.........
+Overview
+--------
 
 **Injects** a Solar2D display object on top of a given slot. This lets you attach
 custom display objects like images, effects or even another skeleton instance to a slot, with a
@@ -22,13 +22,16 @@ update the slot it is attached to, it is recommended to use the :doc:`changeInje
 .. image:: inject.gif
     :align: center
 
-Syntax:
---------
+Syntax
+------
 
 .. fragment: syntax line; object, slotName and listener are placeholders
 .. code-block:: lua
 
    skeleton:inject(object, slotName, listener)
+
+Parameters
+----------
 
 - ``object`` *(required)*:
     ``displayObject`` – The Solar2D display object to attach.
@@ -41,8 +44,8 @@ Syntax:
 The object goes into the skeleton's display group at the slot's place in the draw order. The plugin does not move
 it: position it from the listener's event, which is in the skeleton group's coordinates.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

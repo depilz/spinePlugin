@@ -5,8 +5,8 @@ bone:worldToLocal()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`localToWorld`, :doc:`setWorldPosition`
 
-Overview:
-.........
+Overview
+--------
 
 Converts a point from skeleton space, the skeleton object's local coordinates with y growing downwards, to the
 bone's own coordinate system. It uses the bone's current world transform, the one recalculated by
@@ -18,21 +18,27 @@ parent bone's coordinates.
 
 Raises when the bone belongs to a removed skeleton.
 
-Syntax:
---------
+Syntax
+------
 
 .. fragment: syntax line; bone, worldX and worldY are placeholders
 .. code-block:: lua
 
    local localX, localY = bone:worldToLocal(worldX, worldY)
 
+Parameters
+----------
+
 - ``worldX``, ``worldY`` *(required)*:
     ``number`` – The point in skeleton space.
 
+Return value
+------------
+
 Returns ``localX``, ``localY``: the point in the bone's coordinate system.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

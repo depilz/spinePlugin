@@ -5,8 +5,8 @@ skeleton:updateState()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`draw`
 
-Overview:
-.........
+Overview
+--------
 
 Advances the skeleton’s animation state by `deltaTime` milliseconds, applying all
 active animation tracks to the skeleton. Typically followed by `skeleton:draw()`.
@@ -17,19 +17,22 @@ even when :doc:`draw` is not called. Physics steps once per ``updateState`` call
 steps physics several times, and a frame without ``updateState`` leaves physics where it was. Animation events are
 dispatched from ``updateState`` (see :doc:`../spine/event`).
 
-Syntax:
---------
+Syntax
+------
 
 .. fragment: syntax line; deltaTime is a placeholder
 .. code-block:: lua
 
    skeleton:updateState(deltaTime)
 
-- ``deltaTime`` *(required)*:
-     ``number`` – Time elapsed in milliseconds since last update.
+Parameters
+----------
 
-Example:
---------
+- ``deltaTime`` *(required)*:
+    ``number`` – Time elapsed in milliseconds since last update.
+
+Example
+-------
 
 .. code-block:: lua
 

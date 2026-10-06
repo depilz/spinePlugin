@@ -5,29 +5,32 @@ skeleton:findSlot()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`getSlot`
 
-Overview:
-.........
+Overview
+--------
 
 Returns the **Slot** object with the name `slotName`, or ``nil`` if the skeleton has no such slot.
 
-Syntax:
---------
+Syntax
+------
 
 .. fragment: syntax line; slotName is a placeholder
 .. code-block:: lua
 
    local slot = skeleton:findSlot(slotName)
 
+Parameters
+----------
+
 - ``slotName`` *(required)*:
     ``string`` – The name of the slot to search for.
 
-Return value:
--------------
+Return value
+------------
 
 ``Slot`` or ``nil`` – The slot, or ``nil`` if it does not exist. Use :doc:`getSlot` to raise instead.
 
-Example:
-........
+Example
+-------
 
 .. code-block:: lua
 

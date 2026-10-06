@@ -3,8 +3,11 @@ attachment.color
 =======================================
 
 | **Type:** ``table`` (read/write)
-| **Attachment Types:** region, mesh, point, path, boundingbox, clipping
+| **Attachment types:** region, mesh, point, path, boundingbox, clipping
 | **See also:** :doc:`index`, :doc:`r`, :doc:`g`, :doc:`b`, :doc:`a`, :doc:`/naming`
+
+Overview
+--------
 
 The color tint applied to the attachment. The table contains four components:
 

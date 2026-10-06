@@ -5,14 +5,14 @@ physics.inertia
 | **Type:** ``number``
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
 
 The **inertia** property affects how resistant the physics constraints are to changes
 in motion. Higher inertia makes bones slower to start or stop moving.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

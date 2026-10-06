@@ -3,7 +3,10 @@ attachment.path
 =======================================
 
 | **Type:** ``string`` (read-only)
-| **Attachment Types:** region, mesh
+| **Attachment types:** region, mesh
+
+Overview
+--------
 
 The file path to the texture or atlas region used by this attachment.
 
@@ -30,7 +33,7 @@ Notes
 - Read-only - cannot be modified at runtime
 - May differ from the attachment name if set explicitly in Spine
 
-See Also
+See also
 --------
 
 - :doc:`name` - The attachment identifier

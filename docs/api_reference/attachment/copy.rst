@@ -5,8 +5,8 @@ attachment:copy()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`../skin/setAttachment`, :doc:`../skin/copySkin`
 
-Overview:
-.........
+Overview
+--------
 
 Returns a new attachment object with this attachment's properties. Attachments are shared by
 the skins and skeletons that use them, so a property write changes every user of the object; a
@@ -33,8 +33,8 @@ parent mesh.
    ``SpineAttachment: copy{ region } needs a region or mesh attachment, not a <type> attachment``.
    ``attachment.region`` reads the region an attachment shows.
 
-Syntax:
---------
+Syntax
+------
 
 .. fragment: syntax line; attachment is a placeholder
 .. code-block:: lua
@@ -48,13 +48,26 @@ Syntax:
 
       local copy = attachment:copy({ region = regionName })
 
-Returns:
---------
+Parameters
+----------
+
+.. only:: spine43
+
+   - ``region`` *(optional)*:
+       ``string`` – A region of the skeleton's own atlas for the copy to show, passed as ``{ region = name }``.
+       A table without a string ``region``, such as ``{}``, raises ``region (an atlas region name) expected``.
+
+.. only:: spine42
+
+   On this line ``copy()`` takes no argument and ignores a table passed to it.
+
+Return value
+------------
 
 ``Attachment`` – The new attachment. ``copy == attachment`` is ``false``.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

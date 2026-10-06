@@ -5,14 +5,14 @@ slot.b
 | **Type:** ``number``
 | **See also:** :doc:`index`, :doc:`color`, :doc:`/naming`
 
-Overview:
-.........
+Overview
+--------
 
 The **blue** (B) component of this slot’s color, in the range [0–1].
 Combine with `r`, `g`, and `alpha` to create full RGBA tints.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

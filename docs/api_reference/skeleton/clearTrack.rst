@@ -5,25 +5,28 @@ skeleton:clearTrack()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`clearTracks`
 
-Overview:
-.........
+Overview
+--------
 
 Stops and removes the animation on a **single** track. This is
 useful if you want to cancel an animation on one track but leave others running.
 
-Syntax:
---------
+Syntax
+------
 
 .. fragment: syntax line; trackIndex is a placeholder
 .. code-block:: lua
 
    skeleton:clearTrack(trackIndex)
 
+Parameters
+----------
+
 - ``trackIndex`` *(required)*:
     ``number`` – The track index to clear.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

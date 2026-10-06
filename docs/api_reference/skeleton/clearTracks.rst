@@ -5,21 +5,21 @@ skeleton:clearTracks()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`clearTrack`
 
-Overview:
-.........
+Overview
+--------
 
 Stops and removes **all animation tracks** from the skeleton, leaving it with no active
 animations. This is a quick way to halt every animation at once.
 
-Syntax:
---------
+Syntax
+------
 
 .. code-block:: lua
 
    skeleton:clearTracks()
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

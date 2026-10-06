@@ -5,14 +5,14 @@ physics.strength
 | **Type:** ``number``
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
 
 Controls the **strength** of the physics constraints, determining how strongly
 bones try to return to their original positions.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

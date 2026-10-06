@@ -5,15 +5,15 @@ skeleton.physics
 | **Type:** ``userdata`` or ``nil``
 | **See also:** :doc:`index`, :doc:`physics/index`, :doc:`physicsTimeScale`
 
-Overview:
-.........
+Overview
+--------
 
 The skeleton's physics constraints as one object: see :doc:`physics/index` for its properties and methods. A write
 to it reaches every physics constraint of the skeleton. ``skeleton.physics`` is ``nil`` when the skeleton data has
 no physics constraints.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

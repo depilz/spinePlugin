@@ -5,14 +5,14 @@ slot:getSkinAttachments()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`attachment`
 
-Overview:
-.........
+Overview
+--------
 
 Returns a table of attachment objects available for this slot in the currently
 applied skin, or in a skin specified by name or Skin object.
 
-Syntax:
---------
+Syntax
+------
 
 .. fragment: syntax line; slot and the arguments are placeholders
 .. code-block:: lua
@@ -22,14 +22,18 @@ Syntax:
    local attachments = slot:getSkinAttachments("skinName")
    local attachments = slot:getSkinAttachments(skin)
 
-- ``skinName`` *(optional)*:
+Parameters
+----------
+
+- ``skin`` *(optional)*:
     ``string`` or ``Skin`` – The name of the skin to get attachments from, or a Skin object of the same
-    skeleton data. If omitted or
+    skeleton data. A name finds only the skeleton data's skins, so a skin made with
+    ``skeleton:createSkin()`` must be passed as the Skin object. If omitted or
     ``nil``, the currently applied skin is used. If no skin is applied, the
     skeleton data's default skin is used instead.
 
-Return value:
--------------
+Return value
+------------
 
 ``table`` – An array of :doc:`attachment objects </api_reference/attachment/index>`.
 The table is empty if the selected skin has no attachments for this slot.
@@ -41,8 +45,8 @@ to list attachments across the skeleton data's skins. Use :doc:`getAttachmentEnt
 to inspect lookup keys or include the effective default-skin fallback.
 
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

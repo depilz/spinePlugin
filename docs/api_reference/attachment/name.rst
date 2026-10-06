@@ -3,7 +3,10 @@ attachment.name
 =======================================
 
 | **Type:** ``string`` (read-only)
-| **Attachment Types:** All
+| **Attachment types:** All
+
+Overview
+--------
 
 The name of the attachment as defined in the Spine editor.
 

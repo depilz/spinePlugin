@@ -5,13 +5,13 @@ bone.worldScaleY
 | **Type:** ``number`` (read-only)
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
 
 Reflects the bone’s final Y scale in **world space**, after parent scaling is applied.
 
-Example:
-........
+Example
+-------
 
 .. code-block:: lua
 

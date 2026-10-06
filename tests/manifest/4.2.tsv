@@ -109,11 +109,20 @@ docs-samples	samples trackEntry
 docs-samples	keys have pages
 docs-samples	pages name keys
 docs-samples	spineline line and base url
+docs-samples	sections: api pages follow C-1
+docs-samples	sidebar: api toctrees use short labels, each page once
 docs-samples	firing: a failing sample fails its family
 docs-samples	firing: a fragment that runs fails its family
 docs-samples	firing: a fragment without a reason fails its family
 docs-samples	firing: a key without a page fails
 docs-samples	firing: a page without a key fails
+docs-samples	firing: sections catches a nested section
+docs-samples	firing: sections catches an unknown section name
+docs-samples	firing: sections catches sections out of order
+docs-samples	firing: sections catches a sub-section under Overview
+docs-samples	firing: sections catches a bad header line
+docs-samples	firing: sidebar catches a long label
+docs-samples	firing: sidebar catches a page listed twice
 gate	android/data.tgz
 gate	iphone/data.tgz
 gate	iphone-sim/data.tgz

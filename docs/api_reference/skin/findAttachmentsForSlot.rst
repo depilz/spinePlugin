@@ -5,36 +5,38 @@ skin:findAttachmentsForSlot()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`findNamesForSlot`, :doc:`getAttachment`
 
-Overview:
-.........
+Overview
+--------
 
 Returns all attachment objects for a specific slot in the skin. Similar to :doc:`findNamesForSlot`, but returns the full attachment objects instead of just names.
 
-Syntax:
---------
+Syntax
+------
 
 .. fragment: syntax line; skin and slot are placeholders
 .. code-block:: lua
 
    local attachments = skin:findAttachmentsForSlot(slot)
 
-Parameters:
------------
+Parameters
+----------
 
-- ``slot`` (string or Slot) – The slot name, or a Slot object of the same skeleton data. A number raises.
+- ``slot`` *(required)*:
+    ``string`` or ``Slot`` – The slot name, or a Slot object of the same skeleton data. A number raises.
+    A Slot of a removed skeleton raises.
 
-Returns:
---------
+Return value
+------------
 
 ``table`` – Array of attachment objects for the specified slot.
 
-Example:
---------
+Example
+-------
 
 The examples use the mix-and-match example skeleton, whose skins each dress part of the character.
 
 Inspect Attachment Details
-...........................
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: lua
 
@@ -51,7 +53,7 @@ Inspect Attachment Details
    end
 
 Copy Attachments to New Skin
-.............................
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This method returns attachment objects without their lookup keys, and a key (the skin placeholder)
 can differ from ``attachment.name``: in ``full-skins/girl`` the key ``mouth-smile`` maps to the
@@ -79,7 +81,7 @@ object ``girl/mouth-smile``. To copy entries under their keys, use the entry rec
    print(girl:getSlot("mouth").attachment.name)  -- the entries kept their keys
 
 Filter by Attachment Type
-..........................
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: lua
 
@@ -102,8 +104,8 @@ Filter by Attachment Type
    local regionAttachments = getRegionAttachments("full-skins/girl", "mouth")
    print(#regionAttachments)
 
-Notes:
---------
+Notes
+-----
 
 - Returns an empty table if no attachments are found for the slot
 - The slot is a slot name or a Slot object; a string is always a slot name, and a number raises

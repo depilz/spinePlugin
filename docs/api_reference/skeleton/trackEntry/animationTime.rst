@@ -5,14 +5,14 @@ trackEntry.animationTime
 | **Type:** ``number``
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
 
 The `animationTime` attribute indicates the current playback time of the animation on the specified track,
 measured in **milliseconds**. It represents how far into the animation the playback has progressed.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

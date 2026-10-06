@@ -5,8 +5,8 @@ skeleton:setAttachment()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`slot/getAttachments`
 
-Overview:
-.........
+Overview
+--------
 
 Assigns a specific attachment to a named slot. Pass `nil` as `attachmentName` to
 clear the slot’s attachment. String lookup searches the current skin first, then
@@ -15,21 +15,24 @@ the default skin if no matching entry exists. The string is the skin lookup key
 raises a Lua error without changing the slot. ``"null"`` is a literal key; use
 ``nil`` to clear. See :doc:`/attachments-and-skins`.
 
-Syntax:
---------
+Syntax
+------
 
 .. fragment: syntax line; slotName and attachmentName are placeholders
 .. code-block:: lua
 
    skeleton:setAttachment(slotName, attachmentName)
 
+Parameters
+----------
+
 - ``slotName`` *(required)*:
     ``string`` – The name of the slot to assign the attachment to.
 - ``attachmentName`` *(required)*:
-    ``string`` – The name of the attachment to assign to the slot. Pass `nil` to clear the slot.
+    ``string`` or ``nil`` – The name of the attachment to assign to the slot. Pass ``nil`` to clear the slot.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

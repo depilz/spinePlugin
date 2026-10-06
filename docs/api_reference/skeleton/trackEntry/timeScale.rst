@@ -5,8 +5,8 @@ trackEntry.timeScale
 | **Type:** ``number``
 | **See also:** :doc:`index`, :doc:`../timeScale`
 
-Overview:
-.........
+Overview
+--------
 
 The `timeScale` attribute allows you to adjust the playback speed of a specific animation
 track .i.e. changing `timeScale` affects only the specified track, other tracks or the global
@@ -14,8 +14,8 @@ track .i.e. changing `timeScale` affects only the specified track, other tracks 
 
 If you want to adjust the speed of all animations for this skeleton, see :doc:`../timeScale`.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

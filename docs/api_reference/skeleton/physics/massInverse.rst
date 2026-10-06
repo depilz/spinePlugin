@@ -5,14 +5,14 @@ physics.massInverse
 | **Type:** ``number``
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
 
 Represents the inverse of mass applied to the constraints. A higher `massInverse`
 means the bones behave as if they’re lighter or more easily accelerated by forces.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

@@ -5,8 +5,8 @@ trackEntry.onComplete
 | **Type:** ``function`` or ``nil``
 | **See also:** :doc:`index`, :doc:`../../spine/event`, :doc:`isValid`
 
-Overview:
-.........
+Overview
+--------
 
 A function called with the event table every time **this** entry completes: at the end of every loop of a looping
 entry, once for a non-looping one. It receives the same ``completed`` :doc:`../../spine/event` table as the other
@@ -23,8 +23,8 @@ Set it to ``nil`` to clear it. Any other value than a function or ``nil`` raises
 - Reading or writing it on an entry that is no longer valid raises, like every other key (see :doc:`isValid`).
 - An error inside it is reported like any other listener error; the other listeners and the next events still run.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

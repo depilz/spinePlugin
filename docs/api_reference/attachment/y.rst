@@ -3,7 +3,10 @@ attachment.y
 =======================================
 
 | **Type:** ``number`` (read/write)
-| **Attachment Types:** region, point
+| **Attachment types:** region, point
+
+Overview
+--------
 
 The Y position offset of the attachment relative to its bone, in local space.
 
@@ -29,7 +32,7 @@ Example
        attachment.y = attachment.y + 5
    end
 
-See Also
+See also
 --------
 
 - :doc:`x` - The X position offset

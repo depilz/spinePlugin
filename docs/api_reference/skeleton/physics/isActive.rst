@@ -5,8 +5,8 @@ physics.isActive
 | **Type:** ``boolean`` (read-only)
 | **See also:** :doc:`index`, :doc:`mix`, :doc:`/naming`
 
-Overview:
-.........
+Overview
+--------
 
 Indicates whether the skeleton's first physics constraint is currently **active**. Spine decides this itself:
 a constraint is inactive when it is skin-required and the current skin does not include it, or when its bone
@@ -25,8 +25,8 @@ is inactive. The value changes when the skin changes.
 ``Physics constraint isActive is read-only; set mix = 0 to stop it``. To stop physics, set
 :doc:`mix` to ``0``; set it back to a value above ``0`` to restart it.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

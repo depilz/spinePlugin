@@ -5,8 +5,8 @@ skeleton:draw()
 | **Type:** ``function``
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
 
 Renders the skeleton’s current state as meshes in Solar2D’s display system. Typically called after
 `updateState(deltaTime)` each frame to reflect the most recent animation changes.
@@ -15,16 +15,16 @@ Renders the skeleton’s current state as meshes in Solar2D’s display system. 
 :doc:`updateState` and ``draw`` are drawn at once, and physics reacts to them at the next ``updateState``. Calling
 ``draw`` without ``updateState`` advances neither the animation nor physics.
 
-Syntax:
---------
+Syntax
+------
 
 .. code-block:: lua
 
    skeleton:draw()
 
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

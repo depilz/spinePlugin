@@ -5,13 +5,13 @@ skeleton.slots
 | **Type:** ``table`` (read-only)
 | **See also:** :doc:`index`, :doc:`slot/index`, :doc:`/naming`
 
-Overview:
-.........
+Overview
+--------
 
 An array of :doc:`slot/index` objects, each representing the attachments (images, meshes, etc.) assigned to bones in this skeleton.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

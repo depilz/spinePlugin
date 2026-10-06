@@ -5,15 +5,15 @@ ikConstraint.target
 | **Type:** :doc:`bone <../bone/index>` | ``nil``
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
 
 The :doc:`bone <../bone/index>` object serving as the IK target. The chain of bones controlled
 by this IK will try to point towards or reach this target bone.
 
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

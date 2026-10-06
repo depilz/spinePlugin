@@ -5,9 +5,8 @@ slot
 | **Type:** ``userdata``
 | **See also:** :doc:`../slots`, :doc:`../index`
 
-
-Overview:
-..........
+Overview
+--------
 
 A **Slot** object represents the attachment slot for a bone in a Spine skeleton. It holds color
 tints (RGBA), a current attachment, and a reference to its owning bone.
@@ -26,40 +25,40 @@ a key that is not listed raises ``SpineSlot: unknown property '<key>'``.
 Two Slot objects compare equal with ``==`` when they are the same slot of the same skeleton instance.
 Comparing a slot of a removed skeleton raises ``Slot belongs to a removed skeleton``.
 
-Properties:
------------
+Properties
+----------
 
 .. toctree::
    :maxdepth: 1
 
-   name
-   bone
-   attachment
-   appliedAttachment
-   r
-   g
-   b
-   a
-   color
-   darkColor
+   name <name>
+   bone <bone>
+   attachment <attachment>
+   appliedAttachment <appliedAttachment>
+   r <r>
+   g <g>
+   b <b>
+   a <a>
+   color <color>
+   darkColor <darkColor>
 
-Methods:
---------
+Methods
+-------
 
 .. toctree::
    :maxdepth: 1
 
-   setAttachmentFromSkin
-   getAttachments
-   getSkinAttachments
-   getAttachmentEntries
+   setAttachmentFromSkin() <setAttachmentFromSkin>
+   getAttachments() <getAttachments>
+   getSkinAttachments() <getSkinAttachments>
+   getAttachmentEntries() <getAttachmentEntries>
 
-Aliases:
---------
+Aliases
+-------
 
 See :doc:`/naming`.
 
 .. toctree::
    :maxdepth: 1
 
-   alpha
+   alpha <alpha>

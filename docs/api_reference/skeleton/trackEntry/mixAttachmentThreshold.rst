@@ -5,8 +5,8 @@ trackEntry.mixAttachmentThreshold
 | **Type:** ``number``
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
 
 When the mix percentage (mixTime / mixDuration) is less than the mixAttachmentThreshold, attachment timelines
 are applied while this animation is being mixed out. Defaults to 0, so attachment timelines are not applied while
@@ -14,8 +14,8 @@ this animation is being mixed out.
 
 This is a ratio in ``[0..1]``.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

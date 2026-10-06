@@ -3,7 +3,10 @@ attachment.constantSpeed
 =======================================
 
 | **Type:** ``boolean`` (read/write)
-| **Attachment Types:** path
+| **Attachment types:** path
+
+Overview
+--------
 
 Determines whether movement along the path should be at constant speed.
 
@@ -62,7 +65,7 @@ Notes
 - Constant speed mode is more computationally expensive
 - Recommended for paths with varying curve lengths when smooth motion is desired
 
-See Also
+See also
 --------
 
 - :doc:`closed` - Whether the path is a closed loop

@@ -5,15 +5,15 @@ ikConstraint.stretch
 | **Type:** ``boolean``
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
 
 When ``stretch`` is ``true``, bones in this IK chain can stretch to match the
 distance to the target. This can help avoid dead zones where the chain
 is too short or too long for the desired position.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

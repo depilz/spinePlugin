@@ -5,28 +5,28 @@ skeleton.fill
 | **Type:** ``userdata``
 | **See also:** :doc:`index`, :doc:`setFillColor`, :doc:`/naming`
 
-Overview:
-.........
+Overview
+--------
 
 ``skeleton.fill`` is the skeleton's fill: the colour that multiplies every attachment the skeleton draws, and the
 Solar2D shader effect the skeleton is drawn with. Each read returns a new object for the same skeleton. Reading a key
 the fill does not have returns ``nil``; writing one does nothing.
 
-Properties:
------------
+Properties
+----------
 
 .. toctree::
    :maxdepth: 1
 
-   fill/color
-   fill/r
-   fill/g
-   fill/b
-   fill/a
-   fill/effect
+   color <fill/color>
+   r <fill/r>
+   g <fill/g>
+   b <fill/b>
+   a <fill/a>
+   effect <fill/effect>
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

@@ -5,9 +5,8 @@ attachment
 | **Type:** ``userdata``
 | **See also:** :doc:`../skeleton/slot/attachment`, :doc:`../skin/getAttachment`
 
-
-Overview:
-..........
+Overview
+--------
 
 An **Attachment** object represents visual or functional elements attached to a skeleton's slots.
 Attachments can be images (regions), deformable meshes, collision boxes, paths for constraints,
@@ -25,8 +24,7 @@ Attachment objects compare equal with ``==`` when they wrap the same attachment.
 Writing a property the attachment's type does not have raises
 ``SpineAttachment: unknown property '<key>' on a <type> attachment``.
 
-Attachment Types
-................
+**Attachment Types**
 
 - **region** - A rectangular image/sprite (RegionAttachment)
 - **mesh** - A deformable mesh with vertices and triangles (MeshAttachment)
@@ -35,105 +33,96 @@ Attachment Types
 - **point** - A single point with rotation, useful for spawn points (PointAttachment)
 - **clipping** - A polygon that clips rendering (ClippingAttachment)
 
+Properties
+----------
+
 Common Properties
------------------
+~~~~~~~~~~~~~~~~~
 
 Available on all attachment types:
 
 .. toctree::
    :maxdepth: 1
 
-   name
-   type
+   name <name>
+   type <type>
 
 Visual Properties
------------------
+~~~~~~~~~~~~~~~~~
 
 Color and appearance:
 
 .. toctree::
    :maxdepth: 1
 
-   color
-   r
-   g
-   b
-   a
+   color <color>
+   r <r>
+   g <g>
+   b <b>
+   a <a>
 
-RegionAttachment Properties
-----------------------------
+Transform Properties
+~~~~~~~~~~~~~~~~~~~~
 
-Available when ``type == "region"``:
+``x``, ``y`` and ``rotation`` are available on RegionAttachment and PointAttachment, ``scaleX`` and ``scaleY`` on
+RegionAttachment only:
 
 .. toctree::
    :maxdepth: 1
 
-   x
-   y
-   rotation
-   scaleX
-   scaleY
-   width
-   height
-   path
-   region
+   x <x>
+   y <y>
+   rotation <rotation>
+   scaleX <scaleX>
+   scaleY <scaleY>
+
+Texture Properties
+~~~~~~~~~~~~~~~~~~
+
+Available on RegionAttachment and MeshAttachment:
+
+.. toctree::
+   :maxdepth: 1
+
+   width <width>
+   height <height>
+   path <path>
+   region <region>
 
 MeshAttachment Properties
---------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Available when ``type == "mesh"``:
 
 .. toctree::
    :maxdepth: 1
 
-   width
-   height
-   path
-   region
-   triangles
-   hullLength
-   vertices
-   bones
-   worldVerticesLength
-
-PointAttachment Properties
----------------------------
-
-Available when ``type == "point"``:
-
-.. toctree::
-   :maxdepth: 1
-
-   x
-   y
-   rotation
+   triangles <triangles>
+   hullLength <hullLength>
 
 PathAttachment Properties
---------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Available when ``type == "path"``:
 
 .. toctree::
    :maxdepth: 1
 
-   closed
-   constantSpeed
-   lengths
-   vertices
-   bones
-   worldVerticesLength
+   closed <closed>
+   constantSpeed <constantSpeed>
+   lengths <lengths>
 
 VertexAttachment Properties
-----------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Available when ``type`` is "boundingbox", "path", "mesh", or "clipping":
 
 .. toctree::
    :maxdepth: 1
 
-   vertices
-   bones
-   worldVerticesLength
+   vertices <vertices>
+   bones <bones>
+   worldVerticesLength <worldVerticesLength>
 
 Methods
 -------
@@ -141,8 +130,8 @@ Methods
 .. toctree::
    :maxdepth: 1
 
-   computeWorldVertices
-   copy
+   computeWorldVertices() <computeWorldVertices>
+   copy() <copy>
 
 Aliases
 -------
@@ -152,11 +141,11 @@ See :doc:`/naming`.
 .. toctree::
    :maxdepth: 1
 
-   xScale
-   yScale
+   xScale <xScale>
+   yScale <yScale>
 
-Example Usage
--------------
+Example
+-------
 
 **Working with Region Attachments:**
 

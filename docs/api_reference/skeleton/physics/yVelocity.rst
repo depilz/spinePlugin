@@ -5,13 +5,13 @@ physics.yVelocity
 | **Type:** ``number``
 | **See also:** :doc:`index`, :doc:`/naming`
 
-Overview:
-.........
+Overview
+--------
 
 The vertical (Y-axis) velocity applied to the physics constraints.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

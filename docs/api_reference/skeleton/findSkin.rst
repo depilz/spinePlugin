@@ -5,30 +5,33 @@ skeleton:findSkin()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`getSkin`, :doc:`setSkin`, :doc:`getSkins`, :doc:`../skin/index`
 
-Overview:
-.........
+Overview
+--------
 
 Returns the Skin object with the given name from the skeleton's data, or ``nil`` if there is none. The skin is not
 applied; pass it to :doc:`setSkin` to apply it.
 
-Syntax:
---------
+Syntax
+------
 
 .. fragment: syntax line; skinName is a placeholder
 .. code-block:: lua
 
    local skin = skeleton:findSkin(skinName)
 
+Parameters
+----------
+
 - ``skinName`` *(required)*:
     ``string`` – The name of the skin to look up.
 
-Returns:
---------
+Return value
+------------
 
 ``Skin`` or ``nil`` – The skin with that name, or nil if the skeleton data has no such skin.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

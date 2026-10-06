@@ -5,13 +5,13 @@ slot.name
 | **Type:** ``string`` (read-only)
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
 
 The **name** of this slot as defined in Spine.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

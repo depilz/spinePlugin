@@ -5,8 +5,8 @@ slider.time
 | **Type:** ``number``
 | **See also:** :doc:`index`, :doc:`boneDriven`, :doc:`duration`, :doc:`mix`
 
-Overview:
-.........
+Overview
+--------
 
 The time, in seconds, at which the slider applies its :doc:`animation`. The skeleton shows a new time at the next
 ``updateState`` or draw.
@@ -23,8 +23,8 @@ reads the value of the last update.
 An animation that keys this slider's time sets ``time`` again every time it is applied. A value that is not a number
 raises.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

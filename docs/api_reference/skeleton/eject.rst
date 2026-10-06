@@ -5,22 +5,28 @@ skeleton:eject()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`inject`
 
-Overview:
-.........
+Overview
+--------
 
 Removes a previously injected display object from the skeleton. After ejection, the object
 is inserted into the stage group and its `listener` is no longer invoked.
 
-Syntax:
---------
+Syntax
+------
 
 .. fragment: syntax line; object is a placeholder
 .. code-block:: lua
 
    skeleton:eject(object)
 
-Example:
---------
+Parameters
+----------
+
+- ``object`` *(required)*:
+    ``displayObject`` – The injected display object to remove.
+
+Example
+-------
 
 .. code-block:: lua
 

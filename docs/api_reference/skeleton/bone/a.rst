@@ -5,14 +5,14 @@ bone.a
 | **Type:** ``number``
 | **See also:** :doc:`index`, :doc:`/naming`
 
-Overview:
-.........
+Overview
+--------
 
 Represents the *a* component of this bone’s local transform matrix. Typically manipulated only
 in advanced scenarios for custom transform logic.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

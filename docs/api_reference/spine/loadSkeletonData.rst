@@ -3,44 +3,23 @@ spine.loadSkeletonData()
 ===============================================
 
 | **Type:** ``function``
-| **Return value:** SkeletonData userdata
 | **See also:** :doc:`index`, :doc:`loadAtlas`
 
-Overview:
-.........
+Overview
+--------
 
 Loads Spine skeleton data (``.json`` or ``.skel``) from the specified path using a previously loaded atlas. This function parses the skeleton data and prepares it for animation within your Solar2D project. Optionally, you can provide a scale factor to adjust the size of the skeleton.
 
-Gotchas:
---------
-
-The referenced atlas and the skeleton data will remain alive as long as this object is
-alive or has references to it.
-
-The scale, if provided, will affect all skeletons created with this skeleton data. Alternatively you
-can scale the skeleton instance directly.
-
-.. Tested by tests/lifecycle/t35_load_errors (missing, skel, json).
-
-If no file exists at ``path``, ``loadSkeletonData`` raises ``File not found: <path>``, with the path as you passed it.
-
-It raises ``Failed to load skeleton data: <path>: <reason>``, where ``<path>`` is the full path Solar2D resolves and
-``<reason>`` is the Spine runtime's message, for these files:
-
-- a ``.skel`` file exported by another Spine version:
-  ``Skeleton version <version> does not match runtime version <line>``;
-- a ``.json`` file whose slot names a bone the file does not have: ``Slot bone not found: <bone>``.
-
-Other malformed files are not guaranteed to raise: depending on the damage, the Spine runtime's reader can stop the
-app instead. Export with the Spine editor version your plugin line supports.
-
-Syntax:
--------
+Syntax
+------
 
 .. fragment: syntax line; arguments are placeholders
 .. code-block:: lua
 
    local skeletonData = spine.loadSkeletonData(path, atlas, [scale])
+
+Parameters
+----------
 
 - ``path`` *(required)*:
     ``string`` – The relative path to your skeleton data file (either ``.json`` or ``.skel``).
@@ -49,15 +28,15 @@ Syntax:
     ``userdata`` – The atlas userdata returned by ``spine.loadAtlas()``. This atlas contains texture information required by the skeleton.
 
 - ``scale`` *(optional)*:
-    ``number`` – A scaling factor to apply to the skeleton. Defaults to ``1.0`` if not provided.
+    ``number`` – A scaling factor to apply to the skeleton. Defaults to ``1.0``.
 
-Return Values:
---------------
+Return value
+------------
 
 - ``userdata`` – A Lua userdata wrapping the underlying C++ ``SkeletonData`` object. This userdata is used when creating skeleton instances with ``spine.create()``.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 
@@ -85,3 +64,26 @@ Example:
    end
 
    Runtime:addEventListener("enterFrame", onEnterFrame)
+
+Notes
+-----
+
+The referenced atlas and the skeleton data will remain alive as long as this object is
+alive or has references to it.
+
+The scale, if provided, will affect all skeletons created with this skeleton data. Alternatively you
+can scale the skeleton instance directly.
+
+.. Tested by tests/lifecycle/t35_load_errors (missing, skel, json).
+
+If no file exists at ``path``, ``loadSkeletonData`` raises ``File not found: <path>``, with the path as you passed it.
+
+It raises ``Failed to load skeleton data: <path>: <reason>``, where ``<path>`` is the full path Solar2D resolves and
+``<reason>`` is the Spine runtime's message, for these files:
+
+- a ``.skel`` file exported by another Spine version:
+  ``Skeleton version <version> does not match runtime version <line>``;
+- a ``.json`` file whose slot names a bone the file does not have: ``Slot bone not found: <bone>``.
+
+Other malformed files are not guaranteed to raise: depending on the damage, the Spine runtime's reader can stop the
+app instead. Export with the Spine editor version your plugin line supports.

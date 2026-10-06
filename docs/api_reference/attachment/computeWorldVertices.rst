@@ -2,8 +2,11 @@
 attachment:computeWorldVertices()
 =======================================
 
-| **Returns:** ``table`` (array of numbers)
-| **Attachment Types:** region, mesh, path, boundingbox, clipping
+| **Type:** ``function``
+| **Attachment types:** region, mesh, path, boundingbox, clipping
+
+Overview
+--------
 
 Computes the positions of the attachment's vertices in skeleton space.
 
@@ -24,16 +27,26 @@ Syntax
 Parameters
 ----------
 
-- **slot** (``userdata``) - The slot containing this attachment
+- ``slot`` *(required)*:
+    ``Slot`` – The slot containing this attachment. It accepts only a Slot object: a slot name raises.
 
-Returns
--------
+Return value
+------------
 
 A table of numbers representing vertex positions in world space, formatted as:
 
 ``{x1, y1, x2, y2, x3, y3, ...}``
 
 Each pair of values represents one vertex's x and y coordinates.
+
+Return Value by Type
+~~~~~~~~~~~~~~~~~~~~
+
+- **region**: 8 values (4 corners: BR, BL, UL, UR)
+- **mesh**: Variable, based on mesh complexity (``worldVerticesLength`` values)
+- **boundingbox**: Variable, based on polygon vertices
+- **path**: Variable, based on path control points
+- **clipping**: Variable, based on clipping polygon
 
 Example
 -------
@@ -171,16 +184,7 @@ Notes
 - The returned array is always a multiple of 2 (x, y pairs)
 - Calling this every frame can be expensive for complex meshes - cache when possible
 
-Return Value by Type
---------------------
-
-- **region**: 8 values (4 corners: BR, BL, UL, UR)
-- **mesh**: Variable, based on mesh complexity (``worldVerticesLength`` values)
-- **boundingbox**: Variable, based on polygon vertices
-- **path**: Variable, based on path control points
-- **clipping**: Variable, based on clipping polygon
-
-See Also
+See also
 --------
 
 - :doc:`vertices` - The local vertex data

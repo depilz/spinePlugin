@@ -3,7 +3,10 @@ attachment.lengths
 =======================================
 
 | **Type:** ``table`` (read-only)
-| **Attachment Types:** path
+| **Attachment types:** path
+
+Overview
+--------
 
 An array of curve segment lengths for the path attachment.
 
@@ -68,7 +71,7 @@ Notes
 - Only relevant when ``constantSpeed`` is enabled
 - Measured in Spine units from the setup pose
 
-See Also
+See also
 --------
 
 - :doc:`constantSpeed` - Whether to use these lengths for speed normalization

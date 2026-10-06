@@ -5,13 +5,13 @@ bone.worldRotation
 | **Type:** ``number`` (read-only)
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
 
 The **world rotation** of the bone. This is the bone's rotation relative to the skeleton's origin.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

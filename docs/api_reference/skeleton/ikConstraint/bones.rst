@@ -5,13 +5,13 @@ ikConstraint.bones
 | **Type:** ``table`` (read-only)
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
 
 An array of :doc:`bone <../bone/index>` objects controlled by this IK constraint.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

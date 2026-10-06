@@ -5,8 +5,8 @@ skeleton:hitTest()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`getBounds`, :doc:`bone/setWorldPosition`
 
-Overview:
-.........
+Overview
+--------
 
 Tells which bounding-box attachments (Spine "hit areas") of the skeleton contain a point, top-most first.
 
@@ -40,14 +40,17 @@ bounding boxes are still tested where the skeleton object would draw them.
 Raises when the skeleton was removed, when ``x`` or ``y`` is not a number, and when ``listener`` is neither a
 function nor ``nil``.
 
-Syntax:
---------
+Syntax
+------
 
 .. fragment: syntax line; x, y and listener are placeholders
 .. code-block:: lua
 
    local hit = skeleton:hitTest(x, y)
    local handled = skeleton:hitTest(x, y, listener)
+
+Parameters
+----------
 
 - ``x``, ``y`` *(required)*:
     ``number`` – The point in content coordinates.
@@ -56,8 +59,8 @@ Syntax:
     ``function`` – Called with a hit table for each box containing the point, top-most first. Return ``true`` to
     stop.
 
-Hit table:
-----------
+Hit table
+~~~~~~~~~
 
 - ``slotName``: ``string`` – The name of the bounding box's slot.
 
@@ -69,11 +72,11 @@ Hit table:
 
 - ``localX``, ``localY``: ``number`` – The same point in skeleton space.
 
-Example:
---------
+Example
+-------
 
 Top-most hit
-............
+~~~~~~~~~~~~
 
 .. code-block:: lua
 
@@ -89,7 +92,7 @@ Top-most hit
    skeleton:addEventListener("touch", onTouch)
 
 Every hit
-.........
+~~~~~~~~~
 
 .. code-block:: lua
 

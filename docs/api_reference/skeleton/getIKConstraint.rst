@@ -5,32 +5,35 @@ skeleton:getIkConstraint()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`getIKConstraintNames`, :doc:`ikConstraint/index`, :doc:`/naming`
 
-Overview:
-.........
+Overview
+--------
 
 Retrieves the :doc:`ikConstraint/index` with the specified IK constraint name. An unknown name raises
 ``IKConstraint not found: <name>``; use :doc:`getIKConstraintNames` to check the names first.
 ``skeleton:getIKConstraint()`` is an alias of this method: it is the same function, and both names stay supported
 (see :doc:`/naming`).
 
-Syntax:
---------
+Syntax
+------
 
 .. fragment: syntax line; ikConstraintName is a placeholder
 .. code-block:: lua
 
    local ikObj = skeleton:getIkConstraint(ikConstraintName)
 
+Parameters
+----------
+
 - ``ikConstraintName`` *(required)*:
     ``string`` – The name of the IK constraint to search for.
 
-Return value:
--------------
+Return value
+------------
 
 ``IKConstraint`` – The IK constraint object. See :doc:`ikConstraint/index` for more information.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

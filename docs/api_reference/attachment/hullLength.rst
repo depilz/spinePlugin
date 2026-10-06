@@ -3,7 +3,10 @@ attachment.hullLength
 =======================================
 
 | **Type:** ``number`` (read-only)
-| **Attachment Types:** mesh
+| **Attachment types:** mesh
+
+Overview
+--------
 
 The size of the mesh's hull: the outer boundary drawn in the Spine editor.
 
@@ -65,7 +68,7 @@ Notes
 - The Spine 4.2 runtime stores the hull as a vertex count and the Spine 4.3 runtime as a count of numbers,
   so the same export reads 24 on the 4.2 line and 48 on the 4.3 line
 
-See Also
+See also
 --------
 
 - :doc:`vertices` - The vertex positions array

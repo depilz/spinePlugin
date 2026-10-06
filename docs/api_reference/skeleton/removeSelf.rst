@@ -5,8 +5,8 @@ skeleton:removeSelf()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`/lifecycle`
 
-Overview:
-.........
+Overview
+--------
 
 Removes the skeleton, like
 `object:removeSelf() <https://docs.coronalabs.com/api/type/DisplayObject/removeSelf.html>`_ on any display object;
@@ -18,15 +18,15 @@ calling ``skeleton:removeSelf()`` a second time raises Lua's ``attempt to call m
 Use ``display.remove(skeleton)``, or check ``if skeleton.removeSelf then``, where the skeleton may already be
 removed. :doc:`/lifecycle` describes what happens after removal.
 
-Syntax:
---------
+Syntax
+------
 
 .. code-block:: lua
 
    skeleton:removeSelf()
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

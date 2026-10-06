@@ -3,11 +3,11 @@ attachment.region
 =======================================
 
 | **Type:** ``table`` or ``nil`` (read-only)
-| **Attachment Types:** region, mesh
+| **Attachment types:** region, mesh
 | **See also:** :doc:`index`, :doc:`copy`, :doc:`path`, :doc:`../skeleton/createAttachment`
 
-Overview:
-.........
+Overview
+--------
 
 The atlas region a region or mesh attachment shows in its setup frame, as a new table on each read. Attachments
 without a region (bounding box, path, point and clipping) read ``nil``.
@@ -30,8 +30,8 @@ remapped in place. Writing it raises
 ``SpineAttachment: property 'region' is read-only; use attachment:copy{ region = … }``.
 Use ``attachment:copy{ region = "<name>" }`` (:doc:`copy`) for an attachment that shows another region.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

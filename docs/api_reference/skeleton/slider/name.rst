@@ -5,13 +5,13 @@ slider.name
 | **Type:** ``string`` (read-only)
 | **See also:** :doc:`index`, :doc:`../sliders`
 
-Overview:
-.........
+Overview
+--------
 
 The **name** of this slider, as defined in Spine. It is the slider's key in :doc:`../sliders`.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

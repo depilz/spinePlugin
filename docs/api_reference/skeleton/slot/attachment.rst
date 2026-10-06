@@ -5,14 +5,14 @@ slot.attachment
 | **Type:** ``string`` | ``Attachment`` | ``nil``
 | **See also:** :doc:`index`, :doc:`setAttachmentFromSkin`, :doc:`../../attachment/index`
 
+Overview
+--------
+
 String assignment uses the skin lookup key and searches current skin then default
 skin, exactly like :doc:`../setAttachment`. A missing key raises a Lua error and
 leaves the slot unchanged. Direct object assignment bypasses lookup and requires
 an object from the same skeleton data. Use ``nil`` to clear the slot.
 See :doc:`/attachments-and-skins` for animation overrides and ownership.
-
-Overview:
-.........
 
 Gets or sets the current attachment displayed by this slot. Can be set using:
 
@@ -22,8 +22,8 @@ Gets or sets the current attachment displayed by this slot. Can be set using:
 
 When reading, returns an Attachment object or ``nil`` if no attachment is set.
 
-Syntax:
---------
+Syntax
+------
 
 **Reading:**
 
@@ -46,8 +46,8 @@ Syntax:
    -- Clear attachment
    slot.attachment = nil
 
-Behavior:
----------
+Behavior
+~~~~~~~~
 
 When setting by **string name**, the attachment is looked up in this order:
 
@@ -56,8 +56,8 @@ When setting by **string name**, the attachment is looked up in this order:
 
 If you need to set an attachment from a **specific skin** without changing the skeleton's current skin, use :doc:`setAttachmentFromSkin`.
 
-Example:
---------
+Example
+-------
 
 **Reading Attachment:**
 
@@ -114,8 +114,8 @@ Example:
    girl:setSkin("accessories/hat-pointy-blue-yellow")
    slot.attachment = "hat"  -- the pointy blue and yellow hat
 
-Notes:
-------
+Notes
+-----
 
 - When setting by **string name** and the attachment is not found, it raises ``Attachment not found: <name>``
 - An attachment object of other skeleton data raises ``Attachment belongs to different skeleton data``

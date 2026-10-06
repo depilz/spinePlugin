@@ -5,14 +5,14 @@ bone.children
 | **Type:** ``table`` (read-only)
 | **See also:** :doc:`index`, :doc:`parent`
 
-Overview:
-.........
+Overview
+--------
 
 An array of the bone's child bones, in the skeleton data's order: the bones whose :doc:`parent` is this bone. A bone
 without children returns an empty table. Each read builds a new table.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

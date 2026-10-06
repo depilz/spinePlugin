@@ -5,8 +5,8 @@ slot.appliedAttachment
 | **Type:** ``Attachment`` or ``nil`` (read-only)
 | **See also:** :doc:`index`, :doc:`attachment`, :doc:`../../attachment/index`
 
-Overview:
-.........
+Overview
+--------
 
 The attachment the renderer draws for this slot, or ``nil`` when it draws none. Spine 4.3 keeps two poses per slot:
 the pose that :doc:`attachment` reads and writes, and the applied pose built from it each frame, which constraints
@@ -20,8 +20,8 @@ The value follows the last ``updateState`` or draw. Each read returns a new Atta
 Reading or writing it on a slot of a removed skeleton raises ``Slot belongs to a removed skeleton``
 (see :doc:`/lifecycle`).
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

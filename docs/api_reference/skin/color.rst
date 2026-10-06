@@ -1,5 +1,9 @@
+==========
 skin.color
 ==========
+
+Overview
+--------
 
 Gets or sets the editor skin color. This is metadata exported from the Spine
 editor. It is **not multiplied into rendered attachment colors** and does not tint
@@ -9,10 +13,16 @@ Only a custom skin (from :doc:`../skeleton/createSkin`) can be written; writing 
 raises, because data skins are read-only (see :doc:`index`). :doc:`/naming` lists the colour keys of every
 Spine object.
 
+Example
+-------
+
 .. code-block:: lua
 
    local skin = skeleton:createSkin("tinted")
    skin.color = {r = 1, g = 0.5, b = 0.5, a = 1}
+
+Notes
+-----
 
 For rendered color changes, use :doc:`../skeleton/slot/color` or
 :doc:`../skeleton/setFillColor`. Attachment-object colors are shared by users of

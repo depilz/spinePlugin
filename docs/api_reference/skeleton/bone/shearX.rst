@@ -5,14 +5,14 @@ bone.shearX
 | **Type:** ``number``
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
 
 Represents the **shear** along the bone’s X-axis. This skews the bone horizontally, altering
 the shape of attachments in a non-uniform way.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

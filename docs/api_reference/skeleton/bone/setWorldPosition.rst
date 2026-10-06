@@ -5,8 +5,8 @@ bone:setWorldPosition()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`translateWorld`, :doc:`worldX`, :doc:`worldY`
 
-Overview:
-.........
+Overview
+--------
 
 Moves the bone's origin to a position in skeleton space. The position is converted to the parent bone's coordinates
 (for a root bone, to the skeleton's) and written to the bone's local ``x`` and ``y``.
@@ -24,13 +24,16 @@ the constraint may override.
 
 Raises when the bone belongs to a removed skeleton, and for a root bone when the skeleton's scale is zero.
 
-Syntax:
---------
+Syntax
+------
 
 .. fragment: syntax line; bone, worldX and worldY are placeholders
 .. code-block:: lua
 
    bone:setWorldPosition(worldX, worldY)
+
+Parameters
+----------
 
 - ``worldX`` *(required)*:
     ``number`` – The X position in skeleton space.
@@ -38,8 +41,8 @@ Syntax:
 - ``worldY`` *(required)*:
     ``number`` – The Y position in skeleton space, growing downwards.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

@@ -5,8 +5,8 @@ slot:setAttachmentFromSkin()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`attachment`, :doc:`../setSkin`
 
-Overview:
-.........
+Overview
+--------
 
 Sets this slot's attachment to one from a **specific skin** without changing the skeleton's current skin.
 
@@ -16,25 +16,27 @@ This is particularly useful for:
 - **Customization**: Building custom character appearances
 - **Dynamic swapping**: Changing specific parts without affecting the whole skeleton
 
-Syntax:
---------
+Syntax
+------
 
 .. fragment: syntax line; slot, skin and attachmentName are placeholders
 .. code-block:: lua
 
    slot:setAttachmentFromSkin(skin, attachmentName)
 
-Parameters:
------------
+Parameters
+----------
 
-- ``skin`` *(string or Skin, required)*:
-    The name of the skin to get the attachment from, or a Skin object of the same skeleton data
+- ``skin`` *(required)*:
+    ``string`` or ``Skin`` – The name of the skin to get the attachment from, or a Skin object of the same
+    skeleton data. A name finds only the skeleton data's skins, so a skin made with
+    ``skeleton:createSkin()`` must be passed as the Skin object.
 
-- ``attachmentName`` *(string, required)*:
-    The name of the attachment within that skin
+- ``attachmentName`` *(required)*:
+    ``string`` – The name of the attachment within that skin.
 
-Returns:
---------
+Return value
+------------
 
 ``Slot`` – The slot itself, so calls can be chained.
 
@@ -42,8 +44,8 @@ Raises a Lua error, and leaves the slot unchanged, when the skin is not found, h
 belongs to different skeleton data, or when the skin has no such attachment for this slot
 (``Attachment '<name>' not found in skin '<skin>' for slot '<slot>'``).
 
-Example:
---------
+Example
+-------
 
 The examples use the mix-and-match example skeleton, whose skins dress the same slots differently.
 
@@ -126,8 +128,8 @@ The examples use the mix-and-match example skeleton, whose skins dress the same 
    -- Method 2: Explicit skin specification, here the red and yellow hat; the current skin stays
    slot:setAttachmentFromSkin("accessories/hat-red-yellow", "hat")
 
-Notes:
-------
+Notes
+-----
 
 - The skeleton's **current skin remains unchanged** - only this slot is affected
 - This is more explicit than using :doc:`attachment` with a string

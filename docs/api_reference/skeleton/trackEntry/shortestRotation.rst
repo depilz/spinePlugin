@@ -5,16 +5,16 @@ trackEntry.shortestRotation
 | **Type:** ``boolean``
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
 
 If `true`, mixing rotation between tracks always uses the shortest rotation direction. If
 the rotation is animated, the shortest rotation direction may change during the mix. If
 `false`, the shortest rotation direction is remembered when the mix starts and the same
 direction is used for the rest of the mix. Defaults to `false`.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

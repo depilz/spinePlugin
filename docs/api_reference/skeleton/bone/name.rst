@@ -5,13 +5,13 @@ bone.name
 | **Type:** ``string`` (read-only)
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
 
 Indicates the bone’s name as defined in Spine.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

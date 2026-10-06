@@ -5,21 +5,21 @@ skin:getAttachments()
 | **Type:** ``function``
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
 
 Returns a table of all attachments in the skin. Each entry contains the slot name, the lookup key and the attachment. Useful for debugging or inspecting skin contents.
 
-Syntax:
---------
+Syntax
+------
 
 .. fragment: syntax line; skin is a placeholder
 .. code-block:: lua
 
    local attachments = skin:getAttachments()
 
-Returns:
---------
+Return value
+------------
 
 ``table`` – Array of attachment info tables, each containing:
 
@@ -27,13 +27,13 @@ Returns:
 - ``placeholder`` (string) – The skin lookup key (placeholder name), not necessarily the object name
 - ``attachment`` (Attachment) – The attachment object
 
-Example:
---------
+Example
+-------
 
 The examples use the mix-and-match example skeleton, whose skins each dress part of the character.
 
 List All Attachments
-....................
+~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: lua
 
@@ -54,7 +54,7 @@ List All Attachments
    end
 
 Compare Skins
-.............
+~~~~~~~~~~~~~
 
 .. code-block:: lua
 

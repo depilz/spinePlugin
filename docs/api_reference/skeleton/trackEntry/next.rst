@@ -5,13 +5,13 @@ trackEntry.next
 | **Type:** ``trackEntry`` or ``nil`` (read-only)
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
 
 The next queued entry on the same track, or ``nil`` if this is the tail of the queue.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

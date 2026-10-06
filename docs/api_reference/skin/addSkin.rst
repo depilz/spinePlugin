@@ -5,39 +5,44 @@ skin:addSkin()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`copySkin`, :doc:`../skeleton/createSkin`
 
-Overview:
-.........
+Overview
+--------
 
 Adds all attachments from another skin to this skin. Attachments are shared by reference (not copied), making this operation fast and memory-efficient.
 
 If an attachment with the same slot and name already exists in this skin, it will be replaced by the attachment from the other skin.
 
-Syntax:
---------
+Syntax
+------
 
 .. fragment: syntax line; skin and skinNameOrObject are placeholders
 .. code-block:: lua
 
    skin:addSkin(skinNameOrObject)
 
+Parameters
+----------
+
 - ``skinNameOrObject`` *(required)*:
     ``string`` or ``Skin`` – Either the name of an existing skin or a Skin object of the same skeleton data.
+    A name finds only the skeleton data's skins, so a skin made with
+    ``skeleton:createSkin()`` must be passed as the Skin object.
 
-Returns:
---------
+Return value
+------------
 
 ``Skin`` – The skin itself, so calls can be chained.
 
 Raises a Lua error, and changes nothing, when this skin is a data skin (read-only), or when the
 other skin is not found, has the wrong type or belongs to different skeleton data.
 
-Example:
---------
+Example
+-------
 
 The examples use the mix-and-match example skeleton, whose skins each dress part of the character.
 
 Combine Multiple Skins
-......................
+~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: lua
 
@@ -56,7 +61,7 @@ Combine Multiple Skins
    girl:setSkin(avatar)
 
 Layer Skins
-...........
+~~~~~~~~~~~
 
 .. code-block:: lua
 
@@ -74,8 +79,8 @@ Layer Skins
 
    girl:setSkin(character)
 
-Notes:
---------
+Notes
+-----
 
 - Attachments are shared, not copied (references only)
 - Later additions overwrite duplicate slot/attachment combinations

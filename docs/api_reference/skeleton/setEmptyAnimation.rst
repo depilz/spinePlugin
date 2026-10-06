@@ -5,8 +5,8 @@ skeleton:setEmptyAnimation()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`addEmptyAnimation`
 
-Overview:
-.........
+Overview
+--------
 
 Sets an empty animation for a track, discarding any queued animations, and sets the track entry's mixDuration.
 An empty animation has no timelines and serves as a placeholder for mixing in or out.
@@ -24,26 +24,29 @@ Properties keyed in the new animation transition from the value from lower track
 if no lower tracks key the property to the value keyed in the new animation.
 
 
-Syntax:
---------
+Syntax
+------
 
 .. fragment: syntax line; trackIndex and mixDuration are placeholders
 .. code-block:: lua
 
    local trackEntry = skeleton:setEmptyAnimation(trackIndex, mixDuration)
 
+Parameters
+----------
+
 - ``trackIndex`` *(required)*:
     ``number`` – The track index to fade out.
 - ``mixDuration`` *(required)*:
-    ``number (ms)`` – The duration of the fade-out.
+    ``number`` – The duration of the fade-out, in milliseconds.
 
-Return value:
--------------
+Return value
+------------
 
 - ``trackEntry`` – The :doc:`trackEntry/index` of the empty animation.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

@@ -3,7 +3,10 @@ attachment.triangles
 =======================================
 
 | **Type:** ``table`` (read-only)
-| **Attachment Types:** mesh
+| **Attachment types:** mesh
+
+Overview
+--------
 
 An array of vertex indices that define the triangles of the mesh.
 
@@ -46,7 +49,7 @@ Notes
 - Read-only - cannot be modified at runtime
 - Used internally for rendering and can be useful for custom collision detection
 
-See Also
+See also
 --------
 
 - :doc:`vertices` - The vertex positions

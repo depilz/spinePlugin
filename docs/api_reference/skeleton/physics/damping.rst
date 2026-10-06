@@ -5,14 +5,14 @@ physics.damping
 | **Type:** ``number``
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
 
 Specifies how quickly motion **damps** over time. A higher damping value causes
 bones to lose momentum more rapidly, reducing oscillations.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

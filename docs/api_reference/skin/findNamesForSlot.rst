@@ -5,36 +5,38 @@ skin:findNamesForSlot()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`findAttachmentsForSlot`
 
-Overview:
-.........
+Overview
+--------
 
 Returns all attachment names available for a specific slot in the skin. Useful for discovering what attachments exist for a particular slot.
 
-Syntax:
---------
+Syntax
+------
 
 .. fragment: syntax line; skin and slot are placeholders
 .. code-block:: lua
 
    local names = skin:findNamesForSlot(slot)
 
-Parameters:
------------
+Parameters
+----------
 
-- ``slot`` (string or Slot) – The slot name, or a Slot object of the same skeleton data. A number raises.
+- ``slot`` *(required)*:
+    ``string`` or ``Slot`` – The slot name, or a Slot object of the same skeleton data. A number raises.
+    A Slot of a removed skeleton raises.
 
-Returns:
---------
+Return value
+------------
 
 ``table`` – Array of lookup keys / skin placeholder names (strings), which may differ from attachment object names for the specified slot.
 
-Example:
---------
+Example
+-------
 
 The examples use the mix-and-match example skeleton, whose skins each dress part of the character.
 
 List Available Options
-......................
+~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: lua
 
@@ -51,7 +53,7 @@ List Available Options
    end
 
 Create Selection UI
-...................
+~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: lua
 
@@ -80,7 +82,7 @@ Create Selection UI
    createAttachmentSelector("mouth")
 
 Random Customization
-....................
+~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: lua
 
@@ -104,8 +106,8 @@ Random Customization
    randomizeSlot("hair-back")
    randomizeSlot("eye-front-iris")
 
-Notes:
---------
+Notes
+-----
 
 - Returns an empty table if no attachments are found for the slot
 - The slot is a slot name or a Slot object; a string is always a slot name, and a number raises

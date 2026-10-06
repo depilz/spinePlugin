@@ -5,14 +5,14 @@ trackEntry.mixDuration
 | **Type:** ``number``
 | **See also:** :doc:`index`, :doc:`mixTime`
 
-Overview:
-.........
+Overview
+--------
 
 Mix duration in milliseconds for this entry. This controls how long the transition into this
 entry blends from the previous entry.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

@@ -5,21 +5,21 @@ skeleton:getSize()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`getBounds`
 
-Overview:
-.........
+Overview
+--------
 
 Returns the current size of the skeleton and the offset from the origin point. The values come from the same
 bounds as :doc:`getBounds`, and are current right after :doc:`../spine/create` and after every :doc:`updateState`.
 
-Syntax:
---------
+Syntax
+------
 
 .. code-block:: lua
 
    local size = skeleton:getSize()
 
-Return value:
--------------
+Return value
+------------
 
 ``size`` – A table with the following fields:
 
@@ -37,8 +37,8 @@ Return value:
 downwards like any Solar2D display object. A skeleton drawn above its origin has a negative ``offsetY``.
 
 
-Example:
----------
+Example
+-------
 
 .. code-block:: lua
 

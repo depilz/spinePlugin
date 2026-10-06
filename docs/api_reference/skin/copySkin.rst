@@ -5,8 +5,8 @@ skin:copySkin()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`addSkin`, :doc:`../skeleton/createSkin`
 
-Overview:
-.........
+Overview
+--------
 
 Copies attachments from another skin into separate attachment objects. Unlike
 :doc:`addSkin`, per-attachment color changes do not modify the original objects.
@@ -15,32 +15,37 @@ relationships are not fully independent.
 
 This operation uses more memory than ``addSkin()``. See :doc:`/attachments-and-skins`.
 
-Syntax:
---------
+Syntax
+------
 
 .. fragment: syntax line; skin and skinNameOrObject are placeholders
 .. code-block:: lua
 
    skin:copySkin(skinNameOrObject)
 
+Parameters
+----------
+
 - ``skinNameOrObject`` *(required)*:
     ``string`` or ``Skin`` – Either the name of an existing skin or a Skin object of the same skeleton data.
+    A name finds only the skeleton data's skins, so a skin made with
+    ``skeleton:createSkin()`` must be passed as the Skin object.
 
-Returns:
---------
+Return value
+------------
 
 ``Skin`` – The skin itself, so calls can be chained.
 
 Raises a Lua error, and changes nothing, when this skin is a data skin (read-only), or when the
 other skin is not found, has the wrong type or belongs to different skeleton data.
 
-Example:
---------
+Example
+-------
 
 The examples use the mix-and-match example skeleton, whose skins each dress part of the character.
 
 Create Independent Copy
-.......................
+~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: lua
 
@@ -57,7 +62,7 @@ Create Independent Copy
    girl:setSkin(variant)
 
 Template-Based Customization
-............................
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: lua
 
@@ -84,8 +89,8 @@ Template-Based Customization
    local blueTeam = createVariant("blue", "full-skins/boy", {"accessories/cape-blue"})
    girl:setSkin(redTeam)
 
-Notes:
---------
+Notes
+-----
 
 - Creates separate attachment objects, with linked-mesh semantics for meshes
 - Uses more memory than addSkin

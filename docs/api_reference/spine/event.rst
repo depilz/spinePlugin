@@ -5,8 +5,8 @@ spineEvent
 | **Type:** ``table``
 | **See also:** :doc:`index`, :doc:`create`, :doc:`../skeleton/setListener`, :doc:`../skeleton/trackEntry/onComplete`, :doc:`/naming`
 
-Overview:
-.........
+Overview
+--------
 
 This is the event triggered by a Spine animation. Every event has ``event.name == "spine"``; ``event.phase`` tells
 what happened. You can receive it in three places:
@@ -16,8 +16,8 @@ what happened. You can receive it in three places:
 - the entry's :doc:`../skeleton/trackEntry/onComplete` function, for that entry's ``completed`` events only.
 
 
-Properties:
------------
+Properties
+----------
 
 - **event.name**:
     ``string`` – Always ``"spine"``.
@@ -56,7 +56,7 @@ Properties:
 
 
 Custom event properties
-=======================
+~~~~~~~~~~~~~~~~~~~~~~~
 
 When ``event.phase == "event"``, the event also carries:
 
@@ -81,7 +81,7 @@ value from the Spine editor.
 
 
 Audio event properties
-=======================
+~~~~~~~~~~~~~~~~~~~~~~
 
 A custom event with an audio path also carries:
 
@@ -98,36 +98,8 @@ For a key that sets no volume or balance of its own in ``.json`` data, the 4.2 l
 the 4.3 line reports the event's default volume and balance. This is how each Spine runtime reads the file.
 
 
-Dispatch order:
----------------
-
-For each Spine event, the plugin builds **one** event table and passes it to every listener, in this order:
-
-1. the entry's :doc:`../skeleton/trackEntry/onComplete` function (``completed`` events only);
-2. the listener passed to :doc:`create` or set with :doc:`../skeleton/setListener`;
-3. the skeleton's own ``dispatchEvent``: the ``"spine"`` function listeners in the order they were added, then the
-   ``"spine"`` table listeners in the order they were added. This is Solar2D's order for every event.
-
-Because the table is shared, a change a listener makes to it (``event.foo = 1``) is visible to the listeners after
-it. ``event.target`` is set before the first listener runs.
-
-If a listener removes the skeleton, the later steps of that list do not run for this event, and no further events
-are dispatched. A ``removeSelf()`` inside a ``"spine"`` listener added with ``addEventListener`` does not stop the
-rest of that one ``dispatchEvent``: Solar2D calls every listener it collected (the skeleton is freed later, see
-:doc:`../../lifecycle`).
-
-
-Errors in the listener:
------------------------
-
-If any listener raises an error, Solar2D reports it like any other listener error (see
-:doc:`../../lifecycle`). An error in a ``"spine"`` listener added with ``addEventListener`` ends that one
-``dispatchEvent``, as in Solar2D. The plugin call that dispatched the event does not raise, and the next events are
-still dispatched.
-
-
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 
@@ -178,3 +150,33 @@ Example:
    end
 
    Runtime:addEventListener("enterFrame", onEnterFrame)
+
+Notes
+-----
+
+Dispatch order
+~~~~~~~~~~~~~~
+
+For each Spine event, the plugin builds **one** event table and passes it to every listener, in this order:
+
+1. the entry's :doc:`../skeleton/trackEntry/onComplete` function (``completed`` events only);
+2. the listener passed to :doc:`create` or set with :doc:`../skeleton/setListener`;
+3. the skeleton's own ``dispatchEvent``: the ``"spine"`` function listeners in the order they were added, then the
+   ``"spine"`` table listeners in the order they were added. This is Solar2D's order for every event.
+
+Because the table is shared, a change a listener makes to it (``event.foo = 1``) is visible to the listeners after
+it. ``event.target`` is set before the first listener runs.
+
+If a listener removes the skeleton, the later steps of that list do not run for this event, and no further events
+are dispatched. A ``removeSelf()`` inside a ``"spine"`` listener added with ``addEventListener`` does not stop the
+rest of that one ``dispatchEvent``: Solar2D calls every listener it collected (the skeleton is freed later, see
+:doc:`../../lifecycle`).
+
+
+Errors in the listener
+~~~~~~~~~~~~~~~~~~~~~~
+
+If any listener raises an error, Solar2D reports it like any other listener error (see
+:doc:`../../lifecycle`). An error in a ``"spine"`` listener added with ``addEventListener`` ends that one
+``dispatchEvent``, as in Solar2D. The plugin call that dispatched the event does not raise, and the next events are
+still dispatched.

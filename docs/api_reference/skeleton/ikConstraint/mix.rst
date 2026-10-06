@@ -5,8 +5,8 @@ ikConstraint.mix
 | **Type:** ``number``
 | **See also:** :doc:`index`, :doc:`isActive`
 
-Overview:
-.........
+Overview
+--------
 
 Defines how strongly the IK constraint influences its bones, from ``0.0`` (no effect)
 to ``1.0`` (fully controlled by IK). Values in between allow partial blending with
@@ -21,8 +21,8 @@ This is the way to turn an IK constraint off; :doc:`isActive` is read-only.
    written from Lua lasts only until the next update. To keep the constraint stopped, key its mix to ``0``
    in the animation, or stop playing that animation.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

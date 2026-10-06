@@ -7,7 +7,7 @@ Spine plugin, along with their properties, methods, and internal details. Click
 on an object name below to explore its docs.
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 1
 
    spine/index
    skeleton/index

@@ -5,13 +5,13 @@ ikConstraint.order
 | **Type:** ``number`` (read-only)
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
 
 The ordinal of this constraint for the order a skeleton's constraints will be applied by draw.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

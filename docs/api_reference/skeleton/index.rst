@@ -2,12 +2,11 @@
 skeleton
 =======================================
 
-| **Parent**: `DisplayObject <https://docs.coronalabs.com/api/type/DisplayObject/index.html>`_
-| **See also**: :doc:`../spine/create`
+| **Parent:** `DisplayObject <https://docs.coronalabs.com/api/type/DisplayObject/index.html>`_
+| **See also:** :doc:`../spine/create`
 
-..........
-Overview:
-..........
+Overview
+--------
 
 A **Skeleton** object is returned when you call:
 
@@ -35,17 +34,16 @@ Properties
 .. toctree::
    :maxdepth: 1
 
-   isActive
-   timeScale
-   physicsTimeScale
-   numChildren
-   slots
-   bones
-   ikConstraints
-   sliders
-   physics
-   physics/index
-   tracks
+   isActive <isActive>
+   timeScale <timeScale>
+   physicsTimeScale <physicsTimeScale>
+   numChildren <numChildren>
+   slots <slots>
+   bones <bones>
+   ikConstraints <ikConstraints>
+   sliders <sliders>
+   physics <physics>
+   tracks <tracks>
 
 Methods
 -------
@@ -53,134 +51,134 @@ Methods
 *(Inherits methods from* `DisplayObject <https://docs.coronalabs.com/api/type/DisplayObject/index.html>`_.)
 
 Skin Management
-...............
+~~~~~~~~~~~~~~~
 
 .. toctree::
    :maxdepth: 1
 
-   setSkin
-   getSkin
-   findSkin
-   getSkins
-   createSkin
-   createAttachment
+   setSkin() <setSkin>
+   getSkin() <getSkin>
+   findSkin() <findSkin>
+   getSkins() <getSkins>
+   createSkin() <createSkin>
+   createAttachment() <createAttachment>
 
 Setup Pose
-.............
+~~~~~~~~~~
 
 .. toctree::
    :maxdepth: 1
 
-   setToSetupPose
-   setBonesToSetupPose
-   setSlotsToSetupPose
+   setToSetupPose() <setToSetupPose>
+   setBonesToSetupPose() <setBonesToSetupPose>
+   setSlotsToSetupPose() <setSlotsToSetupPose>
 
 Animation Control
-.................
+~~~~~~~~~~~~~~~~~
 
 .. toctree::
    :maxdepth: 1
 
-   setAnimation
-   addAnimation
-   addAnimationAt
-   findAnimation
-   getAnimations
-   getCurrentAnimation
-   getTrackEntry
-   setEmptyAnimation
-   addEmptyAnimation
-   setEmptyAnimations
-   setListener
-   clearTracks
-   clearTrack
+   setAnimation() <setAnimation>
+   addAnimation() <addAnimation>
+   addAnimationAt() <addAnimationAt>
+   findAnimation() <findAnimation>
+   getAnimations() <getAnimations>
+   getCurrentAnimation() <getCurrentAnimation>
+   getTrackEntry() <getTrackEntry>
+   setEmptyAnimation() <setEmptyAnimation>
+   addEmptyAnimation() <addEmptyAnimation>
+   setEmptyAnimations() <setEmptyAnimations>
+   setListener() <setListener>
+   clearTracks() <clearTracks>
+   clearTrack() <clearTrack>
 
 Animation Mixing
-................
+~~~~~~~~~~~~~~~~
 
 .. toctree::
    :maxdepth: 1
 
-   setDefaultMix
-   setMix
+   setDefaultMix() <setDefaultMix>
+   setMix() <setMix>
 
 Update & Rendering
-...................
+~~~~~~~~~~~~~~~~~~
 
 .. toctree::
    :maxdepth: 1
 
-   updateState
-   draw
-   getSize
-   getBounds
+   updateState() <updateState>
+   draw() <draw>
+   getSize() <getSize>
+   getBounds() <getBounds>
 
 Hit Testing
-...........
+~~~~~~~~~~~
 
 .. toctree::
    :maxdepth: 1
 
-   hitTest
+   hitTest() <hitTest>
 
 Attachment / Slot Management
-.............................
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. toctree::
    :maxdepth: 1
 
-   setAttachment
-   findSlot
-   getSlot
-   getSlotNames
-   getDrawOrder
+   setAttachment() <setAttachment>
+   findSlot() <findSlot>
+   getSlot() <getSlot>
+   getSlotNames() <getSlotNames>
+   getDrawOrder() <getDrawOrder>
 
 IK Constraints
-..............
+~~~~~~~~~~~~~~
 
 .. toctree::
    :maxdepth: 1
 
-   getIKConstraint
-   getIKConstraintNames
+   getIkConstraint() <getIKConstraint>
+   getIkConstraintNames() <getIKConstraintNames>
 
 Injections
-.............
+~~~~~~~~~~
 
 .. toctree::
    :maxdepth: 1
 
-   inject
-   injectionEvent
-   changeInjectionSlot
-   eject
+   inject() <inject>
+   injectionEvent <injectionEvent>
+   changeInjectionSlot() <changeInjectionSlot>
+   eject() <eject>
 
 Splits
-.............
+~~~~~~
 
 .. toctree::
    :maxdepth: 1
 
-   split
-   reassemble
+   split() <split>
+   reassemble() <reassemble>
 
 
 Effects
-.............
+~~~~~~~
 
 .. toctree::
    :maxdepth: 1
 
-   setFillColor
-   fill
+   setFillColor() <setFillColor>
+   fill <fill>
 
 Removal
-.............
+~~~~~~~
 
 .. toctree::
    :maxdepth: 1
 
-   removeSelf
+   removeSelf() <removeSelf>
 
 Aliases
 -------

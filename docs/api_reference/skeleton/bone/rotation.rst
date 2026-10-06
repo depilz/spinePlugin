@@ -5,14 +5,14 @@ bone.rotation
 | **Type:** ``number``
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
 
 Rotation in **degrees**, relative to the parent bone. A value of `0` means no rotation; a
 positive or negative number rotates the bone around its local origin.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

@@ -3,35 +3,25 @@ spine.create()
 ==========================================
 
 | **Type:** ``function``
-| **Return value:** :doc:`../skeleton/index`
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
 
 Creates a new Spine skeleton instance from previously loaded `skeletonData`. Optionally,
 you can provide a listener function to handle animation events such as animation began,
 completed, and custom events triggered within Spine animations.
 
-Gotchas:
---------
-
-Creating multiple skeletons with the same `skeletonData` is efficient, reuse them whenever possible.
-
-The skeleton is freed on the frame after it is removed, not at once. See :doc:`../../lifecycle`
-for what still works during that window.
-
-The new skeleton is already posed: bone and slot world values, :doc:`../skeleton/getBounds` and
-:doc:`../skeleton/getSize` are current right after ``create()``. Physics does not step until the first
-:doc:`../skeleton/updateState`.
-
-Syntax:
--------
+Syntax
+------
 
 .. fragment: syntax line; arguments are placeholders
 .. code-block:: lua
 
    local skeleton = spine.create(skeletonData, [listener])
+
+Parameters
+----------
 
 - ``skeletonData`` *(required)*:
     ``userdata`` – The SkeletonData userdata returned by ``spine.loadSkeletonData()``.
@@ -43,13 +33,13 @@ Syntax:
 
 
 
-Return Value:
---------------
+Return value
+------------
 
 - ``skeleton`` – A :doc:`../skeleton/index` display object representing the new Spine skeleton instance.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 
@@ -93,3 +83,15 @@ Example:
    end
 
    Runtime:addEventListener("enterFrame", onEnterFrame)
+
+Notes
+-----
+
+Creating multiple skeletons with the same `skeletonData` is efficient, reuse them whenever possible.
+
+The skeleton is freed on the frame after it is removed, not at once. See :doc:`../../lifecycle`
+for what still works during that window.
+
+The new skeleton is already posed: bone and slot world values, :doc:`../skeleton/getBounds` and
+:doc:`../skeleton/getSize` are current right after ``create()``. Physics does not step until the first
+:doc:`../skeleton/updateState`.

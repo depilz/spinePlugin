@@ -3,7 +3,10 @@ attachment.closed
 =======================================
 
 | **Type:** ``boolean`` (read/write)
-| **Attachment Types:** path
+| **Attachment types:** path
+
+Overview
+--------
 
 Indicates whether the path forms a closed loop.
 
@@ -63,7 +66,7 @@ Notes
 - Closed paths are suitable for circular/looping movements
 - Open paths are suitable for one-way movements
 
-See Also
+See also
 --------
 
 - :doc:`constantSpeed` - Whether to use constant speed along path

@@ -5,13 +5,13 @@ skeleton.bones
 | **Type:** ``table`` (read-only)
 | **See also:** :doc:`index`, :doc:`bone/index`, :doc:`/naming`
 
-Overview:
-.........
+Overview
+--------
 
 An array of :doc:`bone/index` objects, each controlling the transform (position, rotation, scale) of a skeleton’s structure.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

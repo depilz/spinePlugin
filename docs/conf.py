@@ -11,6 +11,7 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '_ext'))
 import spineline
+import tocgroups
 
 # One tree, one build per plugin line (4.2 -> plugin.spine42, 4.3 -> plugin.spine43).
 line = spineline.select_line(os.environ)
@@ -28,7 +29,6 @@ extensions = [
     'sphinx_wagtail_theme',
 ]
 
-templates_path = ['_templates']
 exclude_patterns = ['_build', '.venv', 'venv', 'env', 'Thumbs.db', '.DS_Store'] + spineline.exclude_patterns(line)
 
 
@@ -38,7 +38,7 @@ exclude_patterns = ['_build', '.venv', 'venv', 'env', 'Thumbs.db', '.DS_Store'] 
 
 html_theme = 'sphinx_wagtail_theme'
 html_static_path = ['_static']
-html_sidebars = { '**': ['globaltoc.html', 'relations.html', 'sourcelink.html', 'searchbox.html'] }
+html_css_files = ['spine-docs.css']
 
 html_baseurl = spineline.base_url(line)
 
@@ -72,3 +72,4 @@ html_favicon = 'favicon.ico'
 
 def setup(app):
     spineline.connect(app, line)
+    tocgroups.connect(app)

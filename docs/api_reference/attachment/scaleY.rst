@@ -3,8 +3,11 @@ attachment.scaleY
 =======================================
 
 | **Type:** ``number`` (read/write)
-| **Attachment Types:** region
+| **Attachment types:** region
 | **See also:** :doc:`index`, :doc:`yScale`, :doc:`/naming`
+
+Overview
+--------
 
 The vertical scale factor of the region attachment.
 
@@ -35,7 +38,7 @@ Example
        attachment.scaleY = -1.0
    end
 
-See Also
+See also
 --------
 
 - :doc:`scaleX` - Horizontal scale

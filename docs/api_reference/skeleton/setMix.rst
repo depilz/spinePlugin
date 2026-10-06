@@ -5,19 +5,22 @@ skeleton:setMix()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`setDefaultMix`
 
-Overview:
-.........
+Overview
+--------
 
 Defines a **custom** mix duration (in ms) when transitioning from one animation to
 another by name. This overrides the default mix for that specific pair.
 
-Syntax:
---------
+Syntax
+------
 
 .. fragment: syntax line; fromAnim, toAnim and mix are placeholders
 .. code-block:: lua
 
    skeleton:setMix(fromAnim, toAnim, mix)
+
+Parameters
+----------
 
 - ``fromAnim`` *(required)*:
     ``string`` – The name of the animation to transition from.
@@ -26,8 +29,8 @@ Syntax:
 - ``mix`` *(required)*:
     ``number`` – The mix duration in milliseconds.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

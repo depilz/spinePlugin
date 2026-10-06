@@ -5,21 +5,21 @@ skeleton:setToSetupPose()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`setSlotsToSetupPose`, :doc:`setBonesToSetupPose`
 
-Overview:
-.........
+Overview
+--------
 
 Resets all bones and slots to their *setup pose* as defined in Spine. This is useful
 when you need to revert the entire skeleton to its default, un-animated state.
 
-Syntax:
---------
+Syntax
+------
 
 .. code-block:: lua
 
    skeleton:setToSetupPose()
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

@@ -5,14 +5,14 @@ trackEntry.loop
 | **Type:** ``boolean``
 | **See also:** :doc:`index`, :doc:`/naming`
 
-Overview:
-.........
+Overview
+--------
 
 The `loop` attribute determines whether the animation on a specific track should repeat indefinitely. Setting
 `loop` to `true` will cause the animation to loop continuously, while `false` will play the animation only once.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

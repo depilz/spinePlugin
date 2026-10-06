@@ -3,8 +3,11 @@ attachment.g
 ===================================
 
 | **Type:** ``number`` (read/write)
-| **Attachment Types:** region, mesh, point, path, boundingbox, clipping
+| **Attachment types:** region, mesh, point, path, boundingbox, clipping
 | **See also:** :doc:`index`, :doc:`color`, :doc:`/naming`
+
+Overview
+--------
 
 The **green** component of :doc:`color`, from 0.0 to 1.0. ``attachment.g`` reads and writes the same value as
 ``attachment.color.g``, one component at a time; the other components keep their value. Values are stored as

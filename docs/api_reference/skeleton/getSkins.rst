@@ -5,25 +5,25 @@ skeleton:getSkins()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`setSkin`
 
-Overview:
-.........
+Overview
+--------
 
 Returns a list of all available skin names within this skeleton’s data. Skins define different sets of attachments or character appearances.
 
-Syntax:
---------
+Syntax
+------
 
 .. code-block:: lua
 
    local skins = skeleton:getSkins()
 
-Return Value:
--------------
+Return value
+------------
 
 - **table** – An array of skin names as strings.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

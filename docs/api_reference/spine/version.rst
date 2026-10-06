@@ -5,8 +5,8 @@ spine.version
 | **Type:** ``string``
 | **See also:** :doc:`index`, :doc:`runtimeVersion`
 
-Overview:
-.........
+Overview
+--------
 
 .. only:: spine42
 
@@ -16,8 +16,8 @@ Overview:
 
    The plugin version, for example ``"3.0.1"`` for ``plugin.spine43``.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

@@ -5,14 +5,15 @@ trackEntry.animationStart
 | **Type:** ``number``
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
+
 The `animationStart` attribute indicates the starting time position of the animation on the specified
 track, measured in **milliseconds**. This value represents where within the animation the playback begins,
 allowing you to start the animation from a specific frame or point in time.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

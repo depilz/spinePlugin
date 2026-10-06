@@ -5,30 +5,33 @@ skeleton:getCurrentAnimation()
 | **Type:** ``function``
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
 
 Retrieves the name of the animation currently playing on the specified track (default 1).
 Returns `nil` if no animation is active.
 
-Syntax:
---------
+Syntax
+------
 
 .. fragment: syntax line; the brackets mark trackIndex as optional
 .. code-block:: lua
 
    local animName = skeleton:getCurrentAnimation([trackIndex])
 
-- ``trackIndex`` *(optional)*:
-    ``number`` – The track index to query.
+Parameters
+----------
 
-Return value:
--------------
+- ``trackIndex`` *(optional)*:
+    ``number`` – The track index to query. Defaults to ``1``.
+
+Return value
+------------
 
 - ``string or nil`` – The current animation name, or `nil` if none.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

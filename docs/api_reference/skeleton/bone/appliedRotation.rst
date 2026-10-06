@@ -5,14 +5,14 @@ bone.appliedRotation
 | **Type:** ``number`` (read/write)
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
 
 Reflects the rotation that Spine calculates for this bone during animation. Setting
 `appliedRotation` directly can override the animation’s rotation if you want manual control.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

@@ -5,13 +5,13 @@ trackEntry.mixingTo
 | **Type:** ``trackEntry`` or ``nil`` (read-only)
 | **See also:** :doc:`index`, :doc:`mixingFrom`
 
-Overview:
-.........
+Overview
+--------
 
 During blending, this points to the entry being mixed into from the current entry.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

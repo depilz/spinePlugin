@@ -5,15 +5,15 @@ trackEntry.trackEnd
 | **Type:** ``number``
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
 
 The `trackEnd` attribute denotes the end time of the current animation on the specified track, measured
 in **milliseconds**. It represents the point at which the animation is scheduled to conclude, considering
 any delays or mixing durations.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

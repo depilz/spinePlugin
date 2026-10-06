@@ -5,14 +5,14 @@ trackEntry.trackTime
 | **Type:** ``number``
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
 
 The `trackTime` attribute represents the current time position within the animation on the specified track,
 measured in **milliseconds**. It indicates how far into the animation the playback has progressed.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

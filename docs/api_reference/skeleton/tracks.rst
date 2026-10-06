@@ -5,8 +5,8 @@ skeleton.tracks
 | **Type:** ``table`` (read-only)
 | **See also:** :doc:`index`, :doc:`trackEntry/index`, :doc:`getTrackEntry`, :doc:`/naming`
 
-Overview:
----------
+Overview
+--------
 
 A plain Lua table with one element per animation track: ``tracks[i]`` is the current :doc:`trackEntry/index` of
 track ``i``, or ``false`` when that track has no current entry.
@@ -19,8 +19,8 @@ Changing the table does not change the skeleton. The entries in it are the same 
 returns: writing to them changes the animation.
 
 
-Syntax:
--------
+Syntax
+------
 
 .. code-block:: lua
 
@@ -37,8 +37,8 @@ Syntax:
 - ``tracks`` *(read-only)*:
     ``table`` – ``tracks[i]`` is a :doc:`trackEntry/index`, or ``false`` for an empty track.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

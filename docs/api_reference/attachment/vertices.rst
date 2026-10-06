@@ -3,7 +3,10 @@ attachment.vertices
 =======================================
 
 | **Type:** ``table`` (read-only)
-| **Attachment Types:** mesh, path, boundingbox, clipping
+| **Attachment types:** mesh, path, boundingbox, clipping
+
+Overview
+--------
 
 An array of vertex data for vertex-based attachments.
 
@@ -70,7 +73,7 @@ Notes
 - Deformations are applied separately via slot deform data
 - Weighted vertices have a complex format - always use ``computeWorldVertices`` for actual positions
 
-See Also
+See also
 --------
 
 - :doc:`bones` - Bone indices for weighted vertices

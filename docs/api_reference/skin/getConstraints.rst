@@ -5,31 +5,31 @@ skin:getConstraints()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`getBones`
 
-Overview:
-.........
+Overview
+--------
 
 Returns the constraints associated with this skin. Some skins in Spine can include constraint data (IK, transform, path, etc.) for skin-specific behavior.
 
-Syntax:
---------
+Syntax
+------
 
 .. fragment: syntax line; skin is a placeholder
 .. code-block:: lua
 
    local constraints = skin:getConstraints()
 
-Returns:
---------
+Return value
+------------
 
 ``table`` – Array of constraint names (strings) associated with this skin.
 
-Example:
---------
+Example
+-------
 
 The examples use the mix-and-match example skeleton, whose skins each dress part of the character.
 
 List Skin Constraints
-.....................
+~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: lua
 
@@ -50,7 +50,7 @@ List Skin Constraints
    end
 
 Check Constraint Requirements
-.............................
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: lua
 
@@ -78,7 +78,7 @@ Check Constraint Requirements
    validateSkinCompatibility("accessories/hat-red-yellow")
 
 Preserve Constraints When Combining
-...................................
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: lua
 
@@ -97,8 +97,8 @@ Preserve Constraints When Combining
    -- All constraints are preserved when combining skins
    girl:setSkin(customSkin)
 
-Notes:
---------
+Notes
+-----
 
 - Returns an empty table if the skin has no associated constraints
 - Skin constraints are an advanced Spine feature used with skin-specific IK, transforms, etc.

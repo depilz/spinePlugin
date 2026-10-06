@@ -3,8 +3,11 @@ attachment.scaleX
 =======================================
 
 | **Type:** ``number`` (read/write)
-| **Attachment Types:** region
+| **Attachment types:** region
 | **See also:** :doc:`index`, :doc:`xScale`, :doc:`/naming`
+
+Overview
+--------
 
 The horizontal scale factor of the region attachment.
 
@@ -52,7 +55,7 @@ Notes
 - Combined with bone scale: ``finalScale = boneScale * attachmentScale``
 - Does not affect collision or physics directly
 
-See Also
+See also
 --------
 
 - :doc:`scaleY` - Vertical scale

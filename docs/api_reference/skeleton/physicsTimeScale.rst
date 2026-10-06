@@ -5,8 +5,8 @@ skeleton.physicsTimeScale
 | **Type:** ``number``
 | **See also:** :doc:`index`, :doc:`timeScale`, :doc:`physics/index`
 
-Overview:
-.........
+Overview
+--------
 
 The **physicsTimeScale** attribute scales the time step of the skeleton's Spine physics constraints.
 It defaults to ``1`` (real time). ``2`` runs physics twice as fast, ``0.5`` at half speed, and ``0``
@@ -23,8 +23,8 @@ continues from where it stopped instead of simulating the paused time in one ste
 The value must be a finite number ``>= 0``; writing anything else raises
 ``physicsTimeScale must be a finite number >= 0``.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

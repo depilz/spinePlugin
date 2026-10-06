@@ -5,23 +5,23 @@ skeleton:reassemble()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`split`
 
-Overview:
-.........
+Overview
+--------
 
 **Reassembles** a skeleton that was previously :doc:`split <split>`. This will reattach
 the split slots to the skeleton, effectively undoing the split operation.
 
 After the operation, the split group will be removed.
 
-Syntax:
---------
+Syntax
+------
 
 .. code-block:: lua
 
    skeleton:reassemble()
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

@@ -5,14 +5,14 @@ bone.shearY
 | **Type:** ``number``
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
 
 Represents the **shear** along the bone’s Y-axis. This skews attachments vertically for
 stylized stretching or angled shapes.
 
-Example:
-........
+Example
+-------
 
 .. code-block:: lua
 

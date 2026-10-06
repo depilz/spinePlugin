@@ -5,8 +5,8 @@ injectionEvent
 | **Type:** ``table``
 | **See also:** :doc:`index`, :doc:`inject`, :doc:`/naming`
 
-Overview:
-.........
+Overview
+--------
 
 The **injectionEvent** is passed to the listener of a display object injected into a Spine slot, every time the
 skeleton draws that slot (each :doc:`draw`), and once more with ``isVisible = false`` when the slot stops being drawn.
@@ -18,8 +18,8 @@ because they are the values you copy to the injected display object; ``event.alp
 colour, not :doc:`slot.a <slot/a>` (see :doc:`/naming`).
 
 
-Properties:
------------
+Properties
+----------
 
 - **event.slotName**
     ``string`` – The slot name.
@@ -41,8 +41,8 @@ Properties:
     ``displayObject`` – The injected object.
 
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

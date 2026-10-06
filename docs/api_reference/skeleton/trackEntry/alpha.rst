@@ -5,16 +5,16 @@ trackEntry.alpha
 | **Type:** ``number``
 | **See also:** :doc:`index`, :doc:`/naming`
 
-Overview:
-.........
+Overview
+--------
 
 Values < 1 mix this animation with the skeleton's current pose (usually the pose resulting from lower tracks).
 Defaults to 1, which overwrites the skeleton's current pose with this animation. Typically track 0 is used to
 completely pose the skeleton, then alpha is used on higher tracks. It doesn't make sense to use alpha on track
 0 if the skeleton pose is from the last frame render.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

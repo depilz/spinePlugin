@@ -5,8 +5,8 @@ skeleton.fill.color
 | **Type:** ``table``
 | **See also:** :doc:`../fill`, :doc:`r`, :doc:`g`, :doc:`b`, :doc:`a`, :doc:`../setFillColor`, :doc:`/naming`
 
-Overview:
-.........
+Overview
+--------
 
 The RGBA components of the skeleton's fill colour: ``{ r = 0–1, g = 0–1, b = 0–1, a = 0–1 }``. The fill colour
 multiplies the colour of every attachment the skeleton draws, and is white (``1, 1, 1, 1``) until you change it.
@@ -16,8 +16,8 @@ fill colour: each of ``r``, ``g``, ``b`` and ``a`` that the table holds as a num
 their value. :doc:`r`, :doc:`g`, :doc:`b` and :doc:`a` read and write the same colour one component at a time, and
 :doc:`../setFillColor` sets it with arguments.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

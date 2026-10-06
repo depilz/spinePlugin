@@ -2,18 +2,17 @@
 skin.name
 ===================================
 
-| **Type:** ``property``
-| **Value:** ``string``
+| **Type:** ``string``
 | **See also:** :doc:`index`, :doc:`getName`, :doc:`/naming`
 
-Overview:
-.........
+Overview
+--------
 
 Read-only property that returns the name of the skin. Writing it raises
 ``SpineSkin: property 'name' is read-only``.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

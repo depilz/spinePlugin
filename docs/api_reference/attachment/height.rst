@@ -3,7 +3,10 @@ attachment.height
 =======================================
 
 | **Type:** ``number`` (read/write)
-| **Attachment Types:** region, mesh
+| **Attachment types:** region, mesh
+
+Overview
+--------
 
 The base height of the attachment in Spine units.
 
@@ -29,7 +32,7 @@ Example
        attachment.height = attachment.height * 1.2
    end
 
-See Also
+See also
 --------
 
 - :doc:`width` - The base width

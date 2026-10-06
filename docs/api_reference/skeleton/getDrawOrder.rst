@@ -5,27 +5,27 @@ skeleton:getDrawOrder()
 | **Type:** ``function``
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
 
 Returns a table of **all slot names** in the current draw order of this skeleton, as strings.
 
 
-Syntax:
---------
+Syntax
+------
 
 .. code-block:: lua
 
    local slotNames = skeleton:getDrawOrder()
 
-Return value:
--------------
+Return value
+------------
 
 ``table`` – A table of strings, each representing a slot name.
 
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

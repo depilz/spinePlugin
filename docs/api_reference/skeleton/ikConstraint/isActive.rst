@@ -5,8 +5,8 @@ ikConstraint.isActive
 | **Type:** ``boolean`` (read-only)
 | **See also:** :doc:`index`, :doc:`mix`, :doc:`/naming`
 
-Overview:
-.........
+Overview
+--------
 
 Indicates whether this IK constraint is currently **active**. Spine decides this itself: a constraint is
 inactive when it is skin-required and the current skin does not include it, or when its target bone is
@@ -25,8 +25,8 @@ inactive. The value changes when the skin changes.
 ``IK constraint isActive is read-only; set mix = 0 to stop it``. To stop the constraint, set its
 :doc:`mix` to ``0``; set it back to a value above ``0`` to restart it.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

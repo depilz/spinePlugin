@@ -5,8 +5,8 @@ skeleton:setSkin()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`getSkins`, :doc:`createSkin`, :doc:`getSkin`
 
-Overview:
-.........
+Overview
+--------
 
 Sets the skeleton's current skin. Accepts a skin name (string), a Skin object of the same skeleton data
 (a data skin from :doc:`findSkin` or a custom skin created with :doc:`createSkin`), or ``nil`` to clear the skin.
@@ -16,14 +16,17 @@ slot colors, and draw order. Pass ``false`` as the second argument to skip this
 extra reset. Spine's normal skin-switch attachment replacements still occur.
 Animations may change attachments on the next update. See :doc:`/attachments-and-skins`.
 
-Syntax:
---------
+Syntax
+------
 
 .. code-block:: lua
 
    skeleton:setSkin(skinNameOrObject)
-   skeleton:setSkin(skinNameOrObject, false)
+   skeleton:setSkin(skinNameOrObject, resetSlots)
    skeleton:setSkin(nil)
+
+Parameters
+----------
 
 - ``skinNameOrObject`` *(required)*:
     ``string``, ``Skin`` or ``nil`` – The name of an existing skin, a Skin object, or ``nil`` to clear the
@@ -31,7 +34,7 @@ Syntax:
     attachments), and :doc:`getSkin` returns ``nil``.
 
 - ``resetSlots`` *(optional)*:
-    ``boolean`` – Defaults to ``true``. Set to ``false`` to skip the setup-pose reset.
+    ``boolean`` – Set to ``false`` to skip the setup-pose reset. Defaults to ``true``.
 
 The skin must belong to the same skeleton data. An unknown skin name, a wrong type or a skin of other
 skeleton data raises a Lua error. Applied custom skins are retained automatically; a custom skin cannot be
@@ -41,13 +44,13 @@ Skin bones: after ``setSkin``, a slot whose bone is a skin bone the applied skin
 **not** raise when it still shows an attachment: the attachment is not updated and not drawn. Apply the
 skin that enables the bone (or a custom skin built with that skin's bones) to draw it.
 
-Example:
---------
+Example
+-------
 
 The examples use the mix-and-match example skeleton, whose skins each dress part of the character.
 
 Using Skin Name
-...............
+~~~~~~~~~~~~~~~
 
 .. code-block:: lua
 
@@ -58,7 +61,7 @@ Using Skin Name
    girl:setSkin("full-skins/girl")
 
 Using Custom Skin Object
-.........................
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: lua
 
@@ -73,7 +76,7 @@ Using Custom Skin Object
    girl:setSkin(customSkin)
 
 Switch Between Skins
-.....................
+~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: lua
 

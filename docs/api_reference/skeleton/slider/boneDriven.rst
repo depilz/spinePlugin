@@ -5,15 +5,15 @@ slider.boneDriven
 | **Type:** ``boolean`` (read-only)
 | **See also:** :doc:`index`, :doc:`time`
 
-Overview:
-.........
+Overview
+--------
 
 ``true`` when a bone drives the slider's :doc:`time`: each update sets the time from that bone's transform, as set up
 in the Spine editor. ``false`` when the slider has no bone, or once a :doc:`time` write took the slider from its bone,
 which cannot be undone.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

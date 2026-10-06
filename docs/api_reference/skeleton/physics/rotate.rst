@@ -5,18 +5,21 @@ physics:rotate()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`translate`
 
-Overview:
-.........
+Overview
+--------
 
 Rotates all physics constraints around the point `(x, y)` by the specified `degrees`.
 
-Syntax:
---------
+Syntax
+------
 
 .. fragment: syntax line; physics and the arguments are placeholders
 .. code-block:: lua
 
    physics:rotate(x, y, degrees)
+
+Parameters
+----------
 
 - ``x`` *(required)*:
     ``number`` – The pivot’s X coordinate.
@@ -25,8 +28,8 @@ Syntax:
 - ``degrees`` *(required)*:
     ``number`` – Degrees to rotate around the pivot.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

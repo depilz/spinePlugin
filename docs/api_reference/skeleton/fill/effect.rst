@@ -5,8 +5,8 @@ skeleton.fill.effect and tint black
 | **Type:** effect ``userdata`` or ``nil``; write a ``string`` or ``nil``
 | **See also:** :doc:`../fill`, :doc:`effect/name`, :doc:`../setFillColor`, :doc:`../slot/darkColor`
 
-Overview:
-.........
+Overview
+--------
 
 A skeleton draws with Solar2D meshes, and ``skeleton.fill.effect`` applies a Solar2D
 `shader effect <https://docs.coronalabs.com/guide/graphics/effects.html>`_ to all of them, as on any
@@ -36,13 +36,12 @@ Writing ``skeleton.fill.effect`` a value other than a string or ``nil`` raises
 .. toctree::
    :maxdepth: 1
 
-   effect/name
+   name <effect/name>
 
 The plugin also uses a shader effect of its own to draw **tint black**, described below. The two cannot be
 combined on one skeleton.
 
-Tint black
-..........
+**Tint black**
 
 Spine's tint black (two-colour tint) gives a slot a second, dark colour: the texture's darkest parts take the
 dark colour while its lightest parts keep the slot colour. The plugin draws it like the Spine runtimes do:
@@ -62,16 +61,14 @@ a skeleton draws such a slot, once per Lua state.
   prints one ``WARNING: plugin.spine: could not define filter.custom.plugin_spine_tintBlack, tint black is off: ...``
   line and draws every slot without its dark colour, as version 1.5.0 did. It never raises.
 
-A skeleton fill effect wins
-...........................
+**A skeleton fill effect wins**
 
 While ``skeleton.fill.effect`` is set, no mesh of that skeleton draws tint black: slots with a dark colour draw
 without it. On the next draw after ``skeleton.fill.effect = nil``, tint black is back. So a hit flash
 (for example ``filter.brightness``) or ``filter.desaturate`` works on a skeleton with dark colours, but it
 cannot be combined with tint black: during the flash, the dark colours are not drawn.
 
-Exporting art with dark colours
-...............................
+**Exporting art with dark colours**
 
 - **Export atlases with straight alpha.** Leave "Premultiply alpha" off when you pack the atlas; Solar2D
   premultiplies textures when it loads them. Premultiplied-alpha atlases are not supported.

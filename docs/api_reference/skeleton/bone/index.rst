@@ -5,8 +5,8 @@ bone
 | **Type:** userdata
 | **See also:** :doc:`../bones`, :doc:`../index`
 
-Overview:
-..........
+Overview
+--------
 
 A **Bone** object represents one bone in the Spine skeleton’s transform hierarchy. Each
 bone has position, rotation, scale, and shear values, as well as references to a parent bone
@@ -19,59 +19,61 @@ Local properties such as ``x`` and ``y`` are the bone's pose relative to its par
 ``worldX`` and ``worldY`` are in skeleton space: the skeleton object's local coordinates, with y growing downwards.
 They are read-only; use :doc:`setWorldPosition` or :doc:`translateWorld` to move a bone in skeleton space.
 
-Properties:
------------
+Properties
+----------
 
-**Common**
-
-.. toctree::
-   :maxdepth: 1
-
-   name
-   parent
-   children
-   x
-   y
-   rotation
-   scaleX
-   scaleY
-   worldX
-   worldY
-   worldRotation
-   worldScaleX
-   worldScaleY
-
-**Advanced**
+Common
+~~~~~~
 
 .. toctree::
    :maxdepth: 1
 
-   shearX
-   shearY
-   appliedRotation
-   a
-   b
-   c
-   d
+   name <name>
+   parent <parent>
+   children <children>
+   x <x>
+   y <y>
+   rotation <rotation>
+   scaleX <scaleX>
+   scaleY <scaleY>
+   worldX <worldX>
+   worldY <worldY>
+   worldRotation <worldRotation>
+   worldScaleX <worldScaleX>
+   worldScaleY <worldScaleY>
 
-Methods:
---------
+Advanced
+~~~~~~~~
 
 .. toctree::
    :maxdepth: 1
 
-   setWorldPosition
-   translateWorld
-   localToWorld
-   worldToLocal
+   shearX <shearX>
+   shearY <shearY>
+   appliedRotation <appliedRotation>
+   a <a>
+   b <b>
+   c <c>
+   d <d>
 
-Aliases:
---------
+Methods
+-------
+
+.. toctree::
+   :maxdepth: 1
+
+   setWorldPosition() <setWorldPosition>
+   translateWorld() <translateWorld>
+   localToWorld() <localToWorld>
+   worldToLocal() <worldToLocal>
+
+Aliases
+-------
 
 See :doc:`/naming`.
 
 .. toctree::
    :maxdepth: 1
 
-   xScale
-   yScale
+   xScale <xScale>
+   yScale <yScale>

@@ -3,7 +3,10 @@ attachment.width
 =======================================
 
 | **Type:** ``number`` (read/write)
-| **Attachment Types:** region, mesh
+| **Attachment types:** region, mesh
+
+Overview
+--------
 
 The base width of the attachment in Spine units.
 
@@ -43,7 +46,7 @@ Notes
 - Changing width does not automatically update UV coordinates
 - Returns ``nil`` for attachment types that don't have width
 
-See Also
+See also
 --------
 
 - :doc:`height` - The base height

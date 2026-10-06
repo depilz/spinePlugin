@@ -5,31 +5,31 @@ skin:getBones()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`getConstraints`
 
-Overview:
-.........
+Overview
+--------
 
 Returns the bones associated with this skin. Some skins in Spine can include bone data, particularly for advanced features like linked meshes or skin-specific bones.
 
-Syntax:
---------
+Syntax
+------
 
 .. fragment: syntax line; skin is a placeholder
 .. code-block:: lua
 
    local bones = skin:getBones()
 
-Returns:
---------
+Return value
+------------
 
 ``table`` – Array of bone names (strings) associated with this skin.
 
-Example:
---------
+Example
+-------
 
 The examples use the mix-and-match example skeleton, whose skins each dress part of the character.
 
 List Skin Bones
-...............
+~~~~~~~~~~~~~~~
 
 .. code-block:: lua
 
@@ -50,7 +50,7 @@ List Skin Bones
    end
 
 Check for Required Bones
-........................
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: lua
 
@@ -73,7 +73,7 @@ Check for Required Bones
    end
 
 Combine Skins with Bones
-........................
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: lua
 
@@ -89,8 +89,8 @@ Combine Skins with Bones
    local bones = customSkin:getBones()
    print("Combined skin has", #bones, "bones")
 
-Notes:
---------
+Notes
+-----
 
 - Returns an empty table if the skin has no associated bones
 - Skin bones are an advanced Spine feature used for linked meshes and other complex setups

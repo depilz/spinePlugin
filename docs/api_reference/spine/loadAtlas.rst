@@ -3,17 +3,46 @@ spine.loadAtlas()
 =======================================
 
 | **Type:** ``function``
-| **Return value:** Atlas userdata
 | **See also:** :doc:`index`, :doc:`loadSkeletonData`
 
-Overview:
-----------
+Overview
+--------
 
 Loads a Spine atlas (``.atlas``) file from the given path and creates
 an internal representation of it in memory.
 
-Gotchas:
-........
+Syntax
+------
+
+.. fragment: syntax line; path is a placeholder
+.. code-block:: lua
+
+   local atlas = spine.loadAtlas(path)
+
+
+Parameters
+----------
+
+- ``path`` *(required)*:
+    ``string`` – The relative path to your atlas file.
+
+Return value
+------------
+
+- ``userdata`` – A Lua userdata wrapping the underlying C++ Atlas object (its metatable is named ``Atlas``). You’ll use this when loading SkeletonData.
+
+
+
+Example
+-------
+
+.. code-block:: lua
+
+   local spine = require("@SPINE_PLUGIN@")
+   local atlas = spine.loadAtlas("assets/characters/spineboy.atlas")
+
+Notes
+-----
 
 The textures are loaded by the atlases and those textures are only released
 when the atlas object is garbage collected, so as long as you hold references
@@ -34,31 +63,3 @@ passed:
    WARNING: plugin.spine: <path>: premultiplied-alpha atlas (pma: true) is not supported; export with straight alpha
 
 Export the atlas again with "Premultiply alpha" turned off.
-
-
-Syntax:
-...........
-
-.. fragment: syntax line; path is a placeholder
-.. code-block:: lua
-
-   local atlas = spine.loadAtlas(path)
-
-
-- ``path`` *(required)*:
-    ``string`` – The relative path to your atlas file.
-
-Return Values:
-..................
-
-- ``userdata`` – A Lua userdata wrapping the underlying C++ Atlas object (its metatable is named ``Atlas``). You’ll use this when loading SkeletonData.
-
-
-
-Example:
-............
-
-.. code-block:: lua
-
-   local spine = require("@SPINE_PLUGIN@")
-   local atlas = spine.loadAtlas("assets/characters/spineboy.atlas")

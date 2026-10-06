@@ -5,27 +5,30 @@ physics:translate()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`rotate`
 
-Overview:
-.........
+Overview
+--------
 
 Translates all physics constraints by the given `(x, y)` offset.
 
 
-Syntax:
---------
+Syntax
+------
 
 .. fragment: syntax line; physics and the arguments are placeholders
 .. code-block:: lua
 
    physics:translate(x, y)
 
+Parameters
+----------
+
 - ``x`` *(required)*:
     ``number`` – The horizontal translation offset.
 - ``y`` *(required)*:
     ``number`` – The vertical translation offset.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

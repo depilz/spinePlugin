@@ -5,14 +5,14 @@ bone.x
 | **Type:** ``number``
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
 
 Specifies the bone’s **local X position** relative to its parent bone. Increasing `x` moves
 the bone horizontally to the right, while decreasing `x` moves it to the left.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

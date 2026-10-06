@@ -5,14 +5,14 @@ slider.animation
 | **Type:** ``string`` (read-only)
 | **See also:** :doc:`index`, :doc:`duration`, :doc:`time`
 
-Overview:
-.........
+Overview
+--------
 
 The name of the animation this slider applies, as set up in the Spine editor. The slider applies it at its own
 :doc:`time`, whatever the skeleton's tracks play.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

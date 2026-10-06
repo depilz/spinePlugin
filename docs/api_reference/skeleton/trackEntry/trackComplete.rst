@@ -5,13 +5,13 @@ trackEntry.trackComplete
 | **Type:** ``number`` (read-only)
 | **See also:** :doc:`index`, :doc:`trackTime`
 
-Overview:
-.........
+Overview
+--------
 
 Time in milliseconds at which this entry will complete on its track.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

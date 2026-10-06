@@ -5,8 +5,8 @@ skeleton:getBounds()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`getSize`
 
-Overview:
-.........
+Overview
+--------
 
 Returns a table with the bounding box of the skeleton. The bounding box is the smallest
 rectangle that contains the skeleton's region and mesh attachments.
@@ -17,15 +17,15 @@ you can use the `skeleton.contentBounds <https://docs.coronalabs.com/api/type/Di
 instead.
 
 
-Syntax:
---------
+Syntax
+------
 
 .. code-block:: lua
 
     local bounds = skeleton:getBounds()
 
-Return value:
--------------
+Return value
+------------
 
 ``bounds`` – A table with the following fields:
 
@@ -37,8 +37,8 @@ Return value:
 
 - ``yMax``: ``number`` – The maximum Y value of the bounding box.
 
-Example:
----------
+Example
+-------
 
 .. code-block:: lua
 

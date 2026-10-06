@@ -5,8 +5,8 @@ trackEntry.mixDrawOrderThreshold
 | **Type:** ``number``
 | **See also:** :doc:`index`
 
-Overview:
-.........
+Overview
+--------
 
 When the mix percentage (mixTime / mixDuration) is less than the mixDrawOrderThreshold, draw order timelines
 are applied while this animation is being mixed out. Defaults to 0, so draw order timelines are not applied
@@ -14,8 +14,8 @@ while this animation is being mixed out.
 
 This is a ratio in ``[0..1]``.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

@@ -3,12 +3,14 @@ attachment.type
 =======================================
 
 | **Type:** ``string`` (read-only)
-| **Attachment Types:** All
+| **Attachment types:** All
+
+Overview
+--------
 
 The type of the attachment. This determines which properties and methods are available.
 
-Possible Values
----------------
+**Possible Values**
 
 - ``"region"`` - A rectangular image/sprite (RegionAttachment)
 - ``"mesh"`` - A deformable mesh (MeshAttachment)

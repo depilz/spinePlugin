@@ -5,8 +5,8 @@ spine
 | **Type:** ``table``
 | **See also:** :doc:`../skeleton/index`
 
-Overview:
-..........
+Overview
+--------
 
 This page documents the Lua API made available when you:
 
@@ -18,23 +18,23 @@ The returned ``spine`` table contains core methods for loading atlases,
 loading SkeletonData, and creating new Spine objects in Solar2D.
 
 
-Properties:
------------
+Properties
+----------
 
 .. toctree::
    :maxdepth: 1
 
-   version
-   runtimeVersion
+   version <version>
+   runtimeVersion <runtimeVersion>
 
 
-Methods:
---------
+Methods
+-------
 
 .. toctree::
    :maxdepth: 1
 
-   loadAtlas
-   loadSkeletonData
-   create
-   event
+   loadAtlas() <loadAtlas>
+   loadSkeletonData() <loadSkeletonData>
+   create() <create>
+   spineEvent <event>

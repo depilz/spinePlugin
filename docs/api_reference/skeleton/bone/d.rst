@@ -5,14 +5,14 @@ bone.d
 | **Type:** ``number``
 | **See also:** :doc:`index`, :doc:`/naming`
 
-Overview:
-.........
+Overview
+--------
 
 The *d* component of the bone’s transform matrix, often involved in scaling or shear in the Y
 direction.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

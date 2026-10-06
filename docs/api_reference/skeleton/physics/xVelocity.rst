@@ -5,13 +5,13 @@ physics.xVelocity
 | **Type:** ``number``
 | **See also:** :doc:`index`, :doc:`/naming`
 
-Overview:
-.........
+Overview
+--------
 
 The horizontal (X-axis) velocity applied to the physics constraints.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

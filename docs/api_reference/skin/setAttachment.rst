@@ -5,8 +5,8 @@ skin:setAttachment()
 | **Type:** ``function``
 | **See also:** :doc:`index`, :doc:`getAttachment`, :doc:`removeAttachment`, :doc:`../attachment/copy`
 
-Overview:
-.........
+Overview
+--------
 
 Puts an attachment into the skin under a lookup key. The key can differ from
 ``attachment.name``. This changes the mapping, not the currently displayed slot
@@ -19,29 +19,38 @@ Use :doc:`../attachment/copy` first when this skin needs its own object.
 
 Optionally, you can provide a source skin to copy bones and constraints from.
 
-Syntax:
---------
+Syntax
+------
 
 .. fragment: syntax line; its arguments are placeholders
 .. code-block:: lua
 
    skin:setAttachment(slot, attachmentName, attachment, [sourceSkin])
 
-Parameters:
------------
+Parameters
+----------
 
-- ``slot`` (string or Slot) – The slot name, or a Slot object of the same skeleton data. A number raises.
-- ``attachmentName`` (string) – The lookup key to give this attachment in the skin. An empty string raises.
-- ``attachment`` (attachment object or nil) – The attachment to set, or ``nil`` to remove
-- ``sourceSkin`` (skin object or string, optional) – Source skin to copy bones/constraints from
+- ``slot`` *(required)*:
+    ``string`` or ``Slot`` – The slot name, or a Slot object of the same skeleton data. A number raises.
+    A Slot of a removed skeleton raises.
+- ``attachmentName`` *(required)*:
+    ``string`` – The lookup key to give this attachment in the skin. An empty string raises.
+- ``attachment`` *(required)*:
+    ``Attachment`` or ``nil`` – The attachment to set, or ``nil`` to remove the entry. It must be passed:
+    leaving it out raises, so pass ``nil`` explicitly to remove.
+- ``sourceSkin`` *(optional)*:
+    ``string`` or ``Skin`` – Source skin to copy bones/constraints from. It has no default. When
+    ``attachment`` is ``nil`` it has no effect, but it is still checked, so an invalid skin raises. A name
+    finds only the skeleton data's skins, so a skin made with
+    ``skeleton:createSkin()`` must be passed as the Skin object.
 
-Returns:
---------
+Return value
+------------
 
 ``Skin`` – The skin itself, so calls can be chained.
 
-Errors:
--------
+Errors
+~~~~~~
 
 Raises a Lua error, and changes nothing, when:
 
@@ -49,13 +58,13 @@ Raises a Lua error, and changes nothing, when:
 - the slot or the source skin is not found, or has the wrong type
 - the attachment or the source skin belongs to different skeleton data
 
-Example:
---------
+Example
+-------
 
 The examples use the mix-and-match example skeleton, whose skins each dress part of the character.
 
 Build Custom Skin
-.................
+~~~~~~~~~~~~~~~~~
 
 .. code-block:: lua
 
@@ -75,7 +84,7 @@ Build Custom Skin
    girl:setSkin(customSkin)
 
 Remove Attachment
-.................
+~~~~~~~~~~~~~~~~~
 
 .. code-block:: lua
 
@@ -89,7 +98,7 @@ Remove Attachment
    skin:setAttachment("hat", "hat", nil)
 
 Own Copy of an Attachment
-.........................
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: lua
 
@@ -105,7 +114,7 @@ Own Copy of an Attachment
    skin:setAttachment("eye-front-iris", "eye-front-iris", myIris)
 
 Copy with Source Skin
-.....................
+~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: lua
 
@@ -125,7 +134,7 @@ Copy with Source Skin
    customSkin:setAttachment("hat", "hat", attachment, "accessories/hat-red-yellow")
 
 Mix and Match System
-....................
+~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: lua
 
@@ -161,8 +170,8 @@ Mix and Match System
 
    girl:setSkin(mySkin)
 
-Notes:
---------
+Notes
+-----
 
 - The attachment is shared, not copied; use :doc:`../attachment/copy` for a separate object
 - The slot is a slot name or a Slot object; a string is always a slot name, and a number raises

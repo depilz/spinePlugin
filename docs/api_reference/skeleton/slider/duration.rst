@@ -5,13 +5,13 @@ slider.duration
 | **Type:** ``number`` (read-only)
 | **See also:** :doc:`index`, :doc:`time`, :doc:`animation`
 
-Overview:
-.........
+Overview
+--------
 
 The duration, in seconds, of the slider's :doc:`animation`: the range of :doc:`time` that shows every frame of it.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

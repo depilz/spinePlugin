@@ -5,8 +5,8 @@ trackEntry.mixInterpolation
 | **Type:** ``string``
 | **See also:** :doc:`index`, :doc:`mixDuration`, :doc:`additive`
 
-Overview:
-.........
+Overview
+--------
 
 How this entry's mix from the previous entry progresses over its :doc:`mixDuration`. It is one of these names:
 
@@ -19,8 +19,8 @@ How this entry's mix from the previous entry progresses over its :doc:`mixDurati
 Writing any other value, including ``nil`` or a non-string, raises an error that lists the five names.
 Setting it does not change :doc:`mixDuration`; the mix takes as long as before.
 
-Example:
---------
+Example
+-------
 
 .. code-block:: lua
 

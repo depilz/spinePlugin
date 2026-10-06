@@ -3,7 +3,10 @@ attachment.rotation
 =======================================
 
 | **Type:** ``number`` (read/write)
-| **Attachment Types:** region, point
+| **Attachment types:** region, point
+
+Overview
+--------
 
 The rotation angle of the attachment in degrees, relative to its bone.
 
@@ -46,7 +49,7 @@ Notes
 - Positive values rotate counter-clockwise
 - The total rotation includes this value plus any bone rotation
 
-See Also
+See also
 --------
 
 - :doc:`x` - The X position offset
