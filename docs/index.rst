@@ -75,10 +75,10 @@ its entry to the plugins table of ``build.settings`` and read that line's docume
       }
 
 The Simulator and the build download each plugin from the `Solar2D Free Plugin Directory <https://plugins.solar2d.com/>`__.
-To stay on one release, add ``version = "v1"`` to the entry: ``v1`` is ``plugin.spine42`` 2.0.0 and ``plugin.spine43``
-3.0.0. The same archives stay attached to the GitHub releases
-`spine42-2.0.0 <https://github.com/depilz/spinePlugin/releases/tag/spine42-2.0.0>`__ and
-`spine43-3.0.0 <https://github.com/depilz/spinePlugin/releases/tag/spine43-3.0.0>`__ as a fallback: list their URLs in
+To stay on one release, add ``version = "v2"`` to the entry: ``v2`` is ``plugin.spine42`` 2.0.1 and ``plugin.spine43``
+3.0.1, and ``v1`` stays on 2.0.0 and 3.0.0. The same archives stay attached to the GitHub releases
+`spine42-2.0.1 <https://github.com/depilz/spinePlugin/releases/tag/spine42-2.0.1>`__ and
+`spine43-3.0.1 <https://github.com/depilz/spinePlugin/releases/tag/spine43-3.0.1>`__ as a fallback: list their URLs in
 the entry's ``supportedPlatforms`` to install from there instead.
 
 Moving a project from ``plugin.spine`` 1.2 to a line, or from 4.2 to 4.3? See the :doc:`migration guide <migration>`

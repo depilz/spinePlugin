@@ -52,7 +52,7 @@ settings =
 
 Then load it with `local spine = require("plugin.spine43")`. The [4.3 documentation](https://spineplugin.readthedocs.io/en/4.3/) covers the rest, and its [migration page](https://spineplugin.readthedocs.io/en/4.3/migration.html) lists what changes from 4.2.
 
-To stay on one release, add `version = "v1"` to the entry: `v1` is plugin.spine42 2.0.0 and plugin.spine43 3.0.0. The same archives stay attached to this repository's [spine42-2.0.0](https://github.com/depilz/spinePlugin/releases/tag/spine42-2.0.0) and [spine43-3.0.0](https://github.com/depilz/spinePlugin/releases/tag/spine43-3.0.0) releases as a fallback: list their URLs in the entry's `supportedPlatforms` to install from there instead.
+To stay on one release, add `version = "v2"` to the entry: `v2` is plugin.spine42 2.0.1 and plugin.spine43 3.0.1, and `v1` stays on 2.0.0 and 3.0.0. The same archives stay attached to this repository's [spine42-2.0.1](https://github.com/depilz/spinePlugin/releases/tag/spine42-2.0.1) and [spine43-3.0.1](https://github.com/depilz/spinePlugin/releases/tag/spine43-3.0.1) releases as a fallback: list their URLs in the entry's `supportedPlatforms` to install from there instead.
 
 
 ### 🤝 Contributing

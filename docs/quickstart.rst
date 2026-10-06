@@ -54,7 +54,7 @@ the simulator or on a device.
           },
       }
 
-- **Pinning**: to stay on one release, add ``version = "v1"`` to the entry;
+- **Pinning**: to stay on one release, add ``version = "v2"`` to the entry;
   :ref:`pick-your-line` says which release that is and where the GitHub
   release archives are kept as a fallback.
 
