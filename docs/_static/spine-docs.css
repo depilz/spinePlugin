@@ -1,0 +1,29 @@
+/* Let the sidebar keep its 25 % column so long names cannot push the content below it. */
+@media (min-width: 992px) {
+  .sidebar-container {
+    min-width: 0;
+  }
+}
+
+.site-toc a,
+.toc a,
+.toctree-wrapper a,
+a.reference.external {
+  overflow-wrap: anywhere;
+}
+
+h1 {
+  overflow-wrap: anywhere;
+}
+
+.page-toc {
+  word-break: normal;
+  overflow-wrap: anywhere;
+}
+
+/* Below 992 px, show "Page contents" after the article instead of above the title. */
+@media (max-width: 991.98px) {
+  .row > .rst-content {
+    order: 0;
+  }
+}
